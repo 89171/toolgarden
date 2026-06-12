@@ -1,26 +1,147 @@
 @import "tailwindcss";
 
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   Layer 1 — Raw values (Light mode)
+   修改主题时只需改这一层，其余自动生效
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Page canvas */
+  --background:        #ffffff;
+  --foreground:        #171717;
+
+  /* Surface — panel / input 背景 */
+  --surface:           #f9fafb;   /* gray-50 */
+  --surface-raised:    #ffffff;   /* white，output 区域 */
+  --surface-hover:     #f3f4f6;   /* gray-100，hover 高亮 */
+
+  /* Border */
+  --border-subtle:     #f3f4f6;   /* gray-100，分隔线 / 面包屑 */
+  --border-base:       #e5e7eb;   /* gray-200，默认边框 */
+  --border-input:      #d1d5db;   /* gray-300，输入框边框 */
+  --border-strong:     #9ca3af;   /* gray-400，hover 边框 */
+
+  /* Content — 文字层级 */
+  --content:           #111827;   /* gray-900，标题 */
+  --content-secondary: #1f2937;   /* gray-800，正文 */
+  --content-muted:     #6b7280;   /* gray-500，辅助说明 */
+  --content-faint:     #9ca3af;   /* gray-400，占位符 / 注释 */
+
+  /* Action — 主操作按钮 */
+  --action:            #1f2937;   /* gray-800 */
+  --action-hover:      #374151;   /* gray-700 */
+  --action-muted:      #e5e7eb;   /* gray-200，次要按钮 / disabled 背景 */
+  --action-muted-fg:   #9ca3af;   /* gray-400，disabled 文字 */
+
+  /* Danger */
+  --danger-surface:       #fee2e2; /* red-100 */
+  --danger-content:       #991b1b; /* red-800 */
+  --danger-surface-hover: #fecaca; /* red-200 */
+
+  /* JSON 语法高亮 */
+  --syntax-string:     #16a34a;   /* green-600 */
+  --syntax-number:     #2563eb;   /* blue-600 */
+  --syntax-boolean:    #9333ea;   /* purple-600 */
+  --syntax-null:       #dc2626;   /* red-600 */
+  --syntax-key:        #1f2937;   /* gray-800 */
+  --syntax-bracket:    #1f2937;   /* gray-800 */
+  --syntax-comment:    #9ca3af;   /* gray-400 */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   Dark mode — 只需在此覆盖 Layer 1 变量
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background:        #0a0a0a;
+    --foreground:        #ededed;
+
+    --surface:           #111827;
+    --surface-raised:    #1f2937;
+    --surface-hover:     #1f2937;
+
+    --border-subtle:     #1f2937;
+    --border-base:       #374151;
+    --border-input:      #4b5563;
+    --border-strong:     #6b7280;
+
+    --content:           #f9fafb;
+    --content-secondary: #e5e7eb;
+    --content-muted:     #9ca3af;
+    --content-faint:     #6b7280;
+
+    --action:            #e5e7eb;
+    --action-hover:      #f3f4f6;
+    --action-muted:      #374151;
+    --action-muted-fg:   #6b7280;
+
+    --danger-surface:       #450a0a;
+    --danger-content:       #fca5a5;
+    --danger-surface-hover: #7f1d1d;
+
+    --syntax-string:     #4ade80;
+    --syntax-number:     #60a5fa;
+    --syntax-boolean:    #c084fc;
+    --syntax-null:       #f87171;
+    --syntax-key:        #e5e7eb;
+    --syntax-bracket:    #e5e7eb;
+    --syntax-comment:    #6b7280;
   }
 }
 
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   Layer 2 — Tailwind v4 @theme 注册
+   将 Layer 1 变量暴露为 Tailwind 工具类（bg-* / text-* / border-*）
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  /* Page */
+  --color-background:          var(--background);
+  --color-foreground:          var(--foreground);
+
+  /* Surface */
+  --color-surface:             var(--surface);
+  --color-surface-raised:      var(--surface-raised);
+  --color-surface-hover:       var(--surface-hover);
+
+  /* Border */
+  --color-border-subtle:       var(--border-subtle);
+  --color-border-base:         var(--border-base);
+  --color-border-input:        var(--border-input);
+  --color-border-strong:       var(--border-strong);
+
+  /* Content */
+  --color-content:             var(--content);
+  --color-content-secondary:   var(--content-secondary);
+  --color-content-muted:       var(--content-muted);
+  --color-content-faint:       var(--content-faint);
+
+  /* Action */
+  --color-action:              var(--action);
+  --color-action-hover:        var(--action-hover);
+  --color-action-muted:        var(--action-muted);
+  --color-action-muted-fg:     var(--action-muted-fg);
+
+  /* Danger */
+  --color-danger-surface:      var(--danger-surface);
+  --color-danger-content:      var(--danger-content);
+  --color-danger-surface-hover: var(--danger-surface-hover);
+
+  /* JSON syntax */
+  --color-syntax-string:       var(--syntax-string);
+  --color-syntax-number:       var(--syntax-number);
+  --color-syntax-boolean:      var(--syntax-boolean);
+  --color-syntax-null:         var(--syntax-null);
+  --color-syntax-key:          var(--syntax-key);
+  --color-syntax-bracket:      var(--syntax-bracket);
+  --color-syntax-comment:      var(--syntax-comment);
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   Base
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }

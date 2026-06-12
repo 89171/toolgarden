@@ -1,11 +1,21 @@
-import React from 'react';
+'use client';
+import Link from 'next/link';
+import { useTranslations, useLocale } from 'next-intl';
+import { LanguageSwitcher } from './LanguageSwitcher';
 
 const Header: React.FC = () => {
+  const t = useTranslations('nav');
+  const locale = useLocale();
+
   return (
-    <div className="text-center mb-8">
-      <h1 className="text-3xl font-bold">JSON 工具包</h1>
-      <p className="text-gray-600 mt-2">格式化、压缩和验证 JSON 数据</p>
-    </div>
+    <header className="border-b border-border-subtle mb-6 pb-4 flex items-center justify-between">
+      <Link href={`/${locale}`} className="font-bold text-lg hover:text-content-muted transition-colors">
+        {t('title')}
+      </Link>
+      <nav className="flex items-center gap-3 text-sm text-content-muted">
+        <LanguageSwitcher />
+      </nav>
+    </header>
   );
 };
 

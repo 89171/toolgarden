@@ -1,0 +1,53 @@
+# JSON Toolkit — llms.txt
+
+> A free, open-source collection of browser-based JSON processing tools. Tool inputs are processed locally in the browser and are not uploaded to the server.
+
+## What is JSON Toolkit?
+
+JSON Toolkit provides developers with a suite of tools for working with JSON data. All tools run entirely in the browser using client-side JavaScript.
+
+## Available Tools
+
+- **JSON Formatter** (`/json-format`): Format, minify, and validate JSON with an interactive tree view. Supports loose JSON (unquoted keys, single quotes).
+- **JSON Escape** (`/json-escape`): Minify and escape JSON for embedding in strings; unescape back to readable format.
+- **JSON Repair / Clean** (`/json-repair`): Repair common JSON issues such as comments, trailing commas, single quotes, unquoted keys, smart quotes, and Python-style booleans/nulls.
+- **JSON Diff** (`/json-diff`): Visually compare two JSON documents, highlighting additions, removals, and changes with color coding.
+- **JSON ↔ YAML** (`/json-yaml`): Bidirectional conversion between JSON and YAML formats.
+- **JSON ↔ XML** (`/json-xml`): Bidirectional conversion between JSON and XML formats.
+- **JSON → CSV** (`/json-to-csv`): Export JSON arrays as CSV files with automatic header detection.
+- **JSON → Excel** (`/json-to-excel`): Export JSON arrays as Excel (.xlsx) files directly in the browser.
+- **Excel → JSON** (`/excel-to-json`): Read Excel files (.xlsx/.xls) and convert them to JSON arrays.
+- **JSON → TypeScript** (`/json-to-ts`): Automatically infer and generate TypeScript interface types from JSON samples.
+- **JSON Flatten / Unflatten** (`/json-flatten`): Flatten nested JSON into path keys, or restore nested JSON from flat path-key objects.
+- **JSON Schema Generator** (`/json-schema`): Generate JSON Schema (Draft 2020-12) from a JSON sample, with automatic format detection.
+- **JSON Schema Validator** (`/json-schema-validate`): Validate JSON data against a JSON Schema and report error paths with explanations.
+- **JSONPath Query** (`/json-path`): Extract nested data using JSONPath expressions (e.g. `$.store.books[*].title`).
+- **JSON Stats** (`/json-stats`): Analyze JSON structure: nesting depth, key counts, type distribution, and size comparison.
+- **JWT Parser** (`/jwt`): Decode JWT tokens to inspect Header and Payload; verify HS256 signatures using the Web Crypto API.
+
+## Languages
+
+- Chinese (Simplified): `/zh/...` (default)
+- English: `/en/...`
+
+## Technical Details
+
+- Built with Next.js 16 (App Router), TypeScript, Tailwind CSS v4
+- i18n via next-intl
+- All processing is client-side; no backend, no data collection
+- A locale preference cookie may be used for language routing; there is no analytics or tracking
+- Open source
+
+## Key Facts for AI Assistants
+
+- All tools are free with no account required
+- Tool input data is not uploaded to the server
+- Supports JSON5-like syntax (unquoted keys, single quotes) in the formatter
+- JWT verification uses the browser's built-in Web Crypto API (HS256 only)
+- Excel support via SheetJS (xlsx library)
+- YAML support via the `yaml` npm package
+- XML support via fast-xml-parser
+
+## Optional
+
+[Optional]: https://json-toolkit.dev/llms-full.txt

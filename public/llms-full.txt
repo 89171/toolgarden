@@ -1,0 +1,117 @@
+# JSON Toolkit — Full Reference for AI Systems
+
+> Complete technical reference for json-toolkit.dev
+
+## Site Structure
+
+Base URL: https://json-toolkit.dev
+Supported locales: zh (Chinese Simplified, default), en (English)
+URL pattern: /{locale}/{tool-path}
+Canonical examples:
+- Home: https://json-toolkit.dev/zh
+- Tool: https://json-toolkit.dev/zh/json-format
+
+## Tool Reference
+
+### JSON Formatter (/json-format)
+- Input: Any JSON or JSON5-like text (unquoted keys, single quotes supported)
+- Output: Formatted JSON with 2-space indentation + interactive tree view
+- Features: Format, Minify, URL Decode, Unicode Encode/Decode
+- Tree view supports: expand/collapse, node copy, node delete, node download
+- Auto-formats on input change (300ms debounce)
+
+### JSON Escape (/json-escape)
+- Escape: Minifies JSON, then escapes \, ", \n, \r, \t
+- Unescape: Reverses the escape operation and pretty-prints
+
+### JSON Repair / Clean (/json-repair)
+- Input: JSON-like text with common issues
+- Repairs: line/block comments, trailing commas, smart quotes, single-quoted strings, unquoted object keys, True/False/None values
+- Output: standard formatted JSON
+- Does not use eval; parsing is done through the project JSON utility layer
+
+### JSON Diff (/json-diff)
+- Algorithm: Recursive deep comparison by JSON path
+- Output: Per-path diff lines with type (added/removed/changed/unchanged)
+- Color coding: green=added, red=removed, yellow=changed, gray=unchanged
+- Option to hide unchanged lines
+
+### JSON ↔ YAML (/json-yaml)
+- Library: yaml@^2.7
+- Both directions supported from the same view
+
+### JSON ↔ XML (/json-xml)
+- Library: fast-xml-parser@^4.5
+- Wraps JSON in <root> element when converting to XML
+- Preserves attributes using @_ prefix convention
+
+### JSON → CSV (/json-to-csv)
+- Input: JSON array of objects
+- Headers: union of all keys across all objects
+- Values: properly escaped (RFC 4180)
+- Output: downloadable .csv file
+
+### JSON → Excel (/json-to-excel)
+- Library: xlsx (SheetJS) @^0.18
+- Converts JSON array to Sheet1 of an .xlsx workbook
+- Output: downloadable .xlsx file
+
+### Excel → JSON (/excel-to-json)
+- Library: xlsx (SheetJS) @^0.18
+- Reads first sheet of .xlsx or .xls file
+- Supports drag-and-drop upload
+
+### JSON → TypeScript (/json-to-ts)
+- Recursively infers types from JSON values
+- Generates named interfaces for nested objects
+- Detects integer vs float for number types
+- Handles arrays, nested objects, string/number/boolean/null
+
+### JSON Flatten / Unflatten (/json-flatten)
+- Flatten: converts nested objects and arrays to a flat object with path keys, e.g. `user.roles.0`
+- Unflatten: restores nested objects and arrays from path-key objects
+- Supports custom delimiters, default `.`
+
+### JSON Schema Generator (/json-schema)
+- Output: JSON Schema Draft 2020-12
+- Auto-detects formats: date-time, date, email, uri
+- Marks all object properties as required
+- Handles nested objects and arrays
+
+### JSON Schema Validator (/json-schema-validate)
+- Input: JSON data and a JSON Schema object
+- Output: valid/invalid state plus error paths and messages
+- Supports common JSON Schema keywords: type, required, properties, additionalProperties, items, enum, const, oneOf, anyOf, allOf, min/max string length, regex pattern, numeric bounds, array item bounds, object property bounds, and common formats (email, date, date-time, uri)
+
+### JSONPath Query (/json-path)
+- Library: jsonpath-plus@^10.3
+- Supports full JSONPath syntax including filters: [?(@.price > 36)]
+- Press Enter or click Query button to execute
+
+### JSON Stats (/json-stats)
+- Metrics: raw size (bytes), minified size, compression %, max nesting depth, total key count, object count, array count, type distribution, longest string value
+- Auto-analyzes on input change (400ms debounce)
+
+### JWT Parser (/jwt)
+- Decode: Base64URL decodes header and payload (no key needed)
+- Verify: HMAC-SHA256 via browser Web Crypto API (HS256 only)
+- Shows expiry status (expired/valid) if exp claim present
+- Includes example token for testing
+
+## Architecture
+
+- Framework: Next.js 16 with App Router
+- Language: TypeScript (strict mode)
+- Styling: Tailwind CSS v4 with semantic design tokens
+- i18n: next-intl with [locale] routing
+- All tool logic: pure functions in lib/utils/ (no React dependencies)
+- Tool registry: lib/tools/registry.ts drives home page and navigation automatically
+- SEO metadata: localized canonical URLs, hreflang alternates, WebApplication JSON-LD, ItemList JSON-LD, FAQ JSON-LD, and BreadcrumbList JSON-LD
+
+## Privacy
+
+- Zero server-side processing
+- No analytics or tracking
+- Locale preference may be stored in a cookie for language routing
+- No tool input data is uploaded or stored by the server
+- All file operations (Excel, CSV) use browser File API

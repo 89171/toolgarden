@@ -1,0 +1,236 @@
+{
+  "common": {
+    "copy": "复制",
+    "copied": "已复制",
+    "clear": "清空",
+    "example": "示例",
+    "download": "下载",
+    "convert": "转换",
+    "query": "查询",
+    "verify": "验证",
+    "input": "输入",
+    "output": "输出",
+    "result": "结果",
+    "empty": "结果将显示在这里",
+    "error_placeholder": "输入 JSON 后自动处理",
+    "download_json": "下载 JSON"
+  },
+  "nav": {
+    "title": "JSON 工具包",
+    "github": "GitHub"
+  },
+  "footer": {
+    "text": "JSON 工具包"
+  },
+  "home": {
+    "title": "JSON 工具包",
+    "meta_title": "在线 JSON 工具包 - 格式化、转换、校验、JWT 解析",
+    "subtitle": "在浏览器中完成 JSON 格式化、压缩、对比，JSON/YAML/XML/CSV/Excel/TypeScript 转换，JSON Schema、JSONPath 和 JWT 解析。数据只在本地处理，无需上传。",
+    "featured": "常用工具",
+    "all_tools": "全部工具",
+    "search_placeholder": "搜索工具、格式或用途...",
+    "search_results": "搜索结果",
+    "no_results": "没有匹配的工具",
+    "privacy_note": "所有处理都在浏览器本地完成，输入内容不会上传到服务器。",
+    "faq_title": "常见问题",
+    "faq": {
+      "privacy_q": "这个 JSON 工具包会上传我的数据吗？",
+      "privacy_a": "不会。格式化、转换、统计、JWT 解析和文件处理都在浏览器本地执行，服务器不会接收你的输入内容。",
+      "formats_q": "支持哪些 JSON 相关格式？",
+      "formats_a": "支持 JSON、YAML、XML、CSV、Excel、TypeScript interface、JSON Schema、JSONPath 和 JWT。",
+      "free_q": "这些工具可以免费使用吗？",
+      "free_a": "可以。工具无需账号即可使用，项目也是开源的。",
+      "loose_q": "JSON 格式化支持宽松语法吗？",
+      "loose_a": "支持常见的宽松输入，例如未加引号的 key 和单引号字符串，方便快速整理开发调试数据。"
+    }
+  },
+  "categories": {
+    "format": "格式化",
+    "convert": "转换",
+    "validate": "验证",
+    "encode": "编解码"
+  },
+  "tools": {
+    "json-format": {
+      "name": "JSON 格式化",
+      "description": "格式化、压缩、验证 JSON，支持树形展示与节点操作",
+      "input_title": "输入 JSON",
+      "output_title": "输出结果",
+      "format": "格式化",
+      "minify": "压缩",
+      "url_decode": "URL 解码",
+      "uni_encode": "Uni 编码",
+      "uni_decode": "Uni 解码",
+      "expand_all": "全部展开",
+      "collapse_all": "全部折叠",
+      "placeholder": "请输入 JSON 数据...",
+      "empty_output": "格式化结果将显示在这里"
+    },
+    "json-escape": {
+      "name": "JSON 压缩转义",
+      "description": "压缩 JSON 并转义特殊字符，反转义还原可读格式",
+      "input_title": "输入",
+      "output_title": "输出",
+      "escape": "压缩转义",
+      "unescape": "反转义格式化",
+      "placeholder": "输入 JSON 或已转义的字符串..."
+    },
+    "json-repair": {
+      "name": "JSON 修复清洗",
+      "description": "修复注释、尾逗号、单引号、未加引号 key 等常见 JSON 问题",
+      "input_title": "待修复 JSON",
+      "output_title": "修复结果",
+      "repair": "修复并格式化",
+      "placeholder": "粘贴包含注释、尾逗号或宽松语法的 JSON...",
+      "empty_output": "修复后的标准 JSON 将显示在这里"
+    },
+    "json-diff": {
+      "name": "JSON 对比",
+      "description": "可视化对比两份 JSON 的差异，高亮增删改",
+      "left_title": "左侧 JSON（原始）",
+      "right_title": "右侧 JSON（新版）",
+      "compare": "开始对比",
+      "hide_unchanged": "隐藏未变项",
+      "added": "新增",
+      "removed": "删除",
+      "changed": "修改",
+      "unchanged": "未变",
+      "identical": "两份 JSON 完全相同",
+      "left_placeholder": "粘贴原始 JSON，例如 a 为 1 的对象",
+      "right_placeholder": "粘贴新版 JSON，例如新增 b 字段的对象"
+    },
+    "json-yaml": {
+      "name": "JSON ↔ YAML",
+      "description": "JSON 与 YAML 格式双向互转",
+      "to_yaml": "→ YAML",
+      "to_json": "→ JSON",
+      "json_placeholder": "粘贴 JSON 对象，例如 key/value 配置",
+      "yaml_placeholder": "key: value"
+    },
+    "json-xml": {
+      "name": "JSON ↔ XML",
+      "description": "JSON 与 XML 格式双向互转",
+      "to_xml": "→ XML",
+      "to_json": "→ JSON",
+      "json_placeholder": "粘贴 JSON 对象，例如姓名和年龄字段",
+      "xml_placeholder": "<root><name>张三</name></root>"
+    },
+    "json-to-csv": {
+      "name": "JSON → CSV",
+      "description": "将 JSON 数组导出为 CSV 文件",
+      "input_title": "输入 JSON 数组",
+      "output_title": "CSV 输出",
+      "convert": "转换为 CSV",
+      "download_csv": "下载 CSV",
+      "placeholder": "粘贴 JSON 数组，例如每一项包含 col1 / col2 字段",
+      "empty_output": "CSV 内容将显示在这里"
+    },
+    "json-to-excel": {
+      "name": "JSON → Excel",
+      "description": "将 JSON 数组导出为 Excel (.xlsx) 文件",
+      "input_title": "输入 JSON 数组",
+      "preview_title": "预览",
+      "download_excel": "下载 Excel",
+      "placeholder": "粘贴 JSON 数组，例如每一项包含 col1 字段",
+      "success_title": "导出成功",
+      "success_desc": "共 {count} 行数据已下载为 export.xlsx",
+      "idle_desc": "输入 JSON 数组后点击「下载 Excel」"
+    },
+    "excel-to-json": {
+      "name": "Excel → JSON",
+      "description": "读取 Excel (.xlsx/.xls) 文件，转换为 JSON 数组",
+      "upload_title": "上传 Excel 文件",
+      "output_title": "JSON 输出",
+      "drop_title": "点击或拖拽上传",
+      "drop_hint": "支持 .xlsx / .xls",
+      "empty_output": "上传文件后结果显示在这里"
+    },
+    "json-to-ts": {
+      "name": "JSON → TypeScript",
+      "description": "从 JSON 自动推断并生成 TypeScript interface 类型",
+      "input_title": "输入 JSON",
+      "output_title": "TypeScript 类型",
+      "placeholder": "粘贴 JSON 样本，例如 id 和 name 字段",
+      "empty_output": "TypeScript 类型将显示在这里"
+    },
+    "json-flatten": {
+      "name": "JSON Flatten / Unflatten",
+      "description": "将嵌套 JSON 平铺为路径键，或从路径键还原嵌套结构",
+      "input_title": "输入 JSON",
+      "output_title": "输出结果",
+      "flatten": "Flatten",
+      "unflatten": "Unflatten",
+      "delimiter": "分隔符",
+      "placeholder": "粘贴嵌套 JSON，例如 user.name 和 roles 数组",
+      "empty_output": "转换结果将显示在这里"
+    },
+    "json-schema": {
+      "name": "JSON Schema 生成",
+      "description": "从 JSON 样本自动推断生成 JSON Schema 定义",
+      "input_title": "输入 JSON 样本",
+      "output_title": "JSON Schema",
+      "placeholder": "粘贴 JSON 样本，例如 id 和 name 字段",
+      "empty_output": "Schema 将显示在这里"
+    },
+    "json-schema-validate": {
+      "name": "JSON Schema 校验",
+      "description": "使用 JSON Schema 校验 JSON 数据，输出错误路径和原因",
+      "json_title": "JSON 数据",
+      "schema_title": "JSON Schema",
+      "result_title": "校验结果",
+      "validate": "校验",
+      "valid": "校验通过",
+      "invalid": "校验失败",
+      "json_placeholder": "粘贴要校验的 JSON 数据，例如 id 和 name 字段",
+      "schema_placeholder": "粘贴 JSON Schema，例如 object、required 和 properties 规则",
+      "empty_output": "点击校验后显示结果"
+    },
+    "json-path": {
+      "name": "JSONPath 查询",
+      "description": "使用 JSONPath 表达式精准提取嵌套字段",
+      "input_title": "输入 JSON",
+      "path_title": "JSONPath 表达式",
+      "result_title": "查询结果",
+      "all_titles": "所有书名",
+      "price_filter": "价格 > 36",
+      "first_book": "第一本书",
+      "all_prices": "所有价格",
+      "placeholder": "$.store.books[*].title",
+      "empty_output": "输入路径后点击查询"
+    },
+    "json-stats": {
+      "name": "JSON 统计分析",
+      "description": "分析 JSON 结构：嵌套层级、Key 数量、类型分布、体积对比",
+      "input_title": "输入 JSON",
+      "raw_size": "原始体积",
+      "max_depth": "最大嵌套层级",
+      "total_keys": "总 Key 数",
+      "object_array": "对象数 / 数组数",
+      "type_distribution": "值类型分布",
+      "longest_string": "最长字符串",
+      "placeholder": "输入任意 JSON，自动分析...",
+      "empty_output": "输入 JSON 后自动显示分析结果",
+      "size_compressed": "压缩后 {size}（节省 {pct}%）"
+    },
+    "jwt": {
+      "name": "JWT 解析",
+      "description": "解码 JWT Token，查看 Header / Payload，支持 HS256 签名验证",
+      "token_title": "JWT Token",
+      "decode": "解码",
+      "verify_title": "HS256 签名验证",
+      "verify": "验证签名",
+      "verifying": "验证中...",
+      "secret_placeholder": "输入 Secret（仅 HS256 算法）",
+      "no_secret": "请输入 Secret",
+      "valid": "✅ 签名有效",
+      "invalid": "❌ 签名无效",
+      "header": "HEADER",
+      "payload": "PAYLOAD",
+      "signature": "SIGNATURE",
+      "expired": "⚠ 已过期",
+      "not_expired": "✓ 未过期",
+      "placeholder": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+      "empty_output": "粘贴 JWT Token 后点击解码"
+    }
+  }
+}

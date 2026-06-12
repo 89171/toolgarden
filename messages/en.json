@@ -1,0 +1,236 @@
+{
+  "common": {
+    "copy": "Copy",
+    "copied": "Copied",
+    "clear": "Clear",
+    "example": "Example",
+    "download": "Download",
+    "convert": "Convert",
+    "query": "Query",
+    "verify": "Verify",
+    "input": "Input",
+    "output": "Output",
+    "result": "Result",
+    "empty": "Result will appear here",
+    "error_placeholder": "Enter JSON to start",
+    "download_json": "Download JSON"
+  },
+  "nav": {
+    "title": "JSON Toolkit",
+    "github": "GitHub"
+  },
+  "footer": {
+    "text": "JSON Toolkit"
+  },
+  "home": {
+    "title": "JSON Toolkit",
+    "meta_title": "Online JSON Toolkit - Format, Convert, Validate, and Decode JWT",
+    "subtitle": "Format, minify, diff, convert, validate, and inspect JSON in your browser. Includes JSON/YAML/XML/CSV/Excel/TypeScript conversion, JSON Schema, JSONPath, and JWT tools. Your data stays local and is never uploaded.",
+    "featured": "Popular tools",
+    "all_tools": "All tools",
+    "search_placeholder": "Search tools, formats, or tasks...",
+    "search_results": "Search results",
+    "no_results": "No matching tools",
+    "privacy_note": "All processing runs locally in your browser. Input data is not uploaded to a server.",
+    "faq_title": "FAQ",
+    "faq": {
+      "privacy_q": "Does JSON Toolkit upload my data?",
+      "privacy_a": "No. Formatting, conversion, analysis, JWT parsing, and file processing run locally in your browser. The server does not receive your input.",
+      "formats_q": "Which JSON-related formats are supported?",
+      "formats_a": "JSON, YAML, XML, CSV, Excel, TypeScript interfaces, JSON Schema, JSONPath, and JWT are supported.",
+      "free_q": "Are these tools free to use?",
+      "free_a": "Yes. The tools are free, require no account, and the project is open source.",
+      "loose_q": "Does the JSON formatter support loose syntax?",
+      "loose_a": "Yes. It accepts common loose input such as unquoted object keys and single-quoted strings for faster debugging."
+    }
+  },
+  "categories": {
+    "format": "Format",
+    "convert": "Convert",
+    "validate": "Validate",
+    "encode": "Encode / Decode"
+  },
+  "tools": {
+    "json-format": {
+      "name": "JSON Formatter",
+      "description": "Format, minify, and validate JSON with tree view and node operations",
+      "input_title": "Input JSON",
+      "output_title": "Output",
+      "format": "Format",
+      "minify": "Minify",
+      "url_decode": "URL Decode",
+      "uni_encode": "Uni Encode",
+      "uni_decode": "Uni Decode",
+      "expand_all": "Expand All",
+      "collapse_all": "Collapse All",
+      "placeholder": "Paste JSON here...",
+      "empty_output": "Formatted result will appear here"
+    },
+    "json-escape": {
+      "name": "JSON Escape",
+      "description": "Minify and escape JSON for embedding in strings, or unescape back",
+      "input_title": "Input",
+      "output_title": "Output",
+      "escape": "Escape",
+      "unescape": "Unescape & Format",
+      "placeholder": "Enter JSON or an escaped string..."
+    },
+    "json-repair": {
+      "name": "JSON Repair / Clean",
+      "description": "Fix comments, trailing commas, single quotes, unquoted keys, and other common JSON issues",
+      "input_title": "JSON to repair",
+      "output_title": "Repaired output",
+      "repair": "Repair & format",
+      "placeholder": "Paste JSON with comments, trailing commas, or loose syntax...",
+      "empty_output": "Standard JSON will appear here"
+    },
+    "json-diff": {
+      "name": "JSON Diff",
+      "description": "Visually compare two JSON documents, highlighting additions, removals, and changes",
+      "left_title": "Left JSON (original)",
+      "right_title": "Right JSON (new)",
+      "compare": "Compare",
+      "hide_unchanged": "Hide unchanged",
+      "added": "added",
+      "removed": "removed",
+      "changed": "changed",
+      "unchanged": "unchanged",
+      "identical": "The two JSON documents are identical",
+      "left_placeholder": "Paste the original JSON, such as an object with a set to 1",
+      "right_placeholder": "Paste the new JSON, such as an object with an added b field"
+    },
+    "json-yaml": {
+      "name": "JSON ↔ YAML",
+      "description": "Convert between JSON and YAML formats",
+      "to_yaml": "→ YAML",
+      "to_json": "→ JSON",
+      "json_placeholder": "Paste a JSON object, such as a key/value config",
+      "yaml_placeholder": "key: value"
+    },
+    "json-xml": {
+      "name": "JSON ↔ XML",
+      "description": "Convert between JSON and XML formats",
+      "to_xml": "→ XML",
+      "to_json": "→ JSON",
+      "json_placeholder": "Paste a JSON object, such as name and age fields",
+      "xml_placeholder": "<root><name>John</name></root>"
+    },
+    "json-to-csv": {
+      "name": "JSON → CSV",
+      "description": "Export a JSON array as a CSV file",
+      "input_title": "Input JSON Array",
+      "output_title": "CSV Output",
+      "convert": "Convert to CSV",
+      "download_csv": "Download CSV",
+      "placeholder": "Paste a JSON array, such as rows with col1 / col2 fields",
+      "empty_output": "CSV content will appear here"
+    },
+    "json-to-excel": {
+      "name": "JSON → Excel",
+      "description": "Export a JSON array as an Excel (.xlsx) file",
+      "input_title": "Input JSON Array",
+      "preview_title": "Preview",
+      "download_excel": "Download Excel",
+      "placeholder": "Paste a JSON array, such as rows with a col1 field",
+      "success_title": "Export successful",
+      "success_desc": "{count} rows downloaded as export.xlsx",
+      "idle_desc": "Enter a JSON array and click Download Excel"
+    },
+    "excel-to-json": {
+      "name": "Excel → JSON",
+      "description": "Read an Excel (.xlsx/.xls) file and convert it to a JSON array",
+      "upload_title": "Upload Excel File",
+      "output_title": "JSON Output",
+      "drop_title": "Click or drag to upload",
+      "drop_hint": "Supports .xlsx / .xls",
+      "empty_output": "Result will appear after uploading a file"
+    },
+    "json-to-ts": {
+      "name": "JSON → TypeScript",
+      "description": "Infer and generate TypeScript interface types from JSON",
+      "input_title": "Input JSON",
+      "output_title": "TypeScript Types",
+      "placeholder": "Paste a JSON sample, such as id and name fields",
+      "empty_output": "TypeScript types will appear here"
+    },
+    "json-flatten": {
+      "name": "JSON Flatten / Unflatten",
+      "description": "Flatten nested JSON into path keys, or restore nested structures from path keys",
+      "input_title": "Input JSON",
+      "output_title": "Output",
+      "flatten": "Flatten",
+      "unflatten": "Unflatten",
+      "delimiter": "Delimiter",
+      "placeholder": "Paste nested JSON, such as user.name and a roles array",
+      "empty_output": "Converted result will appear here"
+    },
+    "json-schema": {
+      "name": "JSON Schema Generator",
+      "description": "Automatically infer a JSON Schema from a sample JSON document",
+      "input_title": "Input JSON Sample",
+      "output_title": "JSON Schema",
+      "placeholder": "Paste a JSON sample, such as id and name fields",
+      "empty_output": "Schema will appear here"
+    },
+    "json-schema-validate": {
+      "name": "JSON Schema Validator",
+      "description": "Validate JSON data against a JSON Schema and show error paths and reasons",
+      "json_title": "JSON Data",
+      "schema_title": "JSON Schema",
+      "result_title": "Validation Result",
+      "validate": "Validate",
+      "valid": "Valid",
+      "invalid": "Invalid",
+      "json_placeholder": "Paste the JSON data to validate, such as id and name fields",
+      "schema_placeholder": "Paste JSON Schema, such as object, required, and properties rules",
+      "empty_output": "Run validation to see results"
+    },
+    "json-path": {
+      "name": "JSONPath Query",
+      "description": "Extract nested fields using JSONPath expressions",
+      "input_title": "Input JSON",
+      "path_title": "JSONPath Expression",
+      "result_title": "Query Result",
+      "all_titles": "All titles",
+      "price_filter": "Price > 36",
+      "first_book": "First book",
+      "all_prices": "All prices",
+      "placeholder": "$.store.books[*].title",
+      "empty_output": "Enter a path and click Query"
+    },
+    "json-stats": {
+      "name": "JSON Stats",
+      "description": "Analyze JSON structure: nesting depth, key count, type distribution, size comparison",
+      "input_title": "Input JSON",
+      "raw_size": "Raw size",
+      "max_depth": "Max depth",
+      "total_keys": "Total keys",
+      "object_array": "Objects / Arrays",
+      "type_distribution": "Value type distribution",
+      "longest_string": "Longest string",
+      "placeholder": "Enter any JSON to analyze...",
+      "empty_output": "Analysis will appear automatically",
+      "size_compressed": "Minified: {size} (saves {pct}%)"
+    },
+    "jwt": {
+      "name": "JWT Parser",
+      "description": "Decode JWT tokens, inspect Header / Payload, and verify HS256 signatures",
+      "token_title": "JWT Token",
+      "decode": "Decode",
+      "verify_title": "HS256 Signature Verification",
+      "verify": "Verify Signature",
+      "verifying": "Verifying...",
+      "secret_placeholder": "Enter Secret (HS256 only)",
+      "no_secret": "Please enter the Secret",
+      "valid": "✅ Signature valid",
+      "invalid": "❌ Signature invalid",
+      "header": "HEADER",
+      "payload": "PAYLOAD",
+      "signature": "SIGNATURE",
+      "expired": "⚠ Expired",
+      "not_expired": "✓ Valid",
+      "placeholder": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+      "empty_output": "Paste a JWT token and click Decode"
+    }
+  }
+}
