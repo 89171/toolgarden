@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <!-- Background -->
+  <rect width="192" height="192" rx="32" fill="#1f2937"/>
+  <!-- Braces -->
+  <text
+    x="96" y="122"
+    text-anchor="middle"
+    font-family="ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace"
+    font-size="88"
+    font-weight="700"
+    letter-spacing="-4"
+    fill="#f9fafb"
+  >{}</text>
+  <!-- Accent dot (JSON ":" hint) -->
+  <circle cx="96" cy="148" r="6" fill="#6b7280"/>
+</svg>

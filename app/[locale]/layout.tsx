@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { notFound } from 'next/navigation';
@@ -10,6 +10,7 @@ import {
   normalizeLocale,
   toJsonLd,
 } from '@/lib/tools/seo';
+import { PwaRegistration } from '@/components/PwaRegistration';
 import '../globals.css';
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'], display: 'swap' });
@@ -23,8 +24,27 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  return createLocaleMetadata(locale);
+  return {
+    ...createLocaleMetadata(locale),
+    manifest: '/manifest.webmanifest',
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: 'default',
+      title: 'JSON Toolkit',
+    },
+    formatDetection: { telephone: false },
+  };
 }
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#1f2937' },
+    { media: '(prefers-color-scheme: dark)',  color: '#111827' },
+  ],
+  width: 'device-width',
+  initialScale: 1,
+  minimumScale: 1,
+};
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -55,6 +75,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider locale={normalizedLocale} messages={m}>
           {children}
         </NextIntlClientProvider>
+        <PwaRegistration />
       </body>
     </html>
   );

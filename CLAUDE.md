@@ -8,6 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 npm run dev      # 启动开发服务器 http://localhost:3000
 npm run build    # 生产构建
 npm run lint     # ESLint 检查
+npm run clean    # 清除 .next 缓存并重启开发服务器
 ```
 
 目前无测试框架，如需新增请使用 Vitest（`npx vitest`）。
@@ -16,53 +17,89 @@ npm run lint     # ESLint 检查
 
 ## 架构：Harness Engineering 模式
 
-本项目采用**注册中心驱动**的工程化架构。核心约束：**首页、导航、面包屑等所有"发现"逻辑，必须从 `lib/tools/registry.ts` 中自动派生，不得硬编码。**
+本项目采用**注册中心驱动**的工程化架构。核心约束：**首页、导航、面包屑、SEO、Sitemap 等所有"发现"逻辑，必须从 `lib/tools/registry.ts` 中自动派生，不得硬编码。**
 
 ### 新增一个工具的完整步骤
 
 1. 在 `lib/tools/registry.ts` 的 `toolRegistry` 数组中追加一条 `ToolMeta` 记录
-2. 创建 `app/<tool-id>/page.tsx`，用 `<ToolLayout toolId="<tool-id>">` 包裹内容
+2. 在 `messages/zh.json` 和 `messages/en.json` 中补齐对应工具文案（`tools.<id>` 节点）
+3. 在 `lib/utils/` 中实现纯函数逻辑
+4. 创建 `app/[locale]/<tool-id>/page.tsx`，用 `<ToolLayout toolId="<tool-id>">` 包裹内容
+5. 创建 `app/[locale]/<tool-id>/layout.tsx`，调用 `createToolMetadata(TOOL_ID, locale)`
+6. 创建 `app/<tool-id>/page.tsx`，调用 `redirectToolToDefaultLocale('<tool-id>')`
 
-完成以上两步后，首页卡片、面包屑、分类分组**自动出现**，无需修改其他任何文件。
+完成以上步骤后，首页卡片、面包屑、分类分组、Sitemap 条目、JSON-LD、hreflang、404 推荐列表**全部自动出现**，无需修改其他任何文件。
 
 ### 目录职责
 
 | 路径 | 职责 |
 |------|------|
 | `lib/tools/types.ts` | `ToolMeta` 接口——工具的唯一标准契约 |
-| `lib/tools/registry.ts` | 工具注册表，驱动首页和导航 |
+| `lib/tools/registry.ts` | 工具注册表，驱动首页、导航、SEO |
+| `lib/tools/seo.ts` | SEO 工具函数：createToolMetadata、createBreadcrumbJsonLd、getLocalizedToolCards 等 |
+| `lib/tools/routing.ts` | 路由工具函数：redirectToDefaultLocale / redirectToolToDefaultLocale |
 | `lib/utils/json.ts` | **纯函数**工具库，无副作用，不得 import React |
-| `components/ToolLayout.tsx` | 所有工具页面必须使用的骨架（面包屑 + 标题） |
+| `lib/utils/*.ts` | 各工具的纯函数逻辑（yaml/xml/csv/diff/schema/repair/flatten 等） |
+| `components/ToolLayout.tsx` | 所有工具页面必须使用的骨架（面包屑 + 标题 + JSON-LD） |
+| `components/ToolDirectory.tsx` | 首页工具目录（搜索 + Featured + 分类分组） |
 | `components/ui/Button.tsx` | 统一按钮，variant: `primary` / `secondary` / `danger` |
 | `components/ui/Panel.tsx` | 输入/输出面板骨架 |
 | `components/JsonNode.tsx` | JSON 树形展示组件 |
-| `app/page.tsx` | 首页，纯展示，从 registry 读数据，不含业务逻辑 |
-| `app/<tool-id>/page.tsx` | 工具页面，只管 UI 状态，逻辑委托给 `lib/utils/` |
+| `components/NotFoundContent.tsx` | 404 页面内容，推荐工具从 registry 派生 |
+| `app/[locale]/layout.tsx` | Locale 根布局：NextIntlClientProvider + JSON-LD + Metadata |
+| `app/[locale]/page.tsx` | 首页 Server Component，直接读 messages，无需 getTranslations |
+| `app/[locale]/<tool-id>/page.tsx` | 工具页面，只管 UI 状态，逻辑委托给 `lib/utils/` |
+| `app/[locale]/<tool-id>/layout.tsx` | 工具页元数据，调用 `createToolMetadata(TOOL_ID, locale)` |
+| `app/<tool-id>/page.tsx` | 根路径兼容入口，调用 `redirectToolToDefaultLocale` |
+| `messages/zh.json` | 中文文案唯一来源 |
+| `messages/en.json` | 英文文案唯一来源 |
 
 ### 分层规则
 
-- **`lib/utils/`** → 纯函数，返回值而不是操作 state，便于测试
-- **`lib/tools/`** → 工具元数据，不含渲染代码
+- **`lib/utils/`** → 纯函数，返回值而不是操作 state，便于测试，不得 import React
+- **`lib/tools/`** → 工具元数据 + SEO + 路由工具，不含渲染代码
 - **`components/ui/`** → 无业务逻辑的原子组件
-- **`app/<tool>/page.tsx`** → 只负责 `useState` / `useEffect`，调用 `lib/utils/` 取结果
+- **`app/[locale]/<tool>/page.tsx`** → 只负责 `useState` / `useEffect`，调用 `lib/utils/` 取结果
 
-工具页面中**禁止**直接写 `JSON.parse` / `JSON.stringify` 等逻辑——应在 `lib/utils/json.ts` 中定义函数后调用。
+工具页面中**禁止**直接写 `JSON.parse` / `JSON.stringify` 等逻辑——应在 `lib/utils/` 中定义函数后调用。
 
 ### ToolMeta 字段说明
 
 ```ts
 interface ToolMeta {
-  id: string;          // 与 app/<id>/ 路由对应
-  name: string;        // 首页卡片标题
-  description: string; // 首页卡片描述（一句话）
+  id: string;          // 与 app/<id>/ 路由对应，也是 messages.tools 的 key
+  name: string;        // 中文名（实际显示文案覆盖于 messages 中）
+  description: string; // 中文描述（实际显示文案覆盖于 messages 中）
   path: string;        // 通常为 '/<id>'
-  icon: string;        // emoji 或 ASCII 符号
+  icon: string;        // ASCII 符号或 emoji
   category: 'format' | 'convert' | 'validate' | 'encode';
-  featured?: boolean;  // 保留字段，用于未来首页置顶
+  featured?: boolean;  // 首页 Featured 区域置顶
 }
 ```
 
-### `lib/utils/json.ts` 的返回约定
+### 工具 layout.tsx 的标准写法
+
+```tsx
+import type { Metadata } from 'next';
+import { createToolMetadata } from '@/lib/tools/seo';
+
+const TOOL_ID = 'json-format'; // 替换为实际 id
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return createToolMetadata(TOOL_ID, locale);
+}
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
+}
+```
+
+### `lib/utils/` 的返回约定
 
 格式化类函数返回判别联合类型，**不抛异常、不操作 state**：
 
@@ -75,13 +112,28 @@ type FormatOutcome = { ok: true; output: string; parsed: unknown }
 
 ---
 
+## i18n 架构
+
+本项目使用 **next-intl 无插件模式**（因 Next.js 版本兼容性原因，改用 webpack alias 注入配置）：
+
+- `app/[locale]/layout.tsx` 调用 `getLocaleMessages(locale)` 并传给 `NextIntlClientProvider`
+- **客户端组件**（工具页）使用 `useTranslations` hook
+- **服务端组件**（首页、layouts）直接调用 `getLocaleMessages(locale)` 读取 messages 对象
+- **Metadata** 通过 `createToolMetadata` / `createLocaleMetadata`（`lib/tools/seo.ts`）统一生成
+
+新增语言只需：
+1. 在 `messages/` 下新建 `<locale>.json`
+2. 在 `i18n/routing.ts` 的 `locales` 数组中追加新 locale
+
+---
+
 ## 主题系统
 
 `app/globals.css` 采用**双层架构**，修改主题只需改 Layer 1：
 
 ```
-Layer 1  :root { --surface: #f9fafb; ... }        ← 改颜色只动这里
-Layer 2  @theme inline { --color-surface: var(--surface); }  ← 注册为 Tailwind 工具类
+Layer 1  :root { --surface: #f9fafb; ... }                     ← 改颜色只动这里
+Layer 2  @theme inline { --color-surface: var(--surface); }    ← 注册为 Tailwind 工具类
 ```
 
 **组件中禁止使用原始 Tailwind 颜色类**（如 `gray-*`、`red-*`），必须使用语义 token：
@@ -109,3 +161,57 @@ Layer 2  @theme inline { --color-surface: var(--surface); }  ← 注册为 Tailw
 | 折叠注释 | `text-syntax-comment` |
 
 **深色模式**：只需在 `globals.css` 的 `@media (prefers-color-scheme: dark)` 中覆盖 Layer 1 变量，组件代码无需任何改动。
+
+---
+
+## Harness Engineering 落地准则
+
+### 1. 单一事实源
+
+| 信息类型 | 唯一来源 |
+|---------|---------|
+| 工具元数据（名称、路径、分类） | `lib/tools/registry.ts` |
+| 中文文案 | `messages/zh.json` |
+| 英文文案 | `messages/en.json` |
+| SEO / JSON-LD 生成逻辑 | `lib/tools/seo.ts` |
+| 工具逻辑 | `lib/utils/<tool>.ts` |
+| 工具页骨架 | `components/ToolLayout.tsx` |
+
+首页、导航、分类、面包屑、推荐工具、404 推荐、SEO、Sitemap、JSON-LD、llms 文档都不得重复硬编码工具信息。
+
+### 2. 新增工具 Checklist
+
+```txt
+[ ] registry.ts 已注册
+[ ] messages/zh.json 已补充
+[ ] messages/en.json 已补充
+[ ] lib/utils/<id>.ts 已实现纯函数
+[ ] app/[locale]/<id>/page.tsx 已创建（使用 ToolLayout）
+[ ] app/[locale]/<id>/layout.tsx 已创建（使用 createToolMetadata）
+[ ] app/<id>/page.tsx 已创建（使用 redirectToolToDefaultLocale）
+[ ] 没有在组件中硬编码工具名称/描述
+[ ] 没有页面内复杂 JSON 逻辑
+[ ] 没有原始 Tailwind 颜色类
+```
+
+删除 registry.ts 里的一条记录后，首页卡片、面包屑、Sitemap、JSON-LD、404 推荐的对应入口应自动消失——这是 Harness 约束有效的验证标准。
+
+### 3. 禁止越层调用
+
+```
+❌ 工具页面直接写 JSON.parse / JSON.stringify
+❌ lib/utils/ 中 import React 或操作 state
+❌ 组件中使用原始颜色类 gray-*/red-*
+❌ generateMetadata 中硬编码 title/description（应通过 createToolMetadata）
+❌ 首页/404 中硬编码工具列表（应从 registry 派生）
+```
+
+### 4. 验证规则
+
+每次结构性改动后必须跑：
+
+```bash
+npm run lint
+npx tsc --noEmit
+npm run build
+```

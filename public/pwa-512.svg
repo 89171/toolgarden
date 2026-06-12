@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Maskable safe-zone background (covers full 512×512) -->
+  <rect width="512" height="512" fill="#1f2937"/>
+  <!-- Rounded card (content within the safe zone ~80%) -->
+  <rect x="40" y="40" width="432" height="432" rx="72" fill="#111827"/>
+  <!-- Braces -->
+  <text
+    x="256" y="324"
+    text-anchor="middle"
+    font-family="ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace"
+    font-size="236"
+    font-weight="700"
+    letter-spacing="-10"
+    fill="#f9fafb"
+  >{}</text>
+  <!-- Green dot — JSON string accent -->
+  <circle cx="256" cy="390" r="16" fill="#16a34a"/>
+</svg>

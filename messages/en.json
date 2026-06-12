@@ -44,6 +44,13 @@
       "loose_a": "Yes. It accepts common loose input such as unquoted object keys and single-quoted strings for faster debugging."
     }
   },
+  "not_found": {
+    "title": "Page not found",
+    "description": "This address does not exist, or the tool has moved. You can return home or continue with one of the popular JSON tools.",
+    "home": "Back home",
+    "browse_tools": "Browse all tools",
+    "suggested": "Popular tools"
+  },
   "categories": {
     "format": "Format",
     "convert": "Convert",

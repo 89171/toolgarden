@@ -44,6 +44,13 @@
       "loose_a": "支持常见的宽松输入，例如未加引号的 key 和单引号字符串，方便快速整理开发调试数据。"
     }
   },
+  "not_found": {
+    "title": "页面没有找到",
+    "description": "这个地址不存在，或者对应的工具已经移动。你可以回到首页，或从常用 JSON 工具继续开始。",
+    "home": "返回首页",
+    "browse_tools": "浏览全部工具",
+    "suggested": "常用工具"
+  },
   "categories": {
     "format": "格式化",
     "convert": "转换",
