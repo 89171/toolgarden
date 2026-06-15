@@ -1,3 +1,5 @@
+import { parseLooseJSON } from './json';
+
 export type DiffType = 'added' | 'removed' | 'changed' | 'unchanged';
 
 export interface DiffLine {
@@ -78,8 +80,8 @@ export interface DiffSummary {
 export function computeDiff(leftJson: string, rightJson: string): { ok: true; summary: DiffSummary } | { ok: false; message: string } {
   try {
     if (!leftJson.trim() && !rightJson.trim()) return { ok: false, message: '' };
-    const left = leftJson.trim() ? JSON.parse(leftJson) : undefined;
-    const right = rightJson.trim() ? JSON.parse(rightJson) : undefined;
+    const left = leftJson.trim() ? parseLooseJSON(leftJson) : undefined;
+    const right = rightJson.trim() ? parseLooseJSON(rightJson) : undefined;
     const lines = diffJson(left, right);
     const summary: DiffSummary = {
       added: lines.filter((l) => l.type === 'added').length,

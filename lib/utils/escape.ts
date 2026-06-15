@@ -1,11 +1,11 @@
-import { FormatOutcome } from './json';
+import { FormatOutcome, parseLooseJSON, stringifyJSONValue } from './json';
 
 /** 压缩 JSON 并转义为适合嵌入字符串的形式（\\n, \\\", 等） */
 export function escapeJson(input: string): FormatOutcome {
   if (!input.trim()) return { ok: false, message: '' };
   try {
-    const parsed = JSON.parse(input);
-    const minified = JSON.stringify(parsed);
+    const parsed = parseLooseJSON(input);
+    const minified = stringifyJSONValue(parsed);
     const escaped = minified
       .replace(/\\/g, '\\\\')
       .replace(/"/g, '\\"')
@@ -25,14 +25,14 @@ export function unescapeJson(input: string): FormatOutcome {
     const unescaped = input
       .replace(/\\"/g, '"')
       .replace(/\\\\/g, '\\');
-    const parsed = JSON.parse(unescaped);
-    return { ok: true, output: JSON.stringify(parsed, null, 2), parsed };
+    const parsed = parseLooseJSON(unescaped);
+    return { ok: true, output: stringifyJSONValue(parsed, 2), parsed };
   } catch (e) {
     try {
       const unwrapped = JSON.parse(input);
       if (typeof unwrapped !== 'string') throw e;
-      const parsed = JSON.parse(unwrapped);
-      return { ok: true, output: JSON.stringify(parsed, null, 2), parsed };
+      const parsed = parseLooseJSON(unwrapped);
+      return { ok: true, output: stringifyJSONValue(parsed, 2), parsed };
     } catch {
       return { ok: false, message: (e as Error).message };
     }

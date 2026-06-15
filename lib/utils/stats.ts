@@ -1,3 +1,5 @@
+import { parseLooseJSON, stringifyJSONValue } from './json';
+
 export interface JsonStats {
   /** 原始 JSON 体积（字节） */
   rawBytes: number;
@@ -57,7 +59,7 @@ function walk(
 export function analyzeJson(input: string): { ok: true; stats: JsonStats } | { ok: false; message: string } {
   if (!input.trim()) return { ok: false, message: '' };
   try {
-    const parsed = JSON.parse(input);
+    const parsed = parseLooseJSON(input);
     const partial: Omit<JsonStats, 'rawBytes' | 'minifiedBytes'> = {
       maxDepth: 0,
       totalKeys: 0,
@@ -70,7 +72,7 @@ export function analyzeJson(input: string): { ok: true; stats: JsonStats } | { o
 
     const stats: JsonStats = {
       rawBytes: new TextEncoder().encode(input).length,
-      minifiedBytes: new TextEncoder().encode(JSON.stringify(parsed)).length,
+      minifiedBytes: new TextEncoder().encode(stringifyJSONValue(parsed)).length,
       ...partial,
     };
 

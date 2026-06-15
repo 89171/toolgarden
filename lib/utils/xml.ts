@@ -1,5 +1,5 @@
 import { XMLParser, XMLBuilder } from 'fast-xml-parser';
-import { FormatOutcome } from './json';
+import { FormatOutcome, parseLooseJSON, stringifyJSONValue } from './json';
 
 const parserOptions = {
   ignoreAttributes: false,
@@ -18,7 +18,7 @@ const builderOptions = {
 export function jsonToXml(input: string): FormatOutcome {
   if (!input.trim()) return { ok: false, message: '' };
   try {
-    const parsed = JSON.parse(input);
+    const parsed = parseLooseJSON(input);
     const builder = new XMLBuilder(builderOptions);
     const output = builder.build({ root: parsed }) as string;
     return { ok: true, output, parsed };
@@ -33,7 +33,7 @@ export function xmlToJson(input: string): FormatOutcome {
   try {
     const parser = new XMLParser(parserOptions);
     const parsed = parser.parse(input) as unknown;
-    return { ok: true, output: JSON.stringify(parsed, null, 2), parsed };
+    return { ok: true, output: stringifyJSONValue(parsed, 2), parsed };
   } catch (e) {
     return { ok: false, message: (e as Error).message };
   }

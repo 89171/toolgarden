@@ -1,4 +1,4 @@
-import { FormatOutcome } from './json';
+import { FormatOutcome, parseLooseJSON } from './json';
 
 /** 将 snake_case / kebab-case 转为 PascalCase */
 function toPascalCase(s: string): string {
@@ -38,7 +38,7 @@ function inferType(value: unknown, interfaces: Map<string, string>, hint = 'Root
 export function jsonToTypeScript(input: string): FormatOutcome {
   if (!input.trim()) return { ok: false, message: '' };
   try {
-    const parsed = JSON.parse(input);
+    const parsed = parseLooseJSON(input);
     const interfaces = new Map<string, string>();
 
     if (Array.isArray(parsed) && parsed.length > 0 && typeof parsed[0] === 'object') {

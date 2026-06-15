@@ -1,4 +1,4 @@
-import { FormatOutcome } from './json';
+import { FormatOutcome, parseLooseJSON, stringifyJSONValue } from './json';
 
 export type ExcelPreviewOutcome =
   | { ok: true; rowCount: number; parsed: unknown }
@@ -8,7 +8,7 @@ export type ExcelPreviewOutcome =
 export function previewJsonToExcel(input: string): ExcelPreviewOutcome {
   if (!input.trim()) return { ok: false, message: '' };
   try {
-    const parsed = JSON.parse(input);
+    const parsed = parseLooseJSON(input);
     if (!Array.isArray(parsed)) return { ok: false, message: '输入必须是 JSON 数组' };
     if (parsed.length === 0) return { ok: false, message: '数组为空' };
     return { ok: true, rowCount: parsed.length, parsed };
@@ -22,7 +22,7 @@ export async function jsonToExcelBuffer(input: string): Promise<{ ok: true; buff
   if (!input.trim()) return { ok: false, message: '' };
   try {
     const XLSX = await import('xlsx');
-    const parsed = JSON.parse(input);
+    const parsed = parseLooseJSON(input);
     if (!Array.isArray(parsed)) return { ok: false, message: '输入必须是 JSON 数组' };
     if (parsed.length === 0) return { ok: false, message: '数组为空' };
 
@@ -44,7 +44,7 @@ export async function excelBufferToJson(buffer: ArrayBuffer): Promise<FormatOutc
     const sheetName = wb.SheetNames[0];
     const ws = wb.Sheets[sheetName];
     const parsed = XLSX.utils.sheet_to_json(ws);
-    return { ok: true, output: JSON.stringify(parsed, null, 2), parsed };
+    return { ok: true, output: stringifyJSONValue(parsed, 2), parsed };
   } catch (e) {
     return { ok: false, message: (e as Error).message };
   }

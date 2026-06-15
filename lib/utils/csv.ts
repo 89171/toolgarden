@@ -1,10 +1,10 @@
-import { FormatOutcome } from './json';
+import { FormatOutcome, parseLooseJSON } from './json';
 
 /** JSON 数组 → CSV 字符串 */
 export function jsonToCsv(input: string): FormatOutcome {
   if (!input.trim()) return { ok: false, message: '' };
   try {
-    const parsed = JSON.parse(input);
+    const parsed = parseLooseJSON(input);
     if (!Array.isArray(parsed)) {
       return { ok: false, message: '输入必须是 JSON 数组' };
     }
