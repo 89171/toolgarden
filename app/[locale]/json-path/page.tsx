@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Panel } from '@/components/ui/Panel';
@@ -23,8 +23,6 @@ export default function JsonPathPage() {
   const tc = useTranslations('common');
   const [json, setJson] = useState(EXAMPLE_JSON);
   const [path, setPath] = useState('$.store.books[*].title');
-  const [output, setOutput] = useState('');
-  const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
 
   const EXAMPLE_PATHS = [
@@ -34,11 +32,9 @@ export default function JsonPathPage() {
     { label: t('all_prices'), path: '$..price' },
   ];
 
-  const run = () => {
-    const r = queryJsonPath(json, path);
-    if (r.ok) { setOutput(r.output); setError(''); }
-    else { setError(r.message); setOutput(''); }
-  };
+  const result = useMemo(() => queryJsonPath(json, path), [json, path]);
+  const output = result.ok ? result.output : '';
+  const error = result.ok ? '' : result.message;
 
   const copy = async () => {
     await navigator.clipboard.writeText(output);
@@ -58,10 +54,8 @@ export default function JsonPathPage() {
             <h2 className="text-sm font-semibold mb-2 text-content-secondary">{t('path_title')}</h2>
             <div className="flex gap-2">
               <input value={path} onChange={(e) => setPath(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && run()}
                 className="flex-grow p-2 border border-border-input rounded focus:outline-none focus:ring-2 focus:ring-action font-mono text-sm bg-surface-raised text-content-secondary"
                 placeholder={t('placeholder')} />
-              <Button onClick={run}>{tc('query')}</Button>
             </div>
             <div className="mt-2 flex flex-wrap gap-1">
               {EXAMPLE_PATHS.map((ex) => (

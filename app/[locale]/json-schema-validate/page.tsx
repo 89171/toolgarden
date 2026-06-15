@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Panel } from '@/components/ui/Panel';
@@ -30,26 +30,16 @@ export default function JsonSchemaValidatePage() {
   const tc = useTranslations('common');
   const [jsonInput, setJsonInput] = useState('');
   const [schemaInput, setSchemaInput] = useState('');
-  const [errors, setErrors] = useState<SchemaValidationError[]>([]);
-  const [output, setOutput] = useState('');
-  const [error, setError] = useState('');
-  const [valid, setValid] = useState<boolean | null>(null);
   const [copied, setCopied] = useState(false);
 
-  const run = () => {
-    const result = validateJsonSchema(jsonInput, schemaInput);
-    if (result.ok) {
-      setValid(result.valid);
-      setErrors(result.errors);
-      setOutput(result.output);
-      setError('');
-    } else {
-      setValid(null);
-      setErrors([]);
-      setOutput('');
-      setError(result.message);
-    }
-  };
+  const result = useMemo(() => {
+    if (!jsonInput.trim() && !schemaInput.trim()) return null;
+    return validateJsonSchema(jsonInput, schemaInput);
+  }, [jsonInput, schemaInput]);
+  const valid = result?.ok ? result.valid : null;
+  const errors: SchemaValidationError[] = result?.ok ? result.errors : [];
+  const output = result?.ok ? result.output : '';
+  const error = result && !result.ok ? result.message : '';
 
   const copy = async () => {
     if (!output) return;
@@ -61,19 +51,11 @@ export default function JsonSchemaValidatePage() {
   const loadExample = () => {
     setJsonInput(EXAMPLE_JSON);
     setSchemaInput(EXAMPLE_SCHEMA);
-    setValid(null);
-    setErrors([]);
-    setOutput('');
-    setError('');
   };
 
   const clear = () => {
     setJsonInput('');
     setSchemaInput('');
-    setValid(null);
-    setErrors([]);
-    setOutput('');
-    setError('');
   };
 
   return (
@@ -99,7 +81,6 @@ export default function JsonSchemaValidatePage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <Button onClick={run}>{t('validate')}</Button>
           <Button variant="secondary" onClick={loadExample}>{tc('example')}</Button>
           <Button variant="secondary" onClick={clear}>{tc('clear')}</Button>
           {valid !== null && (

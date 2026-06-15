@@ -1,26 +1,30 @@
 'use client';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Panel } from '@/components/ui/Panel';
 import { Button } from '@/components/ui/Button';
 import { JsonNode } from '@/components/JsonNode';
 import {
-  deleteTopLevelJSONEntry,
+  deleteJSONEntryAtPath,
   formatJSON,
+  type JSONPathSegment,
   minifyJSON,
   parseJSONValue,
   stringifyJSONValue,
   unicodeDecode,
   unicodeEncode,
   urlDecode,
+  urlEncode,
 } from '@/lib/utils/json';
+
+type OutputMode = 'tree' | 'jsonText' | 'text';
 
 const EXAMPLE_JSON = {
   name: 'JSON Toolkit', version: '1.0.0',
   features: ['format', 'minify', 'validate'],
   settings: { theme: 'dark', indentSize: 2 },
-  isActive: true, lastUpdated: new Date().toISOString(),
+  isActive: true, lastUpdated: '2026-01-01T00:00:00.000Z',
 };
 
 export default function JsonFormatPage() {
@@ -32,42 +36,69 @@ export default function JsonFormatPage() {
   const [copied, setCopied] = useState(false);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [allExpanded, setAllExpanded] = useState(true);
+  const [outputMode, setOutputMode] = useState<OutputMode>('tree');
+  const autoFormatTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const cancelAutoFormat = useCallback(() => {
+    if (autoFormatTimerRef.current) {
+      clearTimeout(autoFormatTimerRef.current);
+      autoFormatTimerRef.current = null;
+    }
+  }, []);
 
   const applyFormat = useCallback((raw: string) => {
     const r = formatJSON(raw);
     if (!r.ok) { setError(r.message); setOutput(''); }
-    else { setOutput(r.output); setError(''); setAllExpanded(true); setExpanded({}); }
+    else { setOutput(r.output); setOutputMode('tree'); setError(''); setAllExpanded(true); setExpanded({}); }
   }, []);
 
-  const handleMinify = () => {
-    const r = minifyJSON(input);
-    if (!r.ok) { setError(r.message); setOutput(''); } else { setOutput(r.output); setError(''); }
+  const handleFormat = () => {
+    cancelAutoFormat();
+    applyFormat(input);
   };
-  const handleUrlDecode = () => { try { setInput(urlDecode(input)); setError(''); } catch { setError('URL decode failed'); } };
-  const handleUnicodeEncode = () => { try { setInput(unicodeEncode(input)); setError(''); } catch { setError('Encode failed'); } };
-  const handleUnicodeDecode = () => { try { setInput(unicodeDecode(input)); setError(''); } catch { setError('Decode failed'); } };
-  const handleClear = () => { setInput(''); setOutput(''); setError(''); setExpanded({}); };
-  const handleExample = () => { const s = stringifyJSONValue(EXAMPLE_JSON, 2); setInput(s); setOutput(s); setError(''); setAllExpanded(true); setExpanded({}); };
+  const handleMinify = () => {
+    cancelAutoFormat();
+    const r = minifyJSON(input);
+    if (!r.ok) { setError(r.message); setOutput(''); } else { setOutput(r.output); setOutputMode('jsonText'); setError(''); }
+  };
+  const handleUrlEncode = () => { cancelAutoFormat(); try { setOutput(urlEncode(input)); setOutputMode('text'); setError(''); } catch { setError(t('url_encode_error')); setOutput(''); } };
+  const handleUrlDecode = () => { cancelAutoFormat(); try { setOutput(urlDecode(input)); setOutputMode('text'); setError(''); } catch { setError(t('url_decode_error')); setOutput(''); } };
+  const handleUnicodeEncode = () => { cancelAutoFormat(); try { setOutput(unicodeEncode(input)); setOutputMode('text'); setError(''); } catch { setError(t('encode_error')); setOutput(''); } };
+  const handleUnicodeDecode = () => { cancelAutoFormat(); try { setOutput(unicodeDecode(input)); setOutputMode('text'); setError(''); } catch { setError(t('decode_error')); setOutput(''); } };
+  const handleClear = () => { cancelAutoFormat(); setInput(''); setOutput(''); setError(''); setOutputMode('tree'); setExpanded({}); };
+  const handleExample = () => { cancelAutoFormat(); const s = stringifyJSONValue(EXAMPLE_JSON, 2); setInput(s); setOutput(s); setOutputMode('tree'); setError(''); setAllExpanded(true); setExpanded({}); };
   const handleCopy = async () => { if (!output) return; await navigator.clipboard.writeText(output); setCopied(true); setTimeout(() => setCopied(false), 2000); };
   const handleDownload = async () => {
     if (!output) return;
     const { saveAs } = await import('file-saver');
-    saveAs(new Blob([output], { type: 'application/json' }), 'formatted.json');
+    const isJsonOutput = outputMode !== 'text';
+    const type = isJsonOutput ? 'application/json' : 'text/plain';
+    const filename = isJsonOutput ? 'formatted.json' : 'output.txt';
+    saveAs(new Blob([output], { type }), filename);
   };
-  const handleDeleteNode = (keyName?: string) => {
+  const handleDeleteNode = (path: JSONPathSegment[]) => {
     if (!output) return;
-    const r = deleteTopLevelJSONEntry(output, keyName);
+    const r = deleteJSONEntryAtPath(output, path);
     if (!r.ok) { setError(r.message); return; }
     setOutput(r.output);
+    setOutputMode('tree');
     setInput(r.output);
   };
 
-  useEffect(() => { const timer = setTimeout(() => applyFormat(input), 300); return () => clearTimeout(timer); }, [input, applyFormat]);
+  useEffect(() => {
+    cancelAutoFormat();
+    autoFormatTimerRef.current = setTimeout(() => {
+      applyFormat(input);
+      autoFormatTimerRef.current = null;
+    }, 300);
+    return cancelAutoFormat;
+  }, [input, applyFormat, cancelAutoFormat]);
 
   const inputActions = (
     <>
-      <Button onClick={() => applyFormat(input)}>{t('format')}</Button>
+      <Button onClick={handleFormat}>{t('format')}</Button>
       <Button onClick={handleMinify}>{t('minify')}</Button>
+      <Button onClick={handleUrlEncode}>{t('url_encode')}</Button>
       <Button onClick={handleUrlDecode}>{t('url_decode')}</Button>
       <Button onClick={handleUnicodeEncode}>{t('uni_encode')}</Button>
       <Button onClick={handleUnicodeDecode}>{t('uni_decode')}</Button>
@@ -77,14 +108,16 @@ export default function JsonFormatPage() {
   );
   const outputActions = (
     <>
-      <Button onClick={handleCopy} disabled={!output && !error}>{copied ? tc('copied') : tc('copy')}</Button>
+      <Button onClick={handleCopy} disabled={!output}>{copied ? tc('copied') : tc('copy')}</Button>
       <Button onClick={handleDownload} disabled={!output}>{tc('download')}</Button>
-      <Button onClick={() => { setAllExpanded(!allExpanded); setExpanded({}); }} disabled={!output}>
-        {allExpanded ? t('collapse_all') : t('expand_all')}
-      </Button>
+      {outputMode === 'tree' && (
+        <Button onClick={() => { setAllExpanded(!allExpanded); setExpanded({}); }} disabled={!output}>
+          {allExpanded ? t('collapse_all') : t('expand_all')}
+        </Button>
+      )}
     </>
   );
-  const parsedOutput = output ? parseJSONValue(output) : null;
+  const parsedOutput = output && outputMode === 'tree' ? parseJSONValue(output) : null;
 
   return (
     <ToolLayout toolId="json-format">
@@ -97,7 +130,18 @@ export default function JsonFormatPage() {
         <Panel title={t('output_title')} actions={outputActions} className="min-h-64 lg:min-h-0">
           <div className="border border-border-input rounded flex-grow p-3 bg-surface-raised overflow-auto">
             {error ? <div className="flex items-center justify-center h-full text-syntax-null text-sm">{error}</div>
-              : parsedOutput?.ok ? <JsonNode data={parsedOutput.parsed} level={0} expanded={expanded} setExpanded={setExpanded} onDelete={handleDeleteNode} allExpanded={allExpanded} />
+              : parsedOutput?.ok ? (
+                <JsonNode
+                  data={parsedOutput.parsed}
+                  level={0}
+                  expanded={expanded}
+                  setExpanded={setExpanded}
+                  onDelete={handleDeleteNode}
+                  allExpanded={allExpanded}
+                  actionLabels={{ copy: tc('copy'), delete: tc('delete'), download: tc('download') }}
+                />
+              )
+              : output ? <pre className="font-mono text-sm text-content-secondary whitespace-pre-wrap break-words">{output}</pre>
               : <div className="flex items-center justify-center h-full text-content-faint text-sm">{t('empty_output')}</div>}
           </div>
         </Panel>

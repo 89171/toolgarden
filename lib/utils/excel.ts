@@ -1,5 +1,22 @@
 import { FormatOutcome } from './json';
 
+export type ExcelPreviewOutcome =
+  | { ok: true; rowCount: number; parsed: unknown }
+  | { ok: false; message: string };
+
+/** JSON 数组预览校验（供输入驱动 UI 展示行数） */
+export function previewJsonToExcel(input: string): ExcelPreviewOutcome {
+  if (!input.trim()) return { ok: false, message: '' };
+  try {
+    const parsed = JSON.parse(input);
+    if (!Array.isArray(parsed)) return { ok: false, message: '输入必须是 JSON 数组' };
+    if (parsed.length === 0) return { ok: false, message: '数组为空' };
+    return { ok: true, rowCount: parsed.length, parsed };
+  } catch (e) {
+    return { ok: false, message: (e as Error).message };
+  }
+}
+
 /** JSON 数组 → xlsx ArrayBuffer（供下载） */
 export async function jsonToExcelBuffer(input: string): Promise<{ ok: true; buffer: ArrayBuffer; parsed: unknown } | { ok: false; message: string }> {
   if (!input.trim()) return { ok: false, message: '' };

@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Panel } from '@/components/ui/Panel';
 import { Button } from '@/components/ui/Button';
-import { jsonToExcelBuffer } from '@/lib/utils/excel';
+import { jsonToExcelBuffer, previewJsonToExcel } from '@/lib/utils/excel';
 import { stringifyJSONValue } from '@/lib/utils/json';
 
 const EXAMPLE = stringifyJSONValue([{ name: '张三', age: 28, city: '北京', salary: 15000 }, { name: '李四', age: 32, city: '上海', salary: 20000 }], 2);
@@ -15,6 +15,18 @@ export default function JsonToExcelPage() {
   const [input, setInput] = useState('');
   const [error, setError] = useState('');
   const [rowCount, setRowCount] = useState<number | null>(null);
+
+  const updateInput = (value: string) => {
+    setInput(value);
+    const preview = previewJsonToExcel(value);
+    if (preview.ok) {
+      setRowCount(preview.rowCount);
+      setError('');
+    } else {
+      setRowCount(null);
+      setError(preview.message);
+    }
+  };
 
   const download = async () => {
     const r = await jsonToExcelBuffer(input);
@@ -30,10 +42,10 @@ export default function JsonToExcelPage() {
       <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
         <Panel title={t('input_title')} actions={<>
           <Button onClick={download}>{t('download_excel')}</Button>
-          <Button variant="secondary" onClick={() => { setInput(EXAMPLE); setError(''); setRowCount(null); }}>{tc('example')}</Button>
-          <Button variant="secondary" onClick={() => { setInput(''); setError(''); setRowCount(null); }}>{tc('clear')}</Button>
+          <Button variant="secondary" onClick={() => updateInput(EXAMPLE)}>{tc('example')}</Button>
+          <Button variant="secondary" onClick={() => updateInput('')}>{tc('clear')}</Button>
         </>} className="min-h-64">
-          <textarea value={input} onChange={(e) => setInput(e.target.value)}
+          <textarea value={input} onChange={(e) => updateInput(e.target.value)}
             className="w-full flex-grow p-3 border border-border-input rounded focus:outline-none focus:ring-2 focus:ring-action resize-none font-mono text-sm bg-surface-raised text-content-secondary"
             placeholder={t('placeholder')} />
         </Panel>

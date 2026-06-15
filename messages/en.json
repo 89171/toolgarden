@@ -5,6 +5,7 @@
     "clear": "Clear",
     "example": "Example",
     "download": "Download",
+    "delete": "Delete",
     "convert": "Convert",
     "query": "Query",
     "verify": "Verify",
@@ -65,13 +66,18 @@
       "output_title": "Output",
       "format": "Format",
       "minify": "Minify",
+      "url_encode": "URL Encode",
       "url_decode": "URL Decode",
       "uni_encode": "Uni Encode",
       "uni_decode": "Uni Decode",
       "expand_all": "Expand All",
       "collapse_all": "Collapse All",
       "placeholder": "Paste JSON here...",
-      "empty_output": "Formatted result will appear here"
+      "empty_output": "Formatted result will appear here",
+      "url_encode_error": "URL encode failed",
+      "url_decode_error": "URL decode failed",
+      "encode_error": "Encode failed",
+      "decode_error": "Decode failed"
     },
     "json-escape": {
       "name": "JSON Escape",
@@ -139,8 +145,8 @@
       "preview_title": "Preview",
       "download_excel": "Download Excel",
       "placeholder": "Paste a JSON array, such as rows with a col1 field",
-      "success_title": "Export successful",
-      "success_desc": "{count} rows downloaded as export.xlsx",
+      "success_title": "Ready to export",
+      "success_desc": "{count} rows can be downloaded as export.xlsx",
       "idle_desc": "Enter a JSON array and click Download Excel"
     },
     "excel-to-json": {

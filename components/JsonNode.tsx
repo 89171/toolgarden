@@ -1,16 +1,22 @@
 'use client';
 import React, { useState } from 'react';
 import { Button } from './ui/Button';
-import { stringifyJSONValue } from '@/lib/utils/json';
+import { stringifyJSONValue, type JSONPathSegment } from '@/lib/utils/json';
 
 interface JsonNodeProps {
   data: unknown;
   keyName?: string;
+  path?: JSONPathSegment[];
   level: number;
   expanded: Record<string, boolean>;
   setExpanded: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
-  onDelete?: (keyName?: string) => void;
+  onDelete?: (path: JSONPathSegment[]) => void;
   allExpanded?: boolean;
+  actionLabels?: {
+    copy: string;
+    delete: string;
+    download: string;
+  };
 }
 
 function getTypeColor(value: unknown): string {
@@ -32,18 +38,25 @@ function renderPrimitive(value: unknown): React.ReactNode {
 export const JsonNode: React.FC<JsonNodeProps> = ({
   data,
   keyName,
+  path = [],
   level,
   expanded,
   setExpanded,
   onDelete,
   allExpanded = true,
+  actionLabels = {
+    copy: 'Copy',
+    delete: 'Delete',
+    download: 'Download',
+  },
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const isObject = typeof data === 'object' && data !== null;
   const isArray = Array.isArray(data);
-  const nodeId = keyName !== undefined ? `${level}-${keyName}` : `root-${level}`;
-  const isExpanded = allExpanded || (expanded[nodeId] ?? false);
+  const nodeId = path.length > 0 ? JSON.stringify(path) : 'root';
+  const isExpanded = expanded[nodeId] ?? allExpanded;
+  const canDelete = Boolean(onDelete && path.length > 0);
 
   const toggleExpand = () =>
     setExpanded((prev) => ({ ...prev, [nodeId]: !isExpanded }));
@@ -64,9 +77,19 @@ export const JsonNode: React.FC<JsonNodeProps> = ({
 
   return (
     <div
-      className={`font-mono text-sm ${isHovered ? 'bg-surface-hover rounded' : ''}`}
+      className={`font-mono text-sm rounded focus:outline-none focus:ring-1 focus:ring-action ${isHovered ? 'bg-surface-hover' : ''}`}
+      tabIndex={isObject ? 0 : undefined}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onFocus={(event) => {
+        if (event.currentTarget === event.target) setIsHovered(true);
+      }}
+      onBlur={(event) => {
+        const nextFocused = event.relatedTarget;
+        if (!(nextFocused instanceof Node) || !event.currentTarget.contains(nextFocused)) {
+          setIsHovered(false);
+        }
+      }}
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center">
@@ -101,11 +124,17 @@ export const JsonNode: React.FC<JsonNodeProps> = ({
 
         {isHovered && isObject && (
           <div className="flex space-x-1 ml-2">
-            <Button variant="secondary" onClick={copyNode} title="复制">复制</Button>
-            {onDelete && (
-              <Button variant="danger" onClick={() => onDelete(keyName)} title="删除">删除</Button>
+            <Button variant="secondary" onClick={copyNode} title={actionLabels.copy}>
+              {actionLabels.copy}
+            </Button>
+            {canDelete && (
+              <Button variant="danger" onClick={() => onDelete?.(path)} title={actionLabels.delete}>
+                {actionLabels.delete}
+              </Button>
             )}
-            <Button variant="secondary" onClick={downloadNode} title="下载">下载</Button>
+            <Button variant="secondary" onClick={downloadNode} title={actionLabels.download}>
+              {actionLabels.download}
+            </Button>
           </div>
         )}
       </div>
@@ -117,11 +146,13 @@ export const JsonNode: React.FC<JsonNodeProps> = ({
                 <JsonNode
                   key={index}
                   data={item}
+                  path={[...path, index]}
                   level={level + 1}
                   expanded={expanded}
                   setExpanded={setExpanded}
-                  onDelete={onDelete ? () => onDelete(String(index)) : undefined}
+                  onDelete={onDelete}
                   allExpanded={allExpanded}
+                  actionLabels={actionLabels}
                 />
               ))
             : Object.entries(data as Record<string, unknown>).map(([key, value]) => (
@@ -129,11 +160,13 @@ export const JsonNode: React.FC<JsonNodeProps> = ({
                   key={key}
                   keyName={key}
                   data={value}
+                  path={[...path, key]}
                   level={level + 1}
                   expanded={expanded}
                   setExpanded={setExpanded}
                   onDelete={onDelete}
                   allExpanded={allExpanded}
+                  actionLabels={actionLabels}
                 />
               ))}
           <div className="flex items-center">

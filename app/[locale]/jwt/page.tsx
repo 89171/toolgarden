@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Panel } from '@/components/ui/Panel';
@@ -15,11 +15,15 @@ export default function JwtPage() {
   const tc = useTranslations('common');
   const [token, setToken] = useState('');
   const [secret, setSecret] = useState('');
-  const [decoded, setDecoded] = useState<ReturnType<typeof decodeJwt> | null>(null);
   const [verifyResult, setVerifyResult] = useState('');
   const [verifying, setVerifying] = useState(false);
 
-  const decode = () => { const r = decodeJwt(token); setDecoded(r); setVerifyResult(''); };
+  const decoded = useMemo(() => (token.trim() ? decodeJwt(token) : null), [token]);
+
+  const updateToken = (value: string) => {
+    setToken(value);
+    setVerifyResult('');
+  };
 
   const verify = async () => {
     if (!secret.trim()) { setVerifyResult(t('no_secret')); return; }
@@ -38,14 +42,13 @@ export default function JwtPage() {
         <div className="flex flex-col gap-4">
           <Panel title={t('token_title')}>
             <textarea value={token}
-              onChange={(e) => { setToken(e.target.value); setDecoded(null); setVerifyResult(''); }}
+              onChange={(e) => updateToken(e.target.value)}
               rows={5}
               className="w-full p-3 border border-border-input rounded focus:outline-none focus:ring-2 focus:ring-action resize-none font-mono text-xs bg-surface-raised text-content-secondary"
               placeholder={t('placeholder')} />
             <div className="mt-3 flex gap-2">
-              <Button onClick={decode} disabled={!token.trim()}>{t('decode')}</Button>
-              <Button variant="secondary" onClick={() => { setToken(EXAMPLE_TOKEN); setDecoded(null); setVerifyResult(''); }}>{tc('example')}</Button>
-              <Button variant="secondary" onClick={() => { setToken(''); setDecoded(null); setVerifyResult(''); }}>{tc('clear')}</Button>
+              <Button variant="secondary" onClick={() => updateToken(EXAMPLE_TOKEN)}>{tc('example')}</Button>
+              <Button variant="secondary" onClick={() => updateToken('')}>{tc('clear')}</Button>
             </div>
           </Panel>
           <Panel title={t('verify_title')}>

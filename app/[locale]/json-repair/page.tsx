@@ -22,8 +22,8 @@ export default function JsonRepairPage() {
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
 
-  const run = () => {
-    const result = repairJson(input);
+  const runRepair = (raw: string) => {
+    const result = repairJson(raw);
     if (result.ok) {
       setOutput(result.output);
       setError('');
@@ -31,6 +31,11 @@ export default function JsonRepairPage() {
       setOutput('');
       setError(result.message);
     }
+  };
+
+  const updateInput = (value: string) => {
+    setInput(value);
+    runRepair(value);
   };
 
   const copy = async () => {
@@ -46,15 +51,14 @@ export default function JsonRepairPage() {
         <Panel
           title={t('input_title')}
           actions={<>
-            <Button onClick={run}>{t('repair')}</Button>
-            <Button variant="secondary" onClick={() => { setInput(EXAMPLE); setOutput(''); setError(''); }}>{tc('example')}</Button>
-            <Button variant="secondary" onClick={() => { setInput(''); setOutput(''); setError(''); }}>{tc('clear')}</Button>
+            <Button variant="secondary" onClick={() => updateInput(EXAMPLE)}>{tc('example')}</Button>
+            <Button variant="secondary" onClick={() => updateInput('')}>{tc('clear')}</Button>
           </>}
           className="min-h-64"
         >
           <textarea
             value={input}
-            onChange={(event) => setInput(event.target.value)}
+            onChange={(event) => updateInput(event.target.value)}
             className="w-full flex-grow p-3 border border-border-input rounded focus:outline-none focus:ring-2 focus:ring-action resize-none font-mono text-sm bg-surface-raised text-content-secondary"
             placeholder={t('placeholder')}
           />

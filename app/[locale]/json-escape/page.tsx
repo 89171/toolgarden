@@ -6,6 +6,8 @@ import { Panel } from '@/components/ui/Panel';
 import { Button } from '@/components/ui/Button';
 import { escapeJson, unescapeJson } from '@/lib/utils/escape';
 
+type EscapeMode = 'escape' | 'unescape';
+
 export default function JsonEscapePage() {
   const t = useTranslations('tools.json-escape');
   const tc = useTranslations('common');
@@ -13,10 +15,19 @@ export default function JsonEscapePage() {
   const [output, setOutput] = useState('');
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
+  const [mode, setMode] = useState<EscapeMode>('escape');
 
-  const run = (fn: (s: string) => { ok: true; output: string } | { ok: false; message: string }) => {
-    const r = fn(input);
+  const run = (raw: string, nextMode = mode) => {
+    const r = nextMode === 'escape' ? escapeJson(raw) : unescapeJson(raw);
     if (r.ok) { setOutput(r.output); setError(''); } else { setError(r.message); setOutput(''); }
+  };
+  const updateInput = (value: string) => {
+    setInput(value);
+    run(value);
+  };
+  const selectMode = (nextMode: EscapeMode) => {
+    setMode(nextMode);
+    run(input, nextMode);
   };
   const copy = async () => { if (!output) return; await navigator.clipboard.writeText(output); setCopied(true); setTimeout(() => setCopied(false), 2000); };
 
@@ -24,11 +35,11 @@ export default function JsonEscapePage() {
     <ToolLayout toolId="json-escape">
       <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
         <Panel title={t('input_title')} actions={<>
-          <Button onClick={() => run(escapeJson)}>{t('escape')}</Button>
-          <Button onClick={() => run(unescapeJson)}>{t('unescape')}</Button>
-          <Button variant="secondary" onClick={() => { setInput(''); setOutput(''); setError(''); }}>{tc('clear')}</Button>
+          <Button variant={mode === 'escape' ? 'primary' : 'secondary'} onClick={() => selectMode('escape')}>{t('escape')}</Button>
+          <Button variant={mode === 'unescape' ? 'primary' : 'secondary'} onClick={() => selectMode('unescape')}>{t('unescape')}</Button>
+          <Button variant="secondary" onClick={() => updateInput('')}>{tc('clear')}</Button>
         </>} className="min-h-64">
-          <textarea value={input} onChange={(e) => setInput(e.target.value)}
+          <textarea value={input} onChange={(e) => updateInput(e.target.value)}
             className="w-full flex-grow p-3 border border-border-input rounded focus:outline-none focus:ring-2 focus:ring-action resize-none font-mono text-sm bg-surface-raised text-content-secondary"
             placeholder={t('placeholder')} />
         </Panel>

@@ -5,6 +5,7 @@
     "clear": "清空",
     "example": "示例",
     "download": "下载",
+    "delete": "删除",
     "convert": "转换",
     "query": "查询",
     "verify": "验证",
@@ -65,13 +66,18 @@
       "output_title": "输出结果",
       "format": "格式化",
       "minify": "压缩",
+      "url_encode": "URL 编码",
       "url_decode": "URL 解码",
       "uni_encode": "Uni 编码",
       "uni_decode": "Uni 解码",
       "expand_all": "全部展开",
       "collapse_all": "全部折叠",
       "placeholder": "请输入 JSON 数据...",
-      "empty_output": "格式化结果将显示在这里"
+      "empty_output": "格式化结果将显示在这里",
+      "url_encode_error": "URL 编码失败",
+      "url_decode_error": "URL 解码失败",
+      "encode_error": "编码失败",
+      "decode_error": "解码失败"
     },
     "json-escape": {
       "name": "JSON 压缩转义",
@@ -139,8 +145,8 @@
       "preview_title": "预览",
       "download_excel": "下载 Excel",
       "placeholder": "粘贴 JSON 数组，例如每一项包含 col1 字段",
-      "success_title": "导出成功",
-      "success_desc": "共 {count} 行数据已下载为 export.xlsx",
+      "success_title": "可导出预览",
+      "success_desc": "共 {count} 行数据可下载为 export.xlsx",
       "idle_desc": "输入 JSON 数组后点击「下载 Excel」"
     },
     "excel-to-json": {

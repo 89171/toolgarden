@@ -17,7 +17,14 @@ export default function JsonToCsvPage() {
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
 
-  const run = () => { const r = jsonToCsv(input); if (r.ok) { setOutput(r.output); setError(''); } else { setError(r.message); setOutput(''); } };
+  const run = (raw: string) => {
+    const r = jsonToCsv(raw);
+    if (r.ok) { setOutput(r.output); setError(''); } else { setError(r.message); setOutput(''); }
+  };
+  const updateInput = (value: string) => {
+    setInput(value);
+    run(value);
+  };
   const copy = async () => { await navigator.clipboard.writeText(output); setCopied(true); setTimeout(() => setCopied(false), 2000); };
   const download = async () => {
     const { saveAs } = await import('file-saver');
@@ -28,11 +35,10 @@ export default function JsonToCsvPage() {
     <ToolLayout toolId="json-to-csv">
       <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
         <Panel title={t('input_title')} actions={<>
-          <Button onClick={run}>{t('convert')}</Button>
-          <Button variant="secondary" onClick={() => { setInput(EXAMPLE); setOutput(''); setError(''); }}>{tc('example')}</Button>
-          <Button variant="secondary" onClick={() => { setInput(''); setOutput(''); setError(''); }}>{tc('clear')}</Button>
+          <Button variant="secondary" onClick={() => updateInput(EXAMPLE)}>{tc('example')}</Button>
+          <Button variant="secondary" onClick={() => updateInput('')}>{tc('clear')}</Button>
         </>} className="min-h-64">
-          <textarea value={input} onChange={(e) => setInput(e.target.value)}
+          <textarea value={input} onChange={(e) => updateInput(e.target.value)}
             className="w-full flex-grow p-3 border border-border-input rounded focus:outline-none focus:ring-2 focus:ring-action resize-none font-mono text-sm bg-surface-raised text-content-secondary"
             placeholder={t('placeholder')} />
         </Panel>

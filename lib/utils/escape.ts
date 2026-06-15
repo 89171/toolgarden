@@ -22,16 +22,19 @@ export function escapeJson(input: string): FormatOutcome {
 export function unescapeJson(input: string): FormatOutcome {
   if (!input.trim()) return { ok: false, message: '' };
   try {
-    // 先执行反转义
     const unescaped = input
-      .replace(/\\n/g, '\n')
-      .replace(/\\r/g, '\r')
-      .replace(/\\t/g, '\t')
       .replace(/\\"/g, '"')
       .replace(/\\\\/g, '\\');
     const parsed = JSON.parse(unescaped);
     return { ok: true, output: JSON.stringify(parsed, null, 2), parsed };
   } catch (e) {
-    return { ok: false, message: (e as Error).message };
+    try {
+      const unwrapped = JSON.parse(input);
+      if (typeof unwrapped !== 'string') throw e;
+      const parsed = JSON.parse(unwrapped);
+      return { ok: true, output: JSON.stringify(parsed, null, 2), parsed };
+    } catch {
+      return { ok: false, message: (e as Error).message };
+    }
   }
 }

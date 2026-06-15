@@ -16,6 +16,8 @@ const EXAMPLE = stringifyJSONValue({
   },
 }, 2);
 
+type FlattenMode = 'flatten' | 'unflatten';
+
 export default function JsonFlattenPage() {
   const t = useTranslations('tools.json-flatten');
   const tc = useTranslations('common');
@@ -23,12 +25,13 @@ export default function JsonFlattenPage() {
   const [output, setOutput] = useState('');
   const [error, setError] = useState('');
   const [delimiter, setDelimiter] = useState('.');
+  const [mode, setMode] = useState<FlattenMode>('flatten');
   const [copied, setCopied] = useState(false);
 
-  const run = (mode: 'flatten' | 'unflatten') => {
-    const result = mode === 'flatten'
-      ? flattenJson(input, delimiter)
-      : unflattenJson(input, delimiter);
+  const run = (raw: string, nextMode = mode, nextDelimiter = delimiter) => {
+    const result = nextMode === 'flatten'
+      ? flattenJson(raw, nextDelimiter)
+      : unflattenJson(raw, nextDelimiter);
 
     if (result.ok) {
       setOutput(result.output);
@@ -37,6 +40,27 @@ export default function JsonFlattenPage() {
       setOutput('');
       setError(result.message);
     }
+  };
+
+  const updateInput = (value: string) => {
+    setInput(value);
+    run(value);
+  };
+
+  const updateDelimiter = (value: string) => {
+    setDelimiter(value);
+    run(input, mode, value);
+  };
+
+  const selectMode = (nextMode: FlattenMode) => {
+    setMode(nextMode);
+    run(input, nextMode);
+  };
+
+  const loadExample = () => {
+    setMode('flatten');
+    setInput(EXAMPLE);
+    run(EXAMPLE, 'flatten');
   };
 
   const copy = async () => {
@@ -52,10 +76,10 @@ export default function JsonFlattenPage() {
         <Panel
           title={t('input_title')}
           actions={<>
-            <Button onClick={() => run('flatten')}>{t('flatten')}</Button>
-            <Button onClick={() => run('unflatten')}>{t('unflatten')}</Button>
-            <Button variant="secondary" onClick={() => { setInput(EXAMPLE); setOutput(''); setError(''); }}>{tc('example')}</Button>
-            <Button variant="secondary" onClick={() => { setInput(''); setOutput(''); setError(''); }}>{tc('clear')}</Button>
+            <Button variant={mode === 'flatten' ? 'primary' : 'secondary'} onClick={() => selectMode('flatten')}>{t('flatten')}</Button>
+            <Button variant={mode === 'unflatten' ? 'primary' : 'secondary'} onClick={() => selectMode('unflatten')}>{t('unflatten')}</Button>
+            <Button variant="secondary" onClick={loadExample}>{tc('example')}</Button>
+            <Button variant="secondary" onClick={() => updateInput('')}>{tc('clear')}</Button>
           </>}
           className="min-h-64"
         >
@@ -63,13 +87,13 @@ export default function JsonFlattenPage() {
             {t('delimiter')}
             <input
               value={delimiter}
-              onChange={(event) => setDelimiter(event.target.value)}
+              onChange={(event) => updateDelimiter(event.target.value)}
               className="w-16 rounded border border-border-input bg-surface-raised px-2 py-1 font-mono text-content-secondary outline-none focus:ring-2 focus:ring-action"
             />
           </label>
           <textarea
             value={input}
-            onChange={(event) => setInput(event.target.value)}
+            onChange={(event) => updateInput(event.target.value)}
             className="w-full flex-grow p-3 border border-border-input rounded focus:outline-none focus:ring-2 focus:ring-action resize-none font-mono text-sm bg-surface-raised text-content-secondary"
             placeholder={t('placeholder')}
           />
