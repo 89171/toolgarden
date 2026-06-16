@@ -4,11 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node scripts/generate-static-metadata.mjs",
-    "build": "next build",
+    "build": "node scripts/generate-static-metadata.mjs && next build",
     "start": "next start",
     "lint": "eslint",
-    "clean": "rm -rf .next && npm run dev"
+    "clean": "node scripts/generate-static-metadata.mjs"
   },
   "dependencies": {
     "@types/file-saver": "^2.0.7",
