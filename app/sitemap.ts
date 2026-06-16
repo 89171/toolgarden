@@ -4,6 +4,7 @@ import { BASE_URL } from '@/lib/tools/seo';
 import { routing } from '@/i18n/routing';
 
 export const dynamic = 'force-static';
+export const revalidate = false;
 
 const locales = routing.locales;
 
