@@ -9,6 +9,12 @@ const BASE_URL = 'https://json-toolkit.dev';
 const locales = ['zh', 'en'];
 const defaultLocale = 'zh';
 
+function cleanBuildArtifacts() {
+  for (const dir of ['.next', 'out']) {
+    fs.rmSync(path.join(rootDir, dir), { recursive: true, force: true });
+  }
+}
+
 function readToolPaths() {
   const registryPath = path.join(rootDir, 'lib/tools/registry.ts');
   const registrySource = fs.readFileSync(registryPath, 'utf8');
@@ -42,7 +48,7 @@ function alternatesFor(routePath = '') {
   ];
 }
 
-function sitemapUrl({ routePath = '', changeFrequency, priority, lastModified }) {
+function sitemapUrl({ routePath = '', changeFrequency, priority }) {
   const loc = `${BASE_URL}/${defaultLocale}${routePath}`;
   const alternateLinks = alternatesFor(routePath)
     .map((alternate) =>
@@ -53,7 +59,6 @@ function sitemapUrl({ routePath = '', changeFrequency, priority, lastModified })
   return [
     '  <url>',
     `    <loc>${escapeXml(loc)}</loc>`,
-    `    <lastmod>${lastModified}</lastmod>`,
     `    <changefreq>${changeFrequency}</changefreq>`,
     `    <priority>${priority}</priority>`,
     alternateLinks,
@@ -62,20 +67,17 @@ function sitemapUrl({ routePath = '', changeFrequency, priority, lastModified })
 }
 
 function generateSitemap() {
-  const lastModified = new Date().toISOString();
   const urls = [
     sitemapUrl({
       routePath: '',
       changeFrequency: 'weekly',
       priority: '1.0',
-      lastModified,
     }),
     ...readToolPaths().map((routePath) =>
       sitemapUrl({
         routePath,
         changeFrequency: 'monthly',
         priority: '0.8',
-        lastModified,
       })
     ),
   ];
@@ -158,6 +160,7 @@ function generateManifest() {
   )}\n`;
 }
 
+cleanBuildArtifacts();
 fs.mkdirSync(publicDir, { recursive: true });
 fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), generateSitemap());
 fs.writeFileSync(path.join(publicDir, 'robots.txt'), generateRobots());
