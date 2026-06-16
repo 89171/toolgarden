@@ -11,6 +11,7 @@ import {
   normalizeLocale,
   toJsonLd,
 } from '@/lib/tools/seo';
+import { BaiduAnalytics } from '@/components/BaiduAnalytics';
 import { PwaRegistration } from '@/components/PwaRegistration';
 import '../globals.css';
 
@@ -79,6 +80,7 @@ export default async function LocaleLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: toJsonLd(createSiteJsonLd(normalizedLocale)) }}
         />
+        <BaiduAnalytics />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <NextIntlClientProvider locale={normalizedLocale} messages={m}>
