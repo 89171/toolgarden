@@ -1,0 +1,8 @@
+{
+    "name": "json-toolkit",
+    "installCommand": "npm install",
+    "assets": {
+      "directory": "./out",
+      "notFoundStrategy": "404Page"
+    }
+  }
