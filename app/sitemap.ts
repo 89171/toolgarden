@@ -3,6 +3,8 @@ import { toolRegistry } from '@/lib/tools/registry';
 import { BASE_URL } from '@/lib/tools/seo';
 import { routing } from '@/i18n/routing';
 
+export const dynamic = 'force-static';
+
 const locales = routing.locales;
 
 function alternatesFor(path = '') {

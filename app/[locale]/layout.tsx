@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
+import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import {
@@ -61,6 +62,7 @@ export default async function LocaleLayout({
 
   if (!routing.locales.includes(locale as Locale)) notFound();
   const normalizedLocale = normalizeLocale(locale);
+  setRequestLocale(normalizedLocale);
   const m = getLocaleMessages(normalizedLocale);
 
   return (
