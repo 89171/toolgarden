@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /_next/
+
+Sitemap: https://json-toolkit.dev/sitemap.xml
+Host: https://json-toolkit.dev

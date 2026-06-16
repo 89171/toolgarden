@@ -28,6 +28,13 @@ export async function generateMetadata({
   return {
     ...createLocaleMetadata(locale),
     manifest: '/manifest.webmanifest',
+    icons: {
+      icon: [
+        { url: '/favicon.ico' },
+        { url: '/icon.svg', type: 'image/svg+xml' },
+      ],
+      apple: [{ url: '/apple-icon.svg', type: 'image/svg+xml' }],
+    },
     appleWebApp: {
       capable: true,
       statusBarStyle: 'default',
