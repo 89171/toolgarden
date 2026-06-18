@@ -27,6 +27,10 @@
   --content-faint:     #9ca3af;   /* gray-400，占位符 / 注释 */
 
   /* Brand */
+  --brand-bg:          #111827;
+  --brand-bg-hover:    #1f2937;
+  --brand-fg:          #f9fafb;
+  --brand-border:      #1f2937;
   --brand-dot:         #f97316;
   --brand-tld:         #94a3b8;
 
@@ -73,8 +77,12 @@
     --content-muted:     #9ca3af;
     --content-faint:     #6b7280;
 
+    --brand-bg:          #000000;
+    --brand-bg-hover:    #171717;
+    --brand-fg:          #f9fafb;
+    --brand-border:      #262626;
     --brand-dot:         #fb923c;
-    --brand-tld:         #94a3b8;
+    --brand-tld:         #a1a1aa;
 
     --action:            #e5e7eb;
     --action-hover:      #f3f4f6;
@@ -125,6 +133,10 @@
   --color-content-faint:       var(--content-faint);
 
   /* Brand */
+  --color-brand-bg:            var(--brand-bg);
+  --color-brand-bg-hover:      var(--brand-bg-hover);
+  --color-brand-fg:            var(--brand-fg);
+  --color-brand-border:        var(--brand-border);
   --color-brand-dot:           var(--brand-dot);
   --color-brand-tld:           var(--brand-tld);
 

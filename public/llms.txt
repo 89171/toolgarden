@@ -38,6 +38,8 @@ JSON Toolkit provides developers with a suite of tools for working with JSON dat
 - **JSON Schema Validator** (`/json-schema-validate`): Validate JSON data against a JSON Schema and report error paths with explanations.
 - **JSONPath Query** (`/json-path`): Extract nested data using JSONPath expressions (e.g. `$.store.books[*].title`).
 - **JSON Stats** (`/json-stats`): Analyze JSON structure: nesting depth, key counts, type distribution, and size comparison.
+- **QR Code Generator** (`/qr-code/generate`): Generate QR code PNG files from URLs, text, contact data, or Wi-Fi configuration text.
+- **QR Code Decoder** (`/qr-code/decode`): Decode uploaded QR images locally in the browser and copy the decoded text.
 - **JWT Parser** (`/jwt`): Decode JWT tokens to inspect Header and Payload; verify HS256 signatures using the Web Crypto API.
 
 ## Languages
@@ -66,6 +68,7 @@ JSON Toolkit provides developers with a suite of tools for working with JSON dat
 - Image tools support compression, background removal, conversion, crop, resize, JPG, PNG, WebP, GIF, BMP, SVG, AVIF, preview comparison, and ZIP batch download
 - PDF tools use pdf-lib for PDF generation and page-level PDF operations, fflate for Office OpenXML/EPUB extraction, SheetJS for spreadsheets, a PalmDOC text extractor for legacy MOBI, and browser Canvas for Unicode text rendering
 - Subtitle Maker supports LRC and SRT parsing, editing, timing calibration against local audio/video, and export without uploading files
+- QR Code Generator uses qrcode for PNG generation; QR Code Decoder uses jsQR for browser-local image decoding
 
 ## Optional
 

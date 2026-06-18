@@ -249,12 +249,20 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/json-stats" />
   </url>
   <url>
-    <loc>https://json-toolkit.dev/zh/qr-code</loc>
+    <loc>https://json-toolkit.dev/zh/qr-code/generate</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/qr-code" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/qr-code" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/qr-code" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/qr-code/generate" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/qr-code/generate" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/qr-code/generate" />
+  </url>
+  <url>
+    <loc>https://json-toolkit.dev/zh/qr-code/decode</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/qr-code/decode" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/qr-code/decode" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/qr-code/decode" />
   </url>
   <url>
     <loc>https://json-toolkit.dev/zh/jwt</loc>

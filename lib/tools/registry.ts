@@ -251,11 +251,19 @@ export const toolRegistry: ToolMeta[] = [
 
   // ── 编解码 ─────────────────────────────────────────────────────
   {
-    id: 'qr-code',
-    name: '二维码生成解码',
-    description: '生成二维码 PNG，或上传图片在浏览器本地识别二维码内容',
-    path: '/qr-code',
-    icon: 'QR',
+    id: 'qr-code-generator',
+    name: '二维码生成',
+    description: '将网址、文本、联系信息或 Wi-Fi 配置文本生成二维码 PNG',
+    path: '/qr-code/generate',
+    icon: 'QR+',
+    category: 'encode',
+  },
+  {
+    id: 'qr-code-decoder',
+    name: '二维码解码',
+    description: '上传二维码图片，在浏览器本地识别并复制二维码内容',
+    path: '/qr-code/decode',
+    icon: 'QR?',
     category: 'encode',
   },
   {
@@ -294,12 +302,18 @@ export function getSubtitleTools(): ToolMeta[] {
   return toolRegistry.filter((tool) => tool.path.startsWith('/subtitle'));
 }
 
-/** 获取 JSON 工具集合，不包含图片、PDF 和字幕工具 */
+/** 获取二维码工具集合 */
+export function getQrCodeTools(): ToolMeta[] {
+  return toolRegistry.filter((tool) => tool.path.startsWith('/qr-code/'));
+}
+
+/** 获取 JSON 工具集合，不包含图片、PDF、字幕和二维码工具 */
 export function getJsonTools(): ToolMeta[] {
   return toolRegistry.filter((tool) =>
     !tool.path.startsWith('/image/') &&
     !tool.path.startsWith('/pdf/') &&
-    !tool.path.startsWith('/subtitle')
+    !tool.path.startsWith('/subtitle') &&
+    !tool.path.startsWith('/qr-code/')
   );
 }
 
@@ -330,7 +344,8 @@ export function getJsonToolGroups(): ToolGroup[] {
         (tool) =>
           !tool.path.startsWith('/image/') &&
           !tool.path.startsWith('/pdf/') &&
-          !tool.path.startsWith('/subtitle')
+          !tool.path.startsWith('/subtitle') &&
+          !tool.path.startsWith('/qr-code/')
       ),
     }))
     .filter((group) => group.tools.length > 0);

@@ -446,16 +446,29 @@
       "general": "图片处理失败，请重试。"
     }
   },
+  "qr_code": {
+    "switcher_label": "二维码工具",
+    "generate_link": "二维码生成",
+    "decode_link": "二维码解码"
+  },
   "tool_faq": {
-    "qr-code": {
+    "qr-code-generator": {
       "items": [
         {
-          "question": "二维码工具会上传我的文本或图片吗？",
-          "answer": "不会。二维码生成和图片识别都在浏览器本地完成，输入文本和上传图片不会发送到服务器。"
+          "question": "二维码生成会上传我的文本吗？",
+          "answer": "不会。二维码会在浏览器本地生成，输入文本不会发送到服务器。"
         },
         {
           "question": "二维码生成支持哪些内容？",
           "answer": "支持网址、普通文本、联系信息、Wi-Fi 配置文本或任意可编码字符串。文本越长，二维码越密集。"
+        }
+      ]
+    },
+    "qr-code-decoder": {
+      "items": [
+        {
+          "question": "二维码解码会上传我的图片吗？",
+          "answer": "不会。图片会在浏览器本地读取和识别，不会上传到服务器。"
         },
         {
           "question": "二维码解码支持哪些图片？",
@@ -655,6 +668,7 @@
     "json_tools_menu": "JSON工具",
     "image_toolbar": "图片工具",
     "pdf_tools": "PDF工具",
+    "qr_tools": "二维码工具",
     "subtitle_tools": "字幕工具",
     "github": "GitHub"
   },
@@ -983,12 +997,11 @@
       "placeholder": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
       "empty_output": "粘贴 JWT Token 后点击解码"
     },
-    "qr-code": {
-      "name": "二维码生成解码",
-      "description": "免费在线生成二维码 PNG，或上传图片在浏览器本地识别二维码内容",
+    "qr-code-generator": {
+      "name": "二维码生成",
+      "description": "免费在线将网址、文本、联系信息或 Wi-Fi 配置文本生成二维码 PNG",
       "generate_title": "生成二维码",
       "preview_title": "二维码预览",
-      "decode_title": "解码二维码",
       "text_label": "二维码内容",
       "text_placeholder": "输入网址、文本、联系信息或 Wi-Fi 配置文本...",
       "generate": "生成",
@@ -1000,6 +1013,16 @@
       "input_bytes": "输入体积",
       "output_size": "输出尺寸",
       "empty_preview": "生成后的二维码会显示在这里",
+      "errors": {
+        "empty_text": "请输入要生成二维码的内容。",
+        "generate_failed": "二维码生成失败，请缩短文本或调整纠错等级后重试。"
+      }
+    },
+    "qr-code-decoder": {
+      "name": "二维码解码",
+      "description": "免费在线上传二维码图片，在浏览器本地识别并复制二维码内容",
+      "decode_title": "上传二维码图片",
+      "result_title": "识别结果",
       "choose_image": "选择图片",
       "drop_title": "点击按钮或拖拽二维码图片到这里",
       "drop_hint": "支持 PNG / JPG / WebP / GIF / BMP",
@@ -1007,8 +1030,6 @@
       "empty_decode": "上传二维码图片后显示识别结果",
       "unknown_file_type": "未知文件类型",
       "errors": {
-        "empty_text": "请输入要生成二维码的内容。",
-        "generate_failed": "二维码生成失败，请缩短文本或调整纠错等级后重试。",
         "empty_file": "文件为空，请选择有效图片。",
         "file_too_large": "文件过大，最大支持 {maxSize}。",
         "unsupported_file": "暂不支持这种图片类型：{type}。",

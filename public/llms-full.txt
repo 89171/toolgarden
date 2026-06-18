@@ -198,6 +198,19 @@ Canonical examples:
 - Metrics: raw size (bytes), minified size, compression %, max nesting depth, total key count, object count, array count, type distribution, longest string value
 - Auto-analyzes on input change (400ms debounce)
 
+### QR Code Generator (/qr-code/generate)
+- Generates PNG QR codes from URLs, plain text, contact data, Wi-Fi configuration text, or other strings
+- Supports QR size, quiet-zone margin, and error correction level controls
+- Uses qrcode@^1.5 for QR generation and outputs a browser-downloadable PNG data URL
+- Text input is not uploaded to a server
+- Links to QR Code Decoder for the reverse workflow
+
+### QR Code Decoder (/qr-code/decode)
+- Decodes uploaded PNG, JPG, WebP, GIF, and BMP images locally in the browser
+- Uses Canvas image data and jsQR@^1.4 with inverted-code attempts enabled
+- Uploaded images are not uploaded to a server
+- Links to QR Code Generator for the reverse workflow
+
 ### JWT Parser (/jwt)
 - Decode: Base64URL decodes header and payload (no key needed)
 - Verify: HMAC-SHA256 via browser Web Crypto API (HS256 only)

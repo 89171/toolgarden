@@ -1,5 +1,5 @@
 import { redirectToolToDefaultLocale } from '@/lib/tools/routing';
 
 export default function ToolRedirectPage() {
-  redirectToolToDefaultLocale('qr-code-generator');
+  redirectToolToDefaultLocale('qr-code-decoder');
 }

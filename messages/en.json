@@ -446,16 +446,29 @@
       "general": "Image processing failed. Please try again."
     }
   },
+  "qr_code": {
+    "switcher_label": "QR code tools",
+    "generate_link": "QR code generator",
+    "decode_link": "QR code decoder"
+  },
   "tool_faq": {
-    "qr-code": {
+    "qr-code-generator": {
       "items": [
         {
-          "question": "Does the QR tool upload my text or images?",
-          "answer": "No. QR generation and image decoding run locally in your browser, so text and uploaded images are not sent to a server."
+          "question": "Does QR generation upload my text?",
+          "answer": "No. QR codes are generated locally in your browser, so text is not sent to a server."
         },
         {
           "question": "What content can I encode as a QR code?",
           "answer": "You can encode URLs, plain text, contact data, Wi-Fi configuration text, or any string that fits in a QR code. Longer text creates denser QR codes."
+        }
+      ]
+    },
+    "qr-code-decoder": {
+      "items": [
+        {
+          "question": "Does QR decoding upload my image?",
+          "answer": "No. Images are read and decoded locally in your browser and are not uploaded to a server."
         },
         {
           "question": "Which image formats can be decoded?",
@@ -655,6 +668,7 @@
     "json_tools_menu": "JSON tools",
     "image_toolbar": "Image tools",
     "pdf_tools": "PDF tools",
+    "qr_tools": "QR tools",
     "subtitle_tools": "Subtitle tools",
     "github": "GitHub"
   },
@@ -983,12 +997,11 @@
       "placeholder": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
       "empty_output": "Paste a JWT token and click Decode"
     },
-    "qr-code": {
-      "name": "QR Code Generator & Decoder",
-      "description": "Free online QR code generator for PNG export and local browser QR image decoding",
+    "qr-code-generator": {
+      "name": "QR Code Generator",
+      "description": "Free online QR code generator for URLs, text, contact data, and Wi-Fi configuration text with PNG export",
       "generate_title": "Generate QR code",
       "preview_title": "QR preview",
-      "decode_title": "Decode QR code",
       "text_label": "QR content",
       "text_placeholder": "Enter a URL, text, contact data, or Wi-Fi configuration text...",
       "generate": "Generate",
@@ -1000,6 +1013,16 @@
       "input_bytes": "Input size",
       "output_size": "Output size",
       "empty_preview": "Generated QR code will appear here",
+      "errors": {
+        "empty_text": "Enter content to generate a QR code.",
+        "generate_failed": "QR code generation failed. Try shorter text or a different error correction level."
+      }
+    },
+    "qr-code-decoder": {
+      "name": "QR Code Decoder",
+      "description": "Free online QR code decoder that reads uploaded QR images locally in your browser",
+      "decode_title": "Upload QR image",
+      "result_title": "Decoded result",
       "choose_image": "Choose image",
       "drop_title": "Use the button or drop a QR image here",
       "drop_hint": "Supports PNG / JPG / WebP / GIF / BMP",
@@ -1007,8 +1030,6 @@
       "empty_decode": "Decoded text will appear after uploading a QR image",
       "unknown_file_type": "Unknown file type",
       "errors": {
-        "empty_text": "Enter content to generate a QR code.",
-        "generate_failed": "QR code generation failed. Try shorter text or a different error correction level.",
         "empty_file": "The file is empty. Choose a valid image.",
         "file_too_large": "The file is too large. Maximum size is {maxSize}.",
         "unsupported_file": "This image type is not supported yet: {type}.",
