@@ -117,7 +117,7 @@ function generateManifest() {
     {
       name: 'JSON Toolkit',
       short_name: 'JSON Toolkit',
-      description: 'Format, convert, validate and decode JSON - all in the browser, no uploads.',
+      description: 'Free online JSON tools to format, convert, validate and decode JSON in the browser, no uploads.',
       start_url: '/zh',
       scope: '/',
       display: 'standalone',
@@ -143,21 +143,21 @@ function generateManifest() {
         {
           name: 'JSON Formatter',
           short_name: 'Format',
-          description: 'Format and validate JSON',
+          description: 'Free online JSON formatter and validator',
           url: '/zh/json-format',
           icons: [{ src: '/pwa-192.svg', sizes: '192x192' }],
         },
         {
           name: 'JSON Diff',
           short_name: 'Diff',
-          description: 'Compare two JSON documents',
+          description: 'Free online JSON diff for comparing two documents',
           url: '/zh/json-diff',
           icons: [{ src: '/pwa-192.svg', sizes: '192x192' }],
         },
         {
           name: 'JWT Parser',
           short_name: 'JWT',
-          description: 'Decode and verify JWT tokens',
+          description: 'Free online JWT decoder and verifier',
           url: '/zh/jwt',
           icons: [{ src: '/pwa-192.svg', sizes: '192x192' }],
         },

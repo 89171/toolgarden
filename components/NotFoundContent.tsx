@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { getLocalizedToolPath, toolRegistry } from '@/lib/tools/registry';
 import zhMessages from '@/messages/zh.json';
@@ -14,12 +15,18 @@ interface NotFoundContentProps {
   locale?: string;
 }
 
-function normalizeLocale(locale?: string): Locale {
-  return routing.locales.includes(locale as Locale) ? (locale as Locale) : routing.defaultLocale;
+function normalizeLocale(locale?: string, pathname?: string | null): Locale {
+  if (routing.locales.includes(locale as Locale)) return locale as Locale;
+
+  const pathLocale = pathname?.split('/').filter(Boolean)[0];
+  if (routing.locales.includes(pathLocale as Locale)) return pathLocale as Locale;
+
+  return routing.defaultLocale;
 }
 
 export function NotFoundContent({ locale }: NotFoundContentProps) {
-  const normalizedLocale = normalizeLocale(locale);
+  const pathname = usePathname();
+  const normalizedLocale = normalizeLocale(locale, pathname);
   const m = messages[normalizedLocale];
   const featuredTools = toolRegistry.filter((tool) => tool.featured).slice(0, 4);
 

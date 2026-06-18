@@ -11,7 +11,7 @@ export default function RootNotFound() {
     <html lang="zh">
       <head />
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <NotFoundContent locale="zh" />
+        <NotFoundContent />
         <BaiduAnalytics />
       </body>
     </html>

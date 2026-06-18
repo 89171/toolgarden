@@ -573,11 +573,11 @@ export function ImageTargetConverter({ toolId, targetFormat }: ImageTargetConver
           role="dialog"
           aria-modal="true"
           aria-label={ti('preview_title')}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 p-3 sm:p-6"
+          className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-background/95 p-3 sm:p-6"
           onClick={() => setPreview(null)}
         >
           <div
-            className="flex h-full max-h-[calc(100svh-1.5rem)] w-full max-w-6xl flex-col gap-3 rounded-lg border border-border-base bg-surface p-3 shadow sm:max-h-[calc(100svh-3rem)] sm:p-4"
+            className="flex max-h-[calc(100svh-1.5rem)] w-full max-w-6xl flex-col gap-3 rounded-lg border border-border-base bg-surface p-3 shadow sm:max-h-[calc(100svh-3rem)] sm:p-4"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border-subtle pb-3">
@@ -602,7 +602,7 @@ export function ImageTargetConverter({ toolId, targetFormat }: ImageTargetConver
               </button>
             </div>
 
-            <div className="relative flex min-h-0 flex-grow items-center justify-center overflow-hidden rounded border border-border-subtle bg-surface-raised">
+            <div className="relative flex max-h-[calc(100svh-8rem)] items-center justify-center overflow-hidden rounded border border-border-subtle bg-surface-raised p-2 sm:max-h-[calc(100svh-9.5rem)] sm:p-3">
               <button
                 type="button"
                 aria-label={ti('preview_open_source')}
@@ -616,7 +616,7 @@ export function ImageTargetConverter({ toolId, targetFormat }: ImageTargetConver
               <img
                 src={previewImage.url}
                 alt={previewImage.name}
-                className="max-h-full max-w-full object-contain"
+                className="block max-h-[calc(100svh-9rem)] max-w-full object-contain sm:max-h-[calc(100svh-11rem)]"
               />
 
               <button

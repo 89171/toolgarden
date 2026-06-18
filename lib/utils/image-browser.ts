@@ -1,6 +1,8 @@
 import {
   calculateSavingsRatio,
+  createBackgroundRemovedImageFilename,
   createCompressedImageFilename,
+  createEditedImageFilename,
   createImageOutputFilename,
   formatFileSize,
   formatPixelLimit,
@@ -10,9 +12,16 @@ import {
   MAX_IMAGE_FILE_SIZE,
   MAX_IMAGE_PIXELS,
   normalizeImageQuality,
+  normalizeCropRect,
+  type ImageBackgroundRemovalModel,
+  type ImageBackgroundRemovalOutcome,
+  type ImageBackgroundRemovalProgress,
   type ImageCompressionOutputMode,
   type ImageCompressionOutcome,
   type ImageConversionOutcome,
+  type ImageCropRect,
+  type ImageEditOutcome,
+  type ImageInspectionOutcome,
   type ImageTargetConfig,
   type ImageTargetFormat,
 } from './image';
@@ -98,6 +107,20 @@ export interface CompressImageOptions {
   outputMode?: ImageCompressionOutputMode;
 }
 
+export interface CropResizeImageOptions {
+  crop: ImageCropRect;
+  outputWidth: number;
+  outputHeight: number;
+  targetFormat: ImageTargetFormat;
+  quality?: number;
+  jpegBackground?: string;
+}
+
+export interface RemoveImageBackgroundOptions {
+  model?: ImageBackgroundRemovalModel;
+  onProgress?: (progress: ImageBackgroundRemovalProgress) => void;
+}
+
 let imageWorker: Worker | null = null;
 let imageWorkerUnavailable = false;
 let workerRequestId = 0;
@@ -113,6 +136,8 @@ const VISIBLE_DIFF_THRESHOLD = {
   maxChannel: 52,
 };
 const PNG_QUANTIZED_TARGET_SAVINGS = 0.25;
+const BACKGROUND_REMOVAL_PUBLIC_PATH =
+  'https://unpkg.com/@imgly/background-removal-data@1.4.5/dist/';
 
 function getImageWorker(): Worker | null {
   if (imageWorkerUnavailable || typeof Worker === 'undefined') return null;
@@ -371,6 +396,17 @@ function canvasToBlob(
       resolve(blob);
     }, mimeType, quality);
   });
+}
+
+async function normalizeLoadedImageToPng(image: LoadedImage): Promise<Blob | null> {
+  const canvas = document.createElement('canvas');
+  canvas.width = image.width;
+  canvas.height = image.height;
+  const context = canvas.getContext('2d');
+  if (!context) return null;
+
+  context.drawImage(image.element, 0, 0);
+  return canvasToBlob(canvas, 'image/png');
 }
 
 function getCompressionCandidates(
@@ -792,6 +828,268 @@ async function convertImageFileOnMainThread(
       mimeType: target.mimeType,
       width: image.width,
       height: image.height,
+      originalSize: file.size,
+      outputSize: blob.size,
+      durationMs: Math.round(performance.now() - startedAt),
+    };
+  } catch {
+    return { ok: false, code: 'load_failed' };
+  }
+}
+
+export async function inspectImageFile(file: File): Promise<ImageInspectionOutcome> {
+  if (file.size === 0) return { ok: false, code: 'empty_file' };
+
+  if (file.size > MAX_IMAGE_FILE_SIZE) {
+    return {
+      ok: false,
+      code: 'file_too_large',
+      maxSize: formatFileSize(MAX_IMAGE_FILE_SIZE),
+    };
+  }
+
+  if (!isSupportedImageInput(file)) {
+    return {
+      ok: false,
+      code: 'unsupported_input',
+      detail: inferImageMimeType(file) || 'unknown',
+    };
+  }
+
+  const sourceType = inferImageMimeType(file);
+  const sourceFile = sourceType === file.type ? file : new File([file], file.name, { type: sourceType });
+
+  try {
+    const image = await loadImage(sourceFile);
+    const pixelCount = image.width * image.height;
+
+    if (!image.width || !image.height) {
+      return { ok: false, code: 'load_failed' };
+    }
+
+    if (pixelCount > MAX_IMAGE_PIXELS) {
+      return {
+        ok: false,
+        code: 'too_many_pixels',
+        maxPixels: formatPixelLimit(MAX_IMAGE_PIXELS),
+      };
+    }
+
+    return {
+      ok: true,
+      filename: file.name,
+      mimeType: sourceType,
+      width: image.width,
+      height: image.height,
+      size: file.size,
+    };
+  } catch {
+    return { ok: false, code: 'load_failed' };
+  }
+}
+
+function createBackgroundRemovalProgress(
+  label: string,
+  current: number,
+  total: number
+): ImageBackgroundRemovalProgress {
+  const isComputeStage = label.startsWith('compute:');
+  const safeTotal = Math.max(1, total);
+
+  return {
+    stage: isComputeStage ? 'compute' : 'model',
+    label,
+    current,
+    total: safeTotal,
+    percent: Math.max(0, Math.min(100, Math.round((current / safeTotal) * 100))),
+  };
+}
+
+export async function removeImageBackground(
+  file: File,
+  options: RemoveImageBackgroundOptions = {}
+): Promise<ImageBackgroundRemovalOutcome> {
+  if (file.size === 0) return { ok: false, code: 'empty_file' };
+
+  if (file.size > MAX_IMAGE_FILE_SIZE) {
+    return {
+      ok: false,
+      code: 'file_too_large',
+      maxSize: formatFileSize(MAX_IMAGE_FILE_SIZE),
+    };
+  }
+
+  if (!isSupportedImageInput(file)) {
+    return {
+      ok: false,
+      code: 'unsupported_input',
+      detail: inferImageMimeType(file) || 'unknown',
+    };
+  }
+
+  const startedAt = performance.now();
+  const sourceType = inferImageMimeType(file);
+  const sourceFile = sourceType === file.type ? file : new File([file], file.name, { type: sourceType });
+
+  try {
+    const image = await loadImage(sourceFile);
+    const pixelCount = image.width * image.height;
+
+    if (!image.width || !image.height) {
+      return { ok: false, code: 'load_failed' };
+    }
+
+    if (pixelCount > MAX_IMAGE_PIXELS) {
+      return {
+        ok: false,
+        code: 'too_many_pixels',
+        maxPixels: formatPixelLimit(MAX_IMAGE_PIXELS),
+      };
+    }
+
+    const modelInput = await normalizeLoadedImageToPng(image);
+    if (!modelInput) return { ok: false, code: 'canvas_context' };
+
+    const backgroundRemoval = await import('@imgly/background-removal');
+    const removeBackground = backgroundRemoval.removeBackground;
+    const blob = await removeBackground(modelInput, {
+      publicPath: BACKGROUND_REMOVAL_PUBLIC_PATH,
+      model: options.model ?? 'small',
+      output: {
+        format: 'image/png',
+        quality: 1,
+      },
+      progress: (label: string, current: number, total: number) => {
+        options.onProgress?.(createBackgroundRemovalProgress(label, current, total));
+      },
+    });
+    const outputBlob = blob.type === 'image/png' ? blob : new Blob([blob], { type: 'image/png' });
+
+    return {
+      ok: true,
+      blob: outputBlob,
+      filename: createBackgroundRemovedImageFilename(file.name),
+      mimeType: 'image/png',
+      width: image.width,
+      height: image.height,
+      originalSize: file.size,
+      outputSize: outputBlob.size,
+      durationMs: Math.round(performance.now() - startedAt),
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      code: 'canvas_export',
+      detail: error instanceof Error ? error.message : undefined,
+    };
+  }
+}
+
+export async function cropResizeImageFile(
+  file: File,
+  options: CropResizeImageOptions
+): Promise<ImageEditOutcome> {
+  if (file.size === 0) return { ok: false, code: 'empty_file' };
+
+  if (file.size > MAX_IMAGE_FILE_SIZE) {
+    return {
+      ok: false,
+      code: 'file_too_large',
+      maxSize: formatFileSize(MAX_IMAGE_FILE_SIZE),
+    };
+  }
+
+  if (!isSupportedImageInput(file)) {
+    return {
+      ok: false,
+      code: 'unsupported_input',
+      detail: inferImageMimeType(file) || 'unknown',
+    };
+  }
+
+  const outputWidth = Math.max(1, Math.round(options.outputWidth));
+  const outputHeight = Math.max(1, Math.round(options.outputHeight));
+
+  if (outputWidth * outputHeight > MAX_IMAGE_PIXELS) {
+    return {
+      ok: false,
+      code: 'too_many_pixels',
+      maxPixels: formatPixelLimit(MAX_IMAGE_PIXELS),
+    };
+  }
+
+  const startedAt = performance.now();
+  const sourceType = inferImageMimeType(file);
+  const sourceFile = sourceType === file.type ? file : new File([file], file.name, { type: sourceType });
+  const target = getImageTargetConfig(options.targetFormat);
+
+  try {
+    const image = await loadImage(sourceFile);
+    const pixelCount = image.width * image.height;
+
+    if (!image.width || !image.height) {
+      return { ok: false, code: 'load_failed' };
+    }
+
+    if (pixelCount > MAX_IMAGE_PIXELS) {
+      return {
+        ok: false,
+        code: 'too_many_pixels',
+        maxPixels: formatPixelLimit(MAX_IMAGE_PIXELS),
+      };
+    }
+
+    const crop = normalizeCropRect(options.crop, image.width, image.height);
+    const canvas = document.createElement('canvas');
+    canvas.width = outputWidth;
+    canvas.height = outputHeight;
+
+    const context = canvas.getContext('2d');
+    if (!context) return { ok: false, code: 'canvas_context' };
+
+    if (target.mimeType === 'image/jpeg') {
+      context.fillStyle = options.jpegBackground ?? '#ffffff';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    context.imageSmoothingEnabled = true;
+    context.imageSmoothingQuality = 'high';
+    context.drawImage(
+      image.element,
+      crop.x,
+      crop.y,
+      crop.width,
+      crop.height,
+      0,
+      0,
+      outputWidth,
+      outputHeight
+    );
+
+    const quality = target.supportsQuality
+      ? normalizeImageQuality(options.quality ?? target.defaultQuality)
+      : undefined;
+    const blob = await canvasToBlob(canvas, target.mimeType, quality);
+
+    if (blob.type && blob.type !== target.mimeType) {
+      return {
+        ok: false,
+        code: 'unsupported_output',
+        detail: target.label,
+      };
+    }
+
+    return {
+      ok: true,
+      blob,
+      filename: createEditedImageFilename(file.name, target.extension),
+      mimeType: target.mimeType,
+      format: target.format,
+      width: outputWidth,
+      height: outputHeight,
+      sourceWidth: image.width,
+      sourceHeight: image.height,
+      crop,
       originalSize: file.size,
       outputSize: blob.size,
       durationMs: Math.round(performance.now() - startedAt),

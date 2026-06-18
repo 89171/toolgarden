@@ -113,6 +113,14 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/image/compress" />
   </url>
   <url>
+    <loc>https://json-toolkit.dev/zh/image/remove-bg</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/image/remove-bg" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/image/remove-bg" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/image/remove-bg" />
+  </url>
+  <url>
     <loc>https://json-toolkit.dev/zh/image/to-jpg</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -135,6 +143,22 @@
     <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/image/to-webp" />
     <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/image/to-webp" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/image/to-webp" />
+  </url>
+  <url>
+    <loc>https://json-toolkit.dev/zh/image/crop</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/image/crop" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/image/crop" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/image/crop" />
+  </url>
+  <url>
+    <loc>https://json-toolkit.dev/zh/image/resize</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/image/resize" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/image/resize" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/image/resize" />
   </url>
   <url>
     <loc>https://json-toolkit.dev/zh/json-schema</loc>

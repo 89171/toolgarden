@@ -87,6 +87,13 @@ Canonical examples:
 - Keeps the original file when no smaller visually safe candidate is found
 - Supports preview comparison, per-file download, and ZIP batch download
 
+### Remove Image Background (/image/remove-bg)
+- Removes image backgrounds locally in the browser with @imgly/background-removal and onnxruntime-web
+- Loads WASM and ONNX model assets on first use; subsequent uses are usually cached by the browser
+- Exports a transparent PNG with the detected foreground
+- Shows source and output preview comparison with a checkerboard background for transparency
+- Image files are not uploaded to a server
+
 ### Image to JPG (/image/to-jpg)
 - Converts PNG, WebP, GIF, BMP, SVG, AVIF, and common browser-decodable images to JPG
 - Uses a white background for transparent pixels because JPG has no alpha channel
@@ -100,6 +107,18 @@ Canonical examples:
 ### Image to WebP (/image/to-webp)
 - Converts JPG, PNG, GIF, BMP, SVG, AVIF, and common browser-decodable images to WebP
 - Supports output quality control, preview comparison, per-file download, and ZIP batch download
+
+### Image Crop (/image/crop)
+- Crops JPG, PNG, WebP, GIF, BMP, SVG, AVIF, and common browser-decodable images locally in the browser
+- Supports dragging the crop frame to move it and dragging edges or corners to resize it
+- Exports the selected crop area as JPG, PNG, or WebP; JPG uses a white background for transparent pixels
+- Uses browser Canvas APIs and does not upload image data to a server
+
+### Image Resize (/image/resize)
+- Resizes JPG, PNG, WebP, GIF, BMP, SVG, AVIF, and common browser-decodable images locally in the browser
+- Keeps the original image aspect ratio by default: entering width calculates height, and entering height calculates width
+- Exports the full resized image as JPG, PNG, or WebP; JPG uses a white background for transparent pixels
+- Uses browser Canvas APIs and does not upload image data to a server
 
 ### JSON Schema Generator (/json-schema)
 - Output: JSON Schema Draft 2020-12

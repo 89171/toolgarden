@@ -125,6 +125,159 @@
       "general": "Compression failed. Please try again."
     }
   },
+  "image_remove_bg": {
+    "settings_title": "Background removal",
+    "results_title": "Background removal result",
+    "model_label": "Local model",
+    "model_title": "Export transparent PNG",
+    "model_description": "Use an open-source image segmentation model in the browser to detect the subject and remove the background. The first run downloads model assets; later runs are usually cached by the browser.",
+    "drop_title": "Click or drag an image",
+    "drop_hint": "Supports {formats}. Exports a transparent PNG.",
+    "drop_action": "Choose image",
+    "input_formats": "Supported formats",
+    "selected_file": "Current file",
+    "source_size": "Source size",
+    "local_note": "All file processing happens locally. Files are not uploaded to any server, and data is cleared when you close the page.",
+    "remove_action": "Remove background",
+    "processing": "Processing",
+    "download": "Download PNG",
+    "empty_title": "Waiting for an image",
+    "empty_body": "Upload one image, then remove the background. The transparent PNG result will appear on the right.",
+    "source": "Source",
+    "output": "Output",
+    "output_empty": "The transparent PNG will appear here",
+    "dimensions": "Dimensions",
+    "output_size": "Output size",
+    "duration": "Duration",
+    "duration_value": "{value}ms",
+    "preview_title": "Image preview",
+    "preview_open_source": "Preview source image",
+    "preview_open_output": "Preview output image",
+    "preview_source": "Source",
+    "preview_output": "Output",
+    "preview_close": "Close preview",
+    "progress_prepare": "Preparing model",
+    "progress_model": "Model assets {value}%",
+    "progress_compute": "Analyzing subject {value}%",
+    "progress_inference": "Separating background {value}%",
+    "progress_encode": "Exporting PNG {value}%",
+    "unknown_type": "Unknown type",
+    "errors": {
+      "empty_file": "The file is empty. Choose a valid image.",
+      "unsupported_input": "This image type is not supported yet: {type}.",
+      "file_too_large": "The file is too large. Maximum size is {maxSize}.",
+      "too_many_pixels": "The image dimensions are too large. Maximum size is {maxPixels}.",
+      "load_failed": "The image could not be decoded. The file may be damaged or unsupported by this browser.",
+      "canvas_context": "Could not create a Canvas drawing context.",
+      "canvas_export": "Background removal failed. Model assets may have failed to load, or this browser may not support the required capabilities.",
+      "unsupported_output": "This browser cannot export {format}.",
+      "general": "Background removal failed. Please try again."
+    }
+  },
+  "image_crop": {
+    "settings_title": "Image crop",
+    "editor_title": "Crop editor",
+    "drop_title": "Click or drop an image",
+    "drop_hint": "Supports {formats}. All processing stays local.",
+    "drop_action": "Choose image",
+    "input_formats": "Supported formats",
+    "local_note": "All file processing happens locally. Files are not uploaded to any server, and data is cleared when you close the page.",
+    "source_image": "Source image",
+    "crop_title": "Crop area",
+    "crop_x": "X",
+    "crop_y": "Y",
+    "crop_width": "Width",
+    "crop_height": "Height",
+    "reset_crop": "Reset crop",
+    "resize_title": "Output size",
+    "output_width": "Width",
+    "output_height": "Height",
+    "keep_ratio": "Keep ratio",
+    "reset_size": "Reset size",
+    "output_format": "Output format",
+    "quality": "Output quality",
+    "quality_value": "{value}%",
+    "apply": "Generate crop",
+    "processing": "Processing",
+    "download": "Download image",
+    "replace": "Replace image",
+    "output_title": "Output preview",
+    "empty_title": "Waiting for an image",
+    "empty_body": "Upload an image, move the crop frame, or drag its edges and corners to adjust the crop size.",
+    "output_empty": "The cropped image will appear here",
+    "source_size": "Original size",
+    "crop_size": "Crop size",
+    "output_size": "Output size",
+    "file_size": "File size",
+    "duration": "Duration",
+    "duration_value": "{value}ms",
+    "unknown_type": "Unknown type",
+    "resize_handle": "Resize crop area",
+    "errors": {
+      "empty_file": "The file is empty. Choose a valid image.",
+      "unsupported_input": "This image type is not supported yet: {type}.",
+      "file_too_large": "The file is too large. Maximum size is {maxSize}.",
+      "too_many_pixels": "The image dimensions are too large. Maximum size is {maxPixels}.",
+      "load_failed": "The image could not be decoded. The file may be damaged or unsupported by this browser.",
+      "canvas_context": "Could not create a Canvas drawing context.",
+      "canvas_export": "Image export failed. Try another browser.",
+      "unsupported_output": "This browser cannot export {format}.",
+      "invalid_dimensions": "Enter a valid output width and height.",
+      "general": "Image processing failed. Please try again."
+    }
+  },
+  "image_resize": {
+    "settings_title": "Image resize",
+    "editor_title": "Resize preview",
+    "drop_title": "Click or drop an image",
+    "drop_hint": "Supports {formats}. All processing stays local.",
+    "drop_action": "Choose image",
+    "input_formats": "Supported formats",
+    "local_note": "All file processing happens locally. Files are not uploaded to any server, and data is cleared when you close the page.",
+    "source_image": "Source image",
+    "crop_title": "Crop area",
+    "crop_x": "X",
+    "crop_y": "Y",
+    "crop_width": "Width",
+    "crop_height": "Height",
+    "reset_crop": "Reset crop",
+    "resize_title": "Output size",
+    "output_width": "Width",
+    "output_height": "Height",
+    "keep_ratio": "Keep ratio",
+    "reset_size": "Reset size",
+    "output_format": "Output format",
+    "quality": "Output quality",
+    "quality_value": "{value}%",
+    "apply": "Generate resized image",
+    "processing": "Processing",
+    "download": "Download image",
+    "replace": "Replace image",
+    "output_title": "Output preview",
+    "empty_title": "Waiting for an image",
+    "empty_body": "Upload an image and enter a target width or height. The other dimension is calculated from the original ratio.",
+    "output_empty": "The resized image will appear here",
+    "source_size": "Original size",
+    "crop_size": "Crop size",
+    "output_size": "Output size",
+    "file_size": "File size",
+    "duration": "Duration",
+    "duration_value": "{value}ms",
+    "unknown_type": "Unknown type",
+    "resize_handle": "Resize crop area",
+    "errors": {
+      "empty_file": "The file is empty. Choose a valid image.",
+      "unsupported_input": "This image type is not supported yet: {type}.",
+      "file_too_large": "The file is too large. Maximum size is {maxSize}.",
+      "too_many_pixels": "The image dimensions are too large. Maximum size is {maxPixels}.",
+      "load_failed": "The image could not be decoded. The file may be damaged or unsupported by this browser.",
+      "canvas_context": "Could not create a Canvas drawing context.",
+      "canvas_export": "Image export failed. Try another browser.",
+      "unsupported_output": "This browser cannot export {format}.",
+      "invalid_dimensions": "Enter a valid output width and height.",
+      "general": "Image processing failed. Please try again."
+    }
+  },
   "tool_faq": {
     "image-compress": {
       "items": [
@@ -143,6 +296,26 @@
         {
           "question": "Can I download compressed images in bulk?",
           "answer": "Yes. After multiple images finish compressing, you can download files individually or export all results as one ZIP archive."
+        }
+      ]
+    },
+    "image-remove-bg": {
+      "items": [
+        {
+          "question": "Does background removal upload my files?",
+          "answer": "No. Images are processed locally in your browser and are not uploaded to a server. The browser may download open-source model assets the first time you use it."
+        },
+        {
+          "question": "What format is the result?",
+          "answer": "The output is a PNG file with an alpha channel, useful for further editing, design work, or conversion to formats such as WebP."
+        },
+        {
+          "question": "Why is the first run slower?",
+          "answer": "The first run needs to load WASM and ONNX model assets. They are usually cached by the browser, so later runs in the same browser are faster."
+        },
+        {
+          "question": "Can it remove every complex background perfectly?",
+          "answer": "The tool automatically detects the foreground and creates a transparent background, but hair, translucent materials, low-contrast edges, or similar foreground and background colors may still need manual retouching."
         }
       ]
     },
@@ -205,10 +378,54 @@
           "answer": "WebP can use lossy compression or preserve high quality. The quality slider controls the tradeoff between output size and visual quality."
         }
       ]
+    },
+    "image-crop": {
+      "items": [
+        {
+          "question": "Does image crop upload my files?",
+          "answer": "No. Images are decoded, cropped, and exported locally in your browser. Files are not uploaded to a server."
+        },
+        {
+          "question": "Can I drag the crop frame?",
+          "answer": "Yes. You can drag the crop frame to move it, and drag its edges or corners to change its size."
+        },
+        {
+          "question": "Does crop also resize the image?",
+          "answer": "No. The crop tool exports the selected crop area at its crop dimensions. Use Image resize when you need a specific width or height."
+        },
+        {
+          "question": "Can I choose the output format?",
+          "answer": "Yes. You can export JPG, PNG, or WebP. JPG does not support alpha transparency, so transparent areas are filled with white."
+        }
+      ]
+    },
+    "image-resize": {
+      "items": [
+        {
+          "question": "Does image resize upload my files?",
+          "answer": "No. Images are decoded, resized, and exported locally in your browser. Files are not uploaded to a server."
+        },
+        {
+          "question": "Does resizing keep the image ratio?",
+          "answer": "By default, it keeps the original aspect ratio. Entering a width calculates the height, and entering a height calculates the width."
+        },
+        {
+          "question": "Does resize crop the image?",
+          "answer": "No. Image resize scales the full image without cutting edges. Use Image crop when you need to select part of an image."
+        },
+        {
+          "question": "Can I choose the output format?",
+          "answer": "Yes. You can export JPG, PNG, or WebP. JPG does not support alpha transparency, so transparent areas are filled with white."
+        }
+      ]
     }
   },
   "nav": {
+    "brand": "toolgarden",
+    "tld": "xyz",
     "title": "JSON Toolkit",
+    "json_tools_menu": "JSON tools",
+    "image_toolbar": "Image tools",
     "github": "GitHub"
   },
   "footer": {
@@ -216,19 +433,19 @@
   },
   "image_hub": {
     "title": "Image tools",
-    "meta_title": "Online Image Tools - Image Compression, JPG, PNG, and WebP Conversion",
-    "description": "Batch-compress and convert images locally in your browser, with smart compression, JPG, PNG, WebP output, preview comparison, and ZIP batch download.",
+    "meta_title": "Free Online Image Tools - Image Compression, Background Removal, JPG, PNG, and WebP Conversion",
+    "description": "Free online image tools for batch compression, background removal, conversion, cropping, and resizing locally in your browser, with smart compression, transparent PNG, JPG, PNG, WebP output, preview comparison, and ZIP batch download.",
     "all_tools": "Image conversion tools",
     "breadcrumb": "Image tools",
     "privacy_note": "Images are processed locally in your browser and are not uploaded to a server."
   },
   "home": {
     "title": "JSON Toolkit",
-    "meta_title": "Online JSON Toolkit - Format, Convert, Validate, and Decode JWT",
-    "subtitle": "Format, minify, diff, convert, validate, and inspect JSON in your browser. Includes JSON/YAML/XML/CSV/Excel/TypeScript conversion, JSON Schema, JSONPath, JWT tools, plus image compression and conversion to JPG, PNG, and WebP. Your data stays local and is never uploaded.",
-    "featured": "Popular tools",
-    "all_tools": "All tools",
-    "search_placeholder": "Search tools, formats, or tasks...",
+    "meta_title": "Free Online JSON Toolkit - Format, Convert, Validate, and Decode JWT",
+    "subtitle": "Free online tools to format, minify, diff, convert, validate, and inspect JSON in your browser. Includes JSON/YAML/XML/CSV/Excel/TypeScript conversion, JSON Schema, JSONPath, and JWT tools. Image tools now live in the top image toolbar, and your data still stays local.",
+    "featured": "Popular JSON tools",
+    "all_tools": "All JSON tools",
+    "search_placeholder": "Search JSON tools, formats, or tasks...",
     "search_results": "Search results",
     "no_results": "No matching tools",
     "privacy_note": "All processing runs locally in your browser. Input data is not uploaded to a server.",
@@ -237,9 +454,9 @@
       "privacy_q": "Does JSON Toolkit upload my data?",
       "privacy_a": "No. Formatting, conversion, analysis, JWT parsing, and file processing run locally in your browser. The server does not receive your input.",
       "formats_q": "Which JSON-related formats are supported?",
-      "formats_a": "JSON, YAML, XML, CSV, Excel, TypeScript interfaces, JSON Schema, JSONPath, JWT, plus common image compression and JPG/PNG/WebP conversion are supported.",
+      "formats_a": "JSON, YAML, XML, CSV, Excel, TypeScript interfaces, JSON Schema, JSONPath, and JWT are supported. Image compression, background removal, and format conversion are available from the top image toolbar.",
       "free_q": "Are these tools free to use?",
-      "free_a": "Yes. The tools are free, require no account, and the project is open source.",
+      "free_a": "Yes. All tools are free to use online, require no account, and the project is open source.",
       "loose_q": "Does the JSON formatter support loose syntax?",
       "loose_a": "Yes. It accepts common loose input such as unquoted object keys and single-quoted strings for faster debugging."
     }
@@ -260,7 +477,7 @@
   "tools": {
     "json-format": {
       "name": "JSON Formatter",
-      "description": "Format, minify, and validate JSON with tree view and node operations",
+      "description": "Free online JSON formatter to format, minify, and validate JSON with tree view and node operations",
       "input_title": "Input JSON",
       "output_title": "Output",
       "format": "Format",
@@ -280,7 +497,7 @@
     },
     "json-escape": {
       "name": "JSON Escape",
-      "description": "Minify and escape JSON for embedding in strings, or unescape back",
+      "description": "Free online JSON escape tool to minify and escape JSON for embedding in strings, or unescape back",
       "input_title": "Input",
       "output_title": "Output",
       "escape": "Escape",
@@ -289,7 +506,7 @@
     },
     "json-repair": {
       "name": "JSON Repair / Clean",
-      "description": "Fix comments, trailing commas, single quotes, unquoted keys, and other common JSON issues",
+      "description": "Free online JSON repair tool for comments, trailing commas, single quotes, unquoted keys, and other common JSON issues",
       "input_title": "JSON to repair",
       "output_title": "Repaired output",
       "repair": "Repair & format",
@@ -298,7 +515,7 @@
     },
     "json-diff": {
       "name": "JSON Diff",
-      "description": "Visually compare two JSON documents, highlighting additions, removals, and changes",
+      "description": "Free online JSON diff tool to visually compare two JSON documents, highlighting additions, removals, and changes",
       "left_title": "Left JSON (original)",
       "right_title": "Right JSON (new)",
       "compare": "Compare",
@@ -313,7 +530,7 @@
     },
     "json-yaml": {
       "name": "JSON ↔ YAML",
-      "description": "Convert between JSON and YAML formats",
+      "description": "Free online JSON to YAML and YAML to JSON converter",
       "to_yaml": "→ YAML",
       "to_json": "→ JSON",
       "json_placeholder": "Paste a JSON object, such as a key/value config",
@@ -321,7 +538,7 @@
     },
     "json-xml": {
       "name": "JSON ↔ XML",
-      "description": "Convert between JSON and XML formats",
+      "description": "Free online JSON to XML and XML to JSON converter",
       "to_xml": "→ XML",
       "to_json": "→ JSON",
       "json_placeholder": "Paste a JSON object, such as name and age fields",
@@ -329,7 +546,7 @@
     },
     "json-to-csv": {
       "name": "JSON → CSV",
-      "description": "Export a JSON array as a CSV file",
+      "description": "Free online tool to export a JSON array as a CSV file",
       "input_title": "Input JSON Array",
       "output_title": "CSV Output",
       "convert": "Convert to CSV",
@@ -339,7 +556,7 @@
     },
     "json-to-excel": {
       "name": "JSON → Excel",
-      "description": "Export a JSON array as an Excel (.xlsx) file",
+      "description": "Free online tool to export a JSON array as an Excel (.xlsx) file",
       "input_title": "Input JSON Array",
       "preview_title": "Preview",
       "download_excel": "Download Excel",
@@ -350,7 +567,7 @@
     },
     "excel-to-json": {
       "name": "Excel → JSON",
-      "description": "Read an Excel (.xlsx/.xls) file and convert it to a JSON array",
+      "description": "Free online tool to read an Excel (.xlsx/.xls) file and convert it to a JSON array",
       "upload_title": "Upload Excel File",
       "output_title": "JSON Output",
       "drop_title": "Click or drag to upload",
@@ -359,7 +576,7 @@
     },
     "json-to-ts": {
       "name": "JSON → TypeScript",
-      "description": "Infer and generate TypeScript interface types from JSON",
+      "description": "Free online tool to infer and generate TypeScript interface types from JSON",
       "input_title": "Input JSON",
       "output_title": "TypeScript Types",
       "placeholder": "Paste a JSON sample, such as id and name fields",
@@ -367,7 +584,7 @@
     },
     "json-flatten": {
       "name": "JSON Flatten / Unflatten",
-      "description": "Flatten nested JSON into path keys, or restore nested structures from path keys",
+      "description": "Free online tool to flatten nested JSON into path keys, or restore nested structures from path keys",
       "input_title": "Input JSON",
       "output_title": "Output",
       "flatten": "Flatten",
@@ -378,23 +595,35 @@
     },
     "image-to-jpg": {
       "name": "Image to JPG",
-      "description": "Convert PNG, WebP, GIF, BMP, SVG, AVIF, and other images to JPG locally in your browser"
+      "description": "Free online tool to convert PNG, WebP, GIF, BMP, SVG, AVIF, and other images to JPG locally in your browser"
     },
     "image-compress": {
       "name": "Image Compressor",
-      "description": "Compress JPG, PNG, WebP, and other images locally in your browser, preserving the original format by default with an optional WebP output mode"
+      "description": "Free online image compressor for JPG, PNG, WebP, and other images locally in your browser, preserving the original format by default with optional WebP output"
+    },
+    "image-remove-bg": {
+      "name": "Remove image background",
+      "description": "Free online background remover that processes images locally in your browser with an open-source model and exports a transparent PNG"
     },
     "image-to-png": {
       "name": "Image to PNG",
-      "description": "Convert JPG, WebP, GIF, BMP, SVG, AVIF, and other images to PNG locally in your browser"
+      "description": "Free online tool to convert JPG, WebP, GIF, BMP, SVG, AVIF, and other images to PNG locally in your browser"
     },
     "image-to-webp": {
       "name": "Image to WebP",
-      "description": "Convert JPG, PNG, GIF, BMP, SVG, AVIF, and other images to WebP locally in your browser"
+      "description": "Free online tool to convert JPG, PNG, GIF, BMP, SVG, AVIF, and other images to WebP locally in your browser"
+    },
+    "image-crop": {
+      "name": "Image crop",
+      "description": "Free online image crop tool that runs locally in your browser with a draggable crop frame"
+    },
+    "image-resize": {
+      "name": "Image resize",
+      "description": "Free online image resize tool that runs locally in your browser by entering a target width or height while keeping the original ratio"
     },
     "json-schema": {
       "name": "JSON Schema Generator",
-      "description": "Automatically infer a JSON Schema from a sample JSON document",
+      "description": "Free online JSON Schema generator that automatically infers a schema from a sample JSON document",
       "input_title": "Input JSON Sample",
       "output_title": "JSON Schema",
       "placeholder": "Paste a JSON sample, such as id and name fields",
@@ -402,7 +631,7 @@
     },
     "json-schema-validate": {
       "name": "JSON Schema Validator",
-      "description": "Validate JSON data against a JSON Schema and show error paths and reasons",
+      "description": "Free online JSON Schema validator that checks JSON data and shows error paths and reasons",
       "json_title": "JSON Data",
       "schema_title": "JSON Schema",
       "result_title": "Validation Result",
@@ -415,7 +644,7 @@
     },
     "json-path": {
       "name": "JSONPath Query",
-      "description": "Extract nested fields using JSONPath expressions",
+      "description": "Free online JSONPath query tool to extract nested fields using JSONPath expressions",
       "input_title": "Input JSON",
       "path_title": "JSONPath Expression",
       "result_title": "Query Result",
@@ -428,7 +657,7 @@
     },
     "json-stats": {
       "name": "JSON Stats",
-      "description": "Analyze JSON structure: nesting depth, key count, type distribution, size comparison",
+      "description": "Free online JSON statistics tool to analyze nesting depth, key count, type distribution, and size comparison",
       "input_title": "Input JSON",
       "raw_size": "Raw size",
       "max_depth": "Max depth",
@@ -442,7 +671,7 @@
     },
     "jwt": {
       "name": "JWT Parser",
-      "description": "Decode JWT tokens, inspect Header / Payload, and verify HS256 signatures",
+      "description": "Free online JWT parser to decode tokens, inspect Header / Payload, and verify HS256 signatures",
       "token_title": "JWT Token",
       "decode": "Decode",
       "verify_title": "HS256 Signature Verification",

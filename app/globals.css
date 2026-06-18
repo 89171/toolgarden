@@ -26,6 +26,10 @@
   --content-muted:     #6b7280;   /* gray-500，辅助说明 */
   --content-faint:     #9ca3af;   /* gray-400，占位符 / 注释 */
 
+  /* Brand */
+  --brand-dot:         #f97316;
+  --brand-tld:         #94a3b8;
+
   /* Action — 主操作按钮 */
   --action:            #1f2937;   /* gray-800 */
   --action-hover:      #374151;   /* gray-700 */
@@ -68,6 +72,9 @@
     --content-secondary: #e5e7eb;
     --content-muted:     #9ca3af;
     --content-faint:     #6b7280;
+
+    --brand-dot:         #fb923c;
+    --brand-tld:         #94a3b8;
 
     --action:            #e5e7eb;
     --action-hover:      #f3f4f6;
@@ -116,6 +123,10 @@
   --color-content-secondary:   var(--content-secondary);
   --color-content-muted:       var(--content-muted);
   --color-content-faint:       var(--content-faint);
+
+  /* Brand */
+  --color-brand-dot:           var(--brand-dot);
+  --color-brand-tld:           var(--brand-tld);
 
   /* Action */
   --color-action:              var(--action);

@@ -115,6 +115,15 @@ export const toolRegistry: ToolMeta[] = [
     featured: true,
   },
   {
+    id: 'image-remove-bg',
+    name: '图片去背景',
+    description: '在浏览器本地使用开源模型移除图片背景，导出透明 PNG',
+    path: '/image/remove-bg',
+    icon: 'BG',
+    category: 'convert',
+    featured: true,
+  },
+  {
     id: 'image-to-jpg',
     name: '图片转 JPG',
     description: '在浏览器本地将 PNG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 JPG',
@@ -136,6 +145,22 @@ export const toolRegistry: ToolMeta[] = [
     description: '在浏览器本地将 JPG、PNG、GIF、BMP、SVG、AVIF 等图片转换为 WebP',
     path: '/image/to-webp',
     icon: 'WEB',
+    category: 'convert',
+  },
+  {
+    id: 'image-crop',
+    name: '图片裁剪',
+    description: '在浏览器本地拖拽裁剪框，移动或调整裁剪区域后导出图片',
+    path: '/image/crop',
+    icon: 'CUT',
+    category: 'convert',
+  },
+  {
+    id: 'image-resize',
+    name: '图片尺寸修改',
+    description: '在浏览器本地按指定宽度或高度等比例缩放图片并导出',
+    path: '/image/resize',
+    icon: 'SIZ',
     category: 'convert',
   },
 
@@ -200,6 +225,11 @@ export function getImageTools(): ToolMeta[] {
   return toolRegistry.filter((tool) => tool.path.startsWith('/image/'));
 }
 
+/** 获取 JSON 工具集合，不包含图片处理工具 */
+export function getJsonTools(): ToolMeta[] {
+  return toolRegistry.filter((tool) => !tool.path.startsWith('/image/'));
+}
+
 /** 按 id 获取单个工具元数据 */
 export function getToolById(id: string): ToolMeta | undefined {
   return toolRegistry.find((t) => t.id === id);
@@ -216,6 +246,16 @@ export function getToolGroups(): ToolGroup[] {
     category,
     tools: getToolsByCategory(category),
   }));
+}
+
+/** 首页与顶部 JSON 菜单使用的 JSON 工具分组 */
+export function getJsonToolGroups(): ToolGroup[] {
+  return getAllCategories()
+    .map((category) => ({
+      category,
+      tools: getToolsByCategory(category).filter((tool) => !tool.path.startsWith('/image/')),
+    }))
+    .filter((group) => group.tools.length > 0);
 }
 
 /** 生成带 locale 前缀的工具路径 */

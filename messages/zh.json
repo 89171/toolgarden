@@ -125,6 +125,159 @@
       "general": "压缩失败，请重试。"
     }
   },
+  "image_remove_bg": {
+    "settings_title": "背景移除",
+    "results_title": "去背景结果",
+    "model_label": "本地模型",
+    "model_title": "导出透明 PNG",
+    "model_description": "使用浏览器中的开源图像分割模型识别主体并移除背景。首次运行需要下载模型资源，之后通常会被浏览器缓存。",
+    "drop_title": "点击或拖拽图片去背景",
+    "drop_hint": "支持 {formats}，输出为透明 PNG",
+    "drop_action": "选择图片",
+    "input_formats": "支持格式",
+    "selected_file": "当前文件",
+    "source_size": "原图大小",
+    "local_note": "所有文件处理都在本地完成，文件不会上传到任何服务器，关闭页面后，数据即被清除。",
+    "remove_action": "移除背景",
+    "processing": "处理中",
+    "download": "下载 PNG",
+    "empty_title": "等待图片输入",
+    "empty_body": "上传一张图片后点击移除背景，结果会以透明 PNG 显示在右侧。",
+    "source": "原图",
+    "output": "输出",
+    "output_empty": "移除背景后显示透明 PNG",
+    "dimensions": "尺寸",
+    "output_size": "输出大小",
+    "duration": "耗时",
+    "duration_value": "{value}ms",
+    "preview_title": "图片预览",
+    "preview_open_source": "预览原图",
+    "preview_open_output": "预览输出图",
+    "preview_source": "原图",
+    "preview_output": "输出图",
+    "preview_close": "关闭预览",
+    "progress_prepare": "准备模型",
+    "progress_model": "模型资源 {value}%",
+    "progress_compute": "正在分析主体 {value}%",
+    "progress_inference": "正在分离背景 {value}%",
+    "progress_encode": "正在导出 PNG {value}%",
+    "unknown_type": "未知类型",
+    "errors": {
+      "empty_file": "文件为空，请选择有效图片。",
+      "unsupported_input": "暂不支持这种图片类型：{type}。",
+      "file_too_large": "文件过大，最大支持 {maxSize}。",
+      "too_many_pixels": "图片尺寸过大，最大支持 {maxPixels}。",
+      "load_failed": "图片解码失败，文件可能已损坏或当前浏览器不支持该格式。",
+      "canvas_context": "无法创建 Canvas 绘图上下文。",
+      "canvas_export": "背景移除失败，模型资源可能加载失败或当前浏览器不支持所需能力。",
+      "unsupported_output": "当前浏览器不支持导出 {format}。",
+      "general": "背景移除失败，请重试。"
+    }
+  },
+  "image_crop": {
+    "settings_title": "图片裁剪",
+    "editor_title": "裁剪编辑",
+    "drop_title": "点击或拖拽图片上传",
+    "drop_hint": "支持 {formats}，所有处理都在本地完成",
+    "drop_action": "选择图片",
+    "input_formats": "支持格式",
+    "local_note": "所有文件处理都在本地完成，文件不会上传到任何服务器，关闭页面后，数据即被清除。",
+    "source_image": "源图片",
+    "crop_title": "裁剪区域",
+    "crop_x": "X",
+    "crop_y": "Y",
+    "crop_width": "宽",
+    "crop_height": "高",
+    "reset_crop": "重置裁剪",
+    "resize_title": "输出尺寸",
+    "output_width": "宽度",
+    "output_height": "高度",
+    "keep_ratio": "保持比例",
+    "reset_size": "重置尺寸",
+    "output_format": "输出格式",
+    "quality": "输出质量",
+    "quality_value": "{value}%",
+    "apply": "生成裁剪图",
+    "processing": "处理中",
+    "download": "下载图片",
+    "replace": "更换图片",
+    "output_title": "输出预览",
+    "empty_title": "等待图片输入",
+    "empty_body": "上传图片后可拖动裁剪框移动区域，也可拖拽边缘和四角改变裁剪尺寸。",
+    "output_empty": "裁剪后的图片会显示在这里",
+    "source_size": "原始尺寸",
+    "crop_size": "裁剪尺寸",
+    "output_size": "输出尺寸",
+    "file_size": "文件大小",
+    "duration": "耗时",
+    "duration_value": "{value}ms",
+    "unknown_type": "未知类型",
+    "resize_handle": "调整裁剪区域",
+    "errors": {
+      "empty_file": "文件为空，请选择有效图片。",
+      "unsupported_input": "暂不支持这种图片类型：{type}。",
+      "file_too_large": "文件过大，最大支持 {maxSize}。",
+      "too_many_pixels": "图片尺寸过大，最大支持 {maxPixels}。",
+      "load_failed": "图片解码失败，文件可能已损坏或当前浏览器不支持该格式。",
+      "canvas_context": "无法创建 Canvas 绘图上下文。",
+      "canvas_export": "图片导出失败，请换一个浏览器重试。",
+      "unsupported_output": "当前浏览器不支持导出 {format}。",
+      "invalid_dimensions": "请输入有效的输出宽度和高度。",
+      "general": "图片处理失败，请重试。"
+    }
+  },
+  "image_resize": {
+    "settings_title": "尺寸修改",
+    "editor_title": "尺寸预览",
+    "drop_title": "点击或拖拽图片上传",
+    "drop_hint": "支持 {formats}，所有处理都在本地完成",
+    "drop_action": "选择图片",
+    "input_formats": "支持格式",
+    "local_note": "所有文件处理都在本地完成，文件不会上传到任何服务器，关闭页面后，数据即被清除。",
+    "source_image": "源图片",
+    "crop_title": "裁剪区域",
+    "crop_x": "X",
+    "crop_y": "Y",
+    "crop_width": "宽",
+    "crop_height": "高",
+    "reset_crop": "重置裁剪",
+    "resize_title": "输出尺寸",
+    "output_width": "宽度",
+    "output_height": "高度",
+    "keep_ratio": "保持比例",
+    "reset_size": "重置尺寸",
+    "output_format": "输出格式",
+    "quality": "输出质量",
+    "quality_value": "{value}%",
+    "apply": "生成缩放图",
+    "processing": "处理中",
+    "download": "下载图片",
+    "replace": "更换图片",
+    "output_title": "输出预览",
+    "empty_title": "等待图片输入",
+    "empty_body": "上传图片后输入目标宽度或高度，另一个尺寸会按原图比例自动计算。",
+    "output_empty": "缩放后的图片会显示在这里",
+    "source_size": "原始尺寸",
+    "crop_size": "裁剪尺寸",
+    "output_size": "输出尺寸",
+    "file_size": "文件大小",
+    "duration": "耗时",
+    "duration_value": "{value}ms",
+    "unknown_type": "未知类型",
+    "resize_handle": "调整裁剪区域",
+    "errors": {
+      "empty_file": "文件为空，请选择有效图片。",
+      "unsupported_input": "暂不支持这种图片类型：{type}。",
+      "file_too_large": "文件过大，最大支持 {maxSize}。",
+      "too_many_pixels": "图片尺寸过大，最大支持 {maxPixels}。",
+      "load_failed": "图片解码失败，文件可能已损坏或当前浏览器不支持该格式。",
+      "canvas_context": "无法创建 Canvas 绘图上下文。",
+      "canvas_export": "图片导出失败，请换一个浏览器重试。",
+      "unsupported_output": "当前浏览器不支持导出 {format}。",
+      "invalid_dimensions": "请输入有效的输出宽度和高度。",
+      "general": "图片处理失败，请重试。"
+    }
+  },
   "tool_faq": {
     "image-compress": {
       "items": [
@@ -143,6 +296,26 @@
         {
           "question": "图片压缩支持批量下载吗？",
           "answer": "支持。多张图片压缩完成后，可以逐个下载，也可以一次下载 ZIP 压缩包。"
+        }
+      ]
+    },
+    "image-remove-bg": {
+      "items": [
+        {
+          "question": "图片去背景会上传文件吗？",
+          "answer": "不会。图片会在浏览器本地处理，文件不会上传到服务器。首次使用时浏览器可能会下载开源模型资源。"
+        },
+        {
+          "question": "去背景结果是什么格式？",
+          "answer": "输出为带透明通道的 PNG 文件，适合继续编辑、放到设计稿中，或再转换为 WebP 等格式。"
+        },
+        {
+          "question": "为什么第一次处理比较慢？",
+          "answer": "第一次需要加载 WASM 和 ONNX 模型资源，之后通常会被浏览器缓存。同一浏览器再次使用会更快。"
+        },
+        {
+          "question": "复杂背景能完全移除吗？",
+          "answer": "工具会自动识别主体并生成透明背景，但发丝、半透明材质、低对比边缘或主体与背景过于相近时，可能需要后续手动修饰。"
         }
       ]
     },
@@ -205,10 +378,54 @@
           "answer": "WebP 可以有损压缩，也可以保留较高质量。页面提供质量滑块，用于控制输出体积和视觉质量。"
         }
       ]
+    },
+    "image-crop": {
+      "items": [
+        {
+          "question": "图片裁剪会上传文件吗？",
+          "answer": "不会。图片会在浏览器本地解码、裁剪和导出，文件不会上传到服务器。"
+        },
+        {
+          "question": "裁剪框可以拖拽调整吗？",
+          "answer": "可以。可以拖动裁剪框移动区域，也可以拖拽边缘和四角改变裁剪尺寸。"
+        },
+        {
+          "question": "裁剪后会改变图片尺寸吗？",
+          "answer": "裁剪页只按裁剪区域导出，不额外缩放；如果需要指定宽高，请使用图片尺寸修改工具。"
+        },
+        {
+          "question": "可以选择导出格式吗？",
+          "answer": "可以导出为 JPG、PNG 或 WebP。JPG 不支持透明通道，透明区域会填充为白色。"
+        }
+      ]
+    },
+    "image-resize": {
+      "items": [
+        {
+          "question": "图片尺寸修改会上传文件吗？",
+          "answer": "不会。图片会在浏览器本地解码、缩放和导出，文件不会上传到服务器。"
+        },
+        {
+          "question": "修改尺寸会保持图片比例吗？",
+          "answer": "默认保持原图宽高比例。输入宽度会自动计算高度，输入高度会自动计算宽度。"
+        },
+        {
+          "question": "尺寸修改会裁剪图片吗？",
+          "answer": "不会。尺寸修改会缩放整张图片，不裁掉边缘；如果需要截取区域，请使用图片裁剪工具。"
+        },
+        {
+          "question": "可以选择导出格式吗？",
+          "answer": "可以导出为 JPG、PNG 或 WebP。JPG 不支持透明通道，透明区域会填充为白色。"
+        }
+      ]
     }
   },
   "nav": {
+    "brand": "toolgarden",
+    "tld": "xyz",
     "title": "JSON 工具包",
+    "json_tools_menu": "JSON工具",
+    "image_toolbar": "图片工具",
     "github": "GitHub"
   },
   "footer": {
@@ -216,19 +433,19 @@
   },
   "image_hub": {
     "title": "图片工具",
-    "meta_title": "在线图片工具 - 图片压缩、JPG、PNG、WebP 转换",
-    "description": "在浏览器本地批量压缩和转换图片，支持智能压缩、JPG、PNG、WebP 输出、预览对比和 ZIP 批量下载。",
+    "meta_title": "免费在线图片工具 - 图片压缩、去背景、JPG、PNG、WebP 转换",
+    "description": "免费在线批量压缩、去背景、转换、裁剪和修改图片尺寸，所有处理都在浏览器本地完成，支持智能压缩、透明 PNG、JPG、PNG、WebP 输出、预览对比和 ZIP 批量下载。",
     "all_tools": "图片转换工具",
     "breadcrumb": "图片工具",
     "privacy_note": "图片仅在本地浏览器处理，不会上传到服务器。"
   },
   "home": {
     "title": "JSON 工具包",
-    "meta_title": "在线 JSON 工具包 - 格式化、转换、校验、JWT 解析",
-    "subtitle": "在浏览器中完成 JSON 格式化、压缩、对比，JSON/YAML/XML/CSV/Excel/TypeScript 转换，JSON Schema、JSONPath、JWT 解析，以及图片压缩和 JPG/PNG/WebP 转换。数据只在本地处理，无需上传。",
-    "featured": "常用工具",
-    "all_tools": "全部工具",
-    "search_placeholder": "搜索工具、格式或用途...",
+    "meta_title": "免费在线 JSON 工具包 - 格式化、转换、校验、JWT 解析",
+    "subtitle": "免费在线完成 JSON 格式化、压缩、对比，JSON/YAML/XML/CSV/Excel/TypeScript 转换，JSON Schema、JSONPath 与 JWT 解析。图片处理工具已整理到顶部图片工具栏，数据仍只在本地处理，无需上传。",
+    "featured": "常用 JSON 工具",
+    "all_tools": "全部 JSON 工具",
+    "search_placeholder": "搜索 JSON 工具、格式或用途...",
     "search_results": "搜索结果",
     "no_results": "没有匹配的工具",
     "privacy_note": "所有处理都在浏览器本地完成，输入内容不会上传到服务器。",
@@ -237,9 +454,9 @@
       "privacy_q": "这个 JSON 工具包会上传我的数据吗？",
       "privacy_a": "不会。格式化、转换、统计、JWT 解析和文件处理都在浏览器本地执行，服务器不会接收你的输入内容。",
       "formats_q": "支持哪些 JSON 相关格式？",
-      "formats_a": "支持 JSON、YAML、XML、CSV、Excel、TypeScript interface、JSON Schema、JSONPath、JWT，以及常见图片压缩和 JPG/PNG/WebP 转换。",
+      "formats_a": "支持 JSON、YAML、XML、CSV、Excel、TypeScript interface、JSON Schema、JSONPath 与 JWT。图片压缩、去背景和格式转换可从顶部图片工具栏进入。",
       "free_q": "这些工具可以免费使用吗？",
-      "free_a": "可以。工具无需账号即可使用，项目也是开源的。",
+      "free_a": "可以。所有工具都可以免费在线使用，无需账号，项目也是开源的。",
       "loose_q": "JSON 格式化支持宽松语法吗？",
       "loose_a": "支持常见的宽松输入，例如未加引号的 key 和单引号字符串，方便快速整理开发调试数据。"
     }
@@ -260,7 +477,7 @@
   "tools": {
     "json-format": {
       "name": "JSON 格式化",
-      "description": "格式化、压缩、验证 JSON，支持树形展示与节点操作",
+      "description": "免费在线格式化、压缩、验证 JSON，支持树形展示与节点操作",
       "input_title": "输入 JSON",
       "output_title": "输出结果",
       "format": "格式化",
@@ -280,7 +497,7 @@
     },
     "json-escape": {
       "name": "JSON 压缩转义",
-      "description": "压缩 JSON 并转义特殊字符，反转义还原可读格式",
+      "description": "免费在线压缩 JSON 并转义特殊字符，反转义还原可读格式",
       "input_title": "输入",
       "output_title": "输出",
       "escape": "压缩转义",
@@ -289,7 +506,7 @@
     },
     "json-repair": {
       "name": "JSON 修复清洗",
-      "description": "修复注释、尾逗号、单引号、未加引号 key 等常见 JSON 问题",
+      "description": "免费在线修复注释、尾逗号、单引号、未加引号 key 等常见 JSON 问题",
       "input_title": "待修复 JSON",
       "output_title": "修复结果",
       "repair": "修复并格式化",
@@ -298,7 +515,7 @@
     },
     "json-diff": {
       "name": "JSON 对比",
-      "description": "可视化对比两份 JSON 的差异，高亮增删改",
+      "description": "免费在线可视化对比两份 JSON 的差异，高亮增删改",
       "left_title": "左侧 JSON（原始）",
       "right_title": "右侧 JSON（新版）",
       "compare": "开始对比",
@@ -313,7 +530,7 @@
     },
     "json-yaml": {
       "name": "JSON ↔ YAML",
-      "description": "JSON 与 YAML 格式双向互转",
+      "description": "免费在线完成 JSON 与 YAML 格式双向互转",
       "to_yaml": "→ YAML",
       "to_json": "→ JSON",
       "json_placeholder": "粘贴 JSON 对象，例如 key/value 配置",
@@ -321,7 +538,7 @@
     },
     "json-xml": {
       "name": "JSON ↔ XML",
-      "description": "JSON 与 XML 格式双向互转",
+      "description": "免费在线完成 JSON 与 XML 格式双向互转",
       "to_xml": "→ XML",
       "to_json": "→ JSON",
       "json_placeholder": "粘贴 JSON 对象，例如姓名和年龄字段",
@@ -329,7 +546,7 @@
     },
     "json-to-csv": {
       "name": "JSON → CSV",
-      "description": "将 JSON 数组导出为 CSV 文件",
+      "description": "免费在线将 JSON 数组导出为 CSV 文件",
       "input_title": "输入 JSON 数组",
       "output_title": "CSV 输出",
       "convert": "转换为 CSV",
@@ -339,7 +556,7 @@
     },
     "json-to-excel": {
       "name": "JSON → Excel",
-      "description": "将 JSON 数组导出为 Excel (.xlsx) 文件",
+      "description": "免费在线将 JSON 数组导出为 Excel (.xlsx) 文件",
       "input_title": "输入 JSON 数组",
       "preview_title": "预览",
       "download_excel": "下载 Excel",
@@ -350,7 +567,7 @@
     },
     "excel-to-json": {
       "name": "Excel → JSON",
-      "description": "读取 Excel (.xlsx/.xls) 文件，转换为 JSON 数组",
+      "description": "免费在线读取 Excel (.xlsx/.xls) 文件，转换为 JSON 数组",
       "upload_title": "上传 Excel 文件",
       "output_title": "JSON 输出",
       "drop_title": "点击或拖拽上传",
@@ -359,7 +576,7 @@
     },
     "json-to-ts": {
       "name": "JSON → TypeScript",
-      "description": "从 JSON 自动推断并生成 TypeScript interface 类型",
+      "description": "免费在线从 JSON 自动推断并生成 TypeScript interface 类型",
       "input_title": "输入 JSON",
       "output_title": "TypeScript 类型",
       "placeholder": "粘贴 JSON 样本，例如 id 和 name 字段",
@@ -367,7 +584,7 @@
     },
     "json-flatten": {
       "name": "JSON Flatten / Unflatten",
-      "description": "将嵌套 JSON 平铺为路径键，或从路径键还原嵌套结构",
+      "description": "免费在线将嵌套 JSON 平铺为路径键，或从路径键还原嵌套结构",
       "input_title": "输入 JSON",
       "output_title": "输出结果",
       "flatten": "Flatten",
@@ -378,23 +595,35 @@
     },
     "image-to-jpg": {
       "name": "图片转 JPG",
-      "description": "在浏览器本地将 PNG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 JPG"
+      "description": "免费在线将 PNG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 JPG，处理过程在浏览器本地完成"
     },
     "image-compress": {
       "name": "图片压缩",
-      "description": "在浏览器本地智能压缩 JPG、PNG、WebP 等图片，默认保持原格式，也可选择输出 WebP"
+      "description": "免费在线智能压缩 JPG、PNG、WebP 等图片，默认保持原格式，也可选择输出 WebP"
+    },
+    "image-remove-bg": {
+      "name": "图片去背景",
+      "description": "免费在线使用开源模型移除图片背景，在浏览器本地导出透明 PNG"
     },
     "image-to-png": {
       "name": "图片转 PNG",
-      "description": "在浏览器本地将 JPG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 PNG"
+      "description": "免费在线将 JPG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 PNG，处理过程在浏览器本地完成"
     },
     "image-to-webp": {
       "name": "图片转 WebP",
-      "description": "在浏览器本地将 JPG、PNG、GIF、BMP、SVG、AVIF 等图片转换为 WebP"
+      "description": "免费在线将 JPG、PNG、GIF、BMP、SVG、AVIF 等图片转换为 WebP，处理过程在浏览器本地完成"
+    },
+    "image-crop": {
+      "name": "图片裁剪",
+      "description": "免费在线拖拽裁剪框，移动或调整裁剪区域后导出图片"
+    },
+    "image-resize": {
+      "name": "图片尺寸修改",
+      "description": "免费在线按指定宽度或高度等比例缩放图片并导出"
     },
     "json-schema": {
       "name": "JSON Schema 生成",
-      "description": "从 JSON 样本自动推断生成 JSON Schema 定义",
+      "description": "免费在线从 JSON 样本自动推断生成 JSON Schema 定义",
       "input_title": "输入 JSON 样本",
       "output_title": "JSON Schema",
       "placeholder": "粘贴 JSON 样本，例如 id 和 name 字段",
@@ -402,7 +631,7 @@
     },
     "json-schema-validate": {
       "name": "JSON Schema 校验",
-      "description": "使用 JSON Schema 校验 JSON 数据，输出错误路径和原因",
+      "description": "免费在线使用 JSON Schema 校验 JSON 数据，输出错误路径和原因",
       "json_title": "JSON 数据",
       "schema_title": "JSON Schema",
       "result_title": "校验结果",
@@ -415,7 +644,7 @@
     },
     "json-path": {
       "name": "JSONPath 查询",
-      "description": "使用 JSONPath 表达式精准提取嵌套字段",
+      "description": "免费在线使用 JSONPath 表达式精准提取嵌套字段",
       "input_title": "输入 JSON",
       "path_title": "JSONPath 表达式",
       "result_title": "查询结果",
@@ -428,7 +657,7 @@
     },
     "json-stats": {
       "name": "JSON 统计分析",
-      "description": "分析 JSON 结构：嵌套层级、Key 数量、类型分布、体积对比",
+      "description": "免费在线分析 JSON 结构：嵌套层级、Key 数量、类型分布、体积对比",
       "input_title": "输入 JSON",
       "raw_size": "原始体积",
       "max_depth": "最大嵌套层级",
@@ -442,7 +671,7 @@
     },
     "jwt": {
       "name": "JWT 解析",
-      "description": "解码 JWT Token，查看 Header / Payload，支持 HS256 签名验证",
+      "description": "免费在线解码 JWT Token，查看 Header / Payload，支持 HS256 签名验证",
       "token_title": "JWT Token",
       "decode": "解码",
       "verify_title": "HS256 签名验证",

@@ -2,7 +2,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { ToolDirectory } from '@/components/ToolDirectory';
 import type { ToolCardData } from '@/components/ToolDirectory';
-import { getToolGroups } from '@/lib/tools/registry';
+import { getJsonToolGroups, getJsonTools } from '@/lib/tools/registry';
 import {
   createFaqJsonLd,
   createToolItemListJsonLd,
@@ -20,9 +20,11 @@ export default async function HomePage({
   const { locale } = await params;
   const normalizedLocale = normalizeLocale(locale);
   const m = getLocaleMessages(normalizedLocale);
-  const tools = getLocalizedToolCards(normalizedLocale);
-  const toolById = new Map(tools.map((tool) => [tool.id, tool]));
-  const groups = getToolGroups().map((group) => ({
+  const localizedTools = getLocalizedToolCards(normalizedLocale);
+  const jsonToolIds = new Set(getJsonTools().map((tool) => tool.id));
+  const tools = localizedTools.filter((tool) => jsonToolIds.has(tool.id));
+  const toolById = new Map(localizedTools.map((tool) => [tool.id, tool]));
+  const groups = getJsonToolGroups().map((group) => ({
     category: group.category,
     label: m.categories[group.category],
     tools: group.tools
