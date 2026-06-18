@@ -9,11 +9,10 @@ const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin']
 export default function RootNotFound() {
   return (
     <html lang="zh">
-      <head>
-        <BaiduAnalytics />
-      </head>
+      <head />
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <NotFoundContent locale="zh" />
+        <BaiduAnalytics />
       </body>
     </html>
   );

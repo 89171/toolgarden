@@ -16,6 +16,197 @@
     "error_placeholder": "Enter JSON to start",
     "download_json": "Download JSON"
   },
+  "image_converter": {
+    "settings_title": "Image conversion",
+    "results_title": "Converted images",
+    "drop_title": "Click or drag images here",
+    "drop_hint": "Supports {formats}, exports as {target}",
+    "drop_action": "Choose images",
+    "format_route": "Format route",
+    "input_formats": "Input formats",
+    "output_format": "Output format",
+    "local_worker_note": "Local Worker first. Files are not uploaded.",
+    "selected_count": "{count} files selected",
+    "ready_count": "{count} results ready",
+    "summary_files": "Files",
+    "summary_ready": "Done",
+    "summary_target": "Target",
+    "quality": "Output quality",
+    "quality_value": "{value}%",
+    "quality_note": "Higher quality usually creates a larger file",
+    "jpeg_background": "Transparent areas are filled with white",
+    "convert_again": "Convert again",
+    "download_all": "Download all",
+    "download_zip": "Batch download ZIP",
+    "empty_results": "Upload images to see converted results here",
+    "empty_title": "Waiting for images",
+    "empty_body": "Batch upload is supported. Download files one by one or all converted results at once.",
+    "source": "Source",
+    "output": "Output",
+    "preview_title": "Image preview",
+    "preview_open_source": "Preview source image",
+    "preview_open_output": "Preview output image",
+    "preview_source": "Source",
+    "preview_output": "Output",
+    "preview_close": "Close preview",
+    "target_format": "Target format",
+    "output_size": "Output size",
+    "duration": "Time",
+    "duration_value": "{value}ms",
+    "status_waiting": "Waiting",
+    "status_converting": "Converting",
+    "status_done": "Done",
+    "status_error": "Failed",
+    "unknown_type": "unknown type",
+    "errors": {
+      "empty_file": "The file is empty. Choose a valid image.",
+      "unsupported_input": "This image type is not supported yet: {type}.",
+      "file_too_large": "The file is too large. Maximum size is {maxSize}.",
+      "too_many_pixels": "The image dimensions are too large. Maximum size is {maxPixels}.",
+      "load_failed": "The image could not be decoded. The file may be corrupted or unsupported by this browser.",
+      "canvas_context": "Could not create a Canvas drawing context.",
+      "canvas_export": "Image export failed. Try another browser.",
+      "unsupported_output": "This browser cannot export {format}.",
+      "general": "Conversion failed. Please try again."
+    }
+  },
+  "image_compressor": {
+    "settings_title": "Smart compression",
+    "results_title": "Compressed images",
+    "mode_label": "Compression strategy",
+    "mode_title": "Keep the original format by default",
+    "mode_description": "When WebP is off, JPG exports as JPG, PNG exports as PNG, and WebP exports as WebP. The original file is kept when no safe compression is available.",
+    "webp_option": "Export as WebP",
+    "webp_option_hint": "Turn this on to export all results as WebP and choose the smallest visually safe WebP output.",
+    "drop_title": "Click or drag images to compress",
+    "drop_hint": "Supports {formats}. The original format is preserved by default.",
+    "drop_action": "Choose images",
+    "input_formats": "Supported formats",
+    "local_worker_note": "Local Worker + OffscreenCanvas is used first. Images are not uploaded.",
+    "selected_count": "{count} files selected",
+    "summary_files": "Files",
+    "summary_ready": "Done",
+    "summary_saved": "Saved",
+    "original_total": "Original total",
+    "output_total": "Compressed total",
+    "compress_again": "Compress again",
+    "download_zip": "Batch download ZIP",
+    "empty_title": "Waiting for images",
+    "empty_body": "Upload images to compress automatically, compare previews, and download individual files or a ZIP.",
+    "source": "Source",
+    "output": "Output",
+    "preview_title": "Image preview",
+    "preview_open_source": "Preview source image",
+    "preview_open_output": "Preview output image",
+    "preview_close": "Close preview",
+    "output_size": "Output size",
+    "saved_size": "Saved size",
+    "saving_ratio": "Savings",
+    "output_format": "Output format",
+    "quality_label": "Quality {value}",
+    "lossless_label": "lossless re-encode",
+    "quantized_colors": "{count}-color quantization",
+    "duration_value": "{value}ms",
+    "status_waiting": "Waiting",
+    "status_compressing": "Compressing",
+    "status_done": "Compressed",
+    "status_optimal": "Already near optimal",
+    "status_error": "Failed",
+    "unknown_type": "unknown type",
+    "errors": {
+      "empty_file": "The file is empty. Choose a valid image.",
+      "unsupported_input": "This image type is not supported yet: {type}.",
+      "file_too_large": "The file is too large. Maximum size is {maxSize}.",
+      "too_many_pixels": "The image dimensions are too large. Maximum size is {maxPixels}.",
+      "load_failed": "The image could not be decoded. The file may be corrupted or unsupported by this browser.",
+      "canvas_context": "Could not create a Canvas drawing context.",
+      "canvas_export": "Image export failed. Try another browser.",
+      "unsupported_output": "This browser cannot export {format}.",
+      "general": "Compression failed. Please try again."
+    }
+  },
+  "tool_faq": {
+    "image-compress": {
+      "items": [
+        {
+          "question": "Does Image Compressor upload my files?",
+          "answer": "No. Compression runs locally in your browser, using Worker and OffscreenCanvas when available. Images are not uploaded to a server."
+        },
+        {
+          "question": "How does it choose the compression level automatically?",
+          "answer": "For each image, the tool tries conservative quality levels for the selected output mode and compares pixel samples with the source. PNG files use color quantization by default; WebP is used only when the WebP option is enabled."
+        },
+        {
+          "question": "Why are some images marked as already near optimal?",
+          "answer": "If the browser encoder cannot produce a smaller visually safe result, the original file is kept to avoid increasing file size or creating obvious quality loss."
+        },
+        {
+          "question": "Can I download compressed images in bulk?",
+          "answer": "Yes. After multiple images finish compressing, you can download files individually or export all results as one ZIP archive."
+        }
+      ]
+    },
+    "image-to-jpg": {
+      "items": [
+        {
+          "question": "Does Image to JPG upload my files?",
+          "answer": "No. Images are converted locally in your browser with Canvas or a Worker. Files are not uploaded to a server."
+        },
+        {
+          "question": "Does JPG keep transparent backgrounds?",
+          "answer": "No. JPG does not support transparency, so transparent areas are filled with a white background."
+        },
+        {
+          "question": "Which images can be converted to JPG?",
+          "answer": "JPG, PNG, WebP, GIF, BMP, SVG, AVIF, and other common browser-decodable image formats are supported."
+        },
+        {
+          "question": "Does converting to JPG reduce image quality?",
+          "answer": "JPG is a lossy format. Lower quality creates smaller files and may lose detail. The quality slider lets you balance size and visual quality."
+        }
+      ]
+    },
+    "image-to-png": {
+      "items": [
+        {
+          "question": "Does Image to PNG upload my files?",
+          "answer": "No. Images are converted locally in your browser with Canvas or a Worker. Files are not uploaded to a server."
+        },
+        {
+          "question": "Does PNG keep transparent backgrounds?",
+          "answer": "PNG supports transparency. If the source image and browser decoder include transparent pixels, the exported PNG keeps them."
+        },
+        {
+          "question": "Which images can be converted to PNG?",
+          "answer": "JPG, PNG, WebP, GIF, BMP, SVG, AVIF, and other common browser-decodable image formats are supported."
+        },
+        {
+          "question": "Why can PNG files be larger than JPG files?",
+          "answer": "PNG uses lossless compression and supports transparency. It is useful for icons, screenshots, and sharp edges, but photo-like images are often larger than JPG."
+        }
+      ]
+    },
+    "image-to-webp": {
+      "items": [
+        {
+          "question": "Does Image to WebP upload my files?",
+          "answer": "No. Images are converted locally in your browser with Canvas or a Worker. Files are not uploaded to a server."
+        },
+        {
+          "question": "What is WebP good for?",
+          "answer": "WebP often keeps good visual quality with smaller file sizes, making it useful for web images, thumbnails, and compressed image assets."
+        },
+        {
+          "question": "Which images can be converted to WebP?",
+          "answer": "JPG, PNG, WebP, GIF, BMP, SVG, AVIF, and other common browser-decodable image formats are supported."
+        },
+        {
+          "question": "Does converting to WebP reduce image quality?",
+          "answer": "WebP can use lossy compression or preserve high quality. The quality slider controls the tradeoff between output size and visual quality."
+        }
+      ]
+    }
+  },
   "nav": {
     "title": "JSON Toolkit",
     "github": "GitHub"
@@ -23,10 +214,18 @@
   "footer": {
     "text": "JSON Toolkit"
   },
+  "image_hub": {
+    "title": "Image tools",
+    "meta_title": "Online Image Tools - Image Compression, JPG, PNG, and WebP Conversion",
+    "description": "Batch-compress and convert images locally in your browser, with smart compression, JPG, PNG, WebP output, preview comparison, and ZIP batch download.",
+    "all_tools": "Image conversion tools",
+    "breadcrumb": "Image tools",
+    "privacy_note": "Images are processed locally in your browser and are not uploaded to a server."
+  },
   "home": {
     "title": "JSON Toolkit",
     "meta_title": "Online JSON Toolkit - Format, Convert, Validate, and Decode JWT",
-    "subtitle": "Format, minify, diff, convert, validate, and inspect JSON in your browser. Includes JSON/YAML/XML/CSV/Excel/TypeScript conversion, JSON Schema, JSONPath, and JWT tools. Your data stays local and is never uploaded.",
+    "subtitle": "Format, minify, diff, convert, validate, and inspect JSON in your browser. Includes JSON/YAML/XML/CSV/Excel/TypeScript conversion, JSON Schema, JSONPath, JWT tools, plus image compression and conversion to JPG, PNG, and WebP. Your data stays local and is never uploaded.",
     "featured": "Popular tools",
     "all_tools": "All tools",
     "search_placeholder": "Search tools, formats, or tasks...",
@@ -38,7 +237,7 @@
       "privacy_q": "Does JSON Toolkit upload my data?",
       "privacy_a": "No. Formatting, conversion, analysis, JWT parsing, and file processing run locally in your browser. The server does not receive your input.",
       "formats_q": "Which JSON-related formats are supported?",
-      "formats_a": "JSON, YAML, XML, CSV, Excel, TypeScript interfaces, JSON Schema, JSONPath, and JWT are supported.",
+      "formats_a": "JSON, YAML, XML, CSV, Excel, TypeScript interfaces, JSON Schema, JSONPath, JWT, plus common image compression and JPG/PNG/WebP conversion are supported.",
       "free_q": "Are these tools free to use?",
       "free_a": "Yes. The tools are free, require no account, and the project is open source.",
       "loose_q": "Does the JSON formatter support loose syntax?",
@@ -176,6 +375,22 @@
       "delimiter": "Delimiter",
       "placeholder": "Paste nested JSON, such as user.name and a roles array",
       "empty_output": "Converted result will appear here"
+    },
+    "image-to-jpg": {
+      "name": "Image to JPG",
+      "description": "Convert PNG, WebP, GIF, BMP, SVG, AVIF, and other images to JPG locally in your browser"
+    },
+    "image-compress": {
+      "name": "Image Compressor",
+      "description": "Compress JPG, PNG, WebP, and other images locally in your browser, preserving the original format by default with an optional WebP output mode"
+    },
+    "image-to-png": {
+      "name": "Image to PNG",
+      "description": "Convert JPG, WebP, GIF, BMP, SVG, AVIF, and other images to PNG locally in your browser"
+    },
+    "image-to-webp": {
+      "name": "Image to WebP",
+      "description": "Convert JPG, PNG, GIF, BMP, SVG, AVIF, and other images to WebP locally in your browser"
     },
     "json-schema": {
       "name": "JSON Schema Generator",

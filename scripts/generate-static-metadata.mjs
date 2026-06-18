@@ -8,6 +8,7 @@ const publicDir = path.join(rootDir, 'public');
 const BASE_URL = 'https://json-toolkit.dev';
 const locales = ['zh', 'en'];
 const defaultLocale = 'zh';
+const hubPaths = ['/image'];
 
 function cleanBuildArtifacts() {
   for (const dir of ['.next', 'out']) {
@@ -73,6 +74,13 @@ function generateSitemap() {
       changeFrequency: 'weekly',
       priority: '1.0',
     }),
+    ...hubPaths.map((routePath) =>
+      sitemapUrl({
+        routePath,
+        changeFrequency: 'weekly',
+        priority: '0.9',
+      })
+    ),
     ...readToolPaths().map((routePath) =>
       sitemapUrl({
         routePath,

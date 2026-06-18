@@ -7,9 +7,11 @@
 Base URL: https://json-toolkit.dev
 Supported locales: zh (Chinese Simplified, default), en (English)
 URL pattern: /{locale}/{tool-path}
+Image tools hub: /{locale}/image
 Canonical examples:
 - Home: https://json-toolkit.dev/zh
 - Tool: https://json-toolkit.dev/zh/json-format
+- Image hub: https://json-toolkit.dev/zh/image
 
 ## Tool Reference
 
@@ -71,6 +73,33 @@ Canonical examples:
 - Flatten: converts nested objects and arrays to a flat object with path keys, e.g. `user.roles.0`
 - Unflatten: restores nested objects and arrays from path-key objects
 - Supports custom delimiters, default `.`
+
+### Image Tools (/image)
+- Lists browser-local image compression and conversion tools
+- Child tool URLs use the `/image/*` namespace
+- Image input data is not uploaded to the server
+
+### Image Compressor (/image/compress)
+- Compresses JPG, PNG, WebP, GIF, BMP, SVG, AVIF, and common browser-decodable images locally in the browser
+- Uses Worker + OffscreenCanvas when available, with a Canvas fallback on the main thread
+- Preserves the original format by default; an optional WebP mode exports visually safe WebP results
+- Tries conservative output candidates and keeps the smallest visually safe result based on pixel-sample comparison
+- Keeps the original file when no smaller visually safe candidate is found
+- Supports preview comparison, per-file download, and ZIP batch download
+
+### Image to JPG (/image/to-jpg)
+- Converts PNG, WebP, GIF, BMP, SVG, AVIF, and common browser-decodable images to JPG
+- Uses a white background for transparent pixels because JPG has no alpha channel
+- Supports output quality control, preview comparison, per-file download, and ZIP batch download
+
+### Image to PNG (/image/to-png)
+- Converts JPG, WebP, GIF, BMP, SVG, AVIF, and common browser-decodable images to PNG
+- Preserves transparency when the browser decoder exposes alpha information
+- Supports preview comparison, per-file download, and ZIP batch download
+
+### Image to WebP (/image/to-webp)
+- Converts JPG, PNG, GIF, BMP, SVG, AVIF, and common browser-decodable images to WebP
+- Supports output quality control, preview comparison, per-file download, and ZIP batch download
 
 ### JSON Schema Generator (/json-schema)
 - Output: JSON Schema Draft 2020-12

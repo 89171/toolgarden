@@ -105,6 +105,39 @@ export const toolRegistry: ToolMeta[] = [
     icon: 'FLT',
     category: 'convert',
   },
+  {
+    id: 'image-compress',
+    name: '图片压缩',
+    description: '在浏览器本地智能压缩 JPG、PNG、WebP 等图片，默认保持原格式，也可选择输出 WebP',
+    path: '/image/compress',
+    icon: 'ZIP',
+    category: 'convert',
+    featured: true,
+  },
+  {
+    id: 'image-to-jpg',
+    name: '图片转 JPG',
+    description: '在浏览器本地将 PNG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 JPG',
+    path: '/image/to-jpg',
+    icon: 'JPG',
+    category: 'convert',
+  },
+  {
+    id: 'image-to-png',
+    name: '图片转 PNG',
+    description: '在浏览器本地将 JPG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 PNG',
+    path: '/image/to-png',
+    icon: 'PNG',
+    category: 'convert',
+  },
+  {
+    id: 'image-to-webp',
+    name: '图片转 WebP',
+    description: '在浏览器本地将 JPG、PNG、GIF、BMP、SVG、AVIF 等图片转换为 WebP',
+    path: '/image/to-webp',
+    icon: 'WEB',
+    category: 'convert',
+  },
 
   // ── 验证 ───────────────────────────────────────────────────────
   {
@@ -160,6 +193,11 @@ export interface ToolGroup {
 /** 按分类获取工具列表 */
 export function getToolsByCategory(category: ToolCategory): ToolMeta[] {
   return toolRegistry.filter((t) => t.category === category);
+}
+
+/** 获取图片工具集合页中的工具 */
+export function getImageTools(): ToolMeta[] {
+  return toolRegistry.filter((tool) => tool.path.startsWith('/image/'));
 }
 
 /** 按 id 获取单个工具元数据 */

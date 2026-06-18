@@ -16,6 +16,197 @@
     "error_placeholder": "输入 JSON 后自动处理",
     "download_json": "下载 JSON"
   },
+  "image_converter": {
+    "settings_title": "图片转换",
+    "results_title": "转换结果",
+    "drop_title": "点击或拖拽图片上传",
+    "drop_hint": "支持 {formats}，输出为 {target}",
+    "drop_action": "选择图片",
+    "format_route": "格式路线",
+    "input_formats": "输入格式",
+    "output_format": "输出格式",
+    "local_worker_note": "本地 Worker 优先处理，不上传文件",
+    "selected_count": "已选择 {count} 个文件",
+    "ready_count": "可下载 {count} 个结果",
+    "summary_files": "文件",
+    "summary_ready": "完成",
+    "summary_target": "目标",
+    "quality": "输出质量",
+    "quality_value": "{value}%",
+    "quality_note": "质量越高文件通常越大",
+    "jpeg_background": "透明区域会填充为白色",
+    "convert_again": "重新转换",
+    "download_all": "下载全部",
+    "download_zip": "批量下载 ZIP",
+    "empty_results": "上传图片后，转换结果会显示在这里",
+    "empty_title": "等待图片输入",
+    "empty_body": "支持批量上传，转换完成后可逐个下载或一次下载全部。",
+    "source": "原图",
+    "output": "输出",
+    "preview_title": "图片预览",
+    "preview_open_source": "预览原图",
+    "preview_open_output": "预览输出图",
+    "preview_source": "原图",
+    "preview_output": "输出图",
+    "preview_close": "关闭预览",
+    "target_format": "目标格式",
+    "output_size": "输出大小",
+    "duration": "耗时",
+    "duration_value": "{value}ms",
+    "status_waiting": "等待中",
+    "status_converting": "转换中",
+    "status_done": "已完成",
+    "status_error": "失败",
+    "unknown_type": "未知类型",
+    "errors": {
+      "empty_file": "文件为空，请选择有效图片。",
+      "unsupported_input": "暂不支持这种图片类型：{type}。",
+      "file_too_large": "文件过大，最大支持 {maxSize}。",
+      "too_many_pixels": "图片尺寸过大，最大支持 {maxPixels}。",
+      "load_failed": "图片解码失败，文件可能已损坏或当前浏览器不支持该格式。",
+      "canvas_context": "无法创建 Canvas 绘图上下文。",
+      "canvas_export": "图片导出失败，请换一个浏览器重试。",
+      "unsupported_output": "当前浏览器不支持导出 {format}。",
+      "general": "转换失败，请重试。"
+    }
+  },
+  "image_compressor": {
+    "settings_title": "智能压缩",
+    "results_title": "压缩结果",
+    "mode_label": "压缩策略",
+    "mode_title": "默认保持原有格式",
+    "mode_description": "未勾选 WebP 时，JPG 输出 JPG、PNG 输出 PNG、WebP 输出 WebP；无法安全压缩时保留原文件。",
+    "webp_option": "输出为 WebP",
+    "webp_option_hint": "勾选后统一尝试导出 WebP，并选择视觉安全的最小 WebP 结果。",
+    "drop_title": "点击或拖拽图片压缩",
+    "drop_hint": "支持 {formats}，默认保持原格式压缩",
+    "drop_action": "选择图片",
+    "input_formats": "支持格式",
+    "local_worker_note": "所有文件处理都在本地完成，文件不会上传到任何服务器，关闭页面后，数据即被清除。",
+    "selected_count": "已选择 {count} 个文件",
+    "summary_files": "文件",
+    "summary_ready": "完成",
+    "summary_saved": "节省",
+    "original_total": "原始总大小",
+    "output_total": "压缩后大小",
+    "compress_again": "重新压缩",
+    "download_zip": "批量下载 ZIP",
+    "empty_title": "等待图片输入",
+    "empty_body": "上传图片后会自动压缩，完成后可预览对比、逐个下载或批量下载。",
+    "source": "原图",
+    "output": "输出",
+    "preview_title": "图片预览",
+    "preview_open_source": "预览原图",
+    "preview_open_output": "预览输出图",
+    "preview_close": "关闭预览",
+    "output_size": "输出大小",
+    "saved_size": "节省体积",
+    "saving_ratio": "节省率",
+    "output_format": "输出格式",
+    "quality_label": "质量 {value}",
+    "lossless_label": "无损重编码",
+    "quantized_colors": "{count} 色量化",
+    "duration_value": "{value}ms",
+    "status_waiting": "等待中",
+    "status_compressing": "压缩中",
+    "status_done": "已压缩",
+    "status_optimal": "已接近最优",
+    "status_error": "失败",
+    "unknown_type": "未知类型",
+    "errors": {
+      "empty_file": "文件为空，请选择有效图片。",
+      "unsupported_input": "暂不支持这种图片类型：{type}。",
+      "file_too_large": "文件过大，最大支持 {maxSize}。",
+      "too_many_pixels": "图片尺寸过大，最大支持 {maxPixels}。",
+      "load_failed": "图片解码失败，文件可能已损坏或当前浏览器不支持该格式。",
+      "canvas_context": "无法创建 Canvas 绘图上下文。",
+      "canvas_export": "图片导出失败，请换一个浏览器重试。",
+      "unsupported_output": "当前浏览器不支持导出 {format}。",
+      "general": "压缩失败，请重试。"
+    }
+  },
+  "tool_faq": {
+    "image-compress": {
+      "items": [
+        {
+          "question": "图片压缩会上传文件吗？",
+          "answer": "不会。压缩过程在浏览器本地完成，优先使用 Worker 和 OffscreenCanvas，图片不会上传到服务器。"
+        },
+        {
+          "question": "图片压缩如何自动选择比例？",
+          "answer": "页面会根据输出模式尝试多个保守质量档位，并在像素样本上和原图比较；PNG 默认会尝试颜色量化压缩，勾选 WebP 后才会统一输出 WebP。"
+        },
+        {
+          "question": "为什么有些图片显示已接近最优？",
+          "answer": "如果浏览器编码器找不到更小且视觉安全的结果，工具会保留原文件，避免为了压缩而让文件变大或画质明显下降。"
+        },
+        {
+          "question": "图片压缩支持批量下载吗？",
+          "answer": "支持。多张图片压缩完成后，可以逐个下载，也可以一次下载 ZIP 压缩包。"
+        }
+      ]
+    },
+    "image-to-jpg": {
+      "items": [
+        {
+          "question": "图片转 JPG 会上传文件吗？",
+          "answer": "不会。图片会在浏览器本地通过 Canvas 或 Worker 转换，文件不会上传到服务器。"
+        },
+        {
+          "question": "转换为 JPG 会保留透明背景吗？",
+          "answer": "不会。JPG 不支持透明通道，透明区域会自动填充为白色背景。"
+        },
+        {
+          "question": "哪些图片可以转换为 JPG？",
+          "answer": "支持 JPG、PNG、WebP、GIF、BMP、SVG、AVIF 等浏览器可解码的常见图片格式。"
+        },
+        {
+          "question": "转换为 JPG 会损失画质吗？",
+          "answer": "JPG 是有损压缩格式，降低质量会减小文件体积，也可能带来细节损失。页面提供质量滑块用于平衡体积和画质。"
+        }
+      ]
+    },
+    "image-to-png": {
+      "items": [
+        {
+          "question": "图片转 PNG 会上传文件吗？",
+          "answer": "不会。图片会在浏览器本地通过 Canvas 或 Worker 转换，文件不会上传到服务器。"
+        },
+        {
+          "question": "转换为 PNG 会保留透明背景吗？",
+          "answer": "PNG 支持透明通道。只要源图片和浏览器解码结果包含透明信息，导出的 PNG 会保留透明背景。"
+        },
+        {
+          "question": "哪些图片可以转换为 PNG？",
+          "answer": "支持 JPG、PNG、WebP、GIF、BMP、SVG、AVIF 等浏览器可解码的常见图片格式。"
+        },
+        {
+          "question": "为什么 PNG 文件可能比 JPG 更大？",
+          "answer": "PNG 使用无损压缩并支持透明背景，适合图标、截图和需要清晰边缘的图片，但照片类内容通常会比 JPG 更大。"
+        }
+      ]
+    },
+    "image-to-webp": {
+      "items": [
+        {
+          "question": "图片转 WebP 会上传文件吗？",
+          "answer": "不会。图片会在浏览器本地通过 Canvas 或 Worker 转换，文件不会上传到服务器。"
+        },
+        {
+          "question": "WebP 适合什么场景？",
+          "answer": "WebP 通常能在较小文件体积下保持较好的画质，适合网页图片、缩略图和需要压缩体积的图片资源。"
+        },
+        {
+          "question": "哪些图片可以转换为 WebP？",
+          "answer": "支持 JPG、PNG、WebP、GIF、BMP、SVG、AVIF 等浏览器可解码的常见图片格式。"
+        },
+        {
+          "question": "转换为 WebP 会损失画质吗？",
+          "answer": "WebP 可以有损压缩，也可以保留较高质量。页面提供质量滑块，用于控制输出体积和视觉质量。"
+        }
+      ]
+    }
+  },
   "nav": {
     "title": "JSON 工具包",
     "github": "GitHub"
@@ -23,10 +214,18 @@
   "footer": {
     "text": "JSON 工具包"
   },
+  "image_hub": {
+    "title": "图片工具",
+    "meta_title": "在线图片工具 - 图片压缩、JPG、PNG、WebP 转换",
+    "description": "在浏览器本地批量压缩和转换图片，支持智能压缩、JPG、PNG、WebP 输出、预览对比和 ZIP 批量下载。",
+    "all_tools": "图片转换工具",
+    "breadcrumb": "图片工具",
+    "privacy_note": "图片仅在本地浏览器处理，不会上传到服务器。"
+  },
   "home": {
     "title": "JSON 工具包",
     "meta_title": "在线 JSON 工具包 - 格式化、转换、校验、JWT 解析",
-    "subtitle": "在浏览器中完成 JSON 格式化、压缩、对比，JSON/YAML/XML/CSV/Excel/TypeScript 转换，JSON Schema、JSONPath 和 JWT 解析。数据只在本地处理，无需上传。",
+    "subtitle": "在浏览器中完成 JSON 格式化、压缩、对比，JSON/YAML/XML/CSV/Excel/TypeScript 转换，JSON Schema、JSONPath、JWT 解析，以及图片压缩和 JPG/PNG/WebP 转换。数据只在本地处理，无需上传。",
     "featured": "常用工具",
     "all_tools": "全部工具",
     "search_placeholder": "搜索工具、格式或用途...",
@@ -38,7 +237,7 @@
       "privacy_q": "这个 JSON 工具包会上传我的数据吗？",
       "privacy_a": "不会。格式化、转换、统计、JWT 解析和文件处理都在浏览器本地执行，服务器不会接收你的输入内容。",
       "formats_q": "支持哪些 JSON 相关格式？",
-      "formats_a": "支持 JSON、YAML、XML、CSV、Excel、TypeScript interface、JSON Schema、JSONPath 和 JWT。",
+      "formats_a": "支持 JSON、YAML、XML、CSV、Excel、TypeScript interface、JSON Schema、JSONPath、JWT，以及常见图片压缩和 JPG/PNG/WebP 转换。",
       "free_q": "这些工具可以免费使用吗？",
       "free_a": "可以。工具无需账号即可使用，项目也是开源的。",
       "loose_q": "JSON 格式化支持宽松语法吗？",
@@ -176,6 +375,22 @@
       "delimiter": "分隔符",
       "placeholder": "粘贴嵌套 JSON，例如 user.name 和 roles 数组",
       "empty_output": "转换结果将显示在这里"
+    },
+    "image-to-jpg": {
+      "name": "图片转 JPG",
+      "description": "在浏览器本地将 PNG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 JPG"
+    },
+    "image-compress": {
+      "name": "图片压缩",
+      "description": "在浏览器本地智能压缩 JPG、PNG、WebP 等图片，默认保持原格式，也可选择输出 WebP"
+    },
+    "image-to-png": {
+      "name": "图片转 PNG",
+      "description": "在浏览器本地将 JPG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 PNG"
+    },
+    "image-to-webp": {
+      "name": "图片转 WebP",
+      "description": "在浏览器本地将 JPG、PNG、GIF、BMP、SVG、AVIF 等图片转换为 WebP"
     },
     "json-schema": {
       "name": "JSON Schema 生成",

@@ -9,6 +9,14 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh" />
   </url>
   <url>
+    <loc>https://json-toolkit.dev/zh/image</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/image" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/image" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/image" />
+  </url>
+  <url>
     <loc>https://json-toolkit.dev/zh/json-format</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -95,6 +103,38 @@
     <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/json-flatten" />
     <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/json-flatten" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/json-flatten" />
+  </url>
+  <url>
+    <loc>https://json-toolkit.dev/zh/image/compress</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/image/compress" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/image/compress" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/image/compress" />
+  </url>
+  <url>
+    <loc>https://json-toolkit.dev/zh/image/to-jpg</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/image/to-jpg" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/image/to-jpg" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/image/to-jpg" />
+  </url>
+  <url>
+    <loc>https://json-toolkit.dev/zh/image/to-png</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/image/to-png" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/image/to-png" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/image/to-png" />
+  </url>
+  <url>
+    <loc>https://json-toolkit.dev/zh/image/to-webp</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/image/to-webp" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/image/to-webp" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/image/to-webp" />
   </url>
   <url>
     <loc>https://json-toolkit.dev/zh/json-schema</loc>

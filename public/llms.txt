@@ -19,6 +19,11 @@ JSON Toolkit provides developers with a suite of tools for working with JSON dat
 - **Excel → JSON** (`/excel-to-json`): Read Excel files (.xlsx/.xls) and convert them to JSON arrays.
 - **JSON → TypeScript** (`/json-to-ts`): Automatically infer and generate TypeScript interface types from JSON samples.
 - **JSON Flatten / Unflatten** (`/json-flatten`): Flatten nested JSON into path keys, or restore nested JSON from flat path-key objects.
+- **Image Tools** (`/image`): Browse browser-local image compression and conversion tools.
+- **Image Compressor** (`/image/compress`): Compress JPG, PNG, WebP, and other images locally in the browser, preserving the original format by default with an optional WebP output mode.
+- **Image to JPG** (`/image/to-jpg`): Convert PNG, WebP, GIF, BMP, SVG, AVIF, and other images to JPG locally in the browser.
+- **Image to PNG** (`/image/to-png`): Convert JPG, WebP, GIF, BMP, SVG, AVIF, and other images to PNG locally in the browser.
+- **Image to WebP** (`/image/to-webp`): Convert JPG, PNG, GIF, BMP, SVG, AVIF, and other images to WebP locally in the browser.
 - **JSON Schema Generator** (`/json-schema`): Generate JSON Schema (Draft 2020-12) from a JSON sample, with automatic format detection.
 - **JSON Schema Validator** (`/json-schema-validate`): Validate JSON data against a JSON Schema and report error paths with explanations.
 - **JSONPath Query** (`/json-path`): Extract nested data using JSONPath expressions (e.g. `$.store.books[*].title`).
@@ -35,6 +40,7 @@ JSON Toolkit provides developers with a suite of tools for working with JSON dat
 - Built with Next.js 16 (App Router), TypeScript, Tailwind CSS v4
 - i18n via next-intl
 - All processing is client-side; no backend, no data collection
+- Image compression and conversion use browser APIs such as Worker, OffscreenCanvas, ImageBitmap, and Canvas when available
 - A locale preference cookie may be used for language routing; there is no analytics or tracking
 - Open source
 
@@ -47,6 +53,7 @@ JSON Toolkit provides developers with a suite of tools for working with JSON dat
 - Excel support via SheetJS (xlsx library)
 - YAML support via the `yaml` npm package
 - XML support via fast-xml-parser
+- Image compression and conversion support JPG, PNG, WebP, GIF, BMP, SVG, AVIF, preview comparison, and ZIP batch download
 
 ## Optional
 

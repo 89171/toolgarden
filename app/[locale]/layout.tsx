@@ -80,12 +80,12 @@ export default async function LocaleLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: toJsonLd(createSiteJsonLd(normalizedLocale)) }}
         />
-        <BaiduAnalytics />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <NextIntlClientProvider locale={normalizedLocale} messages={m}>
           {children}
         </NextIntlClientProvider>
+        <BaiduAnalytics />
         <PwaRegistration />
       </body>
     </html>

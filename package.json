@@ -22,6 +22,7 @@
     "react-json-pretty": "^2.2.0",
     "react-textarea-autosize": "^8.5.9",
     "tailwind-merge": "^3.5.0",
+    "upng-js": "^2.1.0",
     "xlsx": "^0.18.5",
     "yaml": "^2.7.1"
   },
