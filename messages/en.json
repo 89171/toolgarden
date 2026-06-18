@@ -16,6 +16,166 @@
     "error_placeholder": "Enter JSON to start",
     "download_json": "Download JSON"
   },
+  "pdf_converter": {
+    "settings_title": "Convert to PDF",
+    "results_title": "PDF results",
+    "drop_title": "Click or drag files here",
+    "drop_hint": "Supports Word, Excel, PowerPoint, EPUB, MOBI, JPG, PNG, WebP, TXT, Markdown, and HTML",
+    "drop_action": "Choose files",
+    "input_formats": "Input formats",
+    "local_note": "Images, text, Markdown, HTML, EPUB, unencrypted legacy MOBI, docx, xlsx, xls, and pptx are converted locally in the browser. Legacy doc/ppt, encrypted MOBI, and complex Kindle formats need a future server-side converter.",
+    "summary_files": "Files",
+    "summary_ready": "Done",
+    "summary_target": "Target",
+    "convert_again": "Convert again",
+    "download_zip": "Batch download ZIP",
+    "empty_title": "Waiting for files",
+    "empty_body": "Upload one or more files to generate PDFs automatically, then download individually or as a ZIP.",
+    "preview": "Preview",
+    "preview_title": "PDF preview",
+    "preview_empty_title": "Waiting for a PDF",
+    "preview_empty_body": "Converted PDFs can be previewed here.",
+    "pages_value": "{count} pages",
+    "duration_value": "{value}ms",
+    "status_converting": "Converting",
+    "status_done": "Done",
+    "status_error": "Failed",
+    "unknown_type": "unknown type",
+    "kinds": {
+      "image": "Image",
+      "text": "TXT",
+      "markdown": "Markdown",
+      "html": "HTML",
+      "epub": "EPUB",
+      "mobi": "MOBI",
+      "word": "Word",
+      "excel": "Excel",
+      "powerpoint": "PowerPoint",
+      "legacy-office": "Legacy Office",
+      "unsupported": "Unknown format"
+    },
+    "errors": {
+      "empty_file": "The file is empty. Choose a valid file.",
+      "unsupported_input": "This file type is not supported yet: {type}.",
+      "legacy_office": "Legacy doc and ppt files need a server-side converter such as LibreOffice. The current browser version does not support them.",
+      "file_too_large": "The file is too large. Maximum size is {maxSize}.",
+      "load_failed": "The file could not be read. It may be damaged or unsupported by this browser.",
+      "empty_document": "No convertible content was found.",
+      "mobi_unsupported": "Only unencrypted legacy MOBI/PalmDOC text extraction is supported locally for now. Encrypted MOBI, AZW/KF8, and complex Kindle files need a server-side converter.",
+      "render_failed": "PDF generation failed. Try another file.",
+      "general": "Conversion failed. Please try again."
+    }
+  },
+  "pdf_merge": {
+    "settings_title": "Merge settings",
+    "result_title": "Merged PDF",
+    "drop_title": "Click or drag PDFs here",
+    "drop_hint": "Upload multiple PDFs and drag the list to reorder them",
+    "drop_action": "Choose PDFs",
+    "order_title": "Merge order",
+    "ready_count": "{count} files ready",
+    "empty_list": "Uploaded PDFs will appear here.",
+    "status_loading": "Reading",
+    "status_ready": "Ready",
+    "status_error": "Failed",
+    "pages_value": "{count} pages",
+    "move_up": "Move up",
+    "move_down": "Move down",
+    "processing": "Processing",
+    "merge_action": "Merge PDF",
+    "result_summary": "{count} pages · {size} · {duration}ms",
+    "preview_title": "Merged PDF preview",
+    "empty_result_title": "Waiting to merge",
+    "empty_result_body": "Upload at least two PDFs, reorder them, and merge them into one document.",
+    "errors": {
+      "empty_file": "The file is empty. Choose a valid PDF.",
+      "unsupported_input": "Upload PDF files only.",
+      "file_too_large": "The file is too large. Maximum size is {maxSize}.",
+      "load_failed": "The PDF could not be read. It may be damaged or encrypted.",
+      "general": "Processing failed. Please try again."
+    }
+  },
+  "pdf_split": {
+    "settings_title": "Split settings",
+    "result_title": "Split output",
+    "drop_title": "Click or drag a PDF here",
+    "drop_hint": "Upload one PDF and split it into multiple documents by page ranges",
+    "drop_action": "Choose PDF",
+    "pages_value": "{count} pages",
+    "ranges_label": "Page range groups",
+    "ranges_placeholder": "For example 1-3; 4-6; 7",
+    "ranges_hint": "Separate each output document with a semicolon. Each group can include pages or ranges.",
+    "processing": "Processing",
+    "split_ranges": "Split by ranges",
+    "split_every_page": "Split every page",
+    "result_summary": "{count} PDFs · {size} · {duration}ms",
+    "part_summary": "Pages {range} · {pages} pages",
+    "empty_result_title": "Waiting to split",
+    "empty_result_body": "Upload a PDF, then split by ranges or export every page as a separate file.",
+    "errors": {
+      "empty_file": "The file is empty. Choose a valid PDF.",
+      "unsupported_input": "Upload a PDF file only.",
+      "file_too_large": "The file is too large. Maximum size is {maxSize}.",
+      "load_failed": "The PDF could not be read. It may be damaged or encrypted.",
+      "empty_selection": "Choose pages to split.",
+      "general": "Processing failed. Please try again."
+    }
+  },
+  "pdf_extract": {
+    "settings_title": "Extract settings",
+    "result_title": "Extracted PDF",
+    "drop_title": "Click or drag a PDF here",
+    "drop_hint": "Upload one PDF and save selected pages as a new document",
+    "drop_action": "Choose PDF",
+    "pages_value": "{count} pages",
+    "selection_label": "Pages to extract",
+    "selection_placeholder": "For example 1,3,5-7",
+    "selection_hint": "Supports individual pages, comma-separated values, and ranges.",
+    "processing": "Processing",
+    "extract_action": "Extract pages",
+    "result_summary": "{count} pages · {size} · {duration}ms",
+    "preview_title": "Extracted PDF preview",
+    "empty_result_title": "Waiting to extract",
+    "empty_result_body": "Enter page numbers to save selected pages as a new PDF.",
+    "errors": {
+      "empty_file": "The file is empty. Choose a valid PDF.",
+      "unsupported_input": "Upload a PDF file only.",
+      "file_too_large": "The file is too large. Maximum size is {maxSize}.",
+      "load_failed": "The PDF could not be read. It may be damaged or encrypted.",
+      "empty_selection": "Choose pages to extract.",
+      "general": "Processing failed. Please try again."
+    }
+  },
+  "pdf_organize": {
+    "settings_title": "Organize pages",
+    "result_title": "Organized PDF",
+    "drop_title": "Click or drag a PDF here",
+    "drop_hint": "Upload one PDF, then reorder, duplicate, or delete pages",
+    "pages_value": "{count} pages",
+    "pages_title": "Page order",
+    "output_pages": "{count} output pages",
+    "empty_pages": "The page list will appear after uploading a PDF.",
+    "page_card_title": "Output page {output}",
+    "source_page": "Source page {source}",
+    "move_up": "Move up",
+    "move_down": "Move down",
+    "duplicate": "Duplicate",
+    "restore_original": "Restore order",
+    "processing": "Processing",
+    "organize_action": "Generate PDF",
+    "result_summary": "{count} pages · {size} · {duration}ms",
+    "preview_title": "Organized PDF preview",
+    "empty_result_title": "Waiting to organize",
+    "empty_result_body": "Adjust the page order, then generate a new PDF document.",
+    "errors": {
+      "empty_file": "The file is empty. Choose a valid PDF.",
+      "unsupported_input": "Upload a PDF file only.",
+      "file_too_large": "The file is too large. Maximum size is {maxSize}.",
+      "load_failed": "The PDF could not be read. It may be damaged or encrypted.",
+      "empty_selection": "Keep at least one page.",
+      "general": "Processing failed. Please try again."
+    }
+  },
   "image_converter": {
     "settings_title": "Image conversion",
     "results_title": "Converted images",
@@ -130,7 +290,15 @@
     "results_title": "Background removal result",
     "model_label": "Local model",
     "model_title": "Export transparent PNG",
-    "model_description": "Use an open-source image segmentation model in the browser to detect the subject and remove the background. The first run downloads model assets; later runs are usually cached by the browser.",
+    "model_description": "Use an open-source image segmentation model in the browser to detect the subject and remove the background. The high-quality model is used by default; the first run downloads model assets, and later runs are usually cached by the browser.",
+    "model_choice": "Model",
+    "model_quality_label": "High quality",
+    "model_speed_label": "Fast",
+    "model_size_medium": "medium · about 80MB",
+    "model_size_small": "small · about 40MB",
+    "model_default_badge": "Default",
+    "model_quality_description": "More stable edges, hair, and complex subjects. Best for final export.",
+    "model_speed_description": "Faster download and lighter inference for quick previews, with possible artifacts on complex edges.",
     "drop_title": "Click or drag an image",
     "drop_hint": "Supports {formats}. Exports a transparent PNG.",
     "drop_action": "Choose image",
@@ -279,6 +447,22 @@
     }
   },
   "tool_faq": {
+    "qr-code": {
+      "items": [
+        {
+          "question": "Does the QR tool upload my text or images?",
+          "answer": "No. QR generation and image decoding run locally in your browser, so text and uploaded images are not sent to a server."
+        },
+        {
+          "question": "What content can I encode as a QR code?",
+          "answer": "You can encode URLs, plain text, contact data, Wi-Fi configuration text, or any string that fits in a QR code. Longer text creates denser QR codes."
+        },
+        {
+          "question": "Which image formats can be decoded?",
+          "answer": "PNG, JPG, WebP, GIF, and BMP files are supported when your browser can read them. Clear, upright, high-contrast QR codes decode best."
+        }
+      ]
+    },
     "image-compress": {
       "items": [
         {
@@ -418,6 +602,50 @@
           "answer": "Yes. You can export JPG, PNG, or WebP. JPG does not support alpha transparency, so transparent areas are filled with white."
         }
       ]
+    },
+    "pdf-to-pdf": {
+      "items": [
+        {
+          "question": "Does Convert to PDF upload my files?",
+          "answer": "No. Images, text, Markdown, HTML, docx, xlsx, xls, and pptx are converted locally in the browser in this first release."
+        },
+        {
+          "question": "Does Office to PDF preserve the original layout?",
+          "answer": "The current browser version extracts docx paragraphs, Excel table rows, and pptx slide text before generating a PDF. It is useful for quick archiving. Complex layouts and legacy doc or ppt files will need a future server-side converter."
+        },
+        {
+          "question": "How much EPUB and MOBI support is included?",
+          "answer": "EPUB is read from the book package and XHTML spine order before generating a PDF. MOBI currently supports text extraction from unencrypted legacy MOBI/PalmDOC files; encrypted MOBI, AZW/KF8, and complex Kindle files need a server-side converter."
+        },
+        {
+          "question": "Can I convert files in bulk?",
+          "answer": "Yes. Upload multiple files, then download each converted PDF individually or export everything as a ZIP."
+        },
+        {
+          "question": "Which PDF tools are planned next?",
+          "answer": "Planned tools include merge, split, compress, image conversion, edit, annotate, sign, watermark, encrypt, decrypt, and OCR."
+        }
+      ]
+    },
+    "subtitle-maker": {
+      "items": [
+        {
+          "question": "Does Subtitle Maker upload media or subtitle files?",
+          "answer": "No. Media preview, LRC/SRT parsing, editing, and export all run locally in your browser. Files are not uploaded to a server."
+        },
+        {
+          "question": "Which subtitle formats are supported?",
+          "answer": "SRT and LRC are supported. You can upload a file or paste subtitle text directly and parse it."
+        },
+        {
+          "question": "Can I calibrate timing while media plays?",
+          "answer": "Yes. Upload audio or video, select a subtitle row, and set its start or end time from the current playback position."
+        },
+        {
+          "question": "Can I convert between LRC and SRT?",
+          "answer": "Yes. After parsing subtitles, switch the output format and export. The tool generates timing codes for the selected target format."
+        }
+      ]
     }
   },
   "nav": {
@@ -426,6 +654,8 @@
     "title": "JSON Toolkit",
     "json_tools_menu": "JSON tools",
     "image_toolbar": "Image tools",
+    "pdf_tools": "PDF tools",
+    "subtitle_tools": "Subtitle tools",
     "github": "GitHub"
   },
   "footer": {
@@ -438,6 +668,14 @@
     "all_tools": "Image conversion tools",
     "breadcrumb": "Image tools",
     "privacy_note": "Images are processed locally in your browser and are not uploaded to a server."
+  },
+  "pdf_hub": {
+    "title": "PDF tools",
+    "meta_title": "Free Online PDF Tools - Convert Word, Excel, PowerPoint, EPUB, MOBI, and Images to PDF",
+    "description": "Free online PDF tools to convert Word, Excel, PowerPoint, EPUB, MOBI, JPG, PNG, WebP, TXT, Markdown, and HTML to PDF, plus merge, split, page extraction, and page organization. First-release PDF operations run locally in the browser.",
+    "all_tools": "PDF tools",
+    "breadcrumb": "PDF tools",
+    "privacy_note": "The first PDF converter runs locally in your browser, so files are not uploaded to a server."
   },
   "home": {
     "title": "JSON Toolkit",
@@ -621,6 +859,62 @@
       "name": "Image resize",
       "description": "Free online image resize tool that runs locally in your browser by entering a target width or height while keeping the original ratio"
     },
+    "pdf-to-pdf": {
+      "name": "Convert to PDF",
+      "description": "Free online tool to convert Word, Excel, PowerPoint, EPUB, MOBI, JPG, PNG, WebP, TXT, Markdown, and HTML to PDF"
+    },
+    "pdf-merge": {
+      "name": "Merge PDF",
+      "description": "Free online PDF merger that combines multiple PDF files into one document with drag-and-drop reordering"
+    },
+    "pdf-split": {
+      "name": "Split PDF",
+      "description": "Free online PDF splitter that extracts specific pages or splits by page ranges into multiple documents"
+    },
+    "pdf-extract-pages": {
+      "name": "Extract pages",
+      "description": "Free online tool to extract specific pages from a PDF and save selected pages or ranges as a new document"
+    },
+    "pdf-organize": {
+      "name": "Organize PDF",
+      "description": "Free online tool to reorder, duplicate, and delete PDF pages before exporting a new document"
+    },
+    "subtitle-maker": {
+      "name": "Subtitle Maker",
+      "description": "Free online LRC and SRT subtitle editor with media preview, timeline calibration, and subtitle export",
+      "load_media": "Load media",
+      "load_subtitle": "Load subtitles",
+      "export": "Export subtitles",
+      "editor": "Editor",
+      "add_above": "+ Above",
+      "add_below": "+ Below",
+      "set_start": "Set start",
+      "set_end": "Set end",
+      "start": "Start",
+      "end": "End",
+      "subtitle": "Subtitle",
+      "actions": "Actions",
+      "current_time": "Current time",
+      "duration": "Duration",
+      "media_file": "Media file",
+      "none": "None",
+      "empty_media_title": "Load audio or video to calibrate timing",
+      "empty_media_body": "Local audio and video preview is supported. Subtitles, media, and exports stay in your browser.",
+      "empty_subtitles": "Upload LRC / SRT subtitles, or paste subtitle text below and parse it.",
+      "no_active_line": "No active subtitle line",
+      "new_line": "New subtitle",
+      "source_title": "Subtitle source",
+      "source_placeholder": "Paste SRT or LRC subtitle text...",
+      "parse_source": "Parse text",
+      "export_preview": "Export preview",
+      "empty_export": "Exported content will appear here",
+      "parse_failed": "No valid subtitle lines found",
+      "loaded_count": "Loaded {count} {format} subtitle lines",
+      "media_loaded": "Media loaded",
+      "invalid_time": "Invalid time format",
+      "export_failed": "No subtitles to export",
+      "exported": "Exported {format}"
+    },
     "json-schema": {
       "name": "JSON Schema Generator",
       "description": "Free online JSON Schema generator that automatically infers a schema from a sample JSON document",
@@ -688,6 +982,41 @@
       "not_expired": "✓ Valid",
       "placeholder": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
       "empty_output": "Paste a JWT token and click Decode"
+    },
+    "qr-code": {
+      "name": "QR Code Generator & Decoder",
+      "description": "Free online QR code generator for PNG export and local browser QR image decoding",
+      "generate_title": "Generate QR code",
+      "preview_title": "QR preview",
+      "decode_title": "Decode QR code",
+      "text_label": "QR content",
+      "text_placeholder": "Enter a URL, text, contact data, or Wi-Fi configuration text...",
+      "generate": "Generate",
+      "generating": "Generating...",
+      "size_label": "Size",
+      "margin_label": "Margin",
+      "level_label": "Error correction",
+      "preview_alt": "Generated QR code",
+      "input_bytes": "Input size",
+      "output_size": "Output size",
+      "empty_preview": "Generated QR code will appear here",
+      "choose_image": "Choose image",
+      "drop_title": "Use the button or drop a QR image here",
+      "drop_hint": "Supports PNG / JPG / WebP / GIF / BMP",
+      "decoding": "Decoding...",
+      "empty_decode": "Decoded text will appear after uploading a QR image",
+      "unknown_file_type": "Unknown file type",
+      "errors": {
+        "empty_text": "Enter content to generate a QR code.",
+        "generate_failed": "QR code generation failed. Try shorter text or a different error correction level.",
+        "empty_file": "The file is empty. Choose a valid image.",
+        "file_too_large": "The file is too large. Maximum size is {maxSize}.",
+        "unsupported_file": "This image type is not supported yet: {type}.",
+        "image_load_failed": "The image could not be read. The file may be damaged or unsupported by this browser.",
+        "canvas_context": "Could not create a Canvas drawing context.",
+        "too_many_pixels": "The image dimensions are too large. Maximum size is {maxPixels}.",
+        "decode_failed": "No QR code was detected. Try a clearer image."
+      }
     }
   }
 }

@@ -338,9 +338,6 @@ export function ImageTargetConverter({ toolId, targetFormat }: ImageTargetConver
                   : 'border-border-input bg-surface-raised hover:border-border-strong hover:bg-surface-hover'
               }`}
             >
-              <span className="flex h-12 w-12 items-center justify-center rounded-lg border border-border-subtle bg-surface font-mono text-sm font-semibold text-content-muted transition-colors group-hover:border-border-strong group-hover:text-content-secondary sm:h-14 sm:w-14">
-                IMG
-              </span>
               <span className="flex flex-col gap-1">
                 <span className="text-base font-semibold text-content sm:text-lg">{ti('drop_title')}</span>
                 <span className="max-w-72 text-xs leading-relaxed text-content-muted sm:text-sm">

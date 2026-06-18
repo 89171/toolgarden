@@ -8,10 +8,12 @@ Base URL: https://json-toolkit.dev
 Supported locales: zh (Chinese Simplified, default), en (English)
 URL pattern: /{locale}/{tool-path}
 Image tools hub: /{locale}/image
+PDF tools hub: /{locale}/pdf
 Canonical examples:
 - Home: https://json-toolkit.dev/zh
 - Tool: https://json-toolkit.dev/zh/json-format
 - Image hub: https://json-toolkit.dev/zh/image
+- PDF hub: https://json-toolkit.dev/zh/pdf
 
 ## Tool Reference
 
@@ -119,6 +121,62 @@ Canonical examples:
 - Keeps the original image aspect ratio by default: entering width calculates height, and entering height calculates width
 - Exports the full resized image as JPG, PNG, or WebP; JPG uses a white background for transparent pixels
 - Uses browser Canvas APIs and does not upload image data to a server
+
+### PDF Tools (/pdf)
+- Lists PDF conversion and page operation tools
+- Child tool URLs use the `/pdf/*` namespace
+- First release focuses on browser-local PDF conversion and page-level operations
+- Planned additions include compress, convert to/from images/text/JSON, edit, annotate, sign, watermark, encrypt/decrypt, and OCR
+
+### Convert to PDF (/pdf/to-pdf)
+- Converts JPG, PNG, WebP, TXT, Markdown, HTML, EPUB, unencrypted legacy MOBI/PalmDOC, docx, xlsx/xls, and pptx to PDF locally in the browser
+- EPUB conversion reads `META-INF/container.xml`, resolves the OPF package document, follows the spine order, extracts XHTML/HTML chapters, and renders the book text into PDF pages
+- MOBI conversion supports unencrypted legacy PalmDOC/MOBI text records with no compression or PalmDOC compression
+- Encrypted MOBI, AZW/KF8, and complex Kindle files need a future server-side converter such as Calibre
+- Word docx conversion extracts document paragraphs from Office OpenXML
+- Excel conversion uses SheetJS to extract sheet rows and render tabular text
+- PowerPoint pptx conversion extracts slide text from Office OpenXML
+- Text, Markdown, HTML, and Office text are rendered through browser Canvas before being embedded into PDF pages so Unicode content can be preserved
+- Images are embedded into a PDF page with aspect-ratio preserving scaling
+- Uses pdf-lib for PDF generation and fflate for Office OpenXML and EPUB zip extraction
+- Legacy doc and ppt files require a future server-side converter such as LibreOffice and are reported as unsupported in the current browser version
+- Supports multiple files, per-file PDF download, preview, and ZIP batch download
+- Files are not uploaded to a server
+
+### Merge PDF (/pdf/merge)
+- Combines multiple PDF files into a single PDF locally in the browser
+- Uses pdf-lib to copy pages from each source PDF into a new document
+- Supports drag-and-drop reordering plus move up/down controls
+- Shows source page counts and previews the merged result
+- Files are not uploaded to a server
+
+### Split PDF (/pdf/split)
+- Splits one PDF into multiple documents locally in the browser
+- Supports page range groups such as `1-3; 4-6; 7`
+- Can also split every page into a separate PDF
+- Outputs a ZIP archive containing the split PDFs
+- Files are not uploaded to a server
+
+### Extract Pages (/pdf/extract-pages)
+- Extracts selected pages from one PDF locally in the browser
+- Supports page selections such as `1,3,5-7`
+- Outputs one new PDF containing the selected pages
+- Files are not uploaded to a server
+
+### Organize PDF (/pdf/organize)
+- Reorders, duplicates, and deletes pages from one PDF locally in the browser
+- Uses a draggable page list with explicit move, duplicate, and delete controls
+- Outputs a new organized PDF and previews it in the browser
+- Files are not uploaded to a server
+
+### Subtitle Maker (/subtitle-maker)
+- Free online LRC and SRT subtitle editor
+- Supports uploading local audio or video for playback preview and timeline calibration
+- Supports uploading or pasting SRT / LRC text, parsing into editable subtitle rows
+- Lets users edit start time, end time, and subtitle text line by line
+- Lets users set the selected subtitle row start or end time from the current media playback position
+- Exports edited subtitles as SRT or LRC text files
+- Subtitle and media files are processed locally in the browser and are not uploaded to a server
 
 ### JSON Schema Generator (/json-schema)
 - Output: JSON Schema Draft 2020-12

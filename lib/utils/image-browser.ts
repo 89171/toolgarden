@@ -137,7 +137,7 @@ const VISIBLE_DIFF_THRESHOLD = {
 };
 const PNG_QUANTIZED_TARGET_SAVINGS = 0.25;
 const BACKGROUND_REMOVAL_PUBLIC_PATH =
-  'https://unpkg.com/@imgly/background-removal-data@1.4.5/dist/';
+  'https://staticimgly.com/@imgly/background-removal-data/${PACKAGE_VERSION}/dist/';
 
 function getImageWorker(): Worker | null {
   if (imageWorkerUnavailable || typeof Worker === 'undefined') return null;
@@ -952,9 +952,13 @@ export async function removeImageBackground(
 
     const backgroundRemoval = await import('@imgly/background-removal');
     const removeBackground = backgroundRemoval.removeBackground;
+    const modelMap = {
+      medium: 'isnet_fp16',
+      small: 'isnet_quint8',
+    } as const;
     const blob = await removeBackground(modelInput, {
       publicPath: BACKGROUND_REMOVAL_PUBLIC_PATH,
-      model: options.model ?? 'small',
+      model: modelMap[options.model ?? 'medium'],
       output: {
         format: 'image/png',
         quality: 1,

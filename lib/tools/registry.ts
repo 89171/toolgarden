@@ -106,6 +106,48 @@ export const toolRegistry: ToolMeta[] = [
     category: 'convert',
   },
   {
+    id: 'pdf-to-pdf',
+    name: '转为 PDF',
+    description: '将 Word、Excel、PowerPoint、EPUB、MOBI、JPG、PNG、WebP、TXT、Markdown、HTML 转换为 PDF',
+    path: '/pdf/to-pdf',
+    icon: 'PDF',
+    category: 'convert',
+    featured: true,
+  },
+  {
+    id: 'pdf-merge',
+    name: '合并 PDF',
+    description: '将多个 PDF 文件合并成一个文档，支持拖放重新排序',
+    path: '/pdf/merge',
+    icon: 'MRG',
+    category: 'convert',
+    featured: true,
+  },
+  {
+    id: 'pdf-split',
+    name: '拆分 PDF',
+    description: '将 PDF 拆分为多个文档，支持按页面范围分割',
+    path: '/pdf/split',
+    icon: 'SPL',
+    category: 'convert',
+  },
+  {
+    id: 'pdf-extract-pages',
+    name: '提取页面',
+    description: '从 PDF 文件中提取特定页面并保存为新文档',
+    path: '/pdf/extract-pages',
+    icon: 'EXT',
+    category: 'convert',
+  },
+  {
+    id: 'pdf-organize',
+    name: '整理 PDF',
+    description: '重新排序、复制和删除 PDF 页面，导出整理后的文档',
+    path: '/pdf/organize',
+    icon: 'ORG',
+    category: 'convert',
+  },
+  {
     id: 'image-compress',
     name: '图片压缩',
     description: '在浏览器本地智能压缩 JPG、PNG、WebP 等图片，默认保持原格式，也可选择输出 WebP',
@@ -163,6 +205,15 @@ export const toolRegistry: ToolMeta[] = [
     icon: 'SIZ',
     category: 'convert',
   },
+  {
+    id: 'subtitle-maker',
+    name: '字幕编辑器',
+    description: '免费在线编辑 LRC 和 SRT 字幕，支持媒体预览、时间轴校准和字幕导出',
+    path: '/subtitle-maker',
+    icon: 'SUB',
+    category: 'convert',
+    featured: true,
+  },
 
   // ── 验证 ───────────────────────────────────────────────────────
   {
@@ -200,6 +251,14 @@ export const toolRegistry: ToolMeta[] = [
 
   // ── 编解码 ─────────────────────────────────────────────────────
   {
+    id: 'qr-code',
+    name: '二维码生成解码',
+    description: '生成二维码 PNG，或上传图片在浏览器本地识别二维码内容',
+    path: '/qr-code',
+    icon: 'QR',
+    category: 'encode',
+  },
+  {
     id: 'jwt',
     name: 'JWT 解析',
     description: '解码 JWT Token，查看 Header / Payload，支持 HS256 签名验证',
@@ -225,9 +284,23 @@ export function getImageTools(): ToolMeta[] {
   return toolRegistry.filter((tool) => tool.path.startsWith('/image/'));
 }
 
-/** 获取 JSON 工具集合，不包含图片处理工具 */
+/** 获取 PDF 工具集合页中的工具 */
+export function getPdfTools(): ToolMeta[] {
+  return toolRegistry.filter((tool) => tool.path.startsWith('/pdf/'));
+}
+
+/** 获取字幕工具集合 */
+export function getSubtitleTools(): ToolMeta[] {
+  return toolRegistry.filter((tool) => tool.path.startsWith('/subtitle'));
+}
+
+/** 获取 JSON 工具集合，不包含图片、PDF 和字幕工具 */
 export function getJsonTools(): ToolMeta[] {
-  return toolRegistry.filter((tool) => !tool.path.startsWith('/image/'));
+  return toolRegistry.filter((tool) =>
+    !tool.path.startsWith('/image/') &&
+    !tool.path.startsWith('/pdf/') &&
+    !tool.path.startsWith('/subtitle')
+  );
 }
 
 /** 按 id 获取单个工具元数据 */
@@ -253,7 +326,12 @@ export function getJsonToolGroups(): ToolGroup[] {
   return getAllCategories()
     .map((category) => ({
       category,
-      tools: getToolsByCategory(category).filter((tool) => !tool.path.startsWith('/image/')),
+      tools: getToolsByCategory(category).filter(
+        (tool) =>
+          !tool.path.startsWith('/image/') &&
+          !tool.path.startsWith('/pdf/') &&
+          !tool.path.startsWith('/subtitle')
+      ),
     }))
     .filter((group) => group.tools.length > 0);
 }

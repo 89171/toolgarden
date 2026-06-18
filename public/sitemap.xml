@@ -17,6 +17,14 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/image" />
   </url>
   <url>
+    <loc>https://json-toolkit.dev/zh/pdf</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/pdf" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/pdf" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/pdf" />
+  </url>
+  <url>
     <loc>https://json-toolkit.dev/zh/json-format</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -105,6 +113,46 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/json-flatten" />
   </url>
   <url>
+    <loc>https://json-toolkit.dev/zh/pdf/to-pdf</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/pdf/to-pdf" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/pdf/to-pdf" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/pdf/to-pdf" />
+  </url>
+  <url>
+    <loc>https://json-toolkit.dev/zh/pdf/merge</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/pdf/merge" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/pdf/merge" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/pdf/merge" />
+  </url>
+  <url>
+    <loc>https://json-toolkit.dev/zh/pdf/split</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/pdf/split" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/pdf/split" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/pdf/split" />
+  </url>
+  <url>
+    <loc>https://json-toolkit.dev/zh/pdf/extract-pages</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/pdf/extract-pages" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/pdf/extract-pages" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/pdf/extract-pages" />
+  </url>
+  <url>
+    <loc>https://json-toolkit.dev/zh/pdf/organize</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/pdf/organize" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/pdf/organize" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/pdf/organize" />
+  </url>
+  <url>
     <loc>https://json-toolkit.dev/zh/image/compress</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -161,6 +209,14 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/image/resize" />
   </url>
   <url>
+    <loc>https://json-toolkit.dev/zh/subtitle-maker</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/subtitle-maker" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/subtitle-maker" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/subtitle-maker" />
+  </url>
+  <url>
     <loc>https://json-toolkit.dev/zh/json-schema</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -191,6 +247,14 @@
     <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/json-stats" />
     <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/json-stats" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/json-stats" />
+  </url>
+  <url>
+    <loc>https://json-toolkit.dev/zh/qr-code</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/qr-code" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/qr-code" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/qr-code" />
   </url>
   <url>
     <loc>https://json-toolkit.dev/zh/jwt</loc>

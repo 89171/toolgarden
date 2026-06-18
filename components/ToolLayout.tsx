@@ -26,8 +26,10 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
   const toolDesc  = tool ? t(`tools.${toolId}.description`) : '';
   const catLabel  = tool ? t(`categories.${tool.category}`) : '';
   const isImageTool = Boolean(tool?.path.startsWith('/image/'));
+  const isPdfTool = Boolean(tool?.path.startsWith('/pdf/'));
   const homeLabel = t('nav.title');
   const imageHubLabel = t('image_hub.breadcrumb');
+  const pdfHubLabel = t('pdf_hub.breadcrumb');
   const toolJsonLd = tool ? createToolJsonLd(toolId, locale) : null;
   const breadcrumbJsonLd = tool ? createBreadcrumbJsonLd(toolId, locale) : null;
   const faqJsonLd = tool ? createToolFaqJsonLd(toolId, locale) : null;
@@ -70,7 +72,17 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
               <span className="text-content-secondary font-medium">{toolName}</span>
             </>
           )}
-          {tool && !isImageTool && (
+          {tool && isPdfTool && (
+            <>
+              <span>/</span>
+              <Link href={`/${locale}/pdf`} className="text-content-secondary font-medium hover:text-content">
+                {pdfHubLabel}
+              </Link>
+              <span>/</span>
+              <span className="text-content-secondary font-medium">{toolName}</span>
+            </>
+          )}
+          {tool && !isImageTool && !isPdfTool && (
             <>
               <span>/</span>
               <span className="text-content-faint text-xs px-1 py-0.5 bg-surface-hover rounded">
@@ -84,12 +96,14 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
 
         {/* 工具标题 */}
         {tool && (
-          <div className="mb-4">
-            <h1 className="text-2xl font-bold flex items-center gap-2">
+          <div className="mb-4 flex flex-wrap items-end gap-x-2 gap-y-1">
+            <h1 className="text-2xl font-bold flex shrink-0 items-center gap-2">
               <span aria-hidden="true" className="font-mono text-content-faint">{tool.icon}</span>
               {toolName}
             </h1>
-            <p className="text-content-muted text-sm mt-1">{toolDesc}</p>
+            {toolDesc ? (
+              <p className="min-w-0 text-sm text-content-muted">{toolDesc}</p>
+            ) : null}
           </div>
         )}
 

@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useTranslations, useLocale } from 'next-intl';
-import { getImageTools, getJsonToolGroups, getLocalizedToolPath } from '@/lib/tools/registry';
+import { getImageTools, getJsonToolGroups, getLocalizedToolPath, getPdfTools, getSubtitleTools } from '@/lib/tools/registry';
 import type { ToolMeta } from '@/lib/tools/types';
 import { LanguageSwitcher } from './LanguageSwitcher';
 
@@ -25,6 +25,8 @@ const Header: React.FC<HeaderProps> = ({ compact = false }) => {
   const locale = useLocale();
   const jsonGroups = getJsonToolGroups();
   const imageTools = getImageTools();
+  const pdfTools = getPdfTools();
+  const subtitleTools = getSubtitleTools();
 
   const renderToolLink = (tool: ToolMeta) => (
     <Link
@@ -99,6 +101,40 @@ const Header: React.FC<HeaderProps> = ({ compact = false }) => {
               <div className="rounded-lg border border-border-base bg-surface p-3 shadow-lg">
                 <div className="grid gap-1 sm:grid-cols-2">
                   {imageTools.map(renderToolLink)}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="group">
+            <Link
+              href="/pdf"
+              className="flex items-center gap-2 rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+            >
+              <span>{t('nav.pdf_tools')}</span>
+              <span aria-hidden="true" className="text-xs text-content-faint transition-transform group-hover:rotate-180 group-focus-within:rotate-180">v</span>
+            </Link>
+            <div className="pointer-events-none invisible absolute left-0 top-full z-20 w-[calc(100vw-3rem)] max-w-md pt-2 opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:visible group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:visible group-focus-within:opacity-100">
+              <div className="rounded-lg border border-border-base bg-surface p-3 shadow-lg">
+                <div className="grid gap-1">
+                  {pdfTools.map(renderToolLink)}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="group">
+            <Link
+              href="/subtitle-maker"
+              className="flex items-center gap-2 rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+            >
+              <span>{t('nav.subtitle_tools')}</span>
+              <span aria-hidden="true" className="text-xs text-content-faint transition-transform group-hover:rotate-180 group-focus-within:rotate-180">v</span>
+            </Link>
+            <div className="pointer-events-none invisible absolute left-0 top-full z-20 w-[calc(100vw-3rem)] max-w-md pt-2 opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:visible group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:visible group-focus-within:opacity-100">
+              <div className="rounded-lg border border-border-base bg-surface p-3 shadow-lg">
+                <div className="grid gap-1">
+                  {subtitleTools.map(renderToolLink)}
                 </div>
               </div>
             </div>

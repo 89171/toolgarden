@@ -3,7 +3,7 @@ import { routing } from '@/i18n/routing';
 import zhMessages from '@/messages/zh.json';
 import enMessages from '@/messages/en.json';
 import { stringifyJSONValue } from '@/lib/utils/json';
-import { getImageTools, getLocalizedToolPath, getToolById, toolRegistry } from './registry';
+import { getImageTools, getLocalizedToolPath, getPdfTools, getToolById, toolRegistry } from './registry';
 
 export const BASE_URL = 'https://json-toolkit.dev';
 export const REPOSITORY_URL = 'https://github.com/89171/json-toolkit';
@@ -88,6 +88,29 @@ export function createImageHubMetadata(locale: string): Metadata {
   };
 }
 
+export function createPdfHubMetadata(locale: string): Metadata {
+  const normalizedLocale = normalizeLocale(locale);
+  const m = getLocaleMessages(normalizedLocale);
+  const path = '/pdf';
+
+  return {
+    title: m.pdf_hub.meta_title,
+    description: m.pdf_hub.description,
+    alternates: {
+      canonical: getLocalizedPath(normalizedLocale, path),
+      languages: getLanguageAlternates(path),
+    },
+    openGraph: {
+      title: `${m.pdf_hub.title} | ${m.home.title}`,
+      description: m.pdf_hub.description,
+      type: 'website',
+      locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
+      siteName: m.home.title,
+      url: getLocalizedPath(normalizedLocale, path),
+    },
+  };
+}
+
 export function createToolMetadata(toolId: ToolMessageId, locale: string): Metadata {
   const normalizedLocale = normalizeLocale(locale);
   const m = getLocaleMessages(normalizedLocale);
@@ -164,6 +187,28 @@ export function createImageToolItemListJsonLd(locale: string) {
     name: m.image_hub.title,
     description: m.image_hub.description,
     itemListElement: getImageTools().map((tool, index) => {
+      const localizedTool = m.tools[tool.id as ToolMessageId];
+      return {
+        '@type': 'ListItem',
+        position: index + 1,
+        url: getLocalizedUrl(normalizedLocale, tool.path),
+        name: localizedTool.name,
+        description: localizedTool.description,
+      };
+    }),
+  };
+}
+
+export function createPdfToolItemListJsonLd(locale: string) {
+  const normalizedLocale = normalizeLocale(locale);
+  const m = getLocaleMessages(normalizedLocale);
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: m.pdf_hub.title,
+    description: m.pdf_hub.description,
+    itemListElement: getPdfTools().map((tool, index) => {
       const localizedTool = m.tools[tool.id as ToolMessageId];
       return {
         '@type': 'ListItem',
@@ -271,6 +316,33 @@ export function createBreadcrumbJsonLd(toolId: string, locale: string) {
           position: 2,
           name: m.image_hub.breadcrumb,
           item: getLocalizedUrl(normalizedLocale, '/image'),
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: localizedTool.name,
+          item: getLocalizedUrl(normalizedLocale, tool.path),
+        },
+      ],
+    };
+  }
+
+  if (tool.path.startsWith('/pdf/')) {
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: m.home.title,
+          item: getLocalizedUrl(normalizedLocale),
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: m.pdf_hub.breadcrumb,
+          item: getLocalizedUrl(normalizedLocale, '/pdf'),
         },
         {
           '@type': 'ListItem',

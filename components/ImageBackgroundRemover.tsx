@@ -11,6 +11,7 @@ import {
   formatFileSize,
   getImageAcceptValue,
   getSupportedImageInputLabel,
+  type ImageBackgroundRemovalModel,
   type ImageBackgroundRemovalProgress,
   type ImageBackgroundRemovalSuccess,
   type ImageConversionError,
@@ -45,6 +46,26 @@ const checkerboardStyle: React.CSSProperties = {
   backgroundPosition: '0 0, 0 9px, 9px -9px, -9px 0px',
 };
 
+const backgroundRemovalModelOptions: Array<{
+  value: ImageBackgroundRemovalModel;
+  labelKey: 'model_quality_label' | 'model_speed_label';
+  sizeKey: 'model_size_medium' | 'model_size_small';
+  descriptionKey: 'model_quality_description' | 'model_speed_description';
+}> = [
+  {
+    value: 'medium',
+    labelKey: 'model_quality_label',
+    sizeKey: 'model_size_medium',
+    descriptionKey: 'model_quality_description',
+  },
+  {
+    value: 'small',
+    labelKey: 'model_speed_label',
+    sizeKey: 'model_size_small',
+    descriptionKey: 'model_speed_description',
+  },
+];
+
 function createImageId(file: File): string {
   return `${file.name}-${file.size}-${file.lastModified}-${Date.now()}`;
 }
@@ -74,12 +95,15 @@ export function ImageBackgroundRemover() {
   const [image, setImage] = useState<RemoveBgImage | null>(null);
   const [dragging, setDragging] = useState(false);
   const [preview, setPreview] = useState<PreviewKind | null>(null);
+  const [selectedModel, setSelectedModel] = useState<ImageBackgroundRemovalModel>('medium');
+  const [virtualProgress, setVirtualProgress] = useState(0);
   const accept = getImageAcceptValue();
   const inputFormatLabels = useMemo(() => getSupportedImageInputLabel().split(' / '), []);
   const hasImage = Boolean(image);
   const hasOutput = Boolean(image?.outputUrl && image.outputName);
   const canRun = Boolean(image && image.status !== 'processing' && image.sourceInfo);
   const canPreviewOutput = Boolean(image?.outputUrl);
+  const canChangeModel = image?.status !== 'processing';
 
   useEffect(() => {
     imageRef.current = image;
@@ -123,6 +147,25 @@ export function ImageBackgroundRemover() {
 
   const setCurrentImage = useCallback((updater: (current: RemoveBgImage) => RemoveBgImage) => {
     setImage((current) => (current ? updater(current) : current));
+  }, []);
+
+  const changeModel = useCallback((model: ImageBackgroundRemovalModel) => {
+    if (imageRef.current?.status === 'processing') return;
+    setSelectedModel(model);
+    setImage((current) => {
+      if (!current?.outputUrl) return current;
+      URL.revokeObjectURL(current.outputUrl);
+      return {
+        ...current,
+        status: current.sourceInfo ? 'ready' : current.status,
+        progress: undefined,
+        outputBlob: undefined,
+        outputUrl: undefined,
+        outputName: undefined,
+        result: undefined,
+      };
+    });
+    setPreview(null);
   }, []);
 
   const addFile = useCallback((fileList: FileList | File[]) => {
@@ -170,7 +213,9 @@ export function ImageBackgroundRemover() {
     if (!target || target.status === 'processing' || !target.sourceInfo) return;
 
     const jobId = `${target.id}-${Date.now()}`;
+    const model = selectedModel;
     activeJobRef.current = jobId;
+    setVirtualProgress(8);
 
     setCurrentImage((current) => {
       if (current.outputUrl) URL.revokeObjectURL(current.outputUrl);
@@ -193,7 +238,7 @@ export function ImageBackgroundRemover() {
     });
 
     const result = await removeImageBackground(target.file, {
-      model: 'small',
+      model,
       onProgress: (progress) => {
         if (activeJobRef.current !== jobId) return;
         setCurrentImage((current) => ({
@@ -225,7 +270,7 @@ export function ImageBackgroundRemover() {
       progress: undefined,
       error: result,
     }));
-  }, [setCurrentImage]);
+  }, [selectedModel, setCurrentImage]);
 
   const downloadOutput = useCallback(() => {
     const current = imageRef.current;
@@ -233,22 +278,43 @@ export function ImageBackgroundRemover() {
     downloadUrl(current.outputUrl, current.outputName);
   }, []);
 
+  useEffect(() => {
+    if (image?.status !== 'processing') {
+      return undefined;
+    }
+
+    const intervalId = window.setInterval(() => {
+      setVirtualProgress((current) => {
+        if (current >= 94) return current;
+        if (current < 40) return current + 4;
+        if (current < 72) return current + 2;
+        return current + 0.8;
+      });
+    }, 450);
+
+    return () => window.clearInterval(intervalId);
+  }, [image?.id, image?.status]);
+
+  const progressPercent = image?.status === 'processing'
+    ? Math.min(100, Math.round(Math.max(image.progress?.percent ?? 0, virtualProgress)))
+    : 0;
+
   const progressLabel = (() => {
     const progress = image?.progress;
-    if (!progress) return ti('progress_prepare');
+    if (!progress) return ti('progress_model', { value: progressPercent });
     if (progress.stage === 'model') {
-      return ti('progress_model', { value: progress.percent });
+      return ti('progress_model', { value: progressPercent });
     }
 
     if (progress.label.includes('inference')) {
-      return ti('progress_inference', { value: progress.percent });
+      return ti('progress_inference', { value: progressPercent });
     }
 
     if (progress.label.includes('encode')) {
-      return ti('progress_encode', { value: progress.percent });
+      return ti('progress_encode', { value: progressPercent });
     }
 
-    return ti('progress_compute', { value: progress.percent });
+    return ti('progress_compute', { value: progressPercent });
   })();
 
   useEffect(() => {
@@ -326,6 +392,47 @@ export function ImageBackgroundRemover() {
               <p className="mt-3 text-sm leading-relaxed text-content-muted">
                 {ti('model_description')}
               </p>
+              <div className="mt-4" role="radiogroup" aria-label={ti('model_choice')}>
+                <span className="mb-2 block text-xs font-semibold uppercase tracking-normal text-content-faint">
+                  {ti('model_choice')}
+                </span>
+                <div className="grid gap-2">
+                  {backgroundRemovalModelOptions.map((option) => {
+                    const selected = selectedModel === option.value;
+
+                    return (
+                      <button
+                        key={option.value}
+                        type="button"
+                        role="radio"
+                        aria-checked={selected}
+                        disabled={!canChangeModel}
+                        onClick={() => changeModel(option.value)}
+                        className={`min-w-0 rounded border p-3 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
+                          selected
+                            ? 'border-border-strong bg-surface'
+                            : 'border-border-subtle bg-surface-raised hover:border-border-strong hover:bg-surface-hover'
+                        }`}
+                      >
+                        <span className="flex min-w-0 flex-wrap items-center gap-2">
+                          <span className="font-semibold text-content">{ti(option.labelKey)}</span>
+                          <span className="rounded border border-border-subtle bg-surface px-2 py-0.5 font-mono text-xs text-content-muted">
+                            {ti(option.sizeKey)}
+                          </span>
+                          {option.value === 'medium' && (
+                            <span className="rounded border border-border-subtle bg-action px-2 py-0.5 text-xs font-medium text-background">
+                              {ti('model_default_badge')}
+                            </span>
+                          )}
+                        </span>
+                        <span className="mt-1 block text-xs leading-relaxed text-content-muted">
+                          {ti(option.descriptionKey)}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
 
             <button
@@ -355,9 +462,6 @@ export function ImageBackgroundRemover() {
                   : 'border-border-input bg-surface-raised hover:border-border-strong hover:bg-surface-hover'
               }`}
             >
-              <span className="flex h-14 w-14 items-center justify-center rounded-lg border border-border-subtle bg-surface font-mono text-sm font-semibold text-content-muted transition-colors group-hover:border-border-strong group-hover:text-content-secondary">
-                BG
-              </span>
               <span className="flex flex-col gap-1">
                 <span className="text-base font-semibold text-content sm:text-lg">{ti('drop_title')}</span>
                 <span className="max-w-72 text-xs leading-relaxed text-content-muted sm:text-sm">
@@ -484,7 +588,7 @@ export function ImageBackgroundRemover() {
                             <div className="h-2 w-full max-w-72 overflow-hidden rounded bg-surface-hover">
                               <div
                                 className="h-full rounded bg-action transition-all"
-                                style={{ width: `${image.progress?.percent ?? 12}%` }}
+                                style={{ width: `${progressPercent}%` }}
                               />
                             </div>
                           </>
