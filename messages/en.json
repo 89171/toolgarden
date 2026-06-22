@@ -668,6 +668,7 @@
     "json_tools_menu": "JSON tools",
     "image_toolbar": "Image tools",
     "pdf_tools": "PDF tools",
+    "info_codec_tools": "Info codec",
     "qr_tools": "QR tools",
     "subtitle_tools": "Subtitle tools",
     "github": "GitHub"
@@ -977,6 +978,51 @@
       "empty_output": "Analysis will appear automatically",
       "size_compressed": "Minified: {size} (saves {pct}%)"
     },
+    "info-codec": {
+      "name": "Info Encoder / Decoder",
+      "description": "Free online tool for Unicode, URL, UTF16, Base64, MD5, SHA1, hex, JWT, Cookie, Gzip, and string escaping",
+      "input_title": "Input",
+      "operation_title": "Operation",
+      "output_title": "Output",
+      "encode_group": "Encode / Hash",
+      "decode_group": "Decode / Parse",
+      "placeholder": "Paste text to encode, decode, or parse...",
+      "operations": {
+        "legacy-encode": "Encode",
+        "unicode-encode": "Unicode Encode",
+        "url-encode": "URL Encode",
+        "utf16-encode": "UTF16 Encode",
+        "base64-encode": "Base64 Encode",
+        "md5": "MD5",
+        "hex-encode": "Hex Encode",
+        "sha1": "Sha1",
+        "string-escape": "String Escape",
+        "unicode-decode": "Unicode Decode",
+        "url-decode": "URL Decode",
+        "utf16-decode": "UTF16 Decode",
+        "base64-decode": "Base64 Decode",
+        "hex-decode": "Hex Decode",
+        "html-entity-decode": "HTML Entity Decode",
+        "url-params-parse": "URL Params Parse",
+        "jwt-decode": "JWT Decode",
+        "cookie-format": "Cookie Format",
+        "gzip-decompress": "Gzip Decompress",
+        "string-unescape": "String Unescape"
+      },
+      "errors": {
+        "invalid_unicode": "The Unicode escape sequence is invalid.",
+        "invalid_url": "The URL encoded content is invalid.",
+        "invalid_hex": "The hex content is invalid. Enter even-length hex, 0x, or \\x fragments.",
+        "invalid_base64": "The Base64 content is invalid.",
+        "invalid_html_entity": "The HTML entity content is invalid.",
+        "invalid_url_params": "No valid URL parameters were found.",
+        "invalid_jwt": "The JWT is invalid. It should contain header, payload, and signature segments.",
+        "invalid_cookie": "No valid cookie pairs were found.",
+        "invalid_gzip": "Gzip decompression failed. Enter gzip data as Base64 or hex.",
+        "invalid_escape": "String unescape failed.",
+        "unsupported_operation": "This operation is not supported yet."
+      }
+    },
     "jwt": {
       "name": "JWT Parser",
       "description": "Free online JWT parser to decode tokens, inspect Header / Payload, and verify HS256 signatures",
@@ -1009,13 +1055,24 @@
       "size_label": "Size",
       "margin_label": "Margin",
       "level_label": "Error correction",
+      "logo_label": "Logo",
+      "logo_hint": "Supports PNG / JPG / WebP / GIF / BMP, up to {maxSize}",
+      "remove_logo": "Remove logo",
       "preview_alt": "Generated QR code",
       "input_bytes": "Input size",
       "output_size": "Output size",
+      "logo_meta": "Logo",
       "empty_preview": "Generated QR code will appear here",
+      "unknown_logo_type": "unknown type",
       "errors": {
         "empty_text": "Enter content to generate a QR code.",
-        "generate_failed": "QR code generation failed. Try shorter text or a different error correction level."
+        "empty_file": "The logo file is empty. Choose a valid image.",
+        "generate_failed": "QR code generation failed. Try shorter text or a different error correction level.",
+        "canvas_context": "Could not create a Canvas drawing context.",
+        "logo_file_too_large": "The logo file is too large. Maximum size is {maxSize}.",
+        "logo_unsupported_file": "This logo image type is not supported yet: {type}.",
+        "logo_load_failed": "The logo image could not be read. The file may be damaged or unsupported by this browser.",
+        "logo_too_many_pixels": "The logo image dimensions are too large. Maximum size is {maxPixels}."
       }
     },
     "qr-code-decoder": {

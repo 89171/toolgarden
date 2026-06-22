@@ -198,6 +198,16 @@ Canonical examples:
 - Metrics: raw size (bytes), minified size, compression %, max nesting depth, total key count, object count, array count, type distribution, longest string value
 - Auto-analyzes on input change (400ms debounce)
 
+### Info Encoder / Decoder (/info-codec)
+- Encodes text with legacy Encode (% / %u), Unicode escape sequences, URL percent encoding, UTF16-style \x hex escapes, Base64, hex, and JavaScript string escaping
+- Computes MD5 and SHA1 hashes locally in the browser
+- Decodes Unicode escape sequences, URL percent encoding, UTF16-style \x hex escapes, Base64, hex, HTML entities, JWT tokens, URL parameters, cookies, gzip payloads, and escaped strings
+- URL parameter parsing preserves duplicate keys as arrays
+- JWT decoding Base64URL-decodes header and payload without verifying the signature
+- Cookie formatting converts semicolon-delimited cookie strings into readable JSON
+- Gzip decompression accepts Base64 or hex encoded gzip data
+- All operations are implemented in the project utility layer and do not upload input text
+
 ### QR Code Generator (/qr-code/generate)
 - Generates PNG QR codes from URLs, plain text, contact data, Wi-Fi configuration text, or other strings
 - Supports QR size, quiet-zone margin, and error correction level controls

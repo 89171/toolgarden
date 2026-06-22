@@ -8,6 +8,10 @@ export type QrFailureCode =
   | 'file_too_large'
   | 'generate_failed'
   | 'image_load_failed'
+  | 'logo_file_too_large'
+  | 'logo_load_failed'
+  | 'logo_too_many_pixels'
+  | 'logo_unsupported_file'
   | 'too_many_pixels'
   | 'unsupported_file';
 
@@ -30,8 +34,16 @@ export type QrCodeGenerateOutcome =
       filename: string;
       inputBytes: number;
       options: NormalizedQrCodeOptions;
+      logo?: QrCodeLogoInfo;
     }
   | { ok: false; code: QrFailureCode; detail?: string };
+
+export interface QrCodeLogoInfo {
+  filename: string;
+  fileSize: number;
+  width: number;
+  height: number;
+}
 
 export interface DecodedQrCode {
   text: string;
@@ -62,6 +74,11 @@ export const QR_CODE_MARGIN = {
 export const QR_DECODE_LIMITS = {
   maxFileBytes: 12 * 1024 * 1024,
   maxPixels: 24_000_000,
+};
+
+export const QR_LOGO_LIMITS = {
+  maxFileBytes: 4 * 1024 * 1024,
+  maxPixels: 4_000_000,
 };
 
 export const QR_ERROR_CORRECTION_LEVELS: QrErrorCorrectionLevel[] = ['L', 'M', 'Q', 'H'];

@@ -249,6 +249,14 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/json-stats" />
   </url>
   <url>
+    <loc>https://json-toolkit.dev/zh/info-codec</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/info-codec" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/info-codec" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/info-codec" />
+  </url>
+  <url>
     <loc>https://json-toolkit.dev/zh/qr-code/generate</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

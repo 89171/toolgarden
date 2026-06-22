@@ -251,6 +251,15 @@ export const toolRegistry: ToolMeta[] = [
 
   // ── 编解码 ─────────────────────────────────────────────────────
   {
+    id: 'info-codec',
+    name: '信息编码转换',
+    description: '集中处理 Unicode、URL、Base64、哈希、JWT、Cookie、Gzip 等信息编码和解码',
+    path: '/info-codec',
+    icon: 'ENC',
+    category: 'encode',
+    featured: true,
+  },
+  {
     id: 'qr-code-generator',
     name: '二维码生成',
     description: '将网址、文本、联系信息或 Wi-Fi 配置文本生成二维码 PNG',
@@ -307,14 +316,24 @@ export function getQrCodeTools(): ToolMeta[] {
   return toolRegistry.filter((tool) => tool.path.startsWith('/qr-code/'));
 }
 
-/** 获取 JSON 工具集合，不包含图片、PDF、字幕和二维码工具 */
-export function getJsonTools(): ToolMeta[] {
-  return toolRegistry.filter((tool) =>
-    !tool.path.startsWith('/image/') &&
-    !tool.path.startsWith('/pdf/') &&
-    !tool.path.startsWith('/subtitle') &&
-    !tool.path.startsWith('/qr-code/')
+/** 获取信息编码工具集合 */
+export function getInfoCodecTools(): ToolMeta[] {
+  return toolRegistry.filter((tool) => tool.path.startsWith('/info-codec'));
+}
+
+function isNonJsonTopLevelTool(tool: ToolMeta): boolean {
+  return (
+    tool.path.startsWith('/image/') ||
+    tool.path.startsWith('/pdf/') ||
+    tool.path.startsWith('/subtitle') ||
+    tool.path.startsWith('/qr-code/') ||
+    tool.path.startsWith('/info-codec')
   );
+}
+
+/** 获取 JSON 工具集合，不包含图片、PDF、字幕、二维码和信息编码工具 */
+export function getJsonTools(): ToolMeta[] {
+  return toolRegistry.filter((tool) => !isNonJsonTopLevelTool(tool));
 }
 
 /** 按 id 获取单个工具元数据 */
@@ -340,13 +359,7 @@ export function getJsonToolGroups(): ToolGroup[] {
   return getAllCategories()
     .map((category) => ({
       category,
-      tools: getToolsByCategory(category).filter(
-        (tool) =>
-          !tool.path.startsWith('/image/') &&
-          !tool.path.startsWith('/pdf/') &&
-          !tool.path.startsWith('/subtitle') &&
-          !tool.path.startsWith('/qr-code/')
-      ),
+      tools: getToolsByCategory(category).filter((tool) => !isNonJsonTopLevelTool(tool)),
     }))
     .filter((group) => group.tools.length > 0);
 }

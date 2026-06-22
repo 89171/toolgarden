@@ -1,7 +1,15 @@
 'use client';
 import Link from 'next/link';
 import { useTranslations, useLocale } from 'next-intl';
-import { getImageTools, getJsonToolGroups, getLocalizedToolPath, getPdfTools, getQrCodeTools, getSubtitleTools } from '@/lib/tools/registry';
+import {
+  getImageTools,
+  getInfoCodecTools,
+  getJsonToolGroups,
+  getLocalizedToolPath,
+  getPdfTools,
+  getQrCodeTools,
+  getSubtitleTools,
+} from '@/lib/tools/registry';
 import type { ToolMeta } from '@/lib/tools/types';
 import { LanguageSwitcher } from './LanguageSwitcher';
 
@@ -33,7 +41,7 @@ function MenuDropdownCaret() {
 
 function MenuDropdownPanel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="pointer-events-none invisible absolute left-0 top-full z-20 w-max max-w-[calc(100vw-3rem)] pt-2 opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:visible group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:visible group-focus-within:opacity-100">
+    <div className="absolute left-0 top-full z-20 hidden w-max max-w-[calc(100vw-3rem)] pt-2 group-hover:block group-focus-within:block">
       <div className="rounded-lg border border-border-base bg-surface p-3 shadow-lg">
         {children}
       </div>
@@ -47,8 +55,10 @@ const Header: React.FC<HeaderProps> = ({ compact = false }) => {
   const jsonGroups = getJsonToolGroups();
   const imageTools = getImageTools();
   const pdfTools = getPdfTools();
+  const infoCodecTools = getInfoCodecTools();
   const qrCodeTools = getQrCodeTools();
   const subtitleTools = getSubtitleTools();
+  const infoCodecMenuPath = infoCodecTools[0] ? getLocalizedToolPath(infoCodecTools[0], locale) : `/${locale}/info-codec`;
   const qrCodeMenuPath = qrCodeTools[0] ? getLocalizedToolPath(qrCodeTools[0], locale) : `/${locale}/qr-code/generate`;
 
   const renderToolLink = (tool: ToolMeta) => (
@@ -134,6 +144,21 @@ const Header: React.FC<HeaderProps> = ({ compact = false }) => {
             <MenuDropdownPanel>
                 <div className="grid gap-1">
                   {pdfTools.map(renderToolLink)}
+                </div>
+            </MenuDropdownPanel>
+          </div>
+
+          <div className="group relative">
+            <Link
+              href={infoCodecMenuPath}
+              className="flex items-center gap-2 rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+            >
+              <span>{t('nav.info_codec_tools')}</span>
+              <MenuDropdownCaret />
+            </Link>
+            <MenuDropdownPanel>
+                <div className="grid gap-1">
+                  {infoCodecTools.map(renderToolLink)}
                 </div>
             </MenuDropdownPanel>
           </div>

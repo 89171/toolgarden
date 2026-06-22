@@ -49,8 +49,8 @@ export default async function HomePage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: toJsonLd(createFaqJsonLd(normalizedLocale)) }}
       />
-      <div className="mx-auto flex w-full max-w-5xl flex-grow flex-col px-6 py-12">
-        <Header />
+      <div className="mx-auto flex w-full max-w-[1600px] flex-grow flex-col px-4 py-4 sm:px-6 lg:px-24">
+        <Header compact />
 
         <header className="mb-10 text-center">
           <h1 className="text-4xl font-bold text-content">

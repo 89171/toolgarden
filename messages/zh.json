@@ -668,6 +668,7 @@
     "json_tools_menu": "JSON工具",
     "image_toolbar": "图片工具",
     "pdf_tools": "PDF工具",
+    "info_codec_tools": "信息编码",
     "qr_tools": "二维码工具",
     "subtitle_tools": "字幕工具",
     "github": "GitHub"
@@ -977,6 +978,51 @@
       "empty_output": "输入 JSON 后自动显示分析结果",
       "size_compressed": "压缩后 {size}（节省 {pct}%）"
     },
+    "info-codec": {
+      "name": "信息编码转换",
+      "description": "免费在线处理 Unicode、URL、UTF16、Base64、MD5、SHA1、十六进制、JWT、Cookie、Gzip 和字符串转义",
+      "input_title": "输入内容",
+      "operation_title": "转换方式",
+      "output_title": "输出结果",
+      "encode_group": "编码 / 计算",
+      "decode_group": "解码 / 解析",
+      "placeholder": "粘贴需要编码、解码或解析的文本...",
+      "operations": {
+        "legacy-encode": "Encode",
+        "unicode-encode": "Unicode 编码",
+        "url-encode": "URL 编码",
+        "utf16-encode": "UTF16 编码",
+        "base64-encode": "Base64 编码",
+        "md5": "MD5 计算",
+        "hex-encode": "十六进制编码",
+        "sha1": "Sha1 加密",
+        "string-escape": "字符串转义",
+        "unicode-decode": "Unicode 解码",
+        "url-decode": "URL 解码",
+        "utf16-decode": "UTF16 解码",
+        "base64-decode": "Base64 解码",
+        "hex-decode": "十六进制解码",
+        "html-entity-decode": "HTML 实体解码",
+        "url-params-parse": "URL 参数解析",
+        "jwt-decode": "JWT 解码",
+        "cookie-format": "Cookie 格式化",
+        "gzip-decompress": "Gzip 解压",
+        "string-unescape": "字符串去转义"
+      },
+      "errors": {
+        "invalid_unicode": "Unicode 转义序列无效。",
+        "invalid_url": "URL 编码内容无效。",
+        "invalid_hex": "十六进制内容无效，请输入偶数位 hex、0x 或 \\x 片段。",
+        "invalid_base64": "Base64 内容无效。",
+        "invalid_html_entity": "HTML 实体内容无效。",
+        "invalid_url_params": "没有解析到有效 URL 参数。",
+        "invalid_jwt": "JWT 格式无效，应包含 header、payload 和 signature 三段。",
+        "invalid_cookie": "没有解析到有效 Cookie 键值。",
+        "invalid_gzip": "Gzip 解压失败，请输入 Base64 或十六进制形式的 gzip 数据。",
+        "invalid_escape": "字符串去转义失败。",
+        "unsupported_operation": "暂不支持该转换方式。"
+      }
+    },
     "jwt": {
       "name": "JWT 解析",
       "description": "免费在线解码 JWT Token，查看 Header / Payload，支持 HS256 签名验证",
@@ -1009,13 +1055,24 @@
       "size_label": "尺寸",
       "margin_label": "留白",
       "level_label": "纠错等级",
+      "logo_label": "Logo",
+      "logo_hint": "支持 PNG / JPG / WebP / GIF / BMP，最大 {maxSize}",
+      "remove_logo": "移除 Logo",
       "preview_alt": "生成的二维码",
       "input_bytes": "输入体积",
       "output_size": "输出尺寸",
+      "logo_meta": "Logo",
       "empty_preview": "生成后的二维码会显示在这里",
+      "unknown_logo_type": "未知类型",
       "errors": {
         "empty_text": "请输入要生成二维码的内容。",
-        "generate_failed": "二维码生成失败，请缩短文本或调整纠错等级后重试。"
+        "empty_file": "Logo 文件为空，请选择有效图片。",
+        "generate_failed": "二维码生成失败，请缩短文本或调整纠错等级后重试。",
+        "canvas_context": "无法创建 Canvas 绘图上下文。",
+        "logo_file_too_large": "Logo 文件过大，最大支持 {maxSize}。",
+        "logo_unsupported_file": "暂不支持这种 Logo 图片类型：{type}。",
+        "logo_load_failed": "Logo 图片读取失败，文件可能已损坏或当前浏览器不支持该格式。",
+        "logo_too_many_pixels": "Logo 图片尺寸过大，最大支持 {maxPixels}。"
       }
     },
     "qr-code-decoder": {
