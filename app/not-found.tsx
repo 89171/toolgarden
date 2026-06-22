@@ -1,5 +1,5 @@
 import { Geist, Geist_Mono } from 'next/font/google';
-import { BaiduAnalytics } from '@/components/BaiduAnalytics';
+import { Analytics } from '@/components/Analytics';
 import { NotFoundContent } from '@/components/NotFoundContent';
 import './globals.css';
 
@@ -12,7 +12,7 @@ export default function RootNotFound() {
       <head />
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <NotFoundContent />
-        <BaiduAnalytics />
+        <Analytics />
       </body>
     </html>
   );

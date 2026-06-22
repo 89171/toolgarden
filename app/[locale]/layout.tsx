@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-import Script from 'next/script';
 import { routing } from '@/i18n/routing';
 import {
   createLocaleMetadata,
@@ -12,13 +11,12 @@ import {
   normalizeLocale,
   toJsonLd,
 } from '@/lib/tools/seo';
-import { BaiduAnalytics } from '@/components/BaiduAnalytics';
+import { Analytics } from '@/components/Analytics';
 import { PwaRegistration } from '@/components/PwaRegistration';
 import '../globals.css';
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'], display: 'swap' });
 const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'], display: 'swap' });
-const CLARITY_PROJECT_ID = 'xax8e8j9r4';
 
 type Locale = (typeof routing.locales)[number];
 
@@ -87,16 +85,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider locale={normalizedLocale} messages={m}>
           {children}
         </NextIntlClientProvider>
-        <Script id="microsoft-clarity" strategy="afterInteractive">
-          {`
-            (function(c,l,a,r,i,t,y){
-              c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-              t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-              y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-            })(window, document, "clarity", "script", "${CLARITY_PROJECT_ID}");
-          `}
-        </Script>
-        <BaiduAnalytics />
+        <Analytics />
         <PwaRegistration />
       </body>
     </html>
