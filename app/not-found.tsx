@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from 'next/font/google';
 import { Analytics } from '@/components/Analytics';
 import { NotFoundContent } from '@/components/NotFoundContent';
+import { SiteProtection } from '@/components/SiteProtection';
 import './globals.css';
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'], display: 'swap' });
@@ -13,6 +14,7 @@ export default function RootNotFound() {
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <NotFoundContent />
         <Analytics />
+        <SiteProtection />
       </body>
     </html>
   );

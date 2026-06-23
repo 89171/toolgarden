@@ -240,7 +240,7 @@ Canonical examples:
 ## Privacy
 
 - Zero server-side processing
-- No analytics or tracking
+- Page-level analytics may be used, but tool inputs are not uploaded
 - Locale preference may be stored in a cookie for language routing
 - No tool input data is uploaded or stored by the server
 - All file operations (Excel, CSV) use browser File API

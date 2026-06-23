@@ -7,6 +7,7 @@ import { getFileMergeTools, getImageTools, getLocalizedToolPath, getPdfTools, ge
 
 export const BASE_URL = 'https://json-toolkit.dev';
 export const REPOSITORY_URL = 'https://github.com/89171/json-toolkit';
+const EXPOSE_SOURCE_METADATA = process.env.NEXT_PUBLIC_EXPOSE_SOURCE === 'true';
 
 const messages = { zh: zhMessages, en: enMessages } as const;
 
@@ -175,7 +176,7 @@ export function createSiteJsonLd(locale: string) {
     browserRequirements: 'Requires a modern browser with JavaScript enabled',
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
     inLanguage: normalizedLocale === 'zh' ? 'zh-CN' : 'en',
-    codeRepository: REPOSITORY_URL,
+    ...(EXPOSE_SOURCE_METADATA ? { codeRepository: REPOSITORY_URL } : {}),
   };
 }
 

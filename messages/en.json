@@ -907,7 +907,7 @@
       "formats_q": "Which JSON-related formats are supported?",
       "formats_a": "JSON, YAML, XML, CSV, Excel, TypeScript interfaces, JSON Schema, JSONPath, and JWT are supported. Image compression, background removal, and format conversion are available from the top image toolbar.",
       "free_q": "Are these tools free to use?",
-      "free_a": "Yes. All tools are free to use online, require no account, and the project is open source.",
+      "free_a": "Yes. All tools are free to use online, require no account, and run directly in your browser.",
       "loose_q": "Does the JSON formatter support loose syntax?",
       "loose_a": "Yes. It accepts common loose input such as unquoted object keys and single-quoted strings for faster debugging."
     }

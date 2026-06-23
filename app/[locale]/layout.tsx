@@ -13,6 +13,7 @@ import {
 } from '@/lib/tools/seo';
 import { Analytics } from '@/components/Analytics';
 import { PwaRegistration } from '@/components/PwaRegistration';
+import { SiteProtection } from '@/components/SiteProtection';
 import '../globals.css';
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'], display: 'swap' });
@@ -87,6 +88,7 @@ export default async function LocaleLayout({
         </NextIntlClientProvider>
         <Analytics />
         <PwaRegistration />
+        <SiteProtection />
       </body>
     </html>
   );

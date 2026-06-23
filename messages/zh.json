@@ -907,7 +907,7 @@
       "formats_q": "支持哪些 JSON 相关格式？",
       "formats_a": "支持 JSON、YAML、XML、CSV、Excel、TypeScript interface、JSON Schema、JSONPath 与 JWT。图片压缩、去背景和格式转换可从顶部图片工具栏进入。",
       "free_q": "这些工具可以免费使用吗？",
-      "free_a": "可以。所有工具都可以免费在线使用，无需账号，项目也是开源的。",
+      "free_a": "可以。所有工具都可以免费在线使用，无需账号，并直接在浏览器中运行。",
       "loose_q": "JSON 格式化支持宽松语法吗？",
       "loose_a": "支持常见的宽松输入，例如未加引号的 key 和单引号字符串，方便快速整理开发调试数据。"
     }
@@ -1053,7 +1053,7 @@
     },
     "image-to-jpg": {
       "name": "图片转 JPG",
-      "description": "免费在线将 PNG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 JPG，处理过程在浏览器本地完成"
+      "description": "免费在线将 PNG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 JPG"
     },
     "image-compress": {
       "name": "图片压缩",
@@ -1065,11 +1065,11 @@
     },
     "image-to-png": {
       "name": "图片转 PNG",
-      "description": "免费在线将 JPG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 PNG，处理过程在浏览器本地完成"
+      "description": "免费在线将 JPG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 PNG"
     },
     "image-to-webp": {
       "name": "图片转 WebP",
-      "description": "免费在线将 JPG、PNG、GIF、BMP、SVG、AVIF 等图片转换为 WebP，处理过程在浏览器本地完成"
+      "description": "免费在线将 JPG、PNG、GIF、BMP、SVG、AVIF 等图片转换为 WebP"
     },
     "image-crop": {
       "name": "图片裁剪",
@@ -1093,11 +1093,11 @@
     },
     "word-merge": {
       "name": "Word 合并",
-      "description": "免费在线将多个 Word DOCX 文档合并成一个 DOCX 文件，处理过程在浏览器本地完成"
+      "description": "免费在线将多个 Word DOCX 文档合并成一个 DOCX 文件"
     },
     "ppt-merge": {
       "name": "PPT 合并",
-      "description": "免费在线将多个 PPTX 演示文稿合并成一个 PPTX 文件，处理过程在浏览器本地完成"
+      "description": "免费在线将多个 PPTX 演示文稿合并成一个 PPTX 文件"
     },
     "txt-merge": {
       "name": "TXT 合并",

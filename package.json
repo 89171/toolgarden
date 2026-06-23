@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/generate-static-metadata.mjs && next build",
+    "build": "node scripts/generate-static-metadata.mjs && next build && node scripts/harden-static-export.mjs",
     "start": "next start",
     "lint": "eslint",
-    "clean": "node scripts/generate-static-metadata.mjs"
+    "clean": "node scripts/generate-static-metadata.mjs",
+    "harden": "node scripts/harden-static-export.mjs"
   },
   "dependencies": {
     "@imgly/background-removal": "^1.4.5",

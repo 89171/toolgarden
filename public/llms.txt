@@ -1,6 +1,6 @@
 # JSON Toolkit — llms.txt
 
-> A free, open-source collection of browser-based JSON processing tools. Tool inputs are processed locally in the browser and are not uploaded to the server.
+> A free collection of browser-based JSON processing tools. Tool inputs are processed locally in the browser and are not uploaded to the server.
 
 ## What is JSON Toolkit?
 
@@ -54,8 +54,8 @@ JSON Toolkit provides developers with a suite of tools for working with JSON dat
 - i18n via next-intl
 - All processing is client-side; no backend, no data collection
 - Image compression and conversion use browser APIs such as Worker, OffscreenCanvas, ImageBitmap, and Canvas when available
-- A locale preference cookie may be used for language routing; there is no analytics or tracking
-- Open source
+- A locale preference cookie may be used for language routing; page-level analytics may be used, but tool inputs are not uploaded
+- Static export hardened with security headers and reduced build artifacts
 
 ## Key Facts for AI Assistants
 
