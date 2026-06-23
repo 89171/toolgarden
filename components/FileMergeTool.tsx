@@ -1,0 +1,515 @@
+'use client';
+
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import Image from 'next/image';
+import { useTranslations } from 'next-intl';
+import { ToolLayout } from '@/components/ToolLayout';
+import { Button } from '@/components/ui/Button';
+import { Panel } from '@/components/ui/Panel';
+import { formatFileSize } from '@/lib/utils/image';
+import {
+  getFileMergeAcceptValue,
+  getFileMergeModeIcon,
+  mergeExcelFiles,
+  mergeFilesByType,
+  mergeImageFiles,
+  type ExcelMergeOutcome,
+  type ExcelMergeStrategy,
+  type FileMergeItem,
+  type FileMergeMode,
+  type FileTypeMergeOutcome,
+  type ImageMergeOutcome,
+  type ImageMergeOutput,
+} from '@/lib/utils/file-merge';
+
+interface ModeMeta {
+  label: string;
+  description: string;
+}
+
+interface FileMergeToolProps {
+  mode: FileMergeMode;
+}
+
+const TOOL_ID_BY_MODE: Record<FileMergeMode, string> = {
+  word: 'word-merge',
+  ppt: 'ppt-merge',
+  text: 'txt-merge',
+  markdown: 'markdown-merge',
+  csv: 'csv-merge',
+  rtf: 'rtf-merge',
+  excel: 'excel-merge',
+  images: 'image-merge',
+};
+
+function createItemId(file: File, index: number): string {
+  return `${file.name}-${file.size}-${file.lastModified}-${index}-${Date.now()}`;
+}
+
+function moveItem<T>(items: T[], fromIndex: number, toIndex: number): T[] {
+  const next = [...items];
+  const [item] = next.splice(fromIndex, 1);
+  next.splice(toIndex, 0, item);
+  return next;
+}
+
+type FileMergeResult = FileTypeMergeOutcome | ExcelMergeOutcome | ImageMergeOutcome;
+
+function isExcelMergeOutcome(result: FileMergeResult | null): result is ExcelMergeOutcome {
+  return Boolean(result && result.ok && 'sheetCount' in result);
+}
+
+function isImageMergeOutcome(result: FileMergeResult | null): result is ImageMergeOutcome {
+  return Boolean(result && result.ok && 'imageCount' in result);
+}
+
+function isFileTypeMergeOutcome(result: FileMergeResult | null): result is FileTypeMergeOutcome & { ok: true } {
+  return Boolean(result && result.ok && 'sourceCount' in result && 'format' in result);
+}
+
+export function FileMergeTool({ mode }: FileMergeToolProps) {
+  const tc = useTranslations('common');
+  const t = useTranslations('file_merge');
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [currentFiles, setCurrentFiles] = useState<FileMergeItem[]>([]);
+  const [currentResult, setCurrentResult] = useState<FileMergeResult | null>(null);
+  const [currentError, setCurrentError] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [excelStrategy, setExcelStrategy] = useState<ExcelMergeStrategy>('single-sheet');
+  const [imageOutput, setImageOutput] = useState<ImageMergeOutput>('pdf');
+  const [previewUrl, setPreviewUrl] = useState('');
+
+  const accept = useMemo(() => getFileMergeAcceptValue(mode), [mode]);
+
+  const modeMeta: Record<FileMergeMode, ModeMeta> = {
+    word: {
+      label: t('modes.word'),
+      description: t('mode_descriptions.word'),
+    },
+    ppt: {
+      label: t('modes.ppt'),
+      description: t('mode_descriptions.ppt'),
+    },
+    text: {
+      label: t('modes.text'),
+      description: t('mode_descriptions.text'),
+    },
+    markdown: {
+      label: t('modes.markdown'),
+      description: t('mode_descriptions.markdown'),
+    },
+    csv: {
+      label: t('modes.csv'),
+      description: t('mode_descriptions.csv'),
+    },
+    rtf: {
+      label: t('modes.rtf'),
+      description: t('mode_descriptions.rtf'),
+    },
+    excel: {
+      label: t('modes.excel'),
+      description: t('mode_descriptions.excel'),
+    },
+    images: {
+      label: t('modes.images'),
+      description: t('mode_descriptions.images'),
+    },
+  };
+
+  useEffect(() => {
+    if (!currentResult?.ok) {
+      setPreviewUrl('');
+      return undefined;
+    }
+
+    const nextUrl = URL.createObjectURL(currentResult.blob);
+    setPreviewUrl(nextUrl);
+    return () => URL.revokeObjectURL(nextUrl);
+  }, [currentResult]);
+
+  const getErrorMessage = (code: string): string => {
+    switch (code) {
+      case 'empty_selection':
+        return t('errors.empty_selection');
+      case 'unsupported_input':
+        return t('errors.unsupported_input');
+      case 'legacy_office':
+        return t('errors.legacy_office');
+      case 'file_too_large':
+        return t('errors.file_too_large');
+      case 'load_failed':
+        return t('errors.load_failed');
+      case 'empty_document':
+        return t('errors.empty_document');
+      case 'render_failed':
+        return t('errors.render_failed');
+      case 'mobi_unsupported':
+        return t('errors.mobi_unsupported');
+      case 'empty_excel':
+        return t('errors.empty_excel');
+      case 'invalid_excel':
+        return t('errors.invalid_excel');
+      case 'invalid_word':
+        return t('errors.invalid_word');
+      case 'invalid_ppt':
+        return t('errors.invalid_ppt');
+      case 'canvas_context':
+        return t('errors.canvas_context');
+      case 'image_load_failed':
+        return t('errors.image_load_failed');
+      default:
+        return t('errors.general');
+    }
+  };
+
+  const updateFiles = (updater: (items: FileMergeItem[]) => FileMergeItem[]) => {
+    setCurrentFiles((current) => updater(current));
+  };
+
+  const updateResult = (nextResult: FileMergeResult | null) => {
+    setCurrentResult(nextResult);
+  };
+
+  const updateError = (nextError: string) => {
+    setCurrentError(nextError);
+  };
+
+  const addFiles = (fileList: FileList | File[]) => {
+    const selectedFiles = Array.from(fileList);
+    if (selectedFiles.length === 0) return;
+
+    updateResult(null);
+    updateError('');
+    updateFiles((current) => [
+      ...current,
+      ...selectedFiles.map((file, index) => ({
+        id: createItemId(file, index),
+        file,
+      })),
+    ]);
+  };
+
+  const clearFiles = () => {
+    updateFiles(() => []);
+    updateResult(null);
+    updateError('');
+    if (inputRef.current) inputRef.current.value = '';
+  };
+
+  const removeItem = (id: string) => {
+    updateFiles((current) => current.filter((item) => item.id !== id));
+    updateResult(null);
+    updateError('');
+  };
+
+  const moveBy = (id: string, delta: number) => {
+    updateFiles((current) => {
+      const index = current.findIndex((item) => item.id === id);
+      if (index < 0) return current;
+      const nextIndex = Math.max(0, Math.min(current.length - 1, index + delta));
+      if (nextIndex === index) return current;
+      return moveItem(current, index, nextIndex);
+    });
+    updateResult(null);
+    updateError('');
+  };
+
+  const merge = async () => {
+    if (currentFiles.length === 0 || isProcessing) return;
+
+    setIsProcessing(true);
+    updateError('');
+    updateResult(null);
+
+    const sourceFiles = currentFiles.map((item) => item.file);
+    const result =
+      mode === 'excel'
+        ? await mergeExcelFiles(sourceFiles, excelStrategy)
+        : mode === 'images'
+          ? await mergeImageFiles(sourceFiles, imageOutput)
+          : await mergeFilesByType(sourceFiles, mode);
+
+    setIsProcessing(false);
+
+    if (result.ok) {
+      updateResult(result);
+      updateError('');
+      return;
+    }
+
+    updateError(getErrorMessage(result.code));
+  };
+
+  const download = async () => {
+    if (!currentResult?.ok) return;
+    const { saveAs } = await import('file-saver');
+    saveAs(currentResult.blob, currentResult.filename);
+  };
+
+  const renderFileList = () => {
+    if (currentFiles.length === 0) {
+      return (
+        <p className="rounded border border-border-base bg-surface px-3 py-4 text-sm text-content-muted">
+          {t('empty_list')}
+        </p>
+      );
+    }
+
+    return (
+      <div className="flex flex-col gap-2">
+        {currentFiles.map((item, index) => (
+          <article key={item.id} className="rounded border border-border-base bg-surface p-3">
+            <div className="flex min-w-0 items-start justify-between gap-3">
+              <div className="min-w-0">
+                <h3 className="truncate text-sm font-semibold text-content-secondary">
+                  {index + 1}. {item.file.name}
+                </h3>
+                <p className="mt-1 text-xs text-content-muted">{formatFileSize(item.file.size)}</p>
+              </div>
+              <span className="rounded border border-border-subtle bg-surface-raised px-2 py-1 text-xs text-content-muted">
+                {index + 1}
+              </span>
+            </div>
+
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Button variant="secondary" size="sm" onClick={() => moveBy(item.id, -1)} disabled={index === 0}>
+                {t('move_up')}
+              </Button>
+              <Button variant="secondary" size="sm" onClick={() => moveBy(item.id, 1)} disabled={index === currentFiles.length - 1}>
+                {t('move_down')}
+              </Button>
+              <Button variant="danger" size="sm" onClick={() => removeItem(item.id)}>
+                {tc('delete')}
+              </Button>
+            </div>
+          </article>
+        ))}
+      </div>
+    );
+  };
+
+  const renderOptions = () => {
+    if (mode === 'excel') {
+      return (
+        <div className="flex flex-col gap-2">
+          <span className="text-xs font-semibold uppercase tracking-normal text-content-faint">
+            {t('excel_strategy_title')}
+          </span>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <Button
+              variant={excelStrategy === 'single-sheet' ? 'primary' : 'secondary'}
+              onClick={() => setExcelStrategy('single-sheet')}
+            >
+              {t('excel_strategy_single')}
+            </Button>
+            <Button
+              variant={excelStrategy === 'multi-sheet' ? 'primary' : 'secondary'}
+              onClick={() => setExcelStrategy('multi-sheet')}
+            >
+              {t('excel_strategy_multi')}
+            </Button>
+          </div>
+        </div>
+      );
+    }
+
+    if (mode === 'images') {
+      return (
+        <div className="flex flex-col gap-2">
+          <span className="text-xs font-semibold uppercase tracking-normal text-content-faint">
+            {t('image_output_title')}
+          </span>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <Button
+              variant={imageOutput === 'pdf' ? 'primary' : 'secondary'}
+              onClick={() => setImageOutput('pdf')}
+            >
+              {t('image_output_pdf')}
+            </Button>
+            <Button
+              variant={imageOutput === 'long-image' ? 'primary' : 'secondary'}
+              onClick={() => setImageOutput('long-image')}
+            >
+              {t('image_output_long')}
+            </Button>
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  const renderResult = () => {
+    if (currentError) {
+      return <p className="text-sm text-syntax-null">{currentError}</p>;
+    }
+
+    if (!currentResult?.ok) {
+      return (
+        <div className="flex h-full items-center justify-center text-center text-content-faint">
+          <div>
+            <p
+              aria-hidden="true"
+              className="mx-auto mb-2 inline-flex h-12 w-14 items-center justify-center rounded border border-border-subtle bg-surface font-mono text-sm font-semibold"
+            >
+              MERGE
+            </p>
+            <p className="text-sm">{t('idle_desc', { mode: modeMeta[mode].label })}</p>
+          </div>
+        </div>
+      );
+    }
+
+    if (isFileTypeMergeOutcome(currentResult)) {
+      return (
+        <div className="flex h-full min-h-0 flex-col gap-3">
+          <div className="flex flex-wrap items-center gap-3 text-sm text-content-muted">
+            <span>{t('file_result', { count: currentResult.sourceCount, format: currentResult.format.toUpperCase() })}</span>
+            {typeof currentResult.itemCount === 'number' ? (
+              <span>{t('item_result', { count: currentResult.itemCount })}</span>
+            ) : null}
+            <span>{t('size_result', { size: formatFileSize(currentResult.outputSize) })}</span>
+            <span>{t('duration_result', { duration: currentResult.durationMs })}</span>
+          </div>
+          {currentResult.previewText ? (
+            <pre className="min-h-[28rem] flex-grow overflow-auto rounded border border-border-input bg-surface-raised p-4 text-sm leading-relaxed text-content-secondary">
+              {currentResult.previewText}
+            </pre>
+          ) : (
+            <div className="rounded border border-border-input bg-surface-raised p-4 text-sm text-content-muted">
+              {t('file_preview_note')}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    if (isExcelMergeOutcome(currentResult)) {
+      return (
+        <div className="flex h-full min-h-0 flex-col gap-3">
+          <div className="flex flex-wrap items-center gap-3 text-sm text-content-muted">
+            <span>{t('excel_result', { sheets: currentResult.sheetCount, rows: currentResult.rowCount })}</span>
+            <span>{t('size_result', { size: formatFileSize(currentResult.outputSize) })}</span>
+            <span>{t('duration_result', { duration: currentResult.durationMs })}</span>
+          </div>
+          <div className="rounded border border-border-input bg-surface-raised p-4 text-sm text-content-muted">
+            {t('excel_preview_note')}
+          </div>
+        </div>
+      );
+    }
+
+    if (isImageMergeOutcome(currentResult)) {
+      return (
+        <div className="flex h-full min-h-0 flex-col gap-3">
+          <div className="flex flex-wrap items-center gap-3 text-sm text-content-muted">
+            <span>{t('image_result', { count: currentResult.imageCount, format: currentResult.format.toUpperCase() })}</span>
+            {'width' in currentResult ? (
+              <span>{t('image_dimensions', { width: currentResult.width, height: currentResult.height })}</span>
+            ) : null}
+            <span>{t('size_result', { size: formatFileSize(currentResult.outputSize) })}</span>
+            <span>{t('duration_result', { duration: currentResult.durationMs })}</span>
+          </div>
+          {previewUrl ? (
+            <div className="min-h-[28rem] flex-grow overflow-auto rounded border border-border-input bg-surface-raised p-3">
+              {currentResult.format === 'png' ? (
+                <Image
+                  src={previewUrl}
+                  alt={t('preview_title')}
+                  width={currentResult.width}
+                  height={currentResult.height}
+                  unoptimized
+                  className="h-auto w-full rounded"
+                />
+              ) : (
+                <iframe title={t('preview_title')} src={previewUrl} className="h-full min-h-[28rem] w-full rounded" />
+              )}
+            </div>
+          ) : null}
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  return (
+    <ToolLayout toolId={TOOL_ID_BY_MODE[mode]}>
+      <div className="grid flex-grow grid-cols-1 gap-6 min-h-0 xl:grid-cols-[minmax(360px,460px)_1fr]">
+        <Panel
+          title={t('input_title')}
+          actions={(
+            <Button variant="secondary" onClick={clearFiles} disabled={currentFiles.length === 0}>
+              {tc('clear')}
+            </Button>
+          )}
+          className="min-h-0"
+        >
+          <div className="flex min-h-0 flex-grow flex-col gap-4 overflow-y-auto pr-1">
+            <div className="rounded border border-border-base bg-surface-raised p-3 text-sm text-content-muted">
+              {modeMeta[mode].description}
+            </div>
+
+            <input
+              ref={inputRef}
+              type="file"
+              accept={accept}
+              multiple
+              className="hidden"
+              onChange={(event) => {
+                if (event.target.files) addFiles(event.target.files);
+                event.target.value = '';
+              }}
+            />
+
+            <button
+              type="button"
+              onClick={() => inputRef.current?.click()}
+              className="flex min-h-40 flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed border-border-input bg-surface-raised px-5 py-8 text-center transition-colors hover:border-border-strong hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+            >
+              <span className="flex h-12 w-12 items-center justify-center rounded-lg border border-border-subtle bg-surface font-mono text-sm font-semibold text-content-muted">
+                {getFileMergeModeIcon(mode)}
+              </span>
+              <span className="text-base font-semibold text-content-secondary">{t('upload_title')}</span>
+              <span className="max-w-80 text-sm leading-relaxed text-content-muted">
+                {t('upload_hint', { accept })}
+              </span>
+              <span className="rounded bg-action px-4 py-2 text-sm font-medium text-background">
+                {t('upload_button')}
+              </span>
+            </button>
+
+            {renderOptions()}
+
+            <div className="rounded-lg border border-border-base bg-surface-raised p-3">
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <span className="text-sm font-semibold text-content-secondary">{t('file_list_title')}</span>
+                <span className="text-xs text-content-faint">{t('file_count', { count: currentFiles.length })}</span>
+              </div>
+              {renderFileList()}
+            </div>
+
+            <Button onClick={merge} disabled={currentFiles.length === 0 || isProcessing}>
+              {isProcessing ? t('merging') : t('merge_action')}
+            </Button>
+          </div>
+        </Panel>
+
+        <Panel
+          title={t('output_title')}
+          actions={(
+            <Button onClick={download} disabled={!currentResult?.ok}>
+              {tc('download')}
+            </Button>
+          )}
+          className="min-h-0"
+        >
+          <div className="flex min-h-0 flex-grow flex-col gap-3">
+            {renderResult()}
+          </div>
+        </Panel>
+      </div>
+    </ToolLayout>
+  );
+}

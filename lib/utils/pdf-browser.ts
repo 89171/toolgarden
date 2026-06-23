@@ -155,6 +155,143 @@ function textToBlocks(title: string, text: string, kind: TextBlockKind = 'body')
   ];
 }
 
+function splitCsvLine(line: string): string[] {
+  const cells: string[] = [];
+  let current = '';
+  let inQuotes = false;
+
+  for (let index = 0; index < line.length; index += 1) {
+    const char = line[index];
+
+    if (inQuotes) {
+      if (char === '"') {
+        if (line[index + 1] === '"') {
+          current += '"';
+          index += 1;
+        } else {
+          inQuotes = false;
+        }
+      } else {
+        current += char;
+      }
+      continue;
+    }
+
+    if (char === '"') {
+      inQuotes = true;
+      continue;
+    }
+
+    if (char === ',') {
+      cells.push(current);
+      current = '';
+      continue;
+    }
+
+    current += char;
+  }
+
+  cells.push(current);
+  return cells;
+}
+
+function csvToBlocks(title: string, text: string): TextBlock[] {
+  const lines = normalizeText(text)
+    .split('\n')
+    .map((line) => line.trimEnd())
+    .filter((line) => line.trim().length > 0);
+
+  if (lines.length === 0) return [];
+
+  const rows = lines.map(splitCsvLine);
+  const maxColumns = Math.min(12, Math.max(...rows.map((row) => row.length)));
+  const widths = Array.from({ length: maxColumns }, (_, columnIndex) => {
+    const width = Math.max(
+      4,
+      ...rows.map((row) => (row[columnIndex] ?? '').replace(/\s+/g, ' ').slice(0, 28).length)
+    );
+    return Math.min(28, width);
+  });
+
+  const body = rows
+    .slice(0, 600)
+    .map((row) =>
+      widths
+        .map((width, columnIndex) => (row[columnIndex] ?? '').replace(/\s+/g, ' ').slice(0, width).padEnd(width))
+        .join('  ')
+        .trimEnd()
+    );
+
+  if (rows.length > body.length) {
+    body.push(`... ${rows.length - body.length} more rows`);
+  }
+
+  return textToBlocks(title, body.join('\n'), 'mono');
+}
+
+function decodeRtfControlWord(word: string, param: string | undefined): string {
+  switch (word) {
+    case 'par':
+    case 'pard':
+      return '\n';
+    case 'line':
+      return '\n';
+    case 'tab':
+      return '\t';
+    case 'emdash':
+      return '—';
+    case 'endash':
+      return '–';
+    case 'u':
+      return param ? String.fromCharCode(Number.parseInt(param, 10)) : '';
+    default:
+      return '';
+  }
+}
+
+function rtfToText(text: string): string {
+  let output = '';
+
+  for (let index = 0; index < text.length; index += 1) {
+    const char = text[index];
+
+    if (char === '{' || char === '}') continue;
+    if (char !== '\\') {
+      output += char;
+      continue;
+    }
+
+    const next = text[index + 1];
+    if (next === '\\' || next === '{' || next === '}') {
+      output += next;
+      index += 1;
+      continue;
+    }
+
+    if (next === "'") {
+      const hex = text.slice(index + 2, index + 4);
+      if (/^[0-9a-fA-F]{2}$/.test(hex)) {
+        output += String.fromCharCode(Number.parseInt(hex, 16));
+        index += 3;
+      }
+      continue;
+    }
+
+    const controlMatch = text.slice(index + 1).match(/^([a-zA-Z]+)(-?\d+)?\s?/);
+    if (controlMatch) {
+      output += decodeRtfControlWord(controlMatch[1], controlMatch[2]);
+      index += controlMatch[0].length;
+    }
+  }
+
+  return normalizeText(output);
+}
+
+function rtfToBlocks(title: string, text: string): TextBlock[] {
+  const plain = rtfToText(text);
+  return plain ? textToBlocks(title, plain) : [];
+}
+
 function markdownToBlocks(title: string, text: string): TextBlock[] {
   const lines = normalizeText(text).split('\n');
   const blocks: TextBlock[] = [{ kind: 'title', text: title }];
@@ -775,6 +912,10 @@ async function createPdfBlobForFile(file: File): Promise<Blob> {
       return createPdfFromBlocks(markdownToBlocks(file.name, await readFileText(file)));
     case 'html':
       return createPdfFromBlocks(htmlToBlocks(file.name, await readFileText(file)));
+    case 'csv':
+      return createPdfFromBlocks(csvToBlocks(file.name, await readFileText(file)));
+    case 'rtf':
+      return createPdfFromBlocks(rtfToBlocks(file.name, await readFileText(file)));
     case 'epub':
       return createPdfFromBlocks(extractEpubBlocks(file.name, await file.arrayBuffer()));
     case 'mobi':
@@ -852,30 +993,49 @@ export async function mergePdfFiles(files: File[], filename = 'merged.pdf'): Pro
   if (files.length === 0) return { ok: false, code: 'empty_selection' };
 
   const startedAt = now();
-  const output = await PDFDocument.create();
 
   try {
+    const blobs: Blob[] = [];
+
     for (const file of files) {
       const validationError = validatePdfFile(file);
       if (validationError) return validationError;
+      blobs.push(file);
+    }
 
-      const source = await PDFDocument.load(await file.arrayBuffer());
-      const pageIndexes = source.getPageIndices();
-      const pages = await output.copyPages(source, pageIndexes);
+    return mergePdfBlobs(blobs, filename, startedAt);
+  } catch {
+    return { ok: false, code: 'load_failed' };
+  }
+}
+
+export async function mergePdfBlobs(
+  blobs: Blob[],
+  filename = 'merged.pdf',
+  startedAt = now()
+): Promise<PdfOperationOutcome> {
+  if (blobs.length === 0) return { ok: false, code: 'empty_selection' };
+
+  try {
+    const output = await PDFDocument.create();
+
+    for (const blob of blobs) {
+      const source = await PDFDocument.load(await blob.arrayBuffer());
+      const pages = await output.copyPages(source, source.getPageIndices());
       pages.forEach((page) => output.addPage(page));
     }
 
     if (output.getPageCount() === 0) return { ok: false, code: 'empty_selection' };
 
     const bytes = await output.save();
-    const blob = createPdfBlob(bytes);
+    const mergedBlob = createPdfBlob(bytes);
 
     return {
       ok: true,
-      blob,
+      blob: mergedBlob,
       filename,
       pageCount: output.getPageCount(),
-      outputSize: blob.size,
+      outputSize: mergedBlob.size,
       durationMs: Math.round(now() - startedAt),
     };
   } catch {

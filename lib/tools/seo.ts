@@ -3,7 +3,7 @@ import { routing } from '@/i18n/routing';
 import zhMessages from '@/messages/zh.json';
 import enMessages from '@/messages/en.json';
 import { stringifyJSONValue } from '@/lib/utils/json';
-import { getImageTools, getLocalizedToolPath, getPdfTools, getToolById, toolRegistry } from './registry';
+import { getFileMergeTools, getImageTools, getLocalizedToolPath, getPdfTools, getToolById, toolRegistry } from './registry';
 
 export const BASE_URL = 'https://json-toolkit.dev';
 export const REPOSITORY_URL = 'https://github.com/89171/json-toolkit';
@@ -111,6 +111,29 @@ export function createPdfHubMetadata(locale: string): Metadata {
   };
 }
 
+export function createFileMergeHubMetadata(locale: string): Metadata {
+  const normalizedLocale = normalizeLocale(locale);
+  const m = getLocaleMessages(normalizedLocale);
+  const path = '/file-merge';
+
+  return {
+    title: m.file_merge_hub.meta_title,
+    description: m.file_merge_hub.description,
+    alternates: {
+      canonical: getLocalizedPath(normalizedLocale, path),
+      languages: getLanguageAlternates(path),
+    },
+    openGraph: {
+      title: `${m.file_merge_hub.title} | ${m.home.title}`,
+      description: m.file_merge_hub.description,
+      type: 'website',
+      locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
+      siteName: m.home.title,
+      url: getLocalizedPath(normalizedLocale, path),
+    },
+  };
+}
+
 export function createToolMetadata(toolId: ToolMessageId, locale: string): Metadata {
   const normalizedLocale = normalizeLocale(locale);
   const m = getLocaleMessages(normalizedLocale);
@@ -209,6 +232,28 @@ export function createPdfToolItemListJsonLd(locale: string) {
     name: m.pdf_hub.title,
     description: m.pdf_hub.description,
     itemListElement: getPdfTools().map((tool, index) => {
+      const localizedTool = m.tools[tool.id as ToolMessageId];
+      return {
+        '@type': 'ListItem',
+        position: index + 1,
+        url: getLocalizedUrl(normalizedLocale, tool.path),
+        name: localizedTool.name,
+        description: localizedTool.description,
+      };
+    }),
+  };
+}
+
+export function createFileMergeToolItemListJsonLd(locale: string) {
+  const normalizedLocale = normalizeLocale(locale);
+  const m = getLocaleMessages(normalizedLocale);
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: m.file_merge_hub.title,
+    description: m.file_merge_hub.description,
+    itemListElement: getFileMergeTools().map((tool, index) => {
       const localizedTool = m.tools[tool.id as ToolMessageId];
       return {
         '@type': 'ListItem',
@@ -343,6 +388,33 @@ export function createBreadcrumbJsonLd(toolId: string, locale: string) {
           position: 2,
           name: m.pdf_hub.breadcrumb,
           item: getLocalizedUrl(normalizedLocale, '/pdf'),
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: localizedTool.name,
+          item: getLocalizedUrl(normalizedLocale, tool.path),
+        },
+      ],
+    };
+  }
+
+  if (tool.path.startsWith('/file-merge/')) {
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: m.home.title,
+          item: getLocalizedUrl(normalizedLocale),
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: m.file_merge_hub.breadcrumb,
+          item: getLocalizedUrl(normalizedLocale, '/file-merge'),
         },
         {
           '@type': 'ListItem',

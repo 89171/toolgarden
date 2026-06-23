@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { useTranslations, useLocale } from 'next-intl';
 import {
+  getFileMergeTools,
   getImageTools,
   getInfoCodecTools,
   getJsonToolGroups,
@@ -55,6 +56,7 @@ const Header: React.FC<HeaderProps> = ({ compact = false }) => {
   const jsonGroups = getJsonToolGroups();
   const imageTools = getImageTools();
   const pdfTools = getPdfTools();
+  const fileMergeTools = getFileMergeTools();
   const infoCodecTools = getInfoCodecTools();
   const qrCodeTools = getQrCodeTools();
   const subtitleTools = getSubtitleTools();
@@ -144,6 +146,21 @@ const Header: React.FC<HeaderProps> = ({ compact = false }) => {
             <MenuDropdownPanel>
                 <div className="grid gap-1">
                   {pdfTools.map(renderToolLink)}
+                </div>
+            </MenuDropdownPanel>
+          </div>
+
+          <div className="group relative">
+            <Link
+              href={`/${locale}/file-merge`}
+              className="flex items-center gap-2 rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+            >
+              <span>{t('nav.file_merge_tools')}</span>
+              <MenuDropdownCaret />
+            </Link>
+            <MenuDropdownPanel>
+                <div className="grid gap-1">
+                  {fileMergeTools.map(renderToolLink)}
                 </div>
             </MenuDropdownPanel>
           </div>

@@ -148,6 +148,70 @@ export const toolRegistry: ToolMeta[] = [
     category: 'convert',
   },
   {
+    id: 'word-merge',
+    name: 'Word 合并',
+    description: '将多个 Word DOCX 文档合并成一个 DOCX 文件',
+    path: '/file-merge/word',
+    icon: 'DOC',
+    category: 'convert',
+  },
+  {
+    id: 'ppt-merge',
+    name: 'PPT 合并',
+    description: '将多个 PPTX 演示文稿合并成一个 PPTX 文件',
+    path: '/file-merge/ppt',
+    icon: 'PPT',
+    category: 'convert',
+  },
+  {
+    id: 'txt-merge',
+    name: 'TXT 合并',
+    description: '将多个 TXT 文本文件合并成一个 TXT 文件',
+    path: '/file-merge/txt',
+    icon: 'TXT',
+    category: 'convert',
+  },
+  {
+    id: 'markdown-merge',
+    name: 'Markdown 合并',
+    description: '将多个 Markdown 文件合并成一个 MD 文件',
+    path: '/file-merge/markdown',
+    icon: 'MD',
+    category: 'convert',
+  },
+  {
+    id: 'csv-merge',
+    name: 'CSV 合并',
+    description: '将多个 CSV 文件按表格行合并成一个 CSV 文件',
+    path: '/file-merge/csv',
+    icon: 'CSV',
+    category: 'convert',
+  },
+  {
+    id: 'rtf-merge',
+    name: 'RTF 合并',
+    description: '将多个 RTF 富文本文件合并成一个 RTF 文件',
+    path: '/file-merge/rtf',
+    icon: 'RTF',
+    category: 'convert',
+  },
+  {
+    id: 'excel-merge',
+    name: 'Excel 合并',
+    description: '合并多个 Excel / CSV 文件，支持汇总到同一个 Sheet 或保留多个 Sheet',
+    path: '/file-merge/excel',
+    icon: 'XLS',
+    category: 'convert',
+  },
+  {
+    id: 'image-merge',
+    name: '图片合并',
+    description: '将多张图片合并成 PDF，或垂直拼接成长图 PNG',
+    path: '/file-merge/images',
+    icon: 'IMG',
+    category: 'convert',
+  },
+  {
     id: 'image-compress',
     name: '图片压缩',
     description: '在浏览器本地智能压缩 JPG、PNG、WebP 等图片，默认保持原格式，也可选择输出 WebP',
@@ -298,12 +362,25 @@ export function getToolsByCategory(category: ToolCategory): ToolMeta[] {
 
 /** 获取图片工具集合页中的工具 */
 export function getImageTools(): ToolMeta[] {
-  return toolRegistry.filter((tool) => tool.path.startsWith('/image/'));
+  const imageMergeTool = getToolById('image-merge');
+  return [
+    ...toolRegistry.filter((tool) => tool.path.startsWith('/image/')),
+    ...(imageMergeTool ? [imageMergeTool] : []),
+  ];
 }
 
 /** 获取 PDF 工具集合页中的工具 */
 export function getPdfTools(): ToolMeta[] {
   return toolRegistry.filter((tool) => tool.path.startsWith('/pdf/'));
+}
+
+/** 获取文件合并工具集合页中的工具 */
+export function getFileMergeTools(): ToolMeta[] {
+  const pdfMergeTool = getToolById('pdf-merge');
+  return [
+    ...(pdfMergeTool ? [pdfMergeTool] : []),
+    ...toolRegistry.filter((tool) => tool.path.startsWith('/file-merge/')),
+  ];
 }
 
 /** 获取字幕工具集合 */
@@ -325,13 +402,14 @@ function isNonJsonTopLevelTool(tool: ToolMeta): boolean {
   return (
     tool.path.startsWith('/image/') ||
     tool.path.startsWith('/pdf/') ||
+    tool.path.startsWith('/file-merge/') ||
     tool.path.startsWith('/subtitle') ||
     tool.path.startsWith('/qr-code/') ||
     tool.path.startsWith('/info-codec')
   );
 }
 
-/** 获取 JSON 工具集合，不包含图片、PDF、字幕、二维码和信息编码工具 */
+/** 获取 JSON 工具集合，不包含图片、PDF、文件合并、字幕、二维码和信息编码工具 */
 export function getJsonTools(): ToolMeta[] {
   return toolRegistry.filter((tool) => !isNonJsonTopLevelTool(tool));
 }

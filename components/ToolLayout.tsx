@@ -27,9 +27,11 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
   const catLabel  = tool ? t(`categories.${tool.category}`) : '';
   const isImageTool = Boolean(tool?.path.startsWith('/image/'));
   const isPdfTool = Boolean(tool?.path.startsWith('/pdf/'));
+  const isFileMergeTool = Boolean(tool?.path.startsWith('/file-merge/'));
   const homeLabel = t('nav.title');
   const imageHubLabel = t('image_hub.breadcrumb');
   const pdfHubLabel = t('pdf_hub.breadcrumb');
+  const fileMergeHubLabel = t('file_merge_hub.breadcrumb');
   const toolJsonLd = tool ? createToolJsonLd(toolId, locale) : null;
   const breadcrumbJsonLd = tool ? createBreadcrumbJsonLd(toolId, locale) : null;
   const faqJsonLd = tool ? createToolFaqJsonLd(toolId, locale) : null;
@@ -55,7 +57,7 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
         />
       )}
       <div className="h-screen bg-background text-foreground flex flex-col">
-        <div className="flex-grow flex flex-col max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 min-h-0">
+        <div className="flex-grow flex flex-col max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-24 py-4 min-h-0">
         <Header compact />
         {/* 面包屑 */}
         <nav className="text-sm text-content-muted mb-4 flex items-center gap-1" aria-label="breadcrumb">
@@ -82,7 +84,17 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
               <span className="text-content-secondary font-medium">{toolName}</span>
             </>
           )}
-          {tool && !isImageTool && !isPdfTool && (
+          {tool && isFileMergeTool && (
+            <>
+              <span>/</span>
+              <Link href={`/${locale}/file-merge`} className="text-content-secondary font-medium hover:text-content">
+                {fileMergeHubLabel}
+              </Link>
+              <span>/</span>
+              <span className="text-content-secondary font-medium">{toolName}</span>
+            </>
+          )}
+          {tool && !isImageTool && !isPdfTool && !isFileMergeTool && (
             <>
               <span>/</span>
               <span className="text-content-faint text-xs px-1 py-0.5 bg-surface-hover rounded">

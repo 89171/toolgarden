@@ -3,6 +3,8 @@ export type PdfInputKind =
   | 'text'
   | 'markdown'
   | 'html'
+  | 'csv'
+  | 'rtf'
   | 'epub'
   | 'mobi'
   | 'word'
@@ -120,6 +122,18 @@ export const supportedPdfInputs: PdfInputFormat[] = [
     label: 'HTML',
     extensions: ['html', 'htm'],
     mimeTypes: ['text/html', 'application/xhtml+xml'],
+  },
+  {
+    kind: 'csv',
+    label: 'CSV',
+    extensions: ['csv'],
+    mimeTypes: ['text/csv', 'application/csv'],
+  },
+  {
+    kind: 'rtf',
+    label: 'RTF',
+    extensions: ['rtf'],
+    mimeTypes: ['application/rtf', 'text/rtf'],
   },
   {
     kind: 'legacy-office',

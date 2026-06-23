@@ -23,7 +23,7 @@
     "drop_hint": "Supports Word, Excel, PowerPoint, EPUB, MOBI, JPG, PNG, WebP, TXT, Markdown, and HTML",
     "drop_action": "Choose files",
     "input_formats": "Input formats",
-    "local_note": "Images, text, Markdown, HTML, EPUB, unencrypted legacy MOBI, docx, xlsx, xls, and pptx are converted locally in the browser. Legacy doc/ppt, encrypted MOBI, and complex Kindle formats need a future server-side converter.",
+    "local_note": "Images, text, Markdown, HTML, CSV, RTF, EPUB, unencrypted legacy MOBI, docx, xlsx, xls, and pptx are converted locally in the browser. Legacy doc/ppt, encrypted MOBI, and complex Kindle formats need a future server-side converter.",
     "summary_files": "Files",
     "summary_ready": "Done",
     "summary_target": "Target",
@@ -93,6 +93,75 @@
       "file_too_large": "The file is too large. Maximum size is {maxSize}.",
       "load_failed": "The PDF could not be read. It may be damaged or encrypted.",
       "general": "Processing failed. Please try again."
+    }
+  },
+  "file_merge": {
+    "input_title": "File merge",
+    "output_title": "Merged result",
+    "preview_title": "Result preview",
+    "upload_title": "Upload files",
+    "upload_button": "Choose files",
+    "upload_hint": "Supports the file formats available in the current mode. Current accept: {accept}",
+    "file_list_title": "File list",
+    "file_count": "{count} files",
+    "empty_list": "Uploaded files will appear here.",
+    "merge_action": "Merge now",
+    "merging": "Merging...",
+    "mode_descriptions": {
+      "pdf": "Merge multiple PDF files into one PDF while preserving page order.",
+      "word": "Merge multiple Word DOCX documents into one DOCX file.",
+      "ppt": "Merge multiple PPTX presentations into one PPTX file.",
+      "text": "Merge multiple TXT files into one TXT file in order.",
+      "markdown": "Merge multiple Markdown files into one MD file in order.",
+      "csv": "Merge multiple CSV files by table rows into one CSV file.",
+      "rtf": "Merge multiple RTF files into one RTF file.",
+      "excel": "Merge one or more Excel / CSV files into a single-sheet or multi-sheet workbook.",
+      "images": "Merge multiple images into a PDF or stitch them into a long PNG."
+    },
+    "modes": {
+      "pdf": "PDF",
+      "word": "Word",
+      "ppt": "PPT",
+      "text": "TXT",
+      "markdown": "Markdown",
+      "csv": "CSV",
+      "rtf": "RTF",
+      "excel": "Excel",
+      "images": "Images"
+    },
+    "excel_strategy_title": "Excel merge mode",
+    "excel_strategy_single": "Merge into one Sheet",
+    "excel_strategy_multi": "Keep each source Sheet",
+    "image_output_title": "Image output mode",
+    "image_output_pdf": "Merge to PDF",
+    "image_output_long": "Stitch into long image",
+    "document_result": "{count} source files merged into a {pages}-page PDF",
+    "file_result": "{count} source files merged into {format}",
+    "item_result": "{count} items",
+    "excel_result": "{sheets} sheets and {rows} rows merged",
+    "image_result": "{count} images merged into {format}",
+    "image_dimensions": "Size {width} × {height}",
+    "size_result": "Size {size}",
+    "duration_result": "Took {duration}ms",
+    "file_preview_note": "The merged file is ready to download.",
+    "excel_preview_note": "The Excel output file is ready to download.",
+    "idle_desc": "You are in {mode} mode. Upload files and click merge.",
+    "errors": {
+      "empty_selection": "Add at least one file first.",
+      "unsupported_input": "This mode does not support the selected file type.",
+      "legacy_office": "Legacy doc / ppt files are not supported in the browser yet. Convert them to docx / pptx first.",
+      "file_too_large": "The file is too large. Maximum size is {maxSize}.",
+      "load_failed": "The file could not be read. It may be damaged or unsupported by this browser.",
+      "empty_document": "No mergeable content was found.",
+      "render_failed": "File merge failed. Please try again.",
+      "mobi_unsupported": "Only unencrypted legacy MOBI/PalmDOC is supported, so this file cannot be merged yet.",
+      "empty_excel": "No mergeable Excel / CSV content was found.",
+      "invalid_excel": "Excel reading failed. Please check the file format.",
+      "invalid_word": "Word reading or merging failed. Check that the file is a valid DOCX.",
+      "invalid_ppt": "PPT reading or merging failed. Check that the file is a valid PPTX.",
+      "canvas_context": "Could not create a Canvas drawing context.",
+      "image_load_failed": "The image could not be read. Check whether it is damaged or unsupported.",
+      "general": "Merge failed. Please try again."
     }
   },
   "pdf_split": {
@@ -464,6 +533,126 @@
         }
       ]
     },
+    "info-codec": {
+      "items": [
+        {
+          "question": "Does Info Encoder / Decoder upload my content to a server?",
+          "answer": "No. Encoding, decoding, hashing, and parsing all run locally in your browser, so your input is not uploaded to a server."
+        },
+        {
+          "question": "Which formats does Info Encoder / Decoder support?",
+          "answer": "It supports common text workflows such as Unicode, URL, UTF16, Base64, MD5, SHA1, hex, HTML entities, JWT, cookies, Gzip, URL parameters, and string escaping."
+        },
+        {
+          "question": "Does JWT decode also verify signatures?",
+          "answer": "By default it only decodes the JWT header and payload so you can inspect the contents quickly. Signature verification is handled in the dedicated JWT tool."
+        },
+        {
+          "question": "Which Gzip inputs are supported?",
+          "answer": "The tool accepts gzip data in Base64 or hex form and shows the decompressed result directly on the page for easy copying or follow-up processing."
+        }
+      ]
+    },
+    "file-merge": {
+      "items": [
+        {
+          "question": "Does File Merge upload my files?",
+          "answer": "No. PDF, Word, PPT, text, Excel, and image merging all run locally in your browser, so files are not uploaded to a server."
+        },
+        {
+          "question": "What does each file type export?",
+          "answer": "Each type exports its native format: PDF to PDF, Word to DOCX, PPT to PPTX, TXT to TXT, Markdown to MD, CSV to CSV, and RTF to RTF."
+        },
+        {
+          "question": "How can Excel sheets be merged?",
+          "answer": "You can merge everything into one Sheet so all source tables end up in a single grid, or keep each source Sheet and output them into different Sheets in the same workbook."
+        },
+        {
+          "question": "What output formats are available for image merging?",
+          "answer": "You can merge images into one PDF or stitch multiple images into a long PNG, which is useful for archiving and sharing."
+        }
+      ]
+    },
+    "word-merge": {
+      "items": [
+        {
+          "question": "What format does Word Merge export?",
+          "answer": "It exports DOCX. The browser-based merge currently supports DOCX only, so legacy DOC files should be converted to DOCX first."
+        },
+        {
+          "question": "Does Word Merge upload my files?",
+          "answer": "No. DOCX documents are unpacked, merged, and repacked locally in your browser."
+        }
+      ]
+    },
+    "ppt-merge": {
+      "items": [
+        {
+          "question": "What format does PPT Merge export?",
+          "answer": "It exports PPTX. The browser-based merge currently supports PPTX only, so legacy PPT files should be converted to PPTX first."
+        },
+        {
+          "question": "Does PPT Merge preserve slide order?",
+          "answer": "Yes. The output file appends slides from each PPTX in the order shown in the upload list."
+        }
+      ]
+    },
+    "txt-merge": {
+      "items": [
+        {
+          "question": "How does TXT Merge separate file contents?",
+          "answer": "The output TXT joins files in order and adds the source filename before each section."
+        }
+      ]
+    },
+    "markdown-merge": {
+      "items": [
+        {
+          "question": "Does Markdown Merge preserve Markdown syntax?",
+          "answer": "Yes. It appends the original Markdown content in order and adds a second-level heading for each source file."
+        }
+      ]
+    },
+    "csv-merge": {
+      "items": [
+        {
+          "question": "How does CSV Merge handle different headers?",
+          "answer": "It keeps every column that appears across the source files and adds a source_file column."
+        }
+      ]
+    },
+    "rtf-merge": {
+      "items": [
+        {
+          "question": "Does RTF Merge preserve all rich text styling?",
+          "answer": "The output is still an RTF file. The browser-based merge keeps readable text content and separates sections by source filename."
+        }
+      ]
+    },
+    "excel-merge": {
+      "items": [
+        {
+          "question": "Which Excel merge modes are supported?",
+          "answer": "You can combine all table data into one Sheet, or keep each source Sheet and export them in one workbook."
+        },
+        {
+          "question": "Does Excel Merge support CSV?",
+          "answer": "Yes. CSV files are read as tables and can be merged together with Excel files."
+        }
+      ]
+    },
+    "image-merge": {
+      "items": [
+        {
+          "question": "Which output formats does Image Merge support?",
+          "answer": "You can export one PDF or stitch multiple images vertically into a long PNG."
+        },
+        {
+          "question": "Does Image Merge compress the original images?",
+          "answer": "Long images are rendered through the browser Canvas as PNG, and PDF output embeds images into pages without uploading them to a server."
+        }
+      ]
+    },
     "qr-code-decoder": {
       "items": [
         {
@@ -668,6 +857,7 @@
     "json_tools_menu": "JSON tools",
     "image_toolbar": "Image tools",
     "pdf_tools": "PDF tools",
+    "file_merge_tools": "File merge tools",
     "info_codec_tools": "Info codec",
     "qr_tools": "QR tools",
     "subtitle_tools": "Subtitle tools",
@@ -678,8 +868,8 @@
   },
   "image_hub": {
     "title": "Image tools",
-    "meta_title": "Free Online Image Tools - Image Compression, Background Removal, JPG, PNG, and WebP Conversion",
-    "description": "Free online image tools for batch compression, background removal, conversion, cropping, and resizing locally in your browser, with smart compression, transparent PNG, JPG, PNG, WebP output, preview comparison, and ZIP batch download.",
+    "meta_title": "Free Online Image Tools - Image Compression, Merge, Background Removal, JPG, PNG, and WebP Conversion",
+    "description": "Free online image tools for batch compression, merging, background removal, conversion, cropping, and resizing locally in your browser, with smart compression, image-to-PDF or long-image output, transparent PNG, JPG, PNG, WebP output, preview comparison, and ZIP batch download.",
     "all_tools": "Image conversion tools",
     "breadcrumb": "Image tools",
     "privacy_note": "Images are processed locally in your browser and are not uploaded to a server."
@@ -691,6 +881,14 @@
     "all_tools": "PDF tools",
     "breadcrumb": "PDF tools",
     "privacy_note": "The first PDF converter runs locally in your browser, so files are not uploaded to a server."
+  },
+  "file_merge_hub": {
+    "title": "File merge tools",
+    "meta_title": "Free Online File Merge Tools - PDF, Word, PPT, Excel, and Image Merge",
+    "description": "Free online tools to merge PDF, Word, PPT, TXT, Markdown, CSV, RTF, Excel, and images while exporting native formats: PDF to PDF, Word to DOCX, PPT to PPTX, and images to PDF or a long image. All processing runs locally in your browser.",
+    "all_tools": "File merge tools",
+    "breadcrumb": "File merge tools",
+    "privacy_note": "Files are processed locally in your browser and are not uploaded to a server."
   },
   "home": {
     "title": "JSON Toolkit",
@@ -809,18 +1007,25 @@
     },
     "json-to-excel": {
       "name": "JSON → Excel",
-      "description": "Free online tool to export a JSON array as an Excel (.xlsx) file",
+      "description": "Free online tool to export a JSON array as an Excel (.xlsx) file with multi-level fields flattened automatically",
       "input_title": "Input JSON Array",
       "preview_title": "Preview",
+      "upload_json": "Upload JSON file",
+      "input_hint": "You can also paste a JSON array directly, or upload a .json file to convert it automatically.",
       "download_excel": "Download Excel",
-      "placeholder": "Paste a JSON array, such as rows with a col1 field",
+      "placeholder": "Paste a JSON array, such as rows with nested fields like customer>name and items>0>sku",
       "success_title": "Ready to export",
       "success_desc": "{count} rows can be downloaded as export.xlsx",
-      "idle_desc": "Enter a JSON array and click Download Excel"
+      "preview_summary": "{count} rows in total",
+      "preview_truncated": "Showing first {count} rows only",
+      "idle_desc": "Enter a JSON array or upload a JSON file, then click Download Excel",
+      "errors": {
+        "load_failed": "The JSON file could not be read. Please choose the file again."
+      }
     },
     "excel-to-json": {
       "name": "Excel → JSON",
-      "description": "Free online tool to read an Excel (.xlsx/.xls) file and convert it to a JSON array",
+      "description": "Free online tool to read an Excel (.xlsx/.xls) file and convert it to a JSON array, restoring multi-level fields with >",
       "upload_title": "Upload Excel File",
       "output_title": "JSON Output",
       "drop_title": "Click or drag to upload",
@@ -881,6 +1086,42 @@
     "pdf-merge": {
       "name": "Merge PDF",
       "description": "Free online PDF merger that combines multiple PDF files into one document with drag-and-drop reordering"
+    },
+    "file-merge": {
+      "name": "File Merge",
+      "description": "Free online tool to merge PDF, Word, PPT, TXT, Markdown, CSV, RTF, Excel, and images while exporting the native format for each file type"
+    },
+    "word-merge": {
+      "name": "Word Merge",
+      "description": "Free online tool to merge multiple Word DOCX documents into one DOCX file locally in your browser"
+    },
+    "ppt-merge": {
+      "name": "PPT Merge",
+      "description": "Free online tool to merge multiple PPTX presentations into one PPTX file locally in your browser"
+    },
+    "txt-merge": {
+      "name": "TXT Merge",
+      "description": "Free online tool to merge multiple TXT files into one TXT file"
+    },
+    "markdown-merge": {
+      "name": "Markdown Merge",
+      "description": "Free online tool to merge multiple Markdown files into one MD file"
+    },
+    "csv-merge": {
+      "name": "CSV Merge",
+      "description": "Free online tool to merge multiple CSV files by table rows into one CSV file"
+    },
+    "rtf-merge": {
+      "name": "RTF Merge",
+      "description": "Free online tool to merge multiple RTF rich text files into one RTF file"
+    },
+    "excel-merge": {
+      "name": "Excel Merge",
+      "description": "Free online tool to merge multiple Excel / CSV files into one Sheet or keep source Sheets in one workbook"
+    },
+    "image-merge": {
+      "name": "Image Merge",
+      "description": "Free online tool to merge images into a PDF or stitch them into one long PNG"
     },
     "pdf-split": {
       "name": "Split PDF",

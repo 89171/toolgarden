@@ -8,7 +8,7 @@ const publicDir = path.join(rootDir, 'public');
 const BASE_URL = 'https://json-toolkit.dev';
 const locales = ['zh', 'en'];
 const defaultLocale = 'zh';
-const hubPaths = ['/image', '/pdf'];
+const hubPaths = ['/image', '/pdf', '/file-merge'];
 
 function cleanBuildArtifacts() {
   for (const dir of ['.next', 'out']) {

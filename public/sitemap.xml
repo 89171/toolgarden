@@ -25,6 +25,14 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/pdf" />
   </url>
   <url>
+    <loc>https://json-toolkit.dev/zh/file-merge</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/file-merge" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/file-merge" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/file-merge" />
+  </url>
+  <url>
     <loc>https://json-toolkit.dev/zh/json-format</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -151,6 +159,70 @@
     <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/pdf/organize" />
     <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/pdf/organize" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/pdf/organize" />
+  </url>
+  <url>
+    <loc>https://json-toolkit.dev/zh/file-merge/word</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/file-merge/word" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/file-merge/word" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/file-merge/word" />
+  </url>
+  <url>
+    <loc>https://json-toolkit.dev/zh/file-merge/ppt</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/file-merge/ppt" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/file-merge/ppt" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/file-merge/ppt" />
+  </url>
+  <url>
+    <loc>https://json-toolkit.dev/zh/file-merge/txt</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/file-merge/txt" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/file-merge/txt" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/file-merge/txt" />
+  </url>
+  <url>
+    <loc>https://json-toolkit.dev/zh/file-merge/markdown</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/file-merge/markdown" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/file-merge/markdown" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/file-merge/markdown" />
+  </url>
+  <url>
+    <loc>https://json-toolkit.dev/zh/file-merge/csv</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/file-merge/csv" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/file-merge/csv" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/file-merge/csv" />
+  </url>
+  <url>
+    <loc>https://json-toolkit.dev/zh/file-merge/rtf</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/file-merge/rtf" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/file-merge/rtf" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/file-merge/rtf" />
+  </url>
+  <url>
+    <loc>https://json-toolkit.dev/zh/file-merge/excel</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/file-merge/excel" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/file-merge/excel" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/file-merge/excel" />
+  </url>
+  <url>
+    <loc>https://json-toolkit.dev/zh/file-merge/images</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/file-merge/images" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/file-merge/images" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/file-merge/images" />
   </url>
   <url>
     <loc>https://json-toolkit.dev/zh/image/compress</loc>
