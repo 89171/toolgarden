@@ -29,6 +29,7 @@ JSON Toolkit provides developers with a suite of tools for working with JSON dat
 - **Image Resize** (`/image/resize`): Resize full images at a proportional target width or height locally in the browser.
 - **PDF Tools** (`/pdf`): Browse PDF conversion and document tools.
 - **Convert to PDF** (`/pdf/to-pdf`): Convert Word, Excel, PowerPoint, EPUB, MOBI, JPG, PNG, WebP, TXT, Markdown, and HTML to PDF. The first release runs locally in the browser for docx, xlsx/xls, pptx, EPUB, unencrypted legacy MOBI/PalmDOC, images, and text-based formats.
+- **PDF to Word** (`/pdf/to-word`): Extract text from text-based PDF files locally in the browser and generate editable Word DOCX documents.
 - **Merge PDF** (`/pdf/merge`): Combine multiple PDF files into one document with drag-and-drop reordering.
 - **Split PDF** (`/pdf/split`): Split one PDF into multiple documents by page ranges or export every page as a separate PDF.
 - **Extract Pages** (`/pdf/extract-pages`): Extract selected pages or ranges from a PDF and save them as a new document.
@@ -67,7 +68,7 @@ JSON Toolkit provides developers with a suite of tools for working with JSON dat
 - YAML support via the `yaml` npm package
 - XML support via fast-xml-parser
 - Image tools support compression, background removal, conversion, crop, resize, JPG, PNG, WebP, GIF, BMP, SVG, AVIF, preview comparison, and ZIP batch download
-- PDF tools use pdf-lib for PDF generation and page-level PDF operations, fflate for Office OpenXML/EPUB extraction, SheetJS for spreadsheets, a PalmDOC text extractor for legacy MOBI, and browser Canvas for Unicode text rendering
+- PDF tools use pdf-lib for PDF generation and page-level PDF operations, pdfjs-dist for PDF text extraction, fflate for Office OpenXML/EPUB/DOCX packaging, SheetJS for spreadsheets, a PalmDOC text extractor for legacy MOBI, and browser Canvas for Unicode text rendering
 - Subtitle Maker supports LRC and SRT parsing, editing, timing calibration against local audio/video, and export without uploading files
 - Info Encoder / Decoder supports Unicode, URL, UTF16-style hex escapes, Base64, MD5, SHA1, hex, JWT decoding, Cookie formatting, Gzip decompression, HTML entity decoding, URL parameter parsing, and string escaping locally in the browser
 - QR Code Generator uses qrcode for PNG generation; QR Code Decoder uses jsQR for browser-local image decoding

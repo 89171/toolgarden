@@ -129,6 +129,14 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/pdf/to-pdf" />
   </url>
   <url>
+    <loc>https://json-toolkit.dev/zh/pdf/to-word</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/pdf/to-word" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/pdf/to-word" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/pdf/to-word" />
+  </url>
+  <url>
     <loc>https://json-toolkit.dev/zh/pdf/merge</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

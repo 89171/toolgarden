@@ -66,6 +66,33 @@
       "general": "转换失败，请重试。"
     }
   },
+  "pdf_to_word": {
+    "settings_title": "PDF 转 Word",
+    "result_title": "Word 结果",
+    "drop_title": "点击或拖拽 PDF 上传",
+    "drop_hint": "从文本型 PDF 中提取文字，生成可编辑的 DOCX 文件",
+    "drop_action": "选择 PDF",
+    "input_format": "输入格式",
+    "selected_file": "已选择文件",
+    "empty_title": "等待 PDF 文件",
+    "empty_body": "上传 PDF 后会在浏览器本地提取文本，并生成 Word DOCX 文件。",
+    "status_converting": "转换中",
+    "converting_body": "正在读取 PDF 文本并生成 DOCX 文件。",
+    "status_error": "转换失败",
+    "ready_label": "DOCX 已生成",
+    "result_summary": "{pages} 页 · {paragraphs} 段 · {size} · {duration}ms",
+    "summary_pages": "页数",
+    "summary_paragraphs": "段落",
+    "summary_size": "体积",
+    "errors": {
+      "empty_file": "文件为空，请选择有效 PDF。",
+      "unsupported_input": "请上传 PDF 文件。",
+      "file_too_large": "文件过大，最大支持 {maxSize}。",
+      "load_failed": "PDF 读取失败，文件可能已损坏、加密或当前浏览器不支持。",
+      "empty_text": "没有读取到可转换文本。扫描版或图片型 PDF 需要 OCR 后才能转为可编辑 Word。",
+      "render_failed": "DOCX 生成失败，请换一个 PDF 重试。"
+    }
+  },
   "pdf_merge": {
     "settings_title": "合并设置",
     "result_title": "合并结果",
@@ -829,6 +856,22 @@
         }
       ]
     },
+    "pdf-to-word": {
+      "items": [
+        {
+          "question": "PDF 转 Word 会上传文件吗？",
+          "answer": "不会。PDF 文本抽取和 DOCX 生成都在浏览器本地完成，文件不会上传到服务器。"
+        },
+        {
+          "question": "扫描版 PDF 可以转成可编辑 Word 吗？",
+          "answer": "当前版本主要支持文本型 PDF。扫描版或图片型 PDF 需要 OCR 识别后才能转成可编辑文本。"
+        },
+        {
+          "question": "转换后会保留原 PDF 版式吗？",
+          "answer": "首版会保留按页和按行提取的文字内容，适合快速编辑和复制；复杂排版、表格和图片还原需要后续增强。"
+        }
+      ]
+    },
     "subtitle-maker": {
       "items": [
         {
@@ -866,6 +909,19 @@
   "footer": {
     "text": "JSON 工具包"
   },
+  "feedback": {
+    "button": "反馈",
+    "button_aria": "复制反馈邮箱",
+    "title": "反馈邮箱",
+    "copied_title": "邮箱已复制",
+    "description": "邮箱已复制到剪贴板，你可以自己打开邮箱发送反馈。",
+    "close": "关闭反馈窗口",
+    "close_action": "知道了",
+    "email_label": "邮箱",
+    "copy_email": "复制邮箱",
+    "copied": "已复制",
+    "copy_failed": "复制失败，请手动复制邮箱地址。"
+  },
   "image_hub": {
     "title": "图片工具",
     "meta_title": "免费在线图片工具 - 图片压缩、合并、去背景、JPG、PNG、WebP 转换",
@@ -876,8 +932,8 @@
   },
   "pdf_hub": {
     "title": "PDF 工具",
-    "meta_title": "免费在线 PDF 工具 - Word、Excel、PowerPoint、EPUB、MOBI、图片转 PDF",
-    "description": "免费在线将 Word、Excel、PowerPoint、EPUB、MOBI、JPG、PNG、WebP、TXT、Markdown 和 HTML 转换为 PDF，并支持合并、拆分、提取页面和整理 PDF 页面。所有首版 PDF 操作都在浏览器本地完成。",
+    "meta_title": "免费在线 PDF 工具 - PDF 转 Word、Word 转 PDF、合并、拆分",
+    "description": "免费在线完成 PDF 转 Word、Word/Excel/PowerPoint/EPUB/MOBI/图片转 PDF，并支持合并、拆分、提取页面和整理 PDF 页面。所有首版 PDF 操作都在浏览器本地完成。",
     "all_tools": "PDF 工具",
     "breadcrumb": "PDF 工具",
     "privacy_note": "首版 PDF 转换在浏览器本地完成，文件不会上传到服务器。"
@@ -1082,6 +1138,10 @@
     "pdf-to-pdf": {
       "name": "转为 PDF",
       "description": "免费在线将 Word、Excel、PowerPoint、EPUB、MOBI、JPG、PNG、WebP、TXT、Markdown、HTML 转换为 PDF"
+    },
+    "pdf-to-word": {
+      "name": "PDF 转 Word",
+      "description": "免费在线从 PDF 中提取文本并生成可编辑的 Word DOCX 文档"
     },
     "pdf-merge": {
       "name": "合并 PDF",

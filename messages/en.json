@@ -66,6 +66,33 @@
       "general": "Conversion failed. Please try again."
     }
   },
+  "pdf_to_word": {
+    "settings_title": "PDF to Word",
+    "result_title": "Word result",
+    "drop_title": "Click or drag a PDF here",
+    "drop_hint": "Extract text from text-based PDFs and generate an editable DOCX file",
+    "drop_action": "Choose PDF",
+    "input_format": "Input format",
+    "selected_file": "Selected file",
+    "empty_title": "Waiting for a PDF",
+    "empty_body": "Upload a PDF to extract text locally in your browser and generate a Word DOCX file.",
+    "status_converting": "Converting",
+    "converting_body": "Reading PDF text and generating a DOCX file.",
+    "status_error": "Conversion failed",
+    "ready_label": "DOCX ready",
+    "result_summary": "{pages} pages · {paragraphs} paragraphs · {size} · {duration}ms",
+    "summary_pages": "Pages",
+    "summary_paragraphs": "Paragraphs",
+    "summary_size": "Size",
+    "errors": {
+      "empty_file": "The file is empty. Choose a valid PDF.",
+      "unsupported_input": "Upload a PDF file only.",
+      "file_too_large": "The file is too large. Maximum size is {maxSize}.",
+      "load_failed": "The PDF could not be read. It may be damaged, encrypted, or unsupported by this browser.",
+      "empty_text": "No convertible text was found. Scanned or image-only PDFs need OCR before they can become editable Word files.",
+      "render_failed": "DOCX generation failed. Try another PDF."
+    }
+  },
   "pdf_merge": {
     "settings_title": "Merge settings",
     "result_title": "Merged PDF",
@@ -829,6 +856,22 @@
         }
       ]
     },
+    "pdf-to-word": {
+      "items": [
+        {
+          "question": "Does PDF to Word upload files?",
+          "answer": "No. PDF text extraction and DOCX generation both run locally in your browser, so files are not uploaded to a server."
+        },
+        {
+          "question": "Can scanned PDFs become editable Word files?",
+          "answer": "This version is designed for text-based PDFs. Scanned or image-only PDFs need OCR before they can become editable text."
+        },
+        {
+          "question": "Will the DOCX keep the original PDF layout?",
+          "answer": "The first version keeps extracted text by page and line, which is useful for quick editing and copying. Complex layout, tables, and image reconstruction need future enhancements."
+        }
+      ]
+    },
     "subtitle-maker": {
       "items": [
         {
@@ -866,6 +909,19 @@
   "footer": {
     "text": "JSON Toolkit"
   },
+  "feedback": {
+    "button": "Feedback",
+    "button_aria": "Copy feedback email",
+    "title": "Feedback email",
+    "copied_title": "Email copied",
+    "description": "The email address has been copied. Open your email app and send feedback yourself.",
+    "close": "Close feedback dialog",
+    "close_action": "Got it",
+    "email_label": "Email",
+    "copy_email": "Copy email",
+    "copied": "Copied",
+    "copy_failed": "Copy failed. Please copy the email address manually."
+  },
   "image_hub": {
     "title": "Image tools",
     "meta_title": "Free Online Image Tools - Image Compression, Merge, Background Removal, JPG, PNG, and WebP Conversion",
@@ -876,8 +932,8 @@
   },
   "pdf_hub": {
     "title": "PDF tools",
-    "meta_title": "Free Online PDF Tools - Convert Word, Excel, PowerPoint, EPUB, MOBI, and Images to PDF",
-    "description": "Free online PDF tools to convert Word, Excel, PowerPoint, EPUB, MOBI, JPG, PNG, WebP, TXT, Markdown, and HTML to PDF, plus merge, split, page extraction, and page organization. First-release PDF operations run locally in the browser.",
+    "meta_title": "Free Online PDF Tools - PDF to Word, Word to PDF, Merge, and Split",
+    "description": "Free online PDF tools for PDF to Word, Word/Excel/PowerPoint/EPUB/MOBI/image to PDF, merge, split, page extraction, and page organization. First-release PDF operations run locally in the browser.",
     "all_tools": "PDF tools",
     "breadcrumb": "PDF tools",
     "privacy_note": "The first PDF converter runs locally in your browser, so files are not uploaded to a server."
@@ -1082,6 +1138,10 @@
     "pdf-to-pdf": {
       "name": "Convert to PDF",
       "description": "Free online tool to convert Word, Excel, PowerPoint, EPUB, MOBI, JPG, PNG, WebP, TXT, Markdown, and HTML to PDF"
+    },
+    "pdf-to-word": {
+      "name": "PDF to Word",
+      "description": "Free online tool to extract text from PDF files and generate editable Word DOCX documents"
     },
     "pdf-merge": {
       "name": "Merge PDF",

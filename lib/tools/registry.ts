@@ -115,6 +115,15 @@ export const toolRegistry: ToolMeta[] = [
     featured: true,
   },
   {
+    id: 'pdf-to-word',
+    name: 'PDF 转 Word',
+    description: '从 PDF 中提取文本并生成可编辑的 Word DOCX 文档',
+    path: '/pdf/to-word',
+    icon: 'DOC',
+    category: 'convert',
+    featured: true,
+  },
+  {
     id: 'pdf-merge',
     name: '合并 PDF',
     description: '将多个 PDF 文件合并成一个文档，支持拖放重新排序',

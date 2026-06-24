@@ -12,6 +12,7 @@ import {
   toJsonLd,
 } from '@/lib/tools/seo';
 import { Analytics } from '@/components/Analytics';
+import { FeedbackButton } from '@/components/FeedbackButton';
 import { PwaRegistration } from '@/components/PwaRegistration';
 import { SiteProtection } from '@/components/SiteProtection';
 import '../globals.css';
@@ -85,6 +86,7 @@ export default async function LocaleLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <NextIntlClientProvider locale={normalizedLocale} messages={m}>
           {children}
+          <FeedbackButton />
         </NextIntlClientProvider>
         <Analytics />
         <PwaRegistration />

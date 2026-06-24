@@ -126,6 +126,7 @@ Canonical examples:
 - Lists PDF conversion and page operation tools
 - Child tool URLs use the `/pdf/*` namespace
 - First release focuses on browser-local PDF conversion and page-level operations
+- Includes PDF to Word text extraction for text-based PDFs
 - Planned additions include compress, convert to/from images/text/JSON, edit, annotate, sign, watermark, encrypt/decrypt, and OCR
 
 ### Convert to PDF (/pdf/to-pdf)
@@ -141,6 +142,15 @@ Canonical examples:
 - Uses pdf-lib for PDF generation and fflate for Office OpenXML and EPUB zip extraction
 - Legacy doc and ppt files require a future server-side converter such as LibreOffice and are reported as unsupported in the current browser version
 - Supports multiple files, per-file PDF download, preview, and ZIP batch download
+- Files are not uploaded to a server
+
+### PDF to Word (/pdf/to-word)
+- Extracts text from text-based PDF files locally in the browser
+- Uses pdfjs-dist for PDF parsing and text extraction
+- Generates a downloadable Word DOCX file using Office OpenXML packaging
+- Preserves extracted text by page and line for quick editing and copying
+- Scanned or image-only PDFs need OCR before they can become editable text
+- Complex layout, tables, and image reconstruction are not fully preserved in this first version
 - Files are not uploaded to a server
 
 ### Merge PDF (/pdf/merge)
