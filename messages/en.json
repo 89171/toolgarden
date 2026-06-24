@@ -542,6 +542,86 @@
       "general": "Image processing failed. Please try again."
     }
   },
+  "image_editor": {
+    "settings_title": "Image editor",
+    "editor_title": "Edit canvas",
+    "drop_title": "Click or drop an image",
+    "drop_hint": "Supports {formats}. Drawing and export stay local.",
+    "drop_action": "Choose image",
+    "replace": "Replace image",
+    "input_formats": "Supported formats",
+    "local_note": "All file processing happens locally. Files are not uploaded to any server, and data is cleared when you close the page.",
+    "tool_title": "Drawing tools",
+    "tools": {
+      "select": "Select",
+      "brush": "Brush",
+      "marker": "Marker",
+      "rectangle": "Rectangle",
+      "ellipse": "Ellipse",
+      "polyline": "Polyline",
+      "text": "Text",
+      "mosaic": "Mosaic",
+      "blur": "Blur",
+      "eraser": "Eraser"
+    },
+    "polyline_title": "Polyline drawing",
+    "polyline_count": "{count} points added",
+    "polyline_hint": "Click on the canvas to add path points, then finish to draw the polyline.",
+    "finish_polyline": "Finish",
+    "cancel_polyline": "Cancel",
+    "style_title": "Style",
+    "color": "Color",
+    "choose_color": "Choose color {color}",
+    "stroke_width": "Stroke width",
+    "shape_mode": "Shape mode",
+    "shape_modes": {
+      "stroke": "Stroke",
+      "fill": "Fill"
+    },
+    "text_content": "Text content",
+    "text_placeholder": "Enter text to place on the image",
+    "font_size": "Font size",
+    "mosaic_size": "Mosaic block size",
+    "blur_radius": "Blur radius",
+    "output_format": "Output format",
+    "quality": "Output quality",
+    "quality_value": "{value}%",
+    "source_size": "Original size",
+    "file_size": "File size",
+    "export": "Export image",
+    "exporting": "Exporting",
+    "loading": "Loading",
+    "empty_title": "Waiting for an image",
+    "empty_body": "Upload an image to edit directly on the canvas with shapes, polylines, brush strokes, markers, text, mosaic, and blur areas.",
+    "undo": "Undo",
+    "redo": "Redo",
+    "delete_selected": "Delete selected",
+    "reset_all": "Reset image",
+    "result_ready": "Export ready",
+    "download": "Download image",
+    "filename": "Filename",
+    "type": "Type",
+    "history": "History",
+    "history_value": "Undo {undo} / Redo {redo}",
+    "eraser_hint": "Eraser deletes the annotation object you click. Switch to Select when you want to adjust objects.",
+    "output_size": "Output size",
+    "duration": "Duration",
+    "duration_value": "{value}ms",
+    "unknown_type": "Unknown type",
+    "errors": {
+      "empty_file": "The file is empty. Choose a valid image.",
+      "unsupported_input": "This image type is not supported yet: {type}.",
+      "file_too_large": "The file is too large. Maximum size is {maxSize}.",
+      "too_many_pixels": "The image dimensions are too large. Maximum size is {maxPixels}.",
+      "load_failed": "The image could not be decoded. The file may be damaged or unsupported by this browser.",
+      "canvas_context": "Could not create a Canvas drawing context.",
+      "canvas_export": "Image export failed. Try another browser.",
+      "unsupported_output": "This browser cannot export {format}.",
+      "empty_text": "Enter text before placing it on the image.",
+      "polyline_points": "A polyline needs at least two points.",
+      "general": "Image editing failed. Please try again."
+    }
+  },
   "qr_code": {
     "switcher_label": "QR code tools",
     "generate_link": "QR code generator",
@@ -832,6 +912,26 @@
         }
       ]
     },
+    "image-editor": {
+      "items": [
+        {
+          "question": "Does image editing upload my files?",
+          "answer": "No. Images are decoded, drawn on, mosaicked, blurred, and exported locally in your browser. Files are not uploaded to a server."
+        },
+        {
+          "question": "Which drawing tools are supported?",
+          "answer": "Rectangle, ellipse, polyline, brush, marker, text, mosaic, blur, and eraser are supported. Rectangles and ellipses can be stroked or filled."
+        },
+        {
+          "question": "Does the eraser remove the original image?",
+          "answer": "No. The eraser deletes annotation objects on the canvas without changing the original image. Mosaic and blur regions can also be selected and deleted, or handled with undo, redo, and reset image."
+        },
+        {
+          "question": "Can I choose the output format?",
+          "answer": "Yes. You can export JPG, PNG, or WebP. JPG does not support alpha transparency, so transparent areas are filled with white."
+        }
+      ]
+    },
     "pdf-to-pdf": {
       "items": [
         {
@@ -924,8 +1024,8 @@
   },
   "image_hub": {
     "title": "Image tools",
-    "meta_title": "Free Online Image Tools - Image Compression, Merge, Background Removal, JPG, PNG, and WebP Conversion",
-    "description": "Free online image tools for batch compression, merging, background removal, conversion, cropping, and resizing locally in your browser, with smart compression, image-to-PDF or long-image output, transparent PNG, JPG, PNG, WebP output, preview comparison, and ZIP batch download.",
+    "meta_title": "Free Online Image Tools - Image Editing, Compression, Merge, Background Removal, JPG, PNG, and WebP Conversion",
+    "description": "Free online image tools for batch editing, compression, merging, background removal, conversion, cropping, and resizing locally in your browser, with shapes, text, mosaic, blur, smart compression, image-to-PDF or long-image output, transparent PNG, JPG, PNG, WebP output, preview comparison, and ZIP batch download.",
     "all_tools": "Image conversion tools",
     "breadcrumb": "Image tools",
     "privacy_note": "Images are processed locally in your browser and are not uploaded to a server."
@@ -1118,6 +1218,10 @@
     "image-remove-bg": {
       "name": "Remove image background",
       "description": "Free online background remover that processes images locally in your browser with an open-source model and exports a transparent PNG"
+    },
+    "image-editor": {
+      "name": "Image editor",
+      "description": "Free online image editor for shapes, polylines, brush, marker, text, mosaic, blur, and eraser annotations"
     },
     "image-to-png": {
       "name": "Image to PNG",

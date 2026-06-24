@@ -239,6 +239,15 @@ export const toolRegistry: ToolMeta[] = [
     featured: true,
   },
   {
+    id: 'image-editor',
+    name: '图片编辑',
+    description: '在浏览器本地为图片绘制形状、折线、画笔、记号笔、文字、马赛克、模糊和橡皮擦标注',
+    path: '/image/edit',
+    icon: 'EDT',
+    category: 'convert',
+    featured: true,
+  },
+  {
     id: 'image-to-jpg',
     name: '图片转 JPG',
     description: '在浏览器本地将 PNG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 JPG',

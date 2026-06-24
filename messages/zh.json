@@ -542,6 +542,86 @@
       "general": "图片处理失败，请重试。"
     }
   },
+  "image_editor": {
+    "settings_title": "图片编辑",
+    "editor_title": "编辑画布",
+    "drop_title": "点击或拖拽图片上传",
+    "drop_hint": "支持 {formats}，绘制和导出都在本地完成",
+    "drop_action": "选择图片",
+    "replace": "更换图片",
+    "input_formats": "支持格式",
+    "local_note": "所有文件处理都在本地完成，文件不会上传到任何服务器，关闭页面后，数据即被清除。",
+    "tool_title": "绘制工具",
+    "tools": {
+      "select": "选择",
+      "brush": "画笔",
+      "marker": "记号笔",
+      "rectangle": "矩形",
+      "ellipse": "椭圆",
+      "polyline": "折线",
+      "text": "文字",
+      "mosaic": "马赛克",
+      "blur": "模糊",
+      "eraser": "橡皮擦"
+    },
+    "polyline_title": "折线绘制",
+    "polyline_count": "已添加 {count} 个点",
+    "polyline_hint": "在画布上连续点击添加折线路径，完成后点击生成折线。",
+    "finish_polyline": "完成",
+    "cancel_polyline": "取消",
+    "style_title": "样式",
+    "color": "颜色",
+    "choose_color": "选择颜色 {color}",
+    "stroke_width": "线宽",
+    "shape_mode": "形状模式",
+    "shape_modes": {
+      "stroke": "描边",
+      "fill": "填充"
+    },
+    "text_content": "文字内容",
+    "text_placeholder": "输入要放到图片上的文字",
+    "font_size": "字号",
+    "mosaic_size": "马赛克块大小",
+    "blur_radius": "模糊半径",
+    "output_format": "输出格式",
+    "quality": "输出质量",
+    "quality_value": "{value}%",
+    "source_size": "原始尺寸",
+    "file_size": "文件大小",
+    "export": "导出图片",
+    "exporting": "导出中",
+    "loading": "读取中",
+    "empty_title": "等待图片输入",
+    "empty_body": "上传图片后可直接在画布上编辑，绘制形状、折线、画笔、记号笔、文字，也可以框选马赛克或模糊区域。",
+    "undo": "撤销",
+    "redo": "重做",
+    "delete_selected": "删除选中",
+    "reset_all": "重置图片",
+    "result_ready": "导出完成",
+    "download": "下载图片",
+    "filename": "文件名",
+    "type": "类型",
+    "history": "历史记录",
+    "history_value": "撤销 {undo} / 重做 {redo}",
+    "eraser_hint": "橡皮擦会删除点击到的标注对象；如需调整对象，请切换到选择工具。",
+    "output_size": "输出尺寸",
+    "duration": "耗时",
+    "duration_value": "{value}ms",
+    "unknown_type": "未知类型",
+    "errors": {
+      "empty_file": "文件为空，请选择有效图片。",
+      "unsupported_input": "暂不支持这种图片类型：{type}。",
+      "file_too_large": "文件过大，最大支持 {maxSize}。",
+      "too_many_pixels": "图片尺寸过大，最大支持 {maxPixels}。",
+      "load_failed": "图片解码失败，文件可能已损坏或当前浏览器不支持该格式。",
+      "canvas_context": "无法创建 Canvas 绘图上下文。",
+      "canvas_export": "图片导出失败，请换一个浏览器重试。",
+      "unsupported_output": "当前浏览器不支持导出 {format}。",
+      "empty_text": "请先输入要放到图片上的文字。",
+      "polyline_points": "折线至少需要两个点。",
+      "general": "图片编辑失败，请重试。"
+    }
+  },
   "qr_code": {
     "switcher_label": "二维码工具",
     "generate_link": "二维码生成",
@@ -832,6 +912,26 @@
         }
       ]
     },
+    "image-editor": {
+      "items": [
+        {
+          "question": "图片编辑会上传文件吗？",
+          "answer": "不会。图片会在浏览器本地解码、绘制、马赛克、模糊和导出，文件不会上传到服务器。"
+        },
+        {
+          "question": "支持哪些绘制工具？",
+          "answer": "支持矩形、椭圆、折线、画笔、记号笔、文字、马赛克、模糊和橡皮擦。矩形和椭圆可以选择描边或填充。"
+        },
+        {
+          "question": "橡皮擦会擦掉原图吗？",
+          "answer": "不会。橡皮擦会删除画布上的标注对象，不会破坏原图本身；马赛克和模糊区域也可以选中后删除，或使用撤销、重做和重置图片。"
+        },
+        {
+          "question": "可以选择导出格式吗？",
+          "answer": "可以导出为 JPG、PNG 或 WebP。JPG 不支持透明通道，透明区域会填充为白色。"
+        }
+      ]
+    },
     "pdf-to-pdf": {
       "items": [
         {
@@ -924,8 +1024,8 @@
   },
   "image_hub": {
     "title": "图片工具",
-    "meta_title": "免费在线图片工具 - 图片压缩、合并、去背景、JPG、PNG、WebP 转换",
-    "description": "免费在线批量压缩、合并、去背景、转换、裁剪和修改图片尺寸，所有处理都在浏览器本地完成，支持智能压缩、图片合成 PDF 或长图、透明 PNG、JPG、PNG、WebP 输出、预览对比和 ZIP 批量下载。",
+    "meta_title": "免费在线图片工具 - 图片编辑、压缩、合并、去背景、JPG、PNG、WebP 转换",
+    "description": "免费在线批量编辑、压缩、合并、去背景、转换、裁剪和修改图片尺寸，所有处理都在浏览器本地完成，支持绘制形状、文字、马赛克、模糊、智能压缩、图片合成 PDF 或长图、透明 PNG、JPG、PNG、WebP 输出、预览对比和 ZIP 批量下载。",
     "all_tools": "图片转换工具",
     "breadcrumb": "图片工具",
     "privacy_note": "图片仅在本地浏览器处理，不会上传到服务器。"
@@ -1118,6 +1218,10 @@
     "image-remove-bg": {
       "name": "图片去背景",
       "description": "免费在线使用开源模型移除图片背景，在浏览器本地导出透明 PNG"
+    },
+    "image-editor": {
+      "name": "图片编辑",
+      "description": "免费在线为图片绘制形状、折线、画笔、记号笔、文字、马赛克、模糊和橡皮擦标注"
     },
     "image-to-png": {
       "name": "图片转 PNG",

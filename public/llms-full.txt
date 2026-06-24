@@ -77,7 +77,7 @@ Canonical examples:
 - Supports custom delimiters, default `.`
 
 ### Image Tools (/image)
-- Lists browser-local image compression and conversion tools
+- Lists browser-local image editing, compression, and conversion tools
 - Child tool URLs use the `/image/*` namespace
 - Image input data is not uploaded to the server
 
@@ -95,6 +95,15 @@ Canonical examples:
 - Exports a transparent PNG with the detected foreground
 - Shows source and output preview comparison with a checkerboard background for transparency
 - Image files are not uploaded to a server
+
+### Image Editor (/image/edit)
+- Edits JPG, PNG, WebP, GIF, BMP, SVG, AVIF, and common browser-decodable images locally in the browser
+- Uses a Fabric.js canvas so uploaded images can be edited directly without a separate preview pane
+- Supports select, brush, marker, rectangle, ellipse, polyline, text, mosaic, blur, eraser, undo, and redo tools
+- Rectangle and ellipse tools can draw stroked or filled shapes with selectable colors
+- Mosaic and blur create editable region objects; the eraser deletes annotation objects without erasing the original image
+- Exports the edited image as JPG, PNG, or WebP; JPG uses a white background for transparent pixels
+- Uses browser Canvas APIs and does not upload image data to a server
 
 ### Image to JPG (/image/to-jpg)
 - Converts PNG, WebP, GIF, BMP, SVG, AVIF, and common browser-decodable images to JPG

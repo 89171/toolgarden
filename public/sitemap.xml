@@ -249,6 +249,14 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/image/remove-bg" />
   </url>
   <url>
+    <loc>https://json-toolkit.dev/zh/image/edit</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://json-toolkit.dev/zh/image/edit" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://json-toolkit.dev/en/image/edit" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://json-toolkit.dev/zh/image/edit" />
+  </url>
+  <url>
     <loc>https://json-toolkit.dev/zh/image/to-jpg</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
