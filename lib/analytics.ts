@@ -1,7 +1,7 @@
 export const analyticsConfig = {
   baidu: {
     enabled: true,
-    src: 'https://hm.baidu.com/hm.js?9e0cbce65058e42d6f5c7eef84806a46',
+    src: 'https://hm.baidu.com/hm.js?5be1525f39fce73b1675c77d59171dad',
   },
   clarity: {
     enabled: true,

@@ -77,7 +77,7 @@ type ObjectRole = 'base' | 'annotation' | 'transient';
 
 const OUTPUT_FORMATS: ImageTargetFormat[] = ['png', 'jpg', 'webp'];
 const HISTORY_LIMIT = 40;
-const CANVAS_VIEWPORT_PADDING = 24;
+const CANVAS_VIEWPORT_PADDING = 32;
 
 const COLOR_SWATCHES = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#14b8a6', '#3b82f6', '#8b5cf6', '#111827'];
 
@@ -376,15 +376,21 @@ function fitCanvasDisplaySize(canvas: Canvas, width: number, height: number, vie
   canvas.setDimensions({ width: `${displaySize.width}px`, height: `${displaySize.height}px` }, { cssOnly: true });
 
   const wrapper = canvas.wrapperEl;
+  const hasImage = width > 1 && height > 1;
   wrapper.style.width = `${displaySize.width}px`;
   wrapper.style.height = `${displaySize.height}px`;
   wrapper.style.maxWidth = 'none';
   wrapper.style.maxHeight = 'none';
   wrapper.style.aspectRatio = `${width} / ${height}`;
+  wrapper.style.display = 'block';
+  wrapper.style.boxShadow = hasImage ? '0 8px 28px rgba(0,0,0,0.12)' : '';
+  wrapper.style.outline = hasImage ? '1px solid rgba(0,0,0,0.08)' : '';
+  wrapper.style.borderRadius = hasImage ? '2px' : '';
 
   [canvas.lowerCanvasEl, canvas.upperCanvasEl].forEach((element) => {
     element.style.width = `${displaySize.width}px`;
     element.style.height = `${displaySize.height}px`;
+    element.style.display = 'block';
   });
 }
 
@@ -1455,7 +1461,7 @@ export function ImageEditorTool() {
               )}
             </div>
 
-            {/* 画布视口：图片即画布，无额外框；用阴影与 ring 标定画布边界 */}
+            {/* 画布视口：图片即画布。阴影/边框由 fitCanvasDisplaySize 注入到 Fabric 的 canvas-container 上 */}
             <div
               ref={canvasViewportRef}
               onDragEnter={handleViewportDragEnter}
@@ -1463,18 +1469,12 @@ export function ImageEditorTool() {
               onDragLeave={handleViewportDragLeave}
               onDrop={handleViewportDrop}
               className={clsx(
-                'relative flex min-h-[26rem] flex-grow items-center justify-center overflow-auto rounded-lg transition-colors lg:min-h-0',
-                imageInfo ? 'bg-transparent' : 'bg-surface-raised',
+                'relative flex min-h-[26rem] flex-grow items-center justify-center overflow-hidden rounded-lg p-4 transition-colors lg:min-h-0',
+                imageInfo ? 'bg-background' : 'bg-surface-raised',
                 draggingFile && 'ring-2 ring-action ring-offset-2 ring-offset-background',
               )}
             >
-              <div
-                className={clsx(
-                  imageInfo
-                    ? 'inline-block rounded-sm shadow-[0_8px_28px_rgba(0,0,0,0.12)] ring-1 ring-border-subtle'
-                    : 'pointer-events-none h-px w-px opacity-0',
-                )}
-              >
+              <div className={clsx('relative', !imageInfo && 'pointer-events-none h-px w-px opacity-0')}>
                 <canvas ref={canvasElementRef} />
               </div>
 
