@@ -6,7 +6,7 @@
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en</loc>
@@ -14,7 +14,7 @@
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/image</loc>
@@ -22,7 +22,7 @@
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/image" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/image</loc>
@@ -30,7 +30,7 @@
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/image" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/pdf</loc>
@@ -38,7 +38,7 @@
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/pdf" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/pdf" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/pdf" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/pdf" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/pdf</loc>
@@ -46,7 +46,7 @@
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/pdf" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/pdf" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/pdf" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/pdf" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/file-merge</loc>
@@ -54,7 +54,7 @@
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/file-merge" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/file-merge" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/file-merge" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/file-merge" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/file-merge</loc>
@@ -62,7 +62,7 @@
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/file-merge" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/file-merge" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/file-merge" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/file-merge" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/json-format</loc>
@@ -70,7 +70,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/json-format" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/json-format" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/json-format" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/json-format" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/json-format</loc>
@@ -78,7 +78,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/json-format" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/json-format" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/json-format" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/json-format" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/json-escape</loc>
@@ -86,7 +86,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/json-escape" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/json-escape" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/json-escape" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/json-escape" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/json-escape</loc>
@@ -94,7 +94,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/json-escape" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/json-escape" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/json-escape" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/json-escape" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/json-repair</loc>
@@ -102,7 +102,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/json-repair" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/json-repair" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/json-repair" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/json-repair" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/json-repair</loc>
@@ -110,7 +110,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/json-repair" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/json-repair" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/json-repair" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/json-repair" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/json-diff</loc>
@@ -118,7 +118,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/json-diff" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/json-diff" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/json-diff" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/json-diff" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/json-diff</loc>
@@ -126,7 +126,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/json-diff" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/json-diff" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/json-diff" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/json-diff" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/json-yaml</loc>
@@ -134,7 +134,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/json-yaml" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/json-yaml" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/json-yaml" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/json-yaml" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/json-yaml</loc>
@@ -142,7 +142,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/json-yaml" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/json-yaml" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/json-yaml" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/json-yaml" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/json-xml</loc>
@@ -150,7 +150,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/json-xml" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/json-xml" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/json-xml" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/json-xml" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/json-xml</loc>
@@ -158,7 +158,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/json-xml" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/json-xml" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/json-xml" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/json-xml" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/json-to-csv</loc>
@@ -166,7 +166,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/json-to-csv" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/json-to-csv" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/json-to-csv" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/json-to-csv" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/json-to-csv</loc>
@@ -174,7 +174,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/json-to-csv" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/json-to-csv" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/json-to-csv" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/json-to-csv" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/json-to-excel</loc>
@@ -182,7 +182,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/json-to-excel" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/json-to-excel" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/json-to-excel" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/json-to-excel" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/json-to-excel</loc>
@@ -190,7 +190,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/json-to-excel" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/json-to-excel" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/json-to-excel" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/json-to-excel" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/excel-to-json</loc>
@@ -198,7 +198,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/excel-to-json" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/excel-to-json" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/excel-to-json" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/excel-to-json" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/excel-to-json</loc>
@@ -206,7 +206,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/excel-to-json" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/excel-to-json" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/excel-to-json" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/excel-to-json" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/json-to-ts</loc>
@@ -214,7 +214,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/json-to-ts" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/json-to-ts" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/json-to-ts" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/json-to-ts" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/json-to-ts</loc>
@@ -222,7 +222,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/json-to-ts" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/json-to-ts" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/json-to-ts" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/json-to-ts" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/json-flatten</loc>
@@ -230,7 +230,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/json-flatten" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/json-flatten" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/json-flatten" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/json-flatten" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/json-flatten</loc>
@@ -238,7 +238,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/json-flatten" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/json-flatten" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/json-flatten" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/json-flatten" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/pdf/to-pdf</loc>
@@ -246,7 +246,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/pdf/to-pdf" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/pdf/to-pdf" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/pdf/to-pdf" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/pdf/to-pdf" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/pdf/to-pdf</loc>
@@ -254,7 +254,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/pdf/to-pdf" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/pdf/to-pdf" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/pdf/to-pdf" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/pdf/to-pdf" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/pdf/to-word</loc>
@@ -262,7 +262,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/pdf/to-word" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/pdf/to-word" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/pdf/to-word" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/pdf/to-word" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/pdf/to-word</loc>
@@ -270,7 +270,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/pdf/to-word" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/pdf/to-word" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/pdf/to-word" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/pdf/to-word" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/pdf/merge</loc>
@@ -278,7 +278,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/pdf/merge" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/pdf/merge" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/pdf/merge" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/pdf/merge" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/pdf/merge</loc>
@@ -286,7 +286,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/pdf/merge" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/pdf/merge" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/pdf/merge" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/pdf/merge" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/pdf/split</loc>
@@ -294,7 +294,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/pdf/split" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/pdf/split" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/pdf/split" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/pdf/split" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/pdf/split</loc>
@@ -302,7 +302,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/pdf/split" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/pdf/split" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/pdf/split" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/pdf/split" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/pdf/extract-pages</loc>
@@ -310,7 +310,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/pdf/extract-pages" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/pdf/extract-pages" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/pdf/extract-pages" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/pdf/extract-pages" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/pdf/extract-pages</loc>
@@ -318,7 +318,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/pdf/extract-pages" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/pdf/extract-pages" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/pdf/extract-pages" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/pdf/extract-pages" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/pdf/organize</loc>
@@ -326,7 +326,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/pdf/organize" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/pdf/organize" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/pdf/organize" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/pdf/organize" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/pdf/organize</loc>
@@ -334,7 +334,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/pdf/organize" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/pdf/organize" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/pdf/organize" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/pdf/organize" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/file-merge/word</loc>
@@ -342,7 +342,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/file-merge/word" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/file-merge/word" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/file-merge/word" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/file-merge/word" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/file-merge/word</loc>
@@ -350,7 +350,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/file-merge/word" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/file-merge/word" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/file-merge/word" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/file-merge/word" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/file-merge/ppt</loc>
@@ -358,7 +358,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/file-merge/ppt" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/file-merge/ppt" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/file-merge/ppt" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/file-merge/ppt" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/file-merge/ppt</loc>
@@ -366,7 +366,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/file-merge/ppt" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/file-merge/ppt" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/file-merge/ppt" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/file-merge/ppt" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/file-merge/txt</loc>
@@ -374,7 +374,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/file-merge/txt" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/file-merge/txt" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/file-merge/txt" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/file-merge/txt" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/file-merge/txt</loc>
@@ -382,7 +382,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/file-merge/txt" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/file-merge/txt" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/file-merge/txt" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/file-merge/txt" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/file-merge/markdown</loc>
@@ -390,7 +390,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/file-merge/markdown" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/file-merge/markdown" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/file-merge/markdown" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/file-merge/markdown" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/file-merge/markdown</loc>
@@ -398,7 +398,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/file-merge/markdown" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/file-merge/markdown" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/file-merge/markdown" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/file-merge/markdown" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/file-merge/csv</loc>
@@ -406,7 +406,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/file-merge/csv" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/file-merge/csv" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/file-merge/csv" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/file-merge/csv" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/file-merge/csv</loc>
@@ -414,7 +414,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/file-merge/csv" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/file-merge/csv" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/file-merge/csv" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/file-merge/csv" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/file-merge/rtf</loc>
@@ -422,7 +422,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/file-merge/rtf" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/file-merge/rtf" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/file-merge/rtf" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/file-merge/rtf" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/file-merge/rtf</loc>
@@ -430,7 +430,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/file-merge/rtf" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/file-merge/rtf" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/file-merge/rtf" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/file-merge/rtf" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/file-merge/excel</loc>
@@ -438,7 +438,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/file-merge/excel" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/file-merge/excel" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/file-merge/excel" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/file-merge/excel" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/file-merge/excel</loc>
@@ -446,7 +446,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/file-merge/excel" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/file-merge/excel" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/file-merge/excel" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/file-merge/excel" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/file-merge/images</loc>
@@ -454,7 +454,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/file-merge/images" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/file-merge/images" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/file-merge/images" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/file-merge/images" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/file-merge/images</loc>
@@ -462,7 +462,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/file-merge/images" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/file-merge/images" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/file-merge/images" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/file-merge/images" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/image/compress</loc>
@@ -470,7 +470,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image/compress" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image/compress" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/image/compress" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/compress" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/image/compress</loc>
@@ -478,7 +478,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image/compress" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image/compress" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/image/compress" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/compress" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/image/remove-bg</loc>
@@ -486,7 +486,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image/remove-bg" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image/remove-bg" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/image/remove-bg" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/remove-bg" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/image/remove-bg</loc>
@@ -494,7 +494,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image/remove-bg" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image/remove-bg" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/image/remove-bg" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/remove-bg" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/image/edit</loc>
@@ -502,7 +502,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image/edit" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image/edit" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/image/edit" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/edit" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/image/edit</loc>
@@ -510,7 +510,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image/edit" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image/edit" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/image/edit" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/edit" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/image/to-jpg</loc>
@@ -518,7 +518,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image/to-jpg" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image/to-jpg" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/image/to-jpg" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/to-jpg" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/image/to-jpg</loc>
@@ -526,7 +526,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image/to-jpg" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image/to-jpg" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/image/to-jpg" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/to-jpg" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/image/to-png</loc>
@@ -534,7 +534,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image/to-png" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image/to-png" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/image/to-png" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/to-png" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/image/to-png</loc>
@@ -542,7 +542,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image/to-png" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image/to-png" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/image/to-png" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/to-png" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/image/to-webp</loc>
@@ -550,7 +550,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image/to-webp" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image/to-webp" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/image/to-webp" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/to-webp" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/image/to-webp</loc>
@@ -558,7 +558,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image/to-webp" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image/to-webp" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/image/to-webp" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/to-webp" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/image/crop</loc>
@@ -566,7 +566,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image/crop" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image/crop" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/image/crop" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/crop" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/image/crop</loc>
@@ -574,7 +574,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image/crop" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image/crop" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/image/crop" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/crop" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/image/resize</loc>
@@ -582,7 +582,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image/resize" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image/resize" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/image/resize" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/resize" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/image/resize</loc>
@@ -590,7 +590,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image/resize" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image/resize" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/image/resize" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/resize" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/subtitle-maker</loc>
@@ -598,7 +598,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/subtitle-maker" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/subtitle-maker" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/subtitle-maker" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/subtitle-maker" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/subtitle-maker</loc>
@@ -606,7 +606,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/subtitle-maker" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/subtitle-maker" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/subtitle-maker" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/subtitle-maker" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/json-schema</loc>
@@ -614,7 +614,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/json-schema" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/json-schema" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/json-schema" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/json-schema" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/json-schema</loc>
@@ -622,7 +622,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/json-schema" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/json-schema" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/json-schema" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/json-schema" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/json-schema-validate</loc>
@@ -630,7 +630,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/json-schema-validate" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/json-schema-validate" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/json-schema-validate" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/json-schema-validate" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/json-schema-validate</loc>
@@ -638,7 +638,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/json-schema-validate" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/json-schema-validate" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/json-schema-validate" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/json-schema-validate" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/json-path</loc>
@@ -646,7 +646,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/json-path" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/json-path" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/json-path" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/json-path" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/json-path</loc>
@@ -654,7 +654,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/json-path" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/json-path" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/json-path" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/json-path" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/json-stats</loc>
@@ -662,7 +662,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/json-stats" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/json-stats" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/json-stats" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/json-stats" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/json-stats</loc>
@@ -670,7 +670,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/json-stats" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/json-stats" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/json-stats" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/json-stats" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/info-codec</loc>
@@ -678,7 +678,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/info-codec" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/info-codec" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/info-codec" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/info-codec" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/info-codec</loc>
@@ -686,7 +686,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/info-codec" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/info-codec" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/info-codec" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/info-codec" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/qr-code/generate</loc>
@@ -694,7 +694,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/qr-code/generate" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/qr-code/generate" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/qr-code/generate" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/qr-code/generate" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/qr-code/generate</loc>
@@ -702,7 +702,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/qr-code/generate" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/qr-code/generate" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/qr-code/generate" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/qr-code/generate" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/qr-code/decode</loc>
@@ -710,7 +710,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/qr-code/decode" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/qr-code/decode" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/qr-code/decode" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/qr-code/decode" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/qr-code/decode</loc>
@@ -718,7 +718,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/qr-code/decode" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/qr-code/decode" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/qr-code/decode" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/qr-code/decode" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/jwt</loc>
@@ -726,7 +726,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/jwt" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/jwt" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/jwt" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/jwt" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/en/jwt</loc>
@@ -734,6 +734,6 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/jwt" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/jwt" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/zh/jwt" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/jwt" />
   </url>
 </urlset>

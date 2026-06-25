@@ -2,7 +2,7 @@
   "name": "JSON Toolkit",
   "short_name": "JSON Toolkit",
   "description": "Free online JSON tools to format, convert, validate and decode JSON in the browser, no uploads.",
-  "start_url": "/zh",
+  "start_url": "/en",
   "scope": "/",
   "display": "standalone",
   "orientation": "any",
@@ -32,7 +32,7 @@
       "name": "JSON Formatter",
       "short_name": "Format",
       "description": "Free online JSON formatter and validator",
-      "url": "/zh/json-format",
+      "url": "/en/json-format",
       "icons": [
         {
           "src": "/pwa-192.svg",
@@ -44,7 +44,7 @@
       "name": "JSON Diff",
       "short_name": "Diff",
       "description": "Free online JSON diff for comparing two documents",
-      "url": "/zh/json-diff",
+      "url": "/en/json-diff",
       "icons": [
         {
           "src": "/pwa-192.svg",
@@ -56,7 +56,7 @@
       "name": "JWT Parser",
       "short_name": "JWT",
       "description": "Free online JWT decoder and verifier",
-      "url": "/zh/jwt",
+      "url": "/en/jwt",
       "icons": [
         {
           "src": "/pwa-192.svg",

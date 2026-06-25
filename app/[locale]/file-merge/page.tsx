@@ -38,7 +38,7 @@ export default async function FileMergeHubPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: toJsonLd(createFileMergeToolItemListJsonLd(normalizedLocale)) }}
       />
-      <div className="flex w-full flex-grow flex-col px-3 py-4 sm:px-4 lg:px-6 xl:px-8 2xl:px-10">
+      <div className="flex w-full flex-grow flex-col px-4 py-4 sm:px-6 lg:px-10 xl:px-14 2xl:px-20">
         <Header compact />
 
         <header className="mb-8">

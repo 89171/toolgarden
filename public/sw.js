@@ -10,7 +10,7 @@
  * 版本号更新 CACHE_NAME 即可清除旧缓存。
  */
 
-const CACHE_NAME = 'json-toolkit-v1';
+const CACHE_NAME = 'json-toolkit-v2';
 
 // ── 安装：立即激活 ─────────────────────────────────────────────
 self.addEventListener('install', () => {
@@ -93,7 +93,7 @@ self.addEventListener('fetch', (event) => {
       .catch(() =>
         // 网络失败：降级到缓存，或返回离线工具首页
         caches.match(request).then(
-          (cached) => cached ?? caches.match('/zh') ?? new Response('Offline', { status: 503 })
+          (cached) => cached ?? caches.match('/en') ?? new Response('Offline', { status: 503 })
         )
       )
   );

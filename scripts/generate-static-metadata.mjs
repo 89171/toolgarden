@@ -7,7 +7,7 @@ const rootDir = path.resolve(scriptDir, '..');
 const publicDir = path.join(rootDir, 'public');
 const BASE_URL = 'https://toolgarden.xyz';
 const locales = ['zh', 'en'];
-const defaultLocale = 'zh';
+const defaultLocale = 'en';
 const hubPaths = ['/image', '/pdf', '/file-merge'];
 
 function cleanBuildArtifacts() {
@@ -125,7 +125,7 @@ function generateManifest() {
       name: 'JSON Toolkit',
       short_name: 'JSON Toolkit',
       description: 'Free online JSON tools to format, convert, validate and decode JSON in the browser, no uploads.',
-      start_url: '/zh',
+      start_url: `/${defaultLocale}`,
       scope: '/',
       display: 'standalone',
       orientation: 'any',
@@ -151,21 +151,21 @@ function generateManifest() {
           name: 'JSON Formatter',
           short_name: 'Format',
           description: 'Free online JSON formatter and validator',
-          url: '/zh/json-format',
+          url: `/${defaultLocale}/json-format`,
           icons: [{ src: '/pwa-192.svg', sizes: '192x192' }],
         },
         {
           name: 'JSON Diff',
           short_name: 'Diff',
           description: 'Free online JSON diff for comparing two documents',
-          url: '/zh/json-diff',
+          url: `/${defaultLocale}/json-diff`,
           icons: [{ src: '/pwa-192.svg', sizes: '192x192' }],
         },
         {
           name: 'JWT Parser',
           short_name: 'JWT',
           description: 'Free online JWT decoder and verifier',
-          url: '/zh/jwt',
+          url: `/${defaultLocale}/jwt`,
           icons: [{ src: '/pwa-192.svg', sizes: '192x192' }],
         },
       ],

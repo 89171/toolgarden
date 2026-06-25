@@ -5,15 +5,15 @@
 ## Site Structure
 
 Base URL: https://toolgarden.xyz
-Supported locales: zh (Chinese Simplified, default), en (English)
+Supported locales: en (English, default), zh (Chinese Simplified)
 URL pattern: /{locale}/{tool-path}
 Image tools hub: /{locale}/image
 PDF tools hub: /{locale}/pdf
 Canonical examples:
-- Home: https://toolgarden.xyz/zh
-- Tool: https://toolgarden.xyz/zh/json-format
-- Image hub: https://toolgarden.xyz/zh/image
-- PDF hub: https://toolgarden.xyz/zh/pdf
+- Home: https://toolgarden.xyz/en
+- Tool: https://toolgarden.xyz/en/json-format
+- Image hub: https://toolgarden.xyz/en/image
+- PDF hub: https://toolgarden.xyz/en/pdf
 
 ## Tool Reference
 

@@ -47,8 +47,8 @@ JSON Toolkit provides developers with a suite of tools for working with JSON dat
 
 ## Languages
 
-- Chinese (Simplified): `/zh/...` (default)
-- English: `/en/...`
+- English: `/en/...` (default)
+- Chinese (Simplified): `/zh/...`
 
 ## Technical Details
 
