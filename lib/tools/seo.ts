@@ -15,6 +15,66 @@ export type Locale = (typeof routing.locales)[number];
 type ToolMessageId = keyof typeof zhMessages.tools;
 type ToolFaqMessageId = keyof typeof zhMessages.tool_faq;
 
+const TOOL_TITLE_PHRASE_LIMIT: Record<Locale, number> = {
+  zh: 34,
+  en: 62,
+};
+
+function trimTrailingPunctuation(value: string): string {
+  return value.replace(/[\s,.，。;；:：、]+$/u, '');
+}
+
+function truncateSeoPhrase(value: string, locale: Locale): string {
+  const limit = TOOL_TITLE_PHRASE_LIMIT[locale];
+  const normalizedValue = value.replace(/\s+/g, ' ').trim();
+
+  if (normalizedValue.length <= limit) return trimTrailingPunctuation(normalizedValue);
+
+  const truncated = normalizedValue.slice(0, limit);
+  const separatorIndex = Math.max(
+    truncated.lastIndexOf('，'),
+    truncated.lastIndexOf('、'),
+    truncated.lastIndexOf(','),
+    truncated.lastIndexOf(';'),
+    truncated.lastIndexOf('；')
+  );
+  const phrase = separatorIndex >= Math.floor(limit * 0.55)
+    ? truncated.slice(0, separatorIndex)
+    : truncated;
+
+  return `${trimTrailingPunctuation(phrase)}...`;
+}
+
+function getToolSeoPhrase(description: string, locale: Locale): string {
+  const phrase = locale === 'zh'
+    ? description.replace(/^免费在线/u, '')
+    : description
+        .replace(/^Free online\s+/iu, '')
+        .replace(/^tool to\s+/iu, '')
+        .replace(/^tool for\s+/iu, '');
+
+  return truncateSeoPhrase(phrase, locale);
+}
+
+function createToolSeoTitle(toolName: string, description: string, locale: Locale): string {
+  const phrase = getToolSeoPhrase(description, locale);
+  return `${toolName} - ${phrase}`;
+}
+
+function createToolSeoDescription(description: string, locale: Locale): string {
+  const hasLocalSignal = locale === 'zh'
+    ? /浏览器|本地/u.test(description)
+    : /browser|locally|local/i.test(description);
+  const suffix = locale === 'zh'
+    ? (hasLocalSignal ? '无需上传，无需登录。' : '所有处理在浏览器本地完成，无需上传，无需登录。')
+    : (hasLocalSignal ? 'No upload or sign-in required.' : 'Runs locally in your browser with no upload or sign-in required.');
+  const separator = /[。.!?]$/u.test(description)
+    ? (locale === 'zh' ? '' : ' ')
+    : (locale === 'zh' ? '。' : '. ');
+
+  return `${description}${separator}${suffix}`;
+}
+
 export function normalizeLocale(locale: string): Locale {
   return routing.locales.includes(locale as Locale) ? (locale as Locale) : routing.defaultLocale;
 }
@@ -141,17 +201,19 @@ export function createToolMetadata(toolId: ToolMessageId, locale: string): Metad
   const registryTool = getToolById(toolId);
   const path = registryTool?.path ?? `/${toolId}`;
   const tool = m.tools[toolId];
+  const seoTitle = createToolSeoTitle(tool.name, tool.description, normalizedLocale);
+  const seoDescription = createToolSeoDescription(tool.description, normalizedLocale);
 
   return {
-    title: tool.name,
-    description: tool.description,
+    title: seoTitle,
+    description: seoDescription,
     alternates: {
       canonical: getLocalizedPath(normalizedLocale, path),
       languages: getLanguageAlternates(path),
     },
     openGraph: {
-      title: `${tool.name} | ${m.home.title}`,
-      description: tool.description,
+      title: `${seoTitle} | ${m.home.title}`,
+      description: seoDescription,
       type: 'website',
       locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
       siteName: m.home.title,

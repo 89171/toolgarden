@@ -1,7 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /api/
-Disallow: /_next/
 
 Sitemap: https://www.toolgarden.xyz/sitemap.xml
 Host: https://www.toolgarden.xyz

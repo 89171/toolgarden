@@ -11,6 +11,7 @@ import {
   normalizeLocale,
   toJsonLd,
 } from '@/lib/tools/seo';
+import { analyticsConfig } from '@/lib/analytics';
 import { Analytics } from '@/components/Analytics';
 import { FeedbackButton } from '@/components/FeedbackButton';
 import { PwaRegistration } from '@/components/PwaRegistration';
@@ -74,10 +75,34 @@ export default async function LocaleLayout({
   const normalizedLocale = normalizeLocale(locale);
   setRequestLocale(normalizedLocale);
   const m = getLocaleMessages(normalizedLocale);
+  const googleMeasurementId = analyticsConfig.google.measurementId;
+  const googleEnabled = analyticsConfig.google.enabled && googleMeasurementId.length > 0;
+  const escapedGoogleMeasurementId = googleMeasurementId
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'");
 
   return (
     <html lang={normalizedLocale}>
       <head>
+        {googleEnabled ? (
+          <>
+            <script
+              async
+              src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(googleMeasurementId)}`}
+            />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', '${escapedGoogleMeasurementId}');
+`,
+              }}
+            />
+          </>
+        ) : null}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: toJsonLd(createSiteJsonLd(normalizedLocale)) }}

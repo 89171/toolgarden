@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import Script from 'next/script';
 import { analyticsConfig } from '@/lib/analytics';
@@ -43,24 +43,7 @@ export function Analytics() {
   }, [googleEnabled, googleMeasurementId, pathname]);
 
   return (
-    <Fragment>
-      {googleEnabled ? (
-        <Fragment>
-          <Script
-            src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(googleMeasurementId)}`}
-            strategy="afterInteractive"
-          />
-          <Script id="google-analytics" strategy="afterInteractive">
-            {`
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', ${JSON.stringify(googleMeasurementId)});
-            `}
-          </Script>
-        </Fragment>
-      ) : null}
-
+    <>
       {analyticsConfig.clarity.enabled ? (
         <Script id="microsoft-clarity" strategy="afterInteractive">
           {`
@@ -72,6 +55,6 @@ export function Analytics() {
           `}
         </Script>
       ) : null}
-    </Fragment>
+    </>
   );
 }

@@ -49,8 +49,8 @@ function alternatesFor(routePath = '') {
   ];
 }
 
-function sitemapUrl({ routePath = '', changeFrequency, priority }) {
-  const loc = `${BASE_URL}/${defaultLocale}${routePath}`;
+function sitemapUrl({ locale = defaultLocale, routePath = '', changeFrequency, priority }) {
+  const loc = `${BASE_URL}/${locale}${routePath}`;
   const alternateLinks = alternatesFor(routePath)
     .map((alternate) =>
       `    <xhtml:link rel="alternate" hreflang="${escapeXml(alternate.hreflang)}" href="${escapeXml(alternate.href)}" />`
@@ -68,27 +68,35 @@ function sitemapUrl({ routePath = '', changeFrequency, priority }) {
 }
 
 function generateSitemap() {
-  const urls = [
-    sitemapUrl({
+  const routeEntries = [
+    {
       routePath: '',
       changeFrequency: 'weekly',
       priority: '1.0',
-    }),
+    },
     ...hubPaths.map((routePath) =>
-      sitemapUrl({
+      ({
         routePath,
         changeFrequency: 'weekly',
         priority: '0.9',
       })
     ),
     ...readToolPaths().map((routePath) =>
-      sitemapUrl({
+      ({
         routePath,
         changeFrequency: 'monthly',
         priority: '0.8',
       })
     ),
   ];
+  const urls = routeEntries.flatMap((entry) =>
+    locales.map((locale) =>
+      sitemapUrl({
+        ...entry,
+        locale,
+      })
+    )
+  );
 
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
@@ -104,7 +112,6 @@ function generateRobots() {
     'User-agent: *',
     'Allow: /',
     'Disallow: /api/',
-    'Disallow: /_next/',
     '',
     `Sitemap: ${BASE_URL}/sitemap.xml`,
     `Host: ${BASE_URL}`,
