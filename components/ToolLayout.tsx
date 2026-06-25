@@ -57,7 +57,7 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
         />
       )}
       <div className="h-screen bg-background text-foreground flex flex-col">
-        <div className="flex-grow flex flex-col max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-24 py-4 min-h-0">
+        <div className="flex-grow flex w-full flex-col px-3 py-4 sm:px-4 lg:px-6 xl:px-8 2xl:px-10 min-h-0">
         <Header compact />
         {/* 面包屑 */}
         <nav className="text-sm text-content-muted mb-4 flex items-center gap-1" aria-label="breadcrumb">

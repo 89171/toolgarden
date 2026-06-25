@@ -38,7 +38,7 @@ export default async function ImageHubPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: toJsonLd(createImageToolItemListJsonLd(normalizedLocale)) }}
       />
-      <div className="mx-auto flex w-full max-w-[1600px] flex-grow flex-col px-4 py-4 sm:px-6 lg:px-24">
+      <div className="flex w-full flex-grow flex-col px-3 py-4 sm:px-4 lg:px-6 xl:px-8 2xl:px-10">
         <Header compact />
 
         <header className="mb-8">
@@ -60,7 +60,7 @@ export default async function ImageHubPage({
           <h2 className="mb-4 border-b border-border-subtle pb-2 text-xs font-semibold uppercase tracking-normal text-content-faint">
             {m.image_hub.all_tools}
           </h2>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
             {imageTools.map((tool) => (
               <Link
                 key={tool.id}

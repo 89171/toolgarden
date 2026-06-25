@@ -53,7 +53,7 @@ function ToolCard({ tool }: { tool: ToolCardData }) {
 
 function ToolGrid({ tools }: { tools: ToolCardData[] }) {
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
       {tools.map((tool) => (
         <ToolCard key={tool.id} tool={tool} />
       ))}

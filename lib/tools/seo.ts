@@ -5,7 +5,7 @@ import enMessages from '@/messages/en.json';
 import { stringifyJSONValue } from '@/lib/utils/json';
 import { getFileMergeTools, getImageTools, getLocalizedToolPath, getPdfTools, getToolById, toolRegistry } from './registry';
 
-export const BASE_URL = 'https://json-toolkit.dev';
+export const BASE_URL = 'https://www.toolgarden.xyz';
 export const REPOSITORY_URL = 'https://github.com/89171/json-toolkit';
 const EXPOSE_SOURCE_METADATA = process.env.NEXT_PUBLIC_EXPOSE_SOURCE === 'true';
 

@@ -302,97 +302,115 @@ export function PdfToPdfConverter() {
               </Button>
             </>
           )}
-          className="min-h-[32rem] overflow-hidden xl:min-h-0"
+          className={`${items.length === 0 ? 'min-h-[32rem]' : 'min-h-[42rem]'} xl:min-h-0 xl:overflow-hidden`}
         >
-          <div className="grid min-h-0 flex-grow grid-cols-1 gap-4 lg:grid-cols-[minmax(280px,360px)_1fr]">
-            <div className="min-h-0 overflow-y-auto rounded border border-border-input bg-surface-raised">
-              {items.length === 0 ? (
-                <div className="flex h-full min-h-64 flex-col items-center justify-center px-6 text-center">
-                  <span className="mb-3 flex h-12 w-12 items-center justify-center rounded border border-border-subtle bg-surface font-mono text-sm font-semibold text-content-faint">
-                    PDF
-                  </span>
-                  <h3 className="text-base font-semibold text-content-secondary">{tp('empty_title')}</h3>
-                  <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-content-muted">
-                    {tp('empty_body')}
-                  </p>
-                </div>
-              ) : (
-                <div className="divide-y divide-border-subtle">
-                  {items.map((item) => (
-                    <article
-                      key={item.id}
-                      className={`flex min-w-0 flex-col gap-3 p-4 transition-colors ${
-                        selectedPreview?.id === item.id ? 'bg-surface-hover' : 'bg-surface-raised'
-                      }`}
-                    >
-                      <div className="flex min-w-0 items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <h3 className="truncate text-sm font-semibold text-content-secondary">{item.file.name}</h3>
-                          <p className="mt-1 text-xs text-content-muted">
-                            {formatFileSize(item.file.size)} · {tp(`kinds.${item.inputKind}`)}
-                          </p>
-                        </div>
-                        <span
-                          className={`shrink-0 rounded border px-2 py-1 text-xs ${
-                            item.status === 'done'
-                              ? 'border-border-base bg-surface text-content-secondary'
-                              : item.status === 'error'
-                                ? 'border-border-base bg-danger-surface text-danger-content'
-                                : 'border-border-subtle bg-surface text-content-muted'
-                          }`}
-                        >
-                          {tp(`status_${item.status}`)}
-                        </span>
-                      </div>
+          <div className="flex min-h-0 flex-grow flex-col gap-4">
+            {items.length === 0 ? (
+              <div className="flex min-h-[28rem] flex-grow flex-col items-center justify-center rounded border border-border-input bg-surface-raised px-6 text-center">
+                <span className="mb-3 flex h-12 w-12 items-center justify-center rounded border border-border-subtle bg-surface font-mono text-sm font-semibold text-content-faint">
+                  PDF
+                </span>
+                <h3 className="text-base font-semibold text-content-secondary">{tp('empty_title')}</h3>
+                <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-content-muted">
+                  {tp('empty_body')}
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="max-h-64 shrink-0 overflow-y-auto rounded border border-border-input bg-surface-raised p-3">
+                  <div className="grid grid-cols-1 gap-3 xl:grid-cols-2 2xl:grid-cols-3">
+                    {items.map((item) => (
+                      <article
+                        key={item.id}
+                        className={`group relative flex min-w-0 flex-col gap-3 rounded border p-3 transition-colors ${
+                          selectedPreview?.id === item.id
+                            ? 'border-border-strong bg-surface-hover'
+                            : 'border-border-subtle bg-surface'
+                        } ${item.status === 'done' && item.outputUrl ? 'cursor-pointer hover:border-border-strong hover:bg-surface-hover' : ''}`}
+                      >
+                        {item.status === 'done' && item.outputUrl && (
+                          <button
+                            type="button"
+                            aria-label={`${tp('preview')} ${item.file.name}`}
+                            onClick={() => setPreviewId(item.id)}
+                            className="absolute inset-0 z-0 cursor-pointer rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+                          >
+                            <span className="sr-only">{tp('preview')}</span>
+                          </button>
+                        )}
 
-                      {item.status === 'done' && item.outputUrl && (
-                        <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-content-muted">
-                          <span>
-                            {tp('pages_value', { count: item.pageCount ?? 0 })} · {formatFileSize(item.outputSize ?? 0)}
-                            {typeof item.durationMs === 'number' ? ` · ${tp('duration_value', { value: item.durationMs })}` : ''}
-                          </span>
-                          <div className="flex gap-2">
-                            <Button variant="secondary" size="sm" onClick={() => setPreviewId(item.id)}>
-                              {tp('preview')}
-                            </Button>
-                            <Button size="sm" onClick={() => downloadItem(item)}>
-                              {tc('download')}
-                            </Button>
+                        <div className="pointer-events-none relative z-10 flex min-w-0 items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <h3 className="truncate text-sm font-semibold text-content-secondary">{item.file.name}</h3>
+                            <p className="mt-1 text-xs text-content-muted">
+                              {formatFileSize(item.file.size)} · {tp(`kinds.${item.inputKind}`)}
+                            </p>
                           </div>
+                          <span
+                            className={`shrink-0 rounded border px-2 py-1 text-xs ${
+                              item.status === 'done'
+                                ? 'border-border-base bg-surface-raised text-content-secondary'
+                                : item.status === 'error'
+                                  ? 'border-border-base bg-danger-surface text-danger-content'
+                                  : 'border-border-subtle bg-surface-raised text-content-muted'
+                            }`}
+                          >
+                            {tp(`status_${item.status}`)}
+                          </span>
                         </div>
-                      )}
 
-                      {item.status === 'error' && item.error && (
-                        <p className="rounded border border-border-base bg-danger-surface px-3 py-2 text-xs leading-relaxed text-danger-content">
-                          {getErrorMessage(item.error)}
-                        </p>
-                      )}
-                    </article>
-                  ))}
-                </div>
-              )}
-            </div>
+                        {item.status === 'done' && item.outputUrl && (
+                          <div className="pointer-events-none relative z-10 flex flex-wrap items-center justify-between gap-2 text-xs text-content-muted">
+                            <span>
+                              {tp('pages_value', { count: item.pageCount ?? 0 })} · {formatFileSize(item.outputSize ?? 0)}
+                              {typeof item.durationMs === 'number' ? ` · ${tp('duration_value', { value: item.durationMs })}` : ''}
+                            </span>
+                            <div className="pointer-events-auto flex gap-2">
+                              <Button
+                                size="sm"
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  downloadItem(item);
+                                }}
+                              >
+                                {tc('download')}
+                              </Button>
+                            </div>
+                          </div>
+                        )}
 
-            <div className="min-h-[24rem] overflow-hidden rounded border border-border-input bg-surface-raised">
-              {selectedPreview?.outputUrl ? (
-                <iframe
-                  key={selectedPreview.outputUrl}
-                  title={tp('preview_title')}
-                  src={selectedPreview.outputUrl}
-                  className="h-full min-h-[24rem] w-full bg-surface"
-                />
-              ) : (
-                <div className="flex h-full min-h-[24rem] flex-col items-center justify-center px-6 text-center">
-                  <span className="mb-3 flex h-12 w-12 items-center justify-center rounded border border-border-subtle bg-surface font-mono text-sm font-semibold text-content-faint">
-                    PDF
-                  </span>
-                  <h3 className="text-base font-semibold text-content-secondary">{tp('preview_empty_title')}</h3>
-                  <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-content-muted">
-                    {tp('preview_empty_body')}
-                  </p>
+                        {item.status === 'error' && item.error && (
+                          <p className="relative z-10 rounded border border-border-base bg-danger-surface px-3 py-2 text-xs leading-relaxed text-danger-content">
+                            {getErrorMessage(item.error)}
+                          </p>
+                        )}
+                      </article>
+                    ))}
+                  </div>
                 </div>
-              )}
-            </div>
+
+                <div className="min-h-[28rem] flex-grow overflow-hidden rounded border border-border-input bg-surface-raised">
+                  {selectedPreview?.outputUrl ? (
+                    <iframe
+                      key={selectedPreview.outputUrl}
+                      title={tp('preview_title')}
+                      src={selectedPreview.outputUrl}
+                      className="h-full min-h-[28rem] w-full bg-surface"
+                    />
+                  ) : (
+                    <div className="flex h-full min-h-[28rem] flex-col items-center justify-center px-6 text-center">
+                      <span className="mb-3 flex h-12 w-12 items-center justify-center rounded border border-border-subtle bg-surface font-mono text-sm font-semibold text-content-faint">
+                        PDF
+                      </span>
+                      <h3 className="text-base font-semibold text-content-secondary">{tp('preview_empty_title')}</h3>
+                      <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-content-muted">
+                        {tp('preview_empty_body')}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </Panel>
       </div>

@@ -362,41 +362,42 @@ export function ImageBackgroundRemover() {
         <Panel
           title={ti('settings_title')}
           actions={<Button variant="secondary" onClick={clearImage} disabled={!hasImage}>{tc('clear')}</Button>}
-          className="h-[min(34rem,calc(100svh-12rem))] min-h-0 overflow-hidden xl:h-auto xl:min-h-0"
+          className="h-[min(32rem,calc(100svh-10rem))] min-h-0 overflow-hidden xl:h-auto xl:min-h-0"
         >
-          <div className="flex min-h-0 flex-grow flex-col gap-4 overflow-y-auto overscroll-contain pr-1 sm:gap-5">
-            <input
-              ref={inputRef}
-              type="file"
-              accept={accept}
-              className="hidden"
-              onChange={(event) => {
-                if (event.target.files) addFile(event.target.files);
-              }}
-            />
+          <div className="flex min-h-0 flex-grow flex-col">
+            <div className="flex min-h-0 flex-grow flex-col gap-3 overflow-y-auto overscroll-contain pr-1 sm:gap-4">
+              <input
+                ref={inputRef}
+                type="file"
+                accept={accept}
+                className="hidden"
+                onChange={(event) => {
+                  if (event.target.files) addFile(event.target.files);
+                }}
+              />
 
-            <div className="rounded-lg border border-border-base bg-surface-raised p-4">
+            <div className="rounded-lg border border-border-base bg-surface-raised p-3">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <span className="text-xs font-semibold uppercase tracking-normal text-content-faint">
                     {ti('model_label')}
                   </span>
-                  <h2 className="mt-2 text-xl font-semibold leading-tight text-content">
+                  <h2 className="mt-1.5 text-lg font-semibold leading-tight text-content">
                     {ti('model_title')}
                   </h2>
                 </div>
-                <span className="rounded-full border border-border-strong bg-surface px-3 py-1 font-mono text-xs font-semibold text-content-secondary">
+                <span className="rounded border border-border-strong bg-surface px-2 py-1 font-mono text-xs font-semibold text-content-secondary">
                   PNG
                 </span>
               </div>
-              <p className="mt-3 text-sm leading-relaxed text-content-muted">
+              <p className="mt-2 text-xs leading-relaxed text-content-muted">
                 {ti('model_description')}
               </p>
-              <div className="mt-4" role="radiogroup" aria-label={ti('model_choice')}>
+              <div className="mt-3" role="radiogroup" aria-label={ti('model_choice')}>
                 <span className="mb-2 block text-xs font-semibold uppercase tracking-normal text-content-faint">
                   {ti('model_choice')}
                 </span>
-                <div className="grid gap-2">
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   {backgroundRemovalModelOptions.map((option) => {
                     const selected = selectedModel === option.value;
 
@@ -406,9 +407,10 @@ export function ImageBackgroundRemover() {
                         type="button"
                         role="radio"
                         aria-checked={selected}
+                        aria-label={`${ti(option.labelKey)} ${ti(option.sizeKey)} ${ti(option.descriptionKey)}`}
                         disabled={!canChangeModel}
                         onClick={() => changeModel(option.value)}
-                        className={`min-w-0 rounded border p-3 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
+                        className={`min-w-0 rounded border p-2.5 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
                           selected
                             ? 'border-border-strong bg-surface'
                             : 'border-border-subtle bg-surface-raised hover:border-border-strong hover:bg-surface-hover'
@@ -416,17 +418,14 @@ export function ImageBackgroundRemover() {
                       >
                         <span className="flex min-w-0 flex-wrap items-center gap-2">
                           <span className="font-semibold text-content">{ti(option.labelKey)}</span>
-                          <span className="rounded border border-border-subtle bg-surface px-2 py-0.5 font-mono text-xs text-content-muted">
+                          <span className="rounded border border-border-subtle bg-surface px-1.5 py-0.5 font-mono text-xs text-content-muted">
                             {ti(option.sizeKey)}
                           </span>
                           {option.value === 'medium' && (
-                            <span className="rounded border border-border-subtle bg-action px-2 py-0.5 text-xs font-medium text-background">
+                            <span className="rounded border border-border-subtle bg-action px-1.5 py-0.5 text-xs font-medium text-background">
                               {ti('model_default_badge')}
                             </span>
                           )}
-                        </span>
-                        <span className="mt-1 block text-xs leading-relaxed text-content-muted">
-                          {ti(option.descriptionKey)}
                         </span>
                       </button>
                     );
@@ -456,28 +455,28 @@ export function ImageBackgroundRemover() {
                 addFile(event.dataTransfer.files);
               }}
               aria-label={ti('drop_action')}
-              className={`group flex min-h-44 flex-col items-center justify-center gap-3 rounded-lg border border-dashed p-4 text-center transition-colors sm:min-h-56 sm:gap-4 sm:p-6 ${
+              className={`group flex min-h-28 flex-col items-center justify-center gap-2 rounded-lg border border-dashed p-3 text-center transition-colors sm:min-h-32 ${
                 dragging
                   ? 'border-border-strong bg-surface-hover'
                   : 'border-border-input bg-surface-raised hover:border-border-strong hover:bg-surface-hover'
               }`}
             >
               <span className="flex flex-col gap-1">
-                <span className="text-base font-semibold text-content sm:text-lg">{ti('drop_title')}</span>
+                <span className="text-sm font-semibold text-content sm:text-base">{ti('drop_title')}</span>
                 <span className="max-w-72 text-xs leading-relaxed text-content-muted sm:text-sm">
                   {ti('drop_hint', { formats: getSupportedImageInputLabel() })}
                 </span>
               </span>
-              <span className="rounded bg-action px-3 py-1.5 text-sm font-medium text-background transition-colors group-hover:bg-action-hover sm:px-4 sm:py-2">
+              <span className="rounded bg-action px-3 py-1.5 text-sm font-medium text-background transition-colors group-hover:bg-action-hover">
                 {ti('drop_action')}
               </span>
             </button>
 
-            <div className="rounded-lg border border-border-base bg-surface-raised p-3 sm:p-4">
-              <span className="mb-3 block text-xs font-semibold uppercase tracking-normal text-content-faint">
+            <div className="rounded-lg border border-border-base bg-surface-raised p-3">
+              <span className="mb-2 block text-xs font-semibold uppercase tracking-normal text-content-faint">
                 {ti('input_formats')}
               </span>
-              <div className="flex max-h-20 flex-wrap gap-1.5 overflow-y-auto pr-1">
+              <div className="flex max-h-14 flex-wrap gap-1.5 overflow-y-auto pr-1">
                 {inputFormatLabels.map((label) => (
                   <span
                     key={label}
@@ -489,7 +488,7 @@ export function ImageBackgroundRemover() {
               </div>
             </div>
 
-            <div className="rounded-lg border border-border-base bg-surface-raised p-3 sm:p-4">
+            <div className="rounded-lg border border-border-base bg-surface-raised p-3">
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div>
                   <span className="block text-xs text-content-faint">{ti('selected_file')}</span>
@@ -506,11 +505,13 @@ export function ImageBackgroundRemover() {
               </div>
             </div>
 
-            <p className="border-t border-border-subtle pt-3 text-xs leading-relaxed text-content-faint">
+            <p className="border-t border-border-subtle pt-2 text-xs leading-relaxed text-content-faint">
               {ti('local_note')}
             </p>
 
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            </div>
+
+            <div className="grid shrink-0 grid-cols-1 gap-2 border-t border-border-subtle bg-surface pt-3 sm:grid-cols-2">
               <Button variant="primary" size="md" onClick={() => void runRemoval()} disabled={!canRun}>
                 {image?.status === 'processing' ? ti('processing') : ti('remove_action')}
               </Button>

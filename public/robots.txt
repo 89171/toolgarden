@@ -3,5 +3,5 @@ Allow: /
 Disallow: /api/
 Disallow: /_next/
 
-Sitemap: https://json-toolkit.dev/sitemap.xml
-Host: https://json-toolkit.dev
+Sitemap: https://www.toolgarden.xyz/sitemap.xml
+Host: https://www.toolgarden.xyz

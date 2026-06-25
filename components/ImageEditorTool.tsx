@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { clsx } from 'clsx';
 import {
   Canvas,
   Ellipse,
@@ -15,7 +16,6 @@ import {
 } from 'fabric';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
-import { Panel } from '@/components/ui/Panel';
 import {
   applyBlur,
   applyMosaic,
@@ -79,24 +79,136 @@ const OUTPUT_FORMATS: ImageTargetFormat[] = ['png', 'jpg', 'webp'];
 const HISTORY_LIMIT = 40;
 const CANVAS_VIEWPORT_PADDING = 24;
 
-const EDITOR_TOOLS: Array<{ tool: EditorTool; icon: string }> = [
-  { tool: 'select', icon: 'SEL' },
-  { tool: 'brush', icon: 'PEN' },
-  { tool: 'marker', icon: 'MRK' },
-  { tool: 'rectangle', icon: 'REC' },
-  { tool: 'ellipse', icon: 'ELL' },
-  { tool: 'polyline', icon: 'LIN' },
-  { tool: 'text', icon: 'TXT' },
-  { tool: 'mosaic', icon: 'MOS' },
-  { tool: 'blur', icon: 'BLR' },
-  { tool: 'eraser', icon: 'ERS' },
-];
-
 const COLOR_SWATCHES = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#14b8a6', '#3b82f6', '#8b5cf6', '#111827'];
 
 if (!FabricObject.customProperties.includes('data')) {
   FabricObject.customProperties.push('data');
 }
+
+type IconProps = { className?: string };
+
+const IconSelect: React.FC<IconProps> = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M4 3l6 16 2.2-6.8L19 10z" />
+  </svg>
+);
+const IconBrush: React.FC<IconProps> = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M9.5 12.5 17 5a2.1 2.1 0 1 1 3 3l-7.5 7.5" />
+    <path d="M9.5 12.5c-2 0-3.5 1.4-3.5 3.4 0 1.4-1.5 2.1-2 2.6 1 1 2.5 2 4.5 2 2.4 0 4-1.7 4-3.9 0-2-1.4-3.4-3-4.1z" />
+  </svg>
+);
+const IconMarker: React.FC<IconProps> = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="m15 4 5 5-9 9-5-5z" />
+    <path d="m6 13-2 7 7-2" />
+    <path d="M14 5 18 9" />
+  </svg>
+);
+const IconRectangle: React.FC<IconProps> = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className={className}>
+    <rect x="3.5" y="5.5" width="17" height="13" rx="1.2" />
+  </svg>
+);
+const IconEllipse: React.FC<IconProps> = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className={className}>
+    <ellipse cx="12" cy="12" rx="9" ry="7" />
+  </svg>
+);
+const IconPolyline: React.FC<IconProps> = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M3 18 8 8l5 6 8-10" />
+  </svg>
+);
+const IconText: React.FC<IconProps> = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M5 6V4h14v2" />
+    <path d="M12 4v16" />
+    <path d="M9 20h6" />
+  </svg>
+);
+const IconMosaic: React.FC<IconProps> = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <rect x="3" y="3" width="6" height="6" rx="0.6" />
+    <rect x="15" y="3" width="6" height="6" rx="0.6" />
+    <rect x="9" y="9" width="6" height="6" rx="0.6" />
+    <rect x="3" y="15" width="6" height="6" rx="0.6" />
+    <rect x="15" y="15" width="6" height="6" rx="0.6" />
+  </svg>
+);
+const IconBlur: React.FC<IconProps> = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <circle cx="12" cy="5.5" r="1.1" />
+    <circle cx="6" cy="12" r="1.1" />
+    <circle cx="18" cy="12" r="1.1" />
+    <circle cx="12" cy="18.5" r="1.1" />
+    <circle cx="8.3" cy="8.3" r="1.1" />
+    <circle cx="15.7" cy="8.3" r="1.1" />
+    <circle cx="8.3" cy="15.7" r="1.1" />
+    <circle cx="15.7" cy="15.7" r="1.1" />
+    <circle cx="12" cy="12" r="1.6" />
+  </svg>
+);
+const IconEraser: React.FC<IconProps> = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="m20 20-8 0L4 12l8-8 8 8z" />
+    <path d="M14 14 9 9" />
+  </svg>
+);
+
+const IconUndo: React.FC<IconProps> = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M9 14 4 9l5-5" />
+    <path d="M4 9h10a6 6 0 0 1 0 12h-3" />
+  </svg>
+);
+const IconRedo: React.FC<IconProps> = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="m15 14 5-5-5-5" />
+    <path d="M20 9H10a6 6 0 0 0 0 12h3" />
+  </svg>
+);
+const IconTrash: React.FC<IconProps> = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M4 7h16" />
+    <path d="M10 11v6M14 11v6" />
+    <path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12" />
+    <path d="M9 7V4h6v3" />
+  </svg>
+);
+const IconReset: React.FC<IconProps> = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M3 12a9 9 0 1 0 3-6.7" />
+    <path d="M3 4v5h5" />
+  </svg>
+);
+const IconUpload: React.FC<IconProps> = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M12 4v12" />
+    <path d="m7 9 5-5 5 5" />
+    <path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+  </svg>
+);
+const IconDownload: React.FC<IconProps> = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M12 4v12" />
+    <path d="m7 11 5 5 5-5" />
+    <path d="M4 20h16" />
+  </svg>
+);
+
+const EDITOR_TOOLS: Array<{ tool: EditorTool; Icon: React.FC<IconProps> }> = [
+  { tool: 'select', Icon: IconSelect },
+  { tool: 'brush', Icon: IconBrush },
+  { tool: 'marker', Icon: IconMarker },
+  { tool: 'rectangle', Icon: IconRectangle },
+  { tool: 'ellipse', Icon: IconEllipse },
+  { tool: 'polyline', Icon: IconPolyline },
+  { tool: 'text', Icon: IconText },
+  { tool: 'mosaic', Icon: IconMosaic },
+  { tool: 'blur', Icon: IconBlur },
+  { tool: 'eraser', Icon: IconEraser },
+];
 
 function formatDimensions(width: number, height: number): string {
   return `${Math.round(width)} × ${Math.round(height)} px`;
@@ -168,6 +280,37 @@ function lockBaseObjects(canvas: Canvas) {
   canvas.getObjects().forEach((object, index) => {
     if (isBaseObject(object) || index === 0) {
       configureBaseObject(object as FabricImage);
+    }
+  });
+}
+
+function applyToolInteractivity(canvas: Canvas, tool: EditorTool) {
+  const isSelect = tool === 'select';
+  const isEraser = tool === 'eraser';
+
+  canvas.selection = isSelect;
+  canvas.skipTargetFind = !isSelect && !isEraser;
+
+  canvas.getObjects().forEach((object) => {
+    if (isBaseObject(object)) return;
+    if (getObjectRole(object) === 'transient') return;
+
+    object.set({
+      selectable: isSelect,
+      evented: isSelect || isEraser,
+      hasControls: isSelect,
+      hasBorders: isSelect,
+      lockMovementX: !isSelect,
+      lockMovementY: !isSelect,
+    });
+    object.setCoords();
+  });
+}
+
+function exitActiveTextEditing(canvas: Canvas) {
+  canvas.getObjects().forEach((object) => {
+    if (object instanceof IText && object.isEditing) {
+      object.exitEditing();
     }
   });
 }
@@ -270,6 +413,55 @@ function createPatchCanvasFromDataUrl(dataUrl: string, width: number, height: nu
   });
 }
 
+interface IconActionProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  label: string;
+  active?: boolean;
+}
+
+const IconAction: React.FC<IconActionProps> = ({ label, active, className, children, ...rest }) => (
+  <button
+    type="button"
+    title={label}
+    aria-label={label}
+    className={clsx(
+      'flex h-9 w-9 items-center justify-center rounded-md border transition-colors disabled:cursor-not-allowed disabled:opacity-40',
+      active
+        ? 'border-border-strong bg-action text-white'
+        : 'border-transparent bg-transparent text-content-secondary hover:bg-surface-hover hover:text-content',
+      className,
+    )}
+    {...rest}
+  >
+    {children}
+  </button>
+);
+
+interface InlineRangeProps {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step?: number;
+  unit?: string;
+  onChange: (value: number) => void;
+}
+
+const InlineRange: React.FC<InlineRangeProps> = ({ label, value, min, max, step = 1, unit = '', onChange }) => (
+  <label className="flex items-center gap-2 text-xs text-content-muted">
+    <span className="whitespace-nowrap">{label}</span>
+    <input
+      type="range"
+      min={min}
+      max={max}
+      step={step}
+      value={value}
+      onChange={(event) => onChange(Number(event.target.value))}
+      className="w-24 accent-action sm:w-28"
+    />
+    <span className="w-10 text-right font-mono text-xs text-content-secondary">{value}{unit}</span>
+  </label>
+);
+
 export function ImageEditorTool() {
   const tc = useTranslations('common');
   const ti = useTranslations('image_editor');
@@ -318,56 +510,23 @@ export function ImageEditorTool() {
   const [draggingFile, setDraggingFile] = useState(false);
 
   const accept = getImageAcceptValue();
-  const inputFormatLabels = getSupportedImageInputLabel().split(' / ');
   const target = getImageTargetConfig(outputFormat);
   const showQuality = target.supportsQuality;
   const canEdit = Boolean(imageInfo && canvasReady);
   const canExport = Boolean(imageInfo && canvasReady && !isLoading && !isExporting);
   const usesStrokeWidth = tool === 'brush' || tool === 'marker' || tool === 'rectangle' || tool === 'ellipse' || tool === 'polyline';
 
-  useEffect(() => {
-    toolRef.current = tool;
-  }, [tool]);
-
-  useEffect(() => {
-    colorRef.current = color;
-  }, [color]);
-
-  useEffect(() => {
-    strokeWidthRef.current = strokeWidth;
-  }, [strokeWidth]);
-
-  useEffect(() => {
-    shapeModeRef.current = shapeMode;
-  }, [shapeMode]);
-
-  useEffect(() => {
-    textValueRef.current = textValue;
-  }, [textValue]);
-
-  useEffect(() => {
-    fontSizeRef.current = fontSize;
-  }, [fontSize]);
-
-  useEffect(() => {
-    mosaicBlockSizeRef.current = mosaicBlockSize;
-  }, [mosaicBlockSize]);
-
-  useEffect(() => {
-    blurRadiusRef.current = blurRadius;
-  }, [blurRadius]);
-
-  useEffect(() => {
-    imageInfoRef.current = imageInfo;
-  }, [imageInfo]);
-
-  useEffect(() => {
-    sourceUrlRef.current = sourceUrl;
-  }, [sourceUrl]);
-
-  useEffect(() => {
-    outputRef.current = output;
-  }, [output]);
+  useEffect(() => { toolRef.current = tool; }, [tool]);
+  useEffect(() => { colorRef.current = color; }, [color]);
+  useEffect(() => { strokeWidthRef.current = strokeWidth; }, [strokeWidth]);
+  useEffect(() => { shapeModeRef.current = shapeMode; }, [shapeMode]);
+  useEffect(() => { textValueRef.current = textValue; }, [textValue]);
+  useEffect(() => { fontSizeRef.current = fontSize; }, [fontSize]);
+  useEffect(() => { mosaicBlockSizeRef.current = mosaicBlockSize; }, [mosaicBlockSize]);
+  useEffect(() => { blurRadiusRef.current = blurRadius; }, [blurRadius]);
+  useEffect(() => { imageInfoRef.current = imageInfo; }, [imageInfo]);
+  useEffect(() => { sourceUrlRef.current = sourceUrl; }, [sourceUrl]);
+  useEffect(() => { outputRef.current = output; }, [output]);
 
   const clearOutput = useCallback(() => {
     setOutput((current) => {
@@ -429,6 +588,7 @@ export function ImageEditorTool() {
     try {
       await canvas.loadFromJSON(state);
       lockBaseObjects(canvas);
+      applyToolInteractivity(canvas, toolRef.current);
       const currentImage = imageInfoRef.current;
       if (currentImage) {
         fitCanvasDisplaySize(canvas, currentImage.width, currentImage.height, canvasViewportRef.current);
@@ -508,11 +668,19 @@ export function ImageEditorTool() {
     if (toolRef.current === 'polyline' && nextTool !== 'polyline') resetPolyline();
 
     if (canvas) {
-      canvas.isDrawingMode = nextTool === 'brush' || nextTool === 'marker';
-      canvas.selection = nextTool === 'select' || nextTool === 'eraser';
-      canvas.defaultCursor = nextTool === 'text' ? 'text' : nextTool === 'eraser' ? 'not-allowed' : 'crosshair';
-      canvas.hoverCursor = nextTool === 'eraser' ? 'not-allowed' : 'move';
+      exitActiveTextEditing(canvas);
       canvas.discardActiveObject();
+      canvas.isDrawingMode = nextTool === 'brush' || nextTool === 'marker';
+      canvas.defaultCursor =
+        nextTool === 'text' ? 'text'
+        : nextTool === 'eraser' ? 'not-allowed'
+        : nextTool === 'select' ? 'default'
+        : 'crosshair';
+      canvas.hoverCursor =
+        nextTool === 'select' ? 'move'
+        : nextTool === 'eraser' ? 'not-allowed'
+        : 'crosshair';
+      applyToolInteractivity(canvas, nextTool);
       canvas.requestRenderAll();
     }
 
@@ -538,17 +706,24 @@ export function ImageEditorTool() {
 
     if (!getObjectRole(object)) setObjectRole(object, 'annotation');
     canvas.add(object);
-    canvas.setActiveObject(object);
+    applyToolInteractivity(canvas, toolRef.current);
+    if (toolRef.current === 'select') {
+      canvas.setActiveObject(object);
+    }
     canvas.requestRenderAll();
     recordHistory();
   }, [recordHistory]);
 
   const addTextAt = useCallback((point: Point) => {
+    const canvas = fabricCanvasRef.current;
     const value = textValueRef.current.trim();
+    if (!canvas) return;
     if (!value) {
       setError(ti('errors.empty_text'));
       return;
     }
+
+    exitActiveTextEditing(canvas);
 
     const text = new IText(value, {
       left: point.x,
@@ -559,9 +734,14 @@ export function ImageEditorTool() {
       fontWeight: '600',
       editable: true,
     });
-    addAnnotationObject(text);
+    setObjectRole(text, 'annotation');
+    canvas.add(text);
+    text.set({ selectable: true, evented: true });
+    canvas.setActiveObject(text);
     text.enterEditing();
-  }, [addAnnotationObject, ti]);
+    canvas.requestRenderAll();
+    recordHistory();
+  }, [recordHistory, ti]);
 
   const createEffectPatch = useCallback(async (toolName: EffectTool, start: Point, end: Point) => {
     const canvas = fabricCanvasRef.current;
@@ -656,18 +836,12 @@ export function ImageEditorTool() {
       strokeWidth: strokeWidthRef.current,
       strokeLineCap: 'round',
       strokeLineJoin: 'round',
-      selectable: true,
-      evented: true,
       objectCaching: false,
     });
-    setObjectRole(polyline, 'annotation');
-    canvas.add(polyline);
-    canvas.setActiveObject(polyline);
-    canvas.requestRenderAll();
     polylineRef.current = { points: [], preview: null };
     setPolylineCount(0);
-    recordHistory();
-  }, [recordHistory, ti]);
+    addAnnotationObject(polyline);
+  }, [addAnnotationObject, ti]);
 
   const handleCanvasMouseDown = useCallback((event: TPointerEventInfo) => {
     const canvas = fabricCanvasRef.current;
@@ -751,11 +925,8 @@ export function ImageEditorTool() {
       return;
     }
 
-    canvas.add(drawingState.object);
-    canvas.setActiveObject(drawingState.object);
-    canvas.requestRenderAll();
-    recordHistory();
-  }, [createEffectPatch, recordHistory]);
+    addAnnotationObject(drawingState.object);
+  }, [addAnnotationObject, createEffectPatch]);
 
   useEffect(() => {
     const element = canvasElementRef.current;
@@ -791,6 +962,7 @@ export function ImageEditorTool() {
       canvas.on('text:changed', () => recordHistory()),
       canvas.on('path:created', (event) => {
         if (event.path) setObjectRole(event.path, 'annotation');
+        applyToolInteractivity(canvas, toolRef.current);
         recordHistory();
       }),
     ];
@@ -1032,115 +1204,229 @@ export function ImageEditorTool() {
     ];
   }, [output, ti]);
 
+  const handleViewportDragEnter = useCallback((event: React.DragEvent<HTMLDivElement>) => {
+    if (event.dataTransfer.types.includes('Files')) {
+      event.preventDefault();
+      setDraggingFile(true);
+    }
+  }, []);
+
+  const handleViewportDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
+    if (event.dataTransfer.types.includes('Files')) {
+      event.preventDefault();
+      event.dataTransfer.dropEffect = 'copy';
+    }
+  }, []);
+
+  const handleViewportDragLeave = useCallback((event: React.DragEvent<HTMLDivElement>) => {
+    if (event.currentTarget.contains(event.relatedTarget as Node)) return;
+    setDraggingFile(false);
+  }, []);
+
+  const handleViewportDrop = useCallback((event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setDraggingFile(false);
+    if (event.dataTransfer.files.length > 0) {
+      void handleFiles(event.dataTransfer.files);
+    }
+  }, [handleFiles]);
+
   return (
     <ToolLayout toolId="image-editor">
-      <div className="grid flex-grow grid-cols-1 gap-4 overflow-auto pb-4 sm:gap-6 sm:pb-8 xl:min-h-0 xl:grid-cols-[minmax(320px,400px)_1fr] xl:overflow-hidden">
-        <Panel
-          title={ti('settings_title')}
-          actions={<Button variant="secondary" onClick={clearImage} disabled={!imageInfo && !error}>{tc('clear')}</Button>}
-          className="h-[min(46rem,calc(100svh-12rem))] min-h-0 overflow-hidden xl:h-auto"
-        >
-          <div className="flex min-h-0 flex-grow flex-col gap-4 overflow-y-auto overscroll-contain pr-1">
-            <input
-              ref={inputRef}
-              type="file"
-              accept={accept}
-              className="hidden"
-              onChange={(event) => {
-                if (event.target.files) handleFiles(event.target.files);
-              }}
-            />
+      <input
+        ref={inputRef}
+        type="file"
+        accept={accept}
+        className="hidden"
+        onChange={(event) => {
+          if (event.target.files) handleFiles(event.target.files);
+          event.target.value = '';
+        }}
+      />
 
-            <button
-              type="button"
-              onClick={() => inputRef.current?.click()}
-              onDragEnter={(event) => {
-                event.preventDefault();
-                setDraggingFile(true);
-              }}
-              onDragOver={(event) => {
-                event.preventDefault();
-                setDraggingFile(true);
-              }}
-              onDragLeave={(event) => {
-                event.preventDefault();
-                setDraggingFile(false);
-              }}
-              onDrop={(event) => {
-                event.preventDefault();
-                setDraggingFile(false);
-                handleFiles(event.dataTransfer.files);
-              }}
-              aria-label={ti('drop_action')}
-              className={`group flex min-h-36 flex-col items-center justify-center gap-3 rounded-lg border border-dashed p-4 text-center transition-colors ${
-                draggingFile
-                  ? 'border-border-strong bg-surface-hover'
-                  : 'border-border-input bg-surface-raised hover:border-border-strong hover:bg-surface-hover'
-              }`}
-            >
-              <span className="flex flex-col gap-1">
-                <span className="text-base font-semibold text-content">{imageInfo ? ti('replace') : ti('drop_title')}</span>
-                <span className="max-w-72 text-xs leading-relaxed text-content-muted">
-                  {ti('drop_hint', { formats: getSupportedImageInputLabel() })}
+      <div className="flex flex-grow flex-col gap-3 pb-4 min-h-0 sm:pb-8">
+
+        {/* 顶部操作条 */}
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border-base bg-surface px-3 py-2">
+          <div className="flex items-center gap-2">
+            <Button size="md" onClick={() => inputRef.current?.click()}>
+              <span className="inline-flex items-center gap-1.5">
+                <IconUpload className="h-4 w-4" />
+                {imageInfo ? ti('replace') : ti('drop_action')}
+              </span>
+            </Button>
+            {imageInfo && (
+              <div className="hidden items-center gap-3 text-xs sm:flex">
+                <span className="max-w-[220px] truncate text-content-secondary" title={imageInfo.filename}>
+                  {imageInfo.filename}
                 </span>
-              </span>
-            </button>
-
-            <div className="rounded-lg border border-border-base bg-surface-raised p-3">
-              <span className="mb-2 block text-xs font-semibold uppercase tracking-normal text-content-faint">
-                {ti('input_formats')}
-              </span>
-              <div className="flex max-h-20 flex-wrap gap-1.5 overflow-y-auto pr-1">
-                {inputFormatLabels.map((label) => (
-                  <span
-                    key={label}
-                    className="rounded border border-border-subtle bg-surface px-2 py-1 font-mono text-xs text-content-muted"
-                  >
-                    {label}
-                  </span>
-                ))}
+                <span className="font-mono text-content-faint">
+                  {formatDimensions(imageInfo.width, imageInfo.height)} · {formatFileSize(imageInfo.size)}
+                </span>
               </div>
-            </div>
+            )}
+          </div>
 
-            <p className="rounded-lg border border-border-subtle bg-surface-raised p-3 text-xs leading-relaxed text-content-muted">
-              {ti('local_note')}
-            </p>
+          <div className="flex items-center gap-1">
+            <IconAction label={ti('undo')} onClick={undo} disabled={historyStatus.undo === 0}>
+              <IconUndo className="h-4 w-4" />
+            </IconAction>
+            <IconAction label={ti('redo')} onClick={redo} disabled={historyStatus.redo === 0}>
+              <IconRedo className="h-4 w-4" />
+            </IconAction>
+            <span className="mx-1 h-5 w-px bg-border-subtle" aria-hidden />
+            <IconAction label={ti('delete_selected')} onClick={deleteSelected} disabled={!imageInfo}>
+              <IconTrash className="h-4 w-4" />
+            </IconAction>
+            <IconAction label={ti('reset_all')} onClick={resetToSource} disabled={!imageInfo}>
+              <IconReset className="h-4 w-4" />
+            </IconAction>
+            <span className="mx-1 h-5 w-px bg-border-subtle" aria-hidden />
+            <Button variant="secondary" onClick={clearImage} disabled={!imageInfo && !error}>
+              {tc('clear')}
+            </Button>
+          </div>
+        </div>
 
-            <div className="rounded-lg border border-border-base bg-surface-raised p-3">
-              <span className="mb-3 block text-sm font-semibold text-content">{ti('tool_title')}</span>
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                {EDITOR_TOOLS.map(({ tool: option, icon }) => {
-                  const active = tool === option;
-                  return (
-                    <button
-                      key={option}
-                      type="button"
-                      onClick={() => selectTool(option)}
-                      disabled={!canEdit && option !== 'select'}
-                      className={`flex min-h-16 flex-col items-center justify-center gap-1 rounded border px-2 py-2 text-center transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
-                        active
-                          ? 'border-border-strong bg-action text-background'
-                          : 'border-border-subtle bg-surface text-content-muted hover:border-border-strong hover:text-content-secondary'
-                      }`}
-                    >
-                      <span className="font-mono text-xs font-semibold">{icon}</span>
-                      <span className="text-xs leading-tight">{ti(`tools.${option}`)}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+        {/* 主编辑区：左工具栏 + 画布 + 右输出 */}
+        <div className="grid flex-grow min-h-0 grid-cols-1 gap-3 lg:grid-cols-[56px_minmax(0,1fr)_300px]">
 
-            {tool === 'polyline' && (
-              <div className="rounded-lg border border-border-base bg-surface-raised p-3">
-                <div className="mb-3 flex items-center justify-between gap-3">
-                  <div>
-                    <span className="block text-sm font-semibold text-content">{ti('polyline_title')}</span>
-                    <span className="text-xs text-content-faint">
-                      {ti('polyline_count', { count: polylineCount })}
-                    </span>
+          {/* 左侧垂直工具栏 */}
+          <div className="flex flex-row gap-1 overflow-x-auto rounded-lg border border-border-base bg-surface p-1.5 lg:flex-col lg:overflow-visible">
+            {EDITOR_TOOLS.map(({ tool: option, Icon }) => (
+              <IconAction
+                key={option}
+                label={ti(`tools.${option}`)}
+                active={tool === option}
+                disabled={!canEdit && option !== 'select'}
+                onClick={() => selectTool(option)}
+              >
+                <Icon className="h-5 w-5" />
+              </IconAction>
+            ))}
+          </div>
+
+          {/* 中部：上下文选项条 + 画布 */}
+          <div className="flex min-h-0 flex-col gap-2">
+
+            {/* 上下文选项条 */}
+            <div className="flex min-h-[44px] flex-wrap items-center gap-3 rounded-lg border border-border-base bg-surface px-3 py-2">
+              {/* 颜色（除选择/橡皮擦外都需要） */}
+              {tool !== 'eraser' && tool !== 'select' && (
+                <div className="flex items-center gap-2">
+                  <label className="relative flex h-7 w-7 cursor-pointer items-center justify-center overflow-hidden rounded-md border border-border-input">
+                    <span className="block h-full w-full" style={{ backgroundColor: color }} />
+                    <input
+                      type="color"
+                      value={color}
+                      onChange={(event) => setColor(event.target.value)}
+                      aria-label={ti('color')}
+                      className="absolute inset-0 cursor-pointer opacity-0"
+                    />
+                  </label>
+                  <div className="hidden items-center gap-1 sm:flex">
+                    {COLOR_SWATCHES.map((swatch) => (
+                      <button
+                        key={swatch}
+                        type="button"
+                        aria-label={ti('choose_color', { color: swatch })}
+                        onClick={() => setColor(swatch)}
+                        className={clsx(
+                          'h-5 w-5 rounded-full border transition-transform hover:scale-110',
+                          color === swatch ? 'border-border-strong ring-2 ring-action/40' : 'border-border-subtle',
+                        )}
+                        style={{ backgroundColor: swatch }}
+                      />
+                    ))}
                   </div>
-                  <div className="flex gap-2">
+                </div>
+              )}
+
+              {/* 线宽 */}
+              {usesStrokeWidth && (
+                <InlineRange
+                  label={ti('stroke_width')}
+                  value={strokeWidth}
+                  min={2}
+                  max={48}
+                  unit="px"
+                  onChange={setStrokeWidth}
+                />
+              )}
+
+              {/* 形状模式 */}
+              {(tool === 'rectangle' || tool === 'ellipse') && (
+                <div className="flex items-center gap-1 rounded-md border border-border-subtle p-0.5 text-xs">
+                  {(['stroke', 'fill'] as ShapeMode[]).map((mode) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      onClick={() => setShapeMode(mode)}
+                      className={clsx(
+                        'rounded px-2.5 py-1 transition-colors',
+                        shapeMode === mode
+                          ? 'bg-action text-white'
+                          : 'text-content-muted hover:text-content',
+                      )}
+                    >
+                      {ti(`shape_modes.${mode}`)}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* 文字 */}
+              {tool === 'text' && (
+                <div className="flex flex-1 flex-wrap items-center gap-3">
+                  <input
+                    type="text"
+                    value={textValue}
+                    onChange={(event) => setTextValue(event.target.value)}
+                    placeholder={ti('text_placeholder')}
+                    className="min-w-[160px] flex-1 rounded-md border border-border-input bg-surface px-2.5 py-1.5 text-sm text-content outline-none transition-colors focus:border-border-strong"
+                  />
+                  <InlineRange
+                    label={ti('font_size')}
+                    value={fontSize}
+                    min={12}
+                    max={128}
+                    unit="px"
+                    onChange={setFontSize}
+                  />
+                </div>
+              )}
+
+              {/* 马赛克 */}
+              {tool === 'mosaic' && (
+                <InlineRange
+                  label={ti('mosaic_size')}
+                  value={mosaicBlockSize}
+                  min={6}
+                  max={64}
+                  unit="px"
+                  onChange={setMosaicBlockSize}
+                />
+              )}
+
+              {/* 模糊 */}
+              {tool === 'blur' && (
+                <InlineRange
+                  label={ti('blur_radius')}
+                  value={blurRadius}
+                  min={2}
+                  max={32}
+                  unit="px"
+                  onChange={setBlurRadius}
+                />
+              )}
+
+              {/* 折线 */}
+              {tool === 'polyline' && (
+                <div className="flex flex-1 flex-wrap items-center justify-between gap-2">
+                  <span className="text-xs text-content-muted">
+                    {ti('polyline_count', { count: polylineCount })} · {ti('polyline_hint_inline')}
+                  </span>
+                  <div className="flex gap-1.5">
                     <Button variant="secondary" onClick={resetPolyline} disabled={polylineCount === 0}>
                       {ti('cancel_polyline')}
                     </Button>
@@ -1149,160 +1435,82 @@ export function ImageEditorTool() {
                     </Button>
                   </div>
                 </div>
-                <p className="text-xs leading-relaxed text-content-muted">{ti('polyline_hint')}</p>
-              </div>
-            )}
-
-            <div className="rounded-lg border border-border-base bg-surface-raised p-3">
-              <span className="mb-3 block text-sm font-semibold text-content">{ti('style_title')}</span>
-              <label className="block">
-                <span className="mb-2 flex items-center justify-between gap-3 text-xs text-content-faint">
-                  <span>{ti('color')}</span>
-                  <span className="font-mono uppercase">{color}</span>
-                </span>
-                <input
-                  type="color"
-                  value={color}
-                  onChange={(event) => setColor(event.target.value)}
-                  className="h-10 w-full rounded border border-border-input bg-surface p-1"
-                />
-              </label>
-              <div className="mt-3 grid grid-cols-8 gap-1.5">
-                {COLOR_SWATCHES.map((swatch) => (
-                  <button
-                    key={swatch}
-                    type="button"
-                    aria-label={ti('choose_color', { color: swatch })}
-                    onClick={() => setColor(swatch)}
-                    className={`h-8 rounded border transition-transform hover:scale-105 ${
-                      color === swatch ? 'border-border-strong' : 'border-border-subtle'
-                    }`}
-                    style={{ backgroundColor: swatch }}
-                  />
-                ))}
-              </div>
-
-              {usesStrokeWidth && (
-                <label className="mt-4 block">
-                  <span className="mb-2 flex items-center justify-between gap-3 text-xs text-content-faint">
-                    <span>{ti('stroke_width')}</span>
-                    <span className="font-mono">{strokeWidth}px</span>
-                  </span>
-                  <input
-                    type="range"
-                    min={2}
-                    max={48}
-                    step={1}
-                    value={strokeWidth}
-                    onChange={(event) => setStrokeWidth(Number(event.target.value))}
-                    className="w-full accent-action"
-                  />
-                </label>
               )}
 
-              {(tool === 'rectangle' || tool === 'ellipse') && (
-                <div className="mt-4">
-                  <span className="mb-2 block text-xs text-content-faint">{ti('shape_mode')}</span>
-                  <div className="grid grid-cols-2 gap-2">
-                    {(['stroke', 'fill'] as ShapeMode[]).map((mode) => {
-                      const active = shapeMode === mode;
-                      return (
-                        <button
-                          key={mode}
-                          type="button"
-                          onClick={() => setShapeMode(mode)}
-                          className={`rounded border px-3 py-2 text-sm transition-colors ${
-                            active
-                              ? 'border-border-strong bg-action text-background'
-                              : 'border-border-subtle bg-surface text-content-muted hover:border-border-strong hover:text-content-secondary'
-                          }`}
-                        >
-                          {ti(`shape_modes.${mode}`)}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {tool === 'text' && (
-                <div className="mt-4 space-y-3">
-                  <label className="block">
-                    <span className="mb-1 block text-xs text-content-faint">{ti('text_content')}</span>
-                    <textarea
-                      value={textValue}
-                      onChange={(event) => setTextValue(event.target.value)}
-                      rows={3}
-                      placeholder={ti('text_placeholder')}
-                      className="w-full resize-y rounded border border-border-input bg-surface px-3 py-2 text-sm text-content outline-none transition-colors focus:border-border-strong"
-                    />
-                  </label>
-                  <label className="block">
-                    <span className="mb-2 flex items-center justify-between gap-3 text-xs text-content-faint">
-                      <span>{ti('font_size')}</span>
-                      <span className="font-mono">{fontSize}px</span>
-                    </span>
-                    <input
-                      type="range"
-                      min={12}
-                      max={128}
-                      step={1}
-                      value={fontSize}
-                      onChange={(event) => setFontSize(Number(event.target.value))}
-                      className="w-full accent-action"
-                    />
-                  </label>
-                </div>
-              )}
-
-              {tool === 'mosaic' && (
-                <label className="mt-4 block">
-                  <span className="mb-2 flex items-center justify-between gap-3 text-xs text-content-faint">
-                    <span>{ti('mosaic_size')}</span>
-                    <span className="font-mono">{mosaicBlockSize}px</span>
-                  </span>
-                  <input
-                    type="range"
-                    min={6}
-                    max={64}
-                    step={1}
-                    value={mosaicBlockSize}
-                    onChange={(event) => setMosaicBlockSize(Number(event.target.value))}
-                    className="w-full accent-action"
-                  />
-                </label>
-              )}
-
-              {tool === 'blur' && (
-                <label className="mt-4 block">
-                  <span className="mb-2 flex items-center justify-between gap-3 text-xs text-content-faint">
-                    <span>{ti('blur_radius')}</span>
-                    <span className="font-mono">{blurRadius}px</span>
-                  </span>
-                  <input
-                    type="range"
-                    min={2}
-                    max={32}
-                    step={1}
-                    value={blurRadius}
-                    onChange={(event) => setBlurRadius(Number(event.target.value))}
-                    className="w-full accent-action"
-                  />
-                </label>
-              )}
-
+              {/* 橡皮擦提示 */}
               {tool === 'eraser' && (
-                <p className="mt-4 rounded border border-border-subtle bg-surface p-2 text-xs leading-relaxed text-content-muted">
-                  {ti('eraser_hint')}
-                </p>
+                <span className="text-xs text-content-muted">{ti('eraser_hint')}</span>
+              )}
+
+              {/* 选择提示 */}
+              {tool === 'select' && (
+                <span className="text-xs text-content-muted">{ti('select_hint')}</span>
+              )}
+
+              {/* 右侧历史指示 */}
+              {imageInfo && (
+                <span className="ml-auto hidden font-mono text-[11px] text-content-faint md:inline">
+                  {ti('history_value', { undo: historyStatus.undo, redo: historyStatus.redo })}
+                </span>
               )}
             </div>
 
-            <div className="rounded-lg border border-border-base bg-surface-raised p-3">
-              <span className="mb-2 block text-xs font-semibold uppercase tracking-normal text-content-faint">
-                {ti('output_format')}
-              </span>
-              <div className="grid grid-cols-3 gap-2">
+            {/* 画布视口：图片即画布，无额外框；用阴影与 ring 标定画布边界 */}
+            <div
+              ref={canvasViewportRef}
+              onDragEnter={handleViewportDragEnter}
+              onDragOver={handleViewportDragOver}
+              onDragLeave={handleViewportDragLeave}
+              onDrop={handleViewportDrop}
+              className={clsx(
+                'relative flex min-h-[26rem] flex-grow items-center justify-center overflow-auto rounded-lg transition-colors lg:min-h-0',
+                imageInfo ? 'bg-transparent' : 'bg-surface-raised',
+                draggingFile && 'ring-2 ring-action ring-offset-2 ring-offset-background',
+              )}
+            >
+              <div
+                className={clsx(
+                  imageInfo
+                    ? 'inline-block rounded-sm shadow-[0_8px_28px_rgba(0,0,0,0.12)] ring-1 ring-border-subtle'
+                    : 'pointer-events-none h-px w-px opacity-0',
+                )}
+              >
+                <canvas ref={canvasElementRef} />
+              </div>
+
+              {!imageInfo && (
+                <button
+                  type="button"
+                  onClick={() => inputRef.current?.click()}
+                  className="absolute inset-4 flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed border-border-subtle bg-surface/70 transition-colors hover:border-border-strong hover:bg-surface"
+                >
+                  <span className="flex h-14 w-14 items-center justify-center rounded-full bg-surface-hover text-content-muted">
+                    <IconUpload className="h-7 w-7" />
+                  </span>
+                  <div className="max-w-sm text-center">
+                    <p className="text-base font-semibold text-content">
+                      {isLoading ? ti('loading') : ti('drop_title')}
+                    </p>
+                    <p className="mt-1 text-xs text-content-muted">
+                      {ti('drop_hint', { formats: getSupportedImageInputLabel() })}
+                    </p>
+                  </div>
+                </button>
+              )}
+
+              {draggingFile && imageInfo && (
+                <div className="pointer-events-none absolute inset-2 flex items-center justify-center rounded-lg border-2 border-dashed border-action bg-action/10 text-sm font-semibold text-action">
+                  {ti('drop_replace')}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* 右侧输出/导出面板 */}
+          <aside className="flex min-h-0 flex-col gap-3 rounded-lg border border-border-base bg-surface p-3">
+            <div>
+              <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-content-faint">{ti('output_format')}</h3>
+              <div className="grid grid-cols-3 gap-1.5">
                 {OUTPUT_FORMATS.map((format) => {
                   const config = getImageTargetConfig(format);
                   const active = outputFormat === format;
@@ -1314,150 +1522,80 @@ export function ImageEditorTool() {
                         setOutputFormat(format);
                         clearOutput();
                       }}
-                      className={`rounded border px-2 py-2 font-mono text-sm font-semibold transition-colors ${
+                      className={clsx(
+                        'rounded-md border px-2 py-1.5 font-mono text-xs font-semibold transition-colors',
                         active
-                          ? 'border-border-strong bg-action text-background'
-                          : 'border-border-subtle bg-surface text-content-muted hover:border-border-strong hover:text-content-secondary'
-                      }`}
+                          ? 'border-border-strong bg-action text-white'
+                          : 'border-border-subtle text-content-muted hover:border-border-strong hover:text-content',
+                      )}
                     >
                       {config.label}
                     </button>
                   );
                 })}
               </div>
-
-              {showQuality && (
-                <label className="mt-4 block">
-                  <span className="mb-2 flex items-center justify-between gap-3 text-xs text-content-faint">
-                    <span>{ti('quality')}</span>
-                    <span className="font-mono">{ti('quality_value', { value: Math.round(quality * 100) })}</span>
-                  </span>
-                  <input
-                    type="range"
-                    min={0.5}
-                    max={1}
-                    step={0.01}
-                    value={quality}
-                    onChange={(event) => {
-                      setQuality(Number(event.target.value));
-                      clearOutput();
-                    }}
-                    className="w-full accent-action"
-                  />
-                </label>
-              )}
             </div>
 
-            {imageInfo && (
-              <div className="grid grid-cols-2 gap-2 text-sm">
-                <div className="border-t border-border-subtle pt-3">
-                  <span className="block text-xs text-content-faint">{ti('source_size')}</span>
-                  <span className="font-mono font-semibold text-content-secondary">
-                    {formatDimensions(imageInfo.width, imageInfo.height)}
-                  </span>
-                </div>
-                <div className="border-t border-border-subtle pt-3">
-                  <span className="block text-xs text-content-faint">{ti('file_size')}</span>
-                  <span className="font-mono font-semibold text-content-secondary">{formatFileSize(imageInfo.size)}</span>
-                </div>
-              </div>
+            {showQuality && (
+              <label className="block">
+                <span className="mb-1.5 flex items-center justify-between text-xs text-content-muted">
+                  <span>{ti('quality')}</span>
+                  <span className="font-mono text-content-secondary">{ti('quality_value', { value: Math.round(quality * 100) })}</span>
+                </span>
+                <input
+                  type="range"
+                  min={0.5}
+                  max={1}
+                  step={0.01}
+                  value={quality}
+                  onChange={(event) => {
+                    setQuality(Number(event.target.value));
+                    clearOutput();
+                  }}
+                  className="w-full accent-action"
+                />
+              </label>
             )}
 
-            <Button onClick={exportImage} disabled={!canExport} className="w-full justify-center">
-              {isExporting ? ti('exporting') : ti('export')}
+            <Button onClick={exportImage} disabled={!canExport} className="w-full justify-center py-2">
+              <span className="inline-flex items-center justify-center gap-1.5">
+                <IconDownload className="h-4 w-4" />
+                {isExporting ? ti('exporting') : ti('export')}
+              </span>
             </Button>
 
             {output && (
-              <div className="rounded-lg border border-border-base bg-surface-raised p-3 text-sm">
-                <div className="mb-2 flex items-center justify-between gap-3">
+              <div className="space-y-1.5 rounded-md border border-border-subtle bg-surface-raised p-2.5 text-xs">
+                <div className="flex items-center justify-between">
                   <span className="font-semibold text-content">{ti('result_ready')}</span>
-                  <Button variant="secondary" onClick={() => downloadUrl(output.url, output.result.filename)}>
+                  <button
+                    type="button"
+                    onClick={() => downloadUrl(output.url, output.result.filename)}
+                    className="text-action hover:underline"
+                  >
                     {ti('download')}
-                  </Button>
+                  </button>
                 </div>
-                <div className="grid grid-cols-1 gap-2">
-                  {outputStats?.map((item) => (
-                    <div key={item.label} className="flex justify-between gap-3 border-t border-border-subtle pt-2">
-                      <span className="text-content-faint">{item.label}</span>
-                      <span className="font-mono font-semibold text-content-secondary">{item.value}</span>
-                    </div>
-                  ))}
-                </div>
+                {outputStats?.map((item) => (
+                  <div key={item.label} className="flex justify-between gap-2 border-t border-border-subtle pt-1">
+                    <span className="text-content-faint">{item.label}</span>
+                    <span className="font-mono text-content-secondary">{item.value}</span>
+                  </div>
+                ))}
               </div>
             )}
 
             {error && (
-              <div className="rounded-lg border border-danger-surface bg-danger-surface px-3 py-2 text-sm text-danger-content">
+              <div className="rounded-md border border-danger-surface bg-danger-surface px-2.5 py-2 text-xs text-danger-content">
                 {error}
               </div>
             )}
-          </div>
-        </Panel>
 
-        <Panel
-          title={ti('editor_title')}
-          actions={(
-            <>
-              <Button variant="secondary" onClick={undo} disabled={historyStatus.undo === 0}>
-                {ti('undo')}
-              </Button>
-              <Button variant="secondary" onClick={redo} disabled={historyStatus.redo === 0}>
-                {ti('redo')}
-              </Button>
-              <Button variant="secondary" onClick={deleteSelected} disabled={!imageInfo}>
-                {ti('delete_selected')}
-              </Button>
-              <Button variant="secondary" onClick={resetToSource} disabled={!imageInfo}>
-                {ti('reset_all')}
-              </Button>
-            </>
-          )}
-          className="min-h-[42rem] overflow-hidden xl:min-h-0"
-        >
-          <div className="flex min-h-0 flex-grow flex-col gap-3">
-            <div
-              ref={canvasViewportRef}
-              className="relative flex min-h-[26rem] flex-grow items-center justify-center overflow-hidden rounded-lg border border-border-input bg-surface-raised p-3 xl:min-h-0"
-            >
-              <div className={imageInfo ? 'block' : 'pointer-events-none h-px w-px opacity-0'}>
-                <canvas ref={canvasElementRef} />
-              </div>
-
-              {!imageInfo && (
-                <div className="absolute inset-0 flex items-center justify-center p-4">
-                  <div className="flex max-w-sm flex-col items-center gap-3 text-center">
-                    <span className="flex h-14 w-14 items-center justify-center rounded-lg border border-border-subtle bg-surface font-mono text-sm font-semibold text-content-faint">
-                      EDT
-                    </span>
-                    <div>
-                      <h2 className="font-semibold text-content">{isLoading ? ti('loading') : ti('empty_title')}</h2>
-                      <p className="mt-2 text-sm leading-relaxed text-content-muted">{ti('empty_body')}</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {imageInfo && (
-              <div className="grid grid-cols-1 gap-2 text-sm sm:grid-cols-3">
-                <div className="rounded border border-border-subtle bg-surface-raised p-3">
-                  <span className="block text-xs text-content-faint">{ti('filename')}</span>
-                  <span className="break-all text-content-secondary">{imageInfo.filename}</span>
-                </div>
-                <div className="rounded border border-border-subtle bg-surface-raised p-3">
-                  <span className="block text-xs text-content-faint">{ti('history')}</span>
-                  <span className="font-mono text-content-secondary">
-                    {ti('history_value', { undo: historyStatus.undo, redo: historyStatus.redo })}
-                  </span>
-                </div>
-                <div className="rounded border border-border-subtle bg-surface-raised p-3">
-                  <span className="block text-xs text-content-faint">{ti('type')}</span>
-                  <span className="font-mono text-content-secondary">{imageInfo.mimeType || ti('unknown_type')}</span>
-                </div>
-              </div>
-            )}
-          </div>
-        </Panel>
+            <p className="mt-auto text-[11px] leading-relaxed text-content-faint">
+              {ti('local_note')}
+            </p>
+          </aside>
+        </div>
       </div>
     </ToolLayout>
   );

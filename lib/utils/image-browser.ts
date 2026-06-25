@@ -140,7 +140,7 @@ const PNG_QUANTIZED_TARGET_SAVINGS = 0.25;
 const BACKGROUND_REMOVAL_PUBLIC_PATH =
   'https://staticimgly.com/@imgly/background-removal-data/${PACKAGE_VERSION}/dist/';
 const WATERMARK_TEXT = 'https://toolgarden.xyz';
-const WATERMARK_ALLOWED_HOSTNAMES = new Set(['toolgarden.xyz', 'json-toolkit.xyz']);
+const WATERMARK_ALLOWED_ROOT_HOSTNAMES = ['toolgarden.xyz', 'json-toolkit.xyz'] as const;
 
 interface WatermarkedImageOutput {
   blob: Blob;
@@ -410,7 +410,16 @@ function canvasToBlob(
 
 function shouldWatermarkImageOutput(): boolean {
   if (typeof window === 'undefined') return false;
-  return !WATERMARK_ALLOWED_HOSTNAMES.has(window.location.hostname.toLowerCase());
+  return !isWatermarkAllowedHostname(window.location.hostname);
+}
+
+function isWatermarkAllowedHostname(hostname: string): boolean {
+  const normalizedHostname = hostname.toLowerCase().replace(/\.$/, '');
+
+  return WATERMARK_ALLOWED_ROOT_HOSTNAMES.some(
+    (allowedHostname) =>
+      normalizedHostname === allowedHostname || normalizedHostname.endsWith(`.${allowedHostname}`)
+  );
 }
 
 function getWatermarkTargetConfig(mimeType: string): ImageTargetConfig {

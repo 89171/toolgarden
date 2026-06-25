@@ -1,19 +1,19 @@
 # JSON Toolkit — Full Reference for AI Systems
 
-> Complete technical reference for json-toolkit.dev
+> Complete technical reference for www.toolgarden.xyz
 
 ## Site Structure
 
-Base URL: https://json-toolkit.dev
+Base URL: https://www.toolgarden.xyz
 Supported locales: zh (Chinese Simplified, default), en (English)
 URL pattern: /{locale}/{tool-path}
 Image tools hub: /{locale}/image
 PDF tools hub: /{locale}/pdf
 Canonical examples:
-- Home: https://json-toolkit.dev/zh
-- Tool: https://json-toolkit.dev/zh/json-format
-- Image hub: https://json-toolkit.dev/zh/image
-- PDF hub: https://json-toolkit.dev/zh/pdf
+- Home: https://www.toolgarden.xyz/zh
+- Tool: https://www.toolgarden.xyz/zh/json-format
+- Image hub: https://www.toolgarden.xyz/zh/image
+- PDF hub: https://www.toolgarden.xyz/zh/pdf
 
 ## Tool Reference
 

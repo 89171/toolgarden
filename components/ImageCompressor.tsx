@@ -285,42 +285,43 @@ export function ImageCompressor() {
         <Panel
           title={ti('settings_title')}
           actions={<Button variant="secondary" onClick={clearItems} disabled={!hasFiles}>{tc('clear')}</Button>}
-          className="h-[min(35rem,calc(100svh-12rem))] min-h-0 overflow-hidden xl:h-auto xl:min-h-0"
+          className="h-[min(32rem,calc(100svh-10rem))] min-h-0 overflow-hidden xl:h-auto xl:min-h-0"
         >
-          <div className="flex min-h-0 flex-grow flex-col gap-4 overflow-y-auto overscroll-contain pr-1 sm:gap-5">
-            <input
-              ref={inputRef}
-              type="file"
-              accept={accept}
-              multiple
-              className="hidden"
-              onChange={(event) => {
-                if (event.target.files) addFiles(event.target.files);
-              }}
-            />
+          <div className="flex min-h-0 flex-grow flex-col">
+            <div className="flex min-h-0 flex-grow flex-col gap-3 overflow-y-auto overscroll-contain pr-1 sm:gap-4">
+              <input
+                ref={inputRef}
+                type="file"
+                accept={accept}
+                multiple
+                className="hidden"
+                onChange={(event) => {
+                  if (event.target.files) addFiles(event.target.files);
+                }}
+              />
 
-            <div className="rounded-lg border border-border-base bg-surface-raised p-4">
+            <div className="rounded-lg border border-border-base bg-surface-raised p-3">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <span className="text-xs font-semibold uppercase tracking-normal text-content-faint">
                     {ti('mode_label')}
                   </span>
-                  <h2 className="mt-2 text-xl font-semibold leading-tight text-content">
+                  <h2 className="mt-1.5 text-lg font-semibold leading-tight text-content">
                     {ti('mode_title')}
                   </h2>
                 </div>
-                <span className="rounded-full border border-border-strong bg-surface px-3 py-1 font-mono text-xs font-semibold text-content-secondary">
+                <span className="rounded border border-border-strong bg-surface px-2 py-1 font-mono text-xs font-semibold text-content-secondary">
                   AUTO
                 </span>
               </div>
-              <p className="mt-3 text-sm leading-relaxed text-content-muted">
+              <p className="mt-2 text-xs leading-relaxed text-content-muted">
                 {ti('mode_description')}
               </p>
             </div>
 
             <label
               htmlFor="image-compressor-webp"
-              className="flex cursor-pointer items-start gap-3 rounded-lg border border-border-base bg-surface-raised p-3 transition-colors hover:border-border-strong hover:bg-surface-hover sm:p-4"
+              className="flex cursor-pointer items-start gap-3 rounded-lg border border-border-base bg-surface-raised p-3 transition-colors hover:border-border-strong hover:bg-surface-hover"
             >
               <span className="relative mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded border border-border-input bg-surface">
                 <input
@@ -336,7 +337,7 @@ export function ImageCompressor() {
                 <span className="block text-sm font-semibold text-content-secondary">
                   {ti('webp_option')}
                 </span>
-                <span className="mt-1 block text-xs leading-relaxed text-content-muted">
+                <span className="mt-0.5 block text-xs leading-relaxed text-content-muted">
                   {ti('webp_option_hint')}
                 </span>
               </span>
@@ -363,28 +364,28 @@ export function ImageCompressor() {
                 addFiles(event.dataTransfer.files);
               }}
               aria-label={ti('drop_action')}
-              className={`group flex min-h-44 flex-col items-center justify-center gap-3 rounded-lg border border-dashed p-4 text-center transition-colors sm:min-h-56 sm:gap-4 sm:p-6 ${
+              className={`group flex min-h-32 flex-col items-center justify-center gap-2 rounded-lg border border-dashed p-3 text-center transition-colors sm:min-h-40 sm:p-4 ${
                 dragging
                   ? 'border-border-strong bg-surface-hover'
                   : 'border-border-input bg-surface-raised hover:border-border-strong hover:bg-surface-hover'
               }`}
             >
               <span className="flex flex-col gap-1">
-                <span className="text-base font-semibold text-content sm:text-lg">{ti('drop_title')}</span>
+                <span className="text-sm font-semibold text-content sm:text-base">{ti('drop_title')}</span>
                 <span className="max-w-72 text-xs leading-relaxed text-content-muted sm:text-sm">
                   {ti('drop_hint', { formats: getSupportedImageInputLabel() })}
                 </span>
               </span>
-              <span className="rounded bg-action px-3 py-1.5 text-sm font-medium text-background transition-colors group-hover:bg-action-hover sm:px-4 sm:py-2">
+              <span className="rounded bg-action px-3 py-1.5 text-sm font-medium text-background transition-colors group-hover:bg-action-hover">
                 {ti('drop_action')}
               </span>
             </button>
 
-            <div className="rounded-lg border border-border-base bg-surface-raised p-3 sm:p-4">
-              <span className="mb-3 block text-xs font-semibold uppercase tracking-normal text-content-faint">
+            <div className="rounded-lg border border-border-base bg-surface-raised p-3">
+              <span className="mb-2 block text-xs font-semibold uppercase tracking-normal text-content-faint">
                 {ti('input_formats')}
               </span>
-              <div className="flex max-h-20 flex-wrap gap-1.5 overflow-y-auto pr-1">
+              <div className="flex max-h-14 flex-wrap gap-1.5 overflow-y-auto pr-1">
                 {inputFormatLabels.map((label) => (
                   <span
                     key={label}
@@ -396,14 +397,14 @@ export function ImageCompressor() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 sm:gap-3">
-              <div className="rounded-lg border border-border-base bg-surface-raised p-3">
+            <div className="grid grid-cols-2 gap-2">
+              <div className="rounded-lg border border-border-base bg-surface-raised p-2.5">
                 <span className="block text-xs text-content-faint">{ti('summary_files')}</span>
                 <span className="mt-1 block text-sm font-medium text-content-secondary">
                   {ti('selected_count', { count: items.length })}
                 </span>
               </div>
-              <div className="rounded-lg border border-border-base bg-surface-raised p-3">
+              <div className="rounded-lg border border-border-base bg-surface-raised p-2.5">
                 <span className="block text-xs text-content-faint">{ti('summary_saved')}</span>
                 <span className="mt-1 block text-sm font-medium text-content-secondary">
                   {formatSavingsPercent(totals.ratio)}
@@ -411,7 +412,7 @@ export function ImageCompressor() {
               </div>
             </div>
 
-            <div className="rounded-lg border border-border-base bg-surface-raised p-3 sm:p-4">
+            <div className="rounded-lg border border-border-base bg-surface-raised p-3">
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div>
                   <span className="block text-xs text-content-faint">{ti('original_total')}</span>
@@ -426,7 +427,7 @@ export function ImageCompressor() {
                   </span>
                 </div>
               </div>
-              <div className="mt-3 h-2 overflow-hidden rounded bg-surface-hover">
+              <div className="mt-2 h-1.5 overflow-hidden rounded bg-surface-hover">
                 <div
                   className="h-full rounded bg-action transition-all"
                   style={{ width: `${Math.min(100, Math.round(totals.ratio * 100))}%` }}
@@ -434,11 +435,13 @@ export function ImageCompressor() {
               </div>
             </div>
 
-            <p className="border-t border-border-subtle pt-3 text-xs leading-relaxed text-content-faint">
+            <p className="border-t border-border-subtle pt-2 text-xs leading-relaxed text-content-faint">
               {ti('local_worker_note')}
             </p>
 
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            </div>
+
+            <div className="grid shrink-0 grid-cols-1 gap-2 border-t border-border-subtle bg-surface pt-3 sm:grid-cols-2">
               <Button variant="primary" size="md" onClick={recompress} disabled={!hasFiles}>
                 {ti('compress_again')}
               </Button>
