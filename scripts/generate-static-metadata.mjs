@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(scriptDir, '..');
 const publicDir = path.join(rootDir, 'public');
-const BASE_URL = 'https://www.toolgarden.xyz';
+const BASE_URL = 'https://toolgarden.xyz';
 const locales = ['zh', 'en'];
 const defaultLocale = 'zh';
 const hubPaths = ['/image', '/pdf', '/file-merge'];

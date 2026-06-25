@@ -76,4 +76,4 @@ JSON Toolkit provides developers with a suite of tools for working with JSON dat
 
 ## Optional
 
-[Optional]: https://www.toolgarden.xyz/llms-full.txt
+[Optional]: https://toolgarden.xyz/llms-full.txt

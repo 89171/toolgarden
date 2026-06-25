@@ -21,7 +21,7 @@ import {
 } from '@/lib/utils/qr';
 import { generateQrCodeDataUrl } from '@/lib/utils/qr-browser';
 
-const EXAMPLE_TEXT = 'https://www.toolgarden.xyz/zh/qr-code/generate';
+const EXAMPLE_TEXT = 'https://toolgarden.xyz/zh/qr-code/generate';
 
 interface GeneratedQrCode {
   dataUrl: string;

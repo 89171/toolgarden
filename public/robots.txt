@@ -2,5 +2,5 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
-Sitemap: https://www.toolgarden.xyz/sitemap.xml
-Host: https://www.toolgarden.xyz
+Sitemap: https://toolgarden.xyz/sitemap.xml
+Host: https://toolgarden.xyz
