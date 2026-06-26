@@ -326,6 +326,52 @@
       "general": "转换失败，请重试。"
     }
   },
+  "image_base64": {
+    "to_settings_title": "图片转 Base64",
+    "to_results_title": "Base64 结果",
+    "from_settings_title": "Base64 转图片",
+    "from_results_title": "图片结果",
+    "switcher_label": "Base64 图片工具切换",
+    "to_base64_link": "图片转 Base64",
+    "to_image_link": "Base64 转图片",
+    "image_drop_title": "选择、拖拽或粘贴图片",
+    "image_drop_hint": "支持 {formats}。也可以直接 Ctrl + V 粘贴剪贴板中的图片。",
+    "choose_image": "选择图片",
+    "input_formats": "支持格式",
+    "local_note": "所有转换都在本地浏览器完成，图片和 Base64 内容不会上传到服务器。",
+    "mime_type": "MIME 类型",
+    "source_size": "源文件大小",
+    "output_size": "输出大小",
+    "dimensions": "尺寸",
+    "base64_length": "Base64 长度",
+    "copy_data_url": "复制 Data URL",
+    "copy_raw_base64": "复制纯 Base64",
+    "download_txt": "下载 TXT",
+    "data_url_label": "Data URL",
+    "to_empty_title": "等待图片输入",
+    "to_empty_body": "选择、拖拽或 Ctrl + V 粘贴一张图片，右侧会生成可复制的 Base64 Data URL。",
+    "base64_input_label": "Base64 输入",
+    "choose_text_file": "选择文本文件",
+    "base64_placeholder": "粘贴 data:image 开头的 Data URL，或纯图片 Base64 内容",
+    "base64_drop_hint": "可以拖拽 .txt / .base64 文本文件到这里，也可以 Ctrl + V 直接粘贴 Base64。",
+    "decode_action": "生成图片",
+    "download_image": "下载图片",
+    "preview_title": "图片预览",
+    "preview_open_output": "预览图片结果",
+    "preview_close": "关闭预览",
+    "from_empty_title": "等待 Base64 输入",
+    "from_empty_body": "粘贴图片 Base64 或 Data URL 后，工具会在本地还原图片并提供下载。",
+    "unknown_type": "未知类型",
+    "errors": {
+      "empty_file": "文件为空，请选择有效图片。",
+      "empty_input": "请输入 Base64 或 Data URL。",
+      "unsupported_input": "暂不支持这种图片类型：{type}。",
+      "file_too_large": "内容过大，最大支持 {maxSize}。",
+      "read_failed": "图片读取失败，请换一个文件重试。",
+      "invalid_base64": "Base64 内容无效，请检查是否复制完整。",
+      "general": "处理失败，请重试。"
+    }
+  },
   "image_compressor": {
     "settings_title": "智能压缩",
     "results_title": "压缩结果",
@@ -445,11 +491,13 @@
     "drop_hint": "支持 {formats}，所有处理都在本地完成",
     "drop_action": "选择图片",
     "input_formats": "支持格式",
-    "local_note": "请仅处理你拥有权利或已获授权修改的图片。AI 精修会在浏览器本地加载模型推理，图片不会上传到任何服务器，关闭页面后，数据即被清除。",
+    "local_note": "请仅处理你拥有权利或已获授权修改的图片。AI 模型会在浏览器本地加载并推理，图片不会上传到任何服务器，关闭页面后，数据即被清除。",
     "method_title": "处理方式",
-    "method_ai": "AI 精修",
+    "method_migan": "高质量 AI",
+    "method_ai": "兼容 AI",
     "method_local": "本地快速",
-    "method_ai_description": "使用 LaMa ONNX 模型在浏览器本地补全选区，首次会下载模型资源，适合照片和复杂纹理。",
+    "method_migan_description": "默认使用 MI-GAN 512 ONNX Pipeline，在浏览器本地进行更高质量补全，首次会下载约 28MB 模型资源。",
+    "method_ai_description": "使用 LaMa ONNX 模型在浏览器本地补全选区，作为兼容备选，适合照片和复杂纹理。",
     "method_local_description": "不加载 AI 模型，直接用选区周边像素进行快速修复，适合纯色、渐变或截图背景。",
     "source_image": "源图片",
     "selection_title": "水印区域",
@@ -471,6 +519,9 @@
     "empty_title": "等待图片输入",
     "empty_body": "上传图片后，在原图上拖拽框选需要修复的水印区域。",
     "output_empty": "修复后的图片会显示在这里",
+    "preview_title": "输出图片预览",
+    "preview_open_output": "预览输出图片",
+    "preview_close": "关闭预览",
     "result_hint": "框选水印区域并生成修复图后，可在这里查看输出信息。",
     "source_size": "原始尺寸",
     "selection_size": "区域尺寸",
@@ -479,7 +530,8 @@
     "duration": "耗时",
     "duration_value": "{value}ms",
     "result_method": "处理方式",
-    "method_value_ai": "AI 精修",
+    "method_value_migan": "高质量 AI",
+    "method_value_ai": "兼容 AI",
     "method_value_local": "本地快速",
     "progress_model": "加载本地 AI 模型",
     "progress_prepare": "准备选区与遮罩",
@@ -528,6 +580,9 @@
     "download": "下载图片",
     "replace": "更换图片",
     "output_title": "输出预览",
+    "preview_title": "输出图片预览",
+    "preview_open_output": "预览输出图片",
+    "preview_close": "关闭预览",
     "empty_title": "等待图片输入",
     "empty_body": "上传图片后可拖动裁剪框移动区域，也可拖拽边缘和四角改变裁剪尺寸。",
     "output_empty": "裁剪后的图片会显示在这里",
@@ -580,6 +635,9 @@
     "download": "下载图片",
     "replace": "更换图片",
     "output_title": "输出预览",
+    "preview_title": "输出图片预览",
+    "preview_open_output": "预览输出图片",
+    "preview_close": "关闭预览",
     "empty_title": "等待图片输入",
     "empty_body": "上传图片后输入目标宽度或高度，另一个尺寸会按原图比例自动计算。",
     "output_empty": "缩放后的图片会显示在这里",
@@ -952,7 +1010,7 @@
       "items": [
         {
           "question": "图片去水印会上传文件吗？",
-          "answer": "不会。图片会在浏览器本地解码、AI 补全或快速修复并导出，文件不会上传到服务器。AI 精修首次会下载模型资源，之后通常会被浏览器缓存。"
+          "answer": "不会。图片会在浏览器本地解码、AI 补全或快速修复并导出，文件不会上传到服务器。默认高质量 AI 首次会下载约 28MB 模型资源，之后通常会被浏览器缓存。"
         },
         {
           "question": "什么类型的水印区域效果更好？",
@@ -1045,6 +1103,46 @@
         {
           "question": "转换为 WebP 会损失画质吗？",
           "answer": "WebP 可以有损压缩，也可以保留较高质量。页面提供质量滑块，用于控制输出体积和视觉质量。"
+        }
+      ]
+    },
+    "image-to-base64": {
+      "items": [
+        {
+          "question": "图片转 Base64 会上传文件吗？",
+          "answer": "不会。图片会在浏览器本地读取并编码为 Base64，文件不会上传到服务器。"
+        },
+        {
+          "question": "支持粘贴图片吗？",
+          "answer": "支持。可以选择图片、拖拽图片，也可以使用 Ctrl + V 粘贴剪贴板中的图片。"
+        },
+        {
+          "question": "输出的是纯 Base64 还是 Data URL？",
+          "answer": "页面默认显示完整 Data URL，同时提供复制纯 Base64 的按钮，方便按不同场景使用。"
+        },
+        {
+          "question": "哪些图片可以转 Base64？",
+          "answer": "支持 JPG、PNG、WebP、GIF、BMP、SVG、AVIF 等常见浏览器可读取图片格式。"
+        }
+      ]
+    },
+    "base64-to-image": {
+      "items": [
+        {
+          "question": "Base64 转图片会上传内容吗？",
+          "answer": "不会。Base64 解码、预览和下载都在浏览器本地完成。"
+        },
+        {
+          "question": "支持哪些 Base64 输入？",
+          "answer": "支持 data:image 开头的完整 Data URL，也支持纯图片 Base64。纯 Base64 会根据图片文件头识别格式。"
+        },
+        {
+          "question": "可以拖拽 Base64 文件吗？",
+          "answer": "可以。可以拖拽 .txt 或 .base64 文本文件，也可以直接 Ctrl + V 粘贴 Base64 内容。"
+        },
+        {
+          "question": "导出的图片格式如何确定？",
+          "answer": "如果输入包含 MIME 类型会优先使用它；纯 Base64 会根据 PNG、JPG、WebP、GIF、BMP、SVG、AVIF 等文件特征识别。"
         }
       ]
     },
@@ -1200,8 +1298,8 @@
   },
   "image_hub": {
     "title": "图片工具",
-    "meta_title": "免费在线图片工具 - 图片编辑、压缩、合并、去背景、去水印、JPG、PNG、WebP 转换",
-    "description": "免费在线批量编辑、压缩、合并、去背景、去水印、转换、裁剪和修改图片尺寸，所有处理都在浏览器本地完成，支持绘制形状、文字、马赛克、模糊、AI 选区修复、智能压缩、图片合成 PDF 或长图、透明 PNG、JPG、PNG、WebP 输出、预览对比和 ZIP 批量下载。",
+    "meta_title": "免费在线图片工具 - 图片编辑、压缩、合并、去背景、去水印、Base64、JPG、PNG、WebP 转换",
+    "description": "免费在线批量编辑、压缩、合并、去背景、去水印、Base64 编解码、转换、裁剪和修改图片尺寸，所有处理都在浏览器本地完成，支持绘制形状、文字、马赛克、模糊、AI 选区修复、智能压缩、图片合成 PDF 或长图、透明 PNG、JPG、PNG、WebP 输出、预览对比和 ZIP 批量下载。",
     "all_tools": "图片转换工具",
     "breadcrumb": "图片工具",
     "privacy_note": "图片仅在本地浏览器处理，不会上传到服务器。"
@@ -1351,6 +1449,8 @@
       "preview_summary": "共 {count} 行数据",
       "preview_truncated": "仅预览前 {count} 行",
       "idle_desc": "输入 JSON 数组或上传 JSON 文件后点击「下载 Excel」",
+      "switcher_label": "JSON 和 Excel 转换工具切换",
+      "reverse_link": "Excel → JSON",
       "errors": {
         "load_failed": "JSON 文件读取失败，请重新选择文件。"
       }
@@ -1362,7 +1462,9 @@
       "output_title": "JSON 输出",
       "drop_title": "点击或拖拽上传",
       "drop_hint": "支持 .xlsx / .xls",
-      "empty_output": "上传文件后结果显示在这里"
+      "empty_output": "上传文件后结果显示在这里",
+      "switcher_label": "JSON 和 Excel 转换工具切换",
+      "reverse_link": "JSON → Excel"
     },
     "json-to-ts": {
       "name": "JSON → TypeScript",
@@ -1414,6 +1516,14 @@
     "image-to-webp": {
       "name": "图片转 WebP",
       "description": "免费在线将 JPG、PNG、GIF、BMP、SVG、AVIF 等图片转换为 WebP"
+    },
+    "image-to-base64": {
+      "name": "图片转 Base64",
+      "description": "免费在线将 PNG、JPG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 Base64 Data URL，支持选择、拖拽和 Ctrl + V 粘贴图片"
+    },
+    "base64-to-image": {
+      "name": "Base64 转图片",
+      "description": "免费在线将 Base64 或 data:image Data URL 还原为图片文件，在浏览器本地预览并下载"
     },
     "image-crop": {
       "name": "图片裁剪",

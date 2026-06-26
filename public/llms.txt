@@ -22,11 +22,13 @@ JSON Toolkit provides developers with a suite of tools for working with JSON dat
 - **Image Tools** (`/image`): Browse browser-local image editing, compression, and conversion tools.
 - **Image Compressor** (`/image/compress`): Compress JPG, PNG, WebP, and other images locally in the browser, preserving the original format by default with an optional WebP output mode.
 - **Remove Image Background** (`/image/remove-bg`): Remove image backgrounds locally in the browser with an open-source model and export a transparent PNG.
-- **Image Watermark Remover** (`/image/remove-watermark`): Select a watermark area, inpaint it with a browser-local AI model or fast pixel repair, and export JPG, PNG, or WebP.
+- **Image Watermark Remover** (`/image/remove-watermark`): Select a watermark area, inpaint it with the default browser-local MI-GAN high-quality AI model, LaMa fallback, or fast pixel repair, and export JPG, PNG, or WebP.
 - **Image Editor** (`/image/edit`): Edit images directly on a Fabric.js canvas with shapes, polylines, brush strokes, marker strokes, text, mosaic, blur, object erasing, undo, and redo locally in the browser.
 - **Image to JPG** (`/image/to-jpg`): Convert PNG, WebP, GIF, BMP, SVG, AVIF, and other images to JPG locally in the browser.
 - **Image to PNG** (`/image/to-png`): Convert JPG, WebP, GIF, BMP, SVG, AVIF, and other images to PNG locally in the browser.
 - **Image to WebP** (`/image/to-webp`): Convert JPG, PNG, GIF, BMP, SVG, AVIF, and other images to WebP locally in the browser.
+- **Image to Base64** (`/image/to-base64`): Convert JPG, PNG, WebP, GIF, BMP, SVG, AVIF, and other images to Base64 Data URLs locally in the browser with file selection, drag-and-drop, and clipboard paste support.
+- **Base64 to Image** (`/image/base64-to-image`): Restore image Base64 strings or `data:image` Data URLs into previewable downloadable image files locally in the browser.
 - **Image Crop** (`/image/crop`): Crop images with a draggable frame locally in the browser.
 - **Image Resize** (`/image/resize`): Resize full images at a proportional target width or height locally in the browser.
 - **PDF Tools** (`/pdf`): Browse PDF conversion and document tools.
@@ -69,7 +71,7 @@ JSON Toolkit provides developers with a suite of tools for working with JSON dat
 - Excel support via SheetJS (xlsx library)
 - YAML support via the `yaml` npm package
 - XML support via fast-xml-parser
-- Image tools support editing, compression, background removal, AI watermark selection repair, conversion, crop, resize, JPG, PNG, WebP, GIF, BMP, SVG, AVIF, preview comparison, and ZIP batch download
+- Image tools support editing, compression, background removal, AI watermark selection repair, conversion, Base64 image encode/decode, crop, resize, JPG, PNG, WebP, GIF, BMP, SVG, AVIF, drag-and-drop, clipboard paste, preview comparison, and ZIP batch download
 - PDF tools use pdf-lib for PDF generation and page-level PDF operations, pdfjs-dist for PDF text extraction, fflate for Office OpenXML/EPUB/DOCX packaging, SheetJS for spreadsheets, a PalmDOC text extractor for legacy MOBI, and browser Canvas for Unicode text rendering
 - Subtitle Maker supports LRC and SRT parsing, editing, timing calibration against local audio/video, and export without uploading files
 - Info Encoder / Decoder supports Unicode, URL, UTF16-style hex escapes, Base64, MD5, SHA1, hex, JWT decoding, Cookie formatting, Gzip decompression, HTML entity decoding, URL parameter parsing, and string escaping locally in the browser

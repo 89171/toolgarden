@@ -77,7 +77,7 @@ Canonical examples:
 - Supports custom delimiters, default `.`
 
 ### Image Tools (/image)
-- Lists browser-local image editing, compression, and conversion tools
+- Lists browser-local image editing, compression, conversion, and Base64 image encode/decode tools
 - Child tool URLs use the `/image/*` namespace
 - Image input data is not uploaded to the server
 
@@ -97,7 +97,7 @@ Canonical examples:
 - Image files are not uploaded to a server
 
 ### Image Watermark Remover (/image/remove-watermark)
-- Inpaints selected watermark areas locally in the browser with a LaMa ONNX model, with fast pixel repair as a fallback
+- Inpaints selected watermark areas locally in the browser with a MI-GAN 512 ONNX Pipeline high-quality model by default, with a LaMa ONNX fallback and fast pixel repair as additional options
 - Users drag or resize a rectangular selection over the area to repair
 - Supports edge blending to soften the repaired area
 - Exports the repaired image as JPG, PNG, or WebP; JPG uses a white background for transparent pixels
@@ -126,6 +126,18 @@ Canonical examples:
 ### Image to WebP (/image/to-webp)
 - Converts JPG, PNG, GIF, BMP, SVG, AVIF, and common browser-decodable images to WebP
 - Supports output quality control, preview comparison, per-file download, and ZIP batch download
+
+### Image to Base64 (/image/to-base64)
+- Converts JPG, PNG, WebP, GIF, BMP, SVG, AVIF, and common browser-decodable images to Base64 Data URLs locally in the browser
+- Supports file selection, drag-and-drop image upload, and Ctrl+V clipboard image paste
+- Shows the full Data URL and raw Base64 string with copy actions and TXT download
+- Reads MIME type, dimensions, and file size locally; image files are not uploaded to a server
+
+### Base64 to Image (/image/base64-to-image)
+- Restores `data:image` Data URLs and raw image Base64 strings into Blob-backed image previews locally in the browser
+- Detects PNG, JPG, WebP, GIF, BMP, SVG, and AVIF images by MIME type or file signature when possible
+- Supports pasted Base64 text, selected `.txt` or `.base64` files, drag-and-drop text files, preview, and image download
+- Image content is decoded locally and is not uploaded to a server
 
 ### Image Crop (/image/crop)
 - Crops JPG, PNG, WebP, GIF, BMP, SVG, AVIF, and common browser-decodable images locally in the browser

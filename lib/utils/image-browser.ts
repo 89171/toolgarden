@@ -168,6 +168,7 @@ const PNG_QUANTIZED_TARGET_SAVINGS = 0.25;
 const BACKGROUND_REMOVAL_PUBLIC_PATH =
   'https://staticimgly.com/@imgly/background-removal-data/${PACKAGE_VERSION}/dist/';
 const ONNX_WASM_PUBLIC_PATH = '/models/onnxruntime-web/';
+const WATERMARK_MIGAN_MODEL_URL = 'https://huggingface.co/andraniksargsyan/migan/resolve/main/migan_pipeline_v2.onnx';
 const WATERMARK_AI_MODEL_URL = 'https://huggingface.co/Carve/LaMa-ONNX/resolve/main/lama_fp32.onnx';
 const WATERMARK_AI_INPUT_SIZE = 512;
 const SVG_OUTPUT_SCALE = 3;
@@ -178,6 +179,9 @@ const WATERMARK_ALLOWED_ROOT_HOSTNAMES = ['toolgarden.xyz', 'json-toolkit.xyz'] 
 const WATERMARK_REPAIR_DISTANCE_POWER = 1.35;
 
 let watermarkInpaintSessionPromise:
+  | Promise<{ ort: OrtWasmModule; session: OrtInferenceSession }>
+  | null = null;
+let watermarkMiganSessionPromise:
   | Promise<{ ort: OrtWasmModule; session: OrtInferenceSession }>
   | null = null;
 let svgCanvasResizerPromise: Promise<PicaInstance> | null = null;
@@ -1110,6 +1114,40 @@ async function getWatermarkInpaintSession(
   return loaded;
 }
 
+async function getWatermarkMiganSession(
+  onProgress?: (progress: ImageWatermarkRemovalProgress) => void
+): Promise<{ ort: OrtWasmModule; session: OrtInferenceSession }> {
+  onProgress?.(createWatermarkRemovalProgress('model', 'model:loading', 8));
+
+  if (!watermarkMiganSessionPromise) {
+    watermarkMiganSessionPromise = (async () => {
+      const ort = await import('onnxruntime-web');
+
+      ort.env.wasm.numThreads = 1;
+      ort.env.wasm.proxy = false;
+      ort.env.wasm.wasmPaths = {
+        wasm: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.wasm`,
+        mjs: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.mjs`,
+      };
+
+      const session = await ort.InferenceSession.create(WATERMARK_MIGAN_MODEL_URL, {
+        executionProviders: ['wasm'],
+        executionMode: 'sequential',
+        graphOptimizationLevel: 'all',
+      });
+
+      return { ort, session };
+    })().catch((error) => {
+      watermarkMiganSessionPromise = null;
+      throw error;
+    });
+  }
+
+  const loaded = await watermarkMiganSessionPromise;
+  onProgress?.(createWatermarkRemovalProgress('model', 'model:ready', 28));
+  return loaded;
+}
+
 function createCanvasFromLoadedImage(image: LoadedImage): HTMLCanvasElement | null {
   const canvas = document.createElement('canvas');
   canvas.width = image.width;
@@ -1257,6 +1295,74 @@ function createWatermarkMaskTensor(ort: OrtWasmModule, canvas: HTMLCanvasElement
   return new ort.Tensor('float32', tensorData, [1, 1, canvas.height, canvas.width]);
 }
 
+function createWatermarkOriginalPatchCanvas(image: LoadedImage, patch: ImageCropRect): HTMLCanvasElement | null {
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.max(1, Math.round(patch.width));
+  canvas.height = Math.max(1, Math.round(patch.height));
+  const context = canvas.getContext('2d');
+  if (!context) return null;
+
+  context.imageSmoothingEnabled = true;
+  context.imageSmoothingQuality = 'high';
+  context.drawImage(
+    image.element,
+    patch.x,
+    patch.y,
+    patch.width,
+    patch.height,
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+  return canvas;
+}
+
+function createMiganImageTensor(ort: OrtWasmModule, canvas: HTMLCanvasElement) {
+  const context = canvas.getContext('2d', { willReadFrequently: true });
+  if (!context) throw new Error('Canvas context failed');
+
+  const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+  const pixelCount = canvas.width * canvas.height;
+  const tensorData = new Uint8Array(3 * pixelCount);
+  const source = imageData.data;
+
+  for (let pixelIndex = 0; pixelIndex < pixelCount; pixelIndex += 1) {
+    const sourceIndex = pixelIndex * 4;
+    const alpha = source[sourceIndex + 3] / 255;
+    tensorData[pixelIndex] = clampNumber(Math.round((source[sourceIndex] * alpha) + 255 * (1 - alpha)), 0, 255);
+    tensorData[pixelCount + pixelIndex] = clampNumber(Math.round((source[sourceIndex + 1] * alpha) + 255 * (1 - alpha)), 0, 255);
+    tensorData[pixelCount * 2 + pixelIndex] = clampNumber(Math.round((source[sourceIndex + 2] * alpha) + 255 * (1 - alpha)), 0, 255);
+  }
+
+  return new ort.Tensor('uint8', tensorData, [1, 3, canvas.height, canvas.width]);
+}
+
+function createMiganMaskTensor(
+  ort: OrtWasmModule,
+  selection: ImageCropRect,
+  patch: ImageCropRect,
+  feather: number
+) {
+  const width = Math.max(1, Math.round(patch.width));
+  const height = Math.max(1, Math.round(patch.height));
+  const tensorData = new Uint8Array(width * height);
+  tensorData.fill(255);
+
+  const maskPadding = clampNumber(Math.round(feather / 2), 1, 18);
+  const left = clampNumber(Math.floor(selection.x - patch.x - maskPadding), 0, width);
+  const top = clampNumber(Math.floor(selection.y - patch.y - maskPadding), 0, height);
+  const right = clampNumber(Math.ceil(selection.x + selection.width - patch.x + maskPadding), 0, width);
+  const bottom = clampNumber(Math.ceil(selection.y + selection.height - patch.y + maskPadding), 0, height);
+
+  for (let y = top; y < bottom; y += 1) {
+    tensorData.fill(0, y * width + left, y * width + right);
+  }
+
+  return new ort.Tensor('uint8', tensorData, [1, 1, height, width]);
+}
+
 interface OrtTensorLike {
   data: ArrayLike<number>;
   dims: readonly number[];
@@ -1357,6 +1463,75 @@ function tensorToImageCanvas(tensor: OrtTensorLike): HTMLCanvasElement | null {
 
   context.putImageData(output, 0, 0);
   return canvas;
+}
+
+async function runMiganWatermarkInpaint(
+  image: LoadedImage,
+  selection: ImageCropRect,
+  feather: number,
+  onProgress?: (progress: ImageWatermarkRemovalProgress) => void
+): Promise<HTMLCanvasElement> {
+  const { ort, session } = await getWatermarkMiganSession(onProgress);
+  onProgress?.(createWatermarkRemovalProgress('prepare', 'prepare:patch', 36));
+
+  const patch = createWatermarkInpaintPatchRect(selection, image.width, image.height);
+  const patchCanvas = createWatermarkOriginalPatchCanvas(image, patch);
+
+  if (!patchCanvas) {
+    throw new Error('Canvas context failed');
+  }
+
+  const imageTensor = createMiganImageTensor(ort, patchCanvas);
+  const maskTensor = createMiganMaskTensor(ort, selection, patch, feather);
+  const imageInputName =
+    session.inputNames.find((name) => /image|img|input/i.test(name)) ?? session.inputNames[0];
+  const maskInputName =
+    session.inputNames.find((name) => /mask/i.test(name)) ??
+    session.inputNames.find((name) => name !== imageInputName);
+
+  if (!imageInputName || !maskInputName) {
+    throw new Error('Unexpected model inputs');
+  }
+
+  onProgress?.(createWatermarkRemovalProgress('compute', 'compute:inpaint', 58));
+
+  const result = await session.run({
+    [imageInputName]: imageTensor,
+    [maskInputName]: maskTensor,
+  });
+  const outputName =
+    session.outputNames.find((name) => /result|output|image/i.test(name)) ??
+    session.outputNames[0] ??
+    Object.keys(result)[0];
+  const output = outputName ? result[outputName] : undefined;
+
+  if (!isOrtTensorLike(output)) {
+    throw new Error('Unexpected model output');
+  }
+
+  const outputPatchCanvas = tensorToImageCanvas(output);
+  const repairCanvas = createCanvasFromLoadedImage(image);
+  if (!outputPatchCanvas || !repairCanvas) {
+    throw new Error('Canvas context failed');
+  }
+
+  const repairContext = repairCanvas.getContext('2d');
+  if (!repairContext) {
+    throw new Error('Canvas context failed');
+  }
+
+  onProgress?.(createWatermarkRemovalProgress('compute', 'compute:blend', 86));
+  repairContext.save();
+  repairContext.beginPath();
+  repairContext.rect(selection.x, selection.y, selection.width, selection.height);
+  repairContext.clip();
+  repairContext.imageSmoothingEnabled = true;
+  repairContext.imageSmoothingQuality = 'high';
+  repairContext.drawImage(outputPatchCanvas, patch.x, patch.y, patch.width, patch.height);
+  repairContext.restore();
+  softenRepairArea(repairCanvas, selection, feather);
+
+  return repairCanvas;
 }
 
 async function runAiWatermarkInpaint(
@@ -2184,8 +2359,18 @@ export async function removeImageWatermark(
     const feather = clampNumber(Math.round(options.feather ?? 12), 0, 36);
     let repairCanvas: HTMLCanvasElement | null = null;
     let method: ImageWatermarkRemovalMethod = 'local';
+    const requestedMethod = options.method ?? 'migan';
 
-    if ((options.method ?? 'ai') === 'ai') {
+    if (requestedMethod === 'migan') {
+      try {
+        repairCanvas = await runMiganWatermarkInpaint(image, selection, feather, options.onProgress);
+        method = 'migan';
+      } catch {
+        options.onProgress?.(createWatermarkRemovalProgress('fallback', 'fallback:lama', 72));
+      }
+    }
+
+    if (!repairCanvas && (requestedMethod === 'migan' || requestedMethod === 'ai')) {
       try {
         repairCanvas = await runAiWatermarkInpaint(image, selection, feather, options.onProgress);
         method = 'ai';

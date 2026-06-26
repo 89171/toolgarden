@@ -593,6 +593,38 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/to-webp" />
   </url>
   <url>
+    <loc>https://toolgarden.xyz/zh/image/to-base64</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image/to-base64" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image/to-base64" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/to-base64" />
+  </url>
+  <url>
+    <loc>https://toolgarden.xyz/en/image/to-base64</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image/to-base64" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image/to-base64" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/to-base64" />
+  </url>
+  <url>
+    <loc>https://toolgarden.xyz/zh/image/base64-to-image</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image/base64-to-image" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image/base64-to-image" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/base64-to-image" />
+  </url>
+  <url>
+    <loc>https://toolgarden.xyz/en/image/base64-to-image</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image/base64-to-image" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image/base64-to-image" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/base64-to-image" />
+  </url>
+  <url>
     <loc>https://toolgarden.xyz/zh/image/crop</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

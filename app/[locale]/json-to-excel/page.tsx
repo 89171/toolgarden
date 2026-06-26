@@ -1,7 +1,8 @@
 'use client';
 import React, { useRef, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
+import { ToolSwitchLinks } from '@/components/ToolSwitchLinks';
 import { Panel } from '@/components/ui/Panel';
 import { Button } from '@/components/ui/Button';
 import {
@@ -36,6 +37,7 @@ const EXAMPLE = stringifyJSONValue(
 );
 
 export default function JsonToExcelPage() {
+  const locale = useLocale();
   const t = useTranslations('tools.json-to-excel');
   const tc = useTranslations('common');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -91,6 +93,22 @@ export default function JsonToExcelPage() {
 
   return (
     <ToolLayout toolId="json-to-excel">
+      <ToolSwitchLinks
+        ariaLabel={t('switcher_label')}
+        currentKey="json-to-excel"
+        links={[
+          {
+            key: 'json-to-excel',
+            href: `/${locale}/json-to-excel`,
+            label: t('name'),
+          },
+          {
+            key: 'excel-to-json',
+            href: `/${locale}/excel-to-json`,
+            label: t('reverse_link'),
+          },
+        ]}
+      />
       <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
         <Panel title={t('input_title')} actions={<>
           <input

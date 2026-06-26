@@ -290,6 +290,22 @@ export const toolRegistry: ToolMeta[] = [
     category: 'convert',
   },
   {
+    id: 'image-to-base64',
+    name: '图片转 Base64',
+    description: '在浏览器本地将图片转换为 Base64 Data URL，支持选择、拖拽和粘贴图片',
+    path: '/image/to-base64',
+    icon: 'B64',
+    category: 'convert',
+  },
+  {
+    id: 'base64-to-image',
+    name: 'Base64 转图片',
+    description: '在浏览器本地将 Base64 或 Data URL 还原为可预览和下载的图片文件',
+    path: '/image/base64-to-image',
+    icon: 'IMG',
+    category: 'convert',
+  },
+  {
     id: 'image-crop',
     name: '图片裁剪',
     description: '在浏览器本地拖拽裁剪框，移动或调整裁剪区域后导出图片',

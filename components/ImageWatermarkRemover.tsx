@@ -3,6 +3,7 @@
 /* eslint-disable @next/next/no-img-element -- Image previews use local blob URLs. */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { ImagePreviewDialog } from '@/components/ImagePreviewDialog';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
@@ -42,7 +43,7 @@ interface OutputState {
 }
 
 const OUTPUT_FORMATS: ImageTargetFormat[] = ['jpg', 'png', 'webp'];
-const REMOVAL_METHODS: ImageWatermarkRemovalMethod[] = ['ai', 'local'];
+const REMOVAL_METHODS: ImageWatermarkRemovalMethod[] = ['migan', 'ai', 'local'];
 
 const SELECTION_HANDLES: Array<{ handle: ImageCropHandle; className: string }> = [
   { handle: 'nw', className: '-left-2 -top-2 cursor-nwse-resize' },
@@ -101,11 +102,12 @@ export function ImageWatermarkRemover() {
   const [sourceUrl, setSourceUrl] = useState('');
   const [image, setImage] = useState<ImageInspectionSuccess | null>(null);
   const [selection, setSelection] = useState<ImageCropRect | null>(null);
-  const [method, setMethod] = useState<ImageWatermarkRemovalMethod>('ai');
+  const [method, setMethod] = useState<ImageWatermarkRemovalMethod>('migan');
   const [outputFormat, setOutputFormat] = useState<ImageTargetFormat>('png');
   const [quality, setQuality] = useState(0.92);
   const [feather, setFeather] = useState(12);
   const [output, setOutput] = useState<OutputState | null>(null);
+  const [isOutputPreviewOpen, setIsOutputPreviewOpen] = useState(false);
   const [progress, setProgress] = useState<ImageWatermarkRemovalProgress | null>(null);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -138,6 +140,39 @@ export function ImageWatermarkRemover() {
     }
   }, [progress, ti]);
 
+  const getMethodLabel = useCallback((nextMethod: ImageWatermarkRemovalMethod): string => {
+    switch (nextMethod) {
+      case 'migan':
+        return ti('method_migan');
+      case 'ai':
+        return ti('method_ai');
+      default:
+        return ti('method_local');
+    }
+  }, [ti]);
+
+  const getMethodDescription = useCallback((nextMethod: ImageWatermarkRemovalMethod): string => {
+    switch (nextMethod) {
+      case 'migan':
+        return ti('method_migan_description');
+      case 'ai':
+        return ti('method_ai_description');
+      default:
+        return ti('method_local_description');
+    }
+  }, [ti]);
+
+  const getResultMethodLabel = useCallback((nextMethod: ImageWatermarkRemovalMethod): string => {
+    switch (nextMethod) {
+      case 'migan':
+        return ti('method_value_migan');
+      case 'ai':
+        return ti('method_value_ai');
+      default:
+        return ti('method_value_local');
+    }
+  }, [ti]);
+
   useEffect(() => {
     selectionRef.current = selection;
   }, [selection]);
@@ -160,6 +195,7 @@ export function ImageWatermarkRemover() {
   }, []);
 
   const clearOutput = useCallback(() => {
+    setIsOutputPreviewOpen(false);
     setOutput((current) => {
       if (current) URL.revokeObjectURL(current.url);
       return null;
@@ -410,12 +446,12 @@ export function ImageWatermarkRemover() {
       { label: ti('output_size'), value: formatDimensions(output.result.width, output.result.height) },
       {
         label: ti('result_method'),
-        value: output.result.method === 'ai' ? ti('method_value_ai') : ti('method_value_local'),
+        value: getResultMethodLabel(output.result.method),
       },
       { label: ti('file_size'), value: formatFileSize(output.result.outputSize) },
       { label: ti('duration'), value: ti('duration_value', { value: output.result.durationMs }) },
     ];
-  }, [output, ti]);
+  }, [getResultMethodLabel, output, ti]);
 
   return (
     <ToolLayout toolId="image-remove-watermark">
@@ -495,7 +531,7 @@ export function ImageWatermarkRemover() {
               <span className="mb-2 block text-xs font-semibold uppercase tracking-normal text-content-faint">
                 {ti('method_title')}
               </span>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
                 {REMOVAL_METHODS.map((nextMethod) => {
                   const active = method === nextMethod;
                   return (
@@ -512,13 +548,13 @@ export function ImageWatermarkRemover() {
                           : 'border-border-subtle bg-surface text-content-muted hover:border-border-strong hover:text-content-secondary'
                       }`}
                     >
-                      {nextMethod === 'ai' ? ti('method_ai') : ti('method_local')}
+                      {getMethodLabel(nextMethod)}
                     </button>
                   );
                 })}
               </div>
               <p className="mt-3 text-xs leading-relaxed text-content-muted">
-                {method === 'ai' ? ti('method_ai_description') : ti('method_local_description')}
+                {getMethodDescription(method)}
               </p>
             </div>
 
@@ -736,11 +772,18 @@ export function ImageWatermarkRemover() {
             <div className="flex min-h-0 flex-col gap-3">
               <div className="flex min-h-64 flex-grow items-center justify-center overflow-hidden rounded-lg border border-border-input bg-surface-raised p-3">
                 {output ? (
-                  <img
-                    src={output.url}
-                    alt={output.result.filename}
-                    className="max-h-full max-w-full object-contain"
-                  />
+                  <button
+                    type="button"
+                    aria-label={ti('preview_open_output')}
+                    onClick={() => setIsOutputPreviewOpen(true)}
+                    className="flex h-full w-full cursor-zoom-in items-center justify-center transition-colors hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+                  >
+                    <img
+                      src={output.url}
+                      alt={output.result.filename}
+                      className="max-h-full max-w-full object-contain"
+                    />
+                  </button>
                 ) : (
                   <span className="rounded border border-border-subtle bg-surface px-3 py-2 text-sm text-content-muted">
                     {ti('output_empty')}
@@ -768,6 +811,14 @@ export function ImageWatermarkRemover() {
           </div>
         </Panel>
       </div>
+      <ImagePreviewDialog
+        open={Boolean(isOutputPreviewOpen && output)}
+        src={output?.url}
+        alt={output?.result.filename ?? ti('output_empty')}
+        title={ti('preview_title')}
+        closeLabel={ti('preview_close')}
+        onClose={() => setIsOutputPreviewOpen(false)}
+      />
     </ToolLayout>
   );
 }

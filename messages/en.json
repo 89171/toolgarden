@@ -326,6 +326,52 @@
       "general": "Conversion failed. Please try again."
     }
   },
+  "image_base64": {
+    "to_settings_title": "Image to Base64",
+    "to_results_title": "Base64 result",
+    "from_settings_title": "Base64 to image",
+    "from_results_title": "Image result",
+    "switcher_label": "Base64 image tool switcher",
+    "to_base64_link": "Image to Base64",
+    "to_image_link": "Base64 to image",
+    "image_drop_title": "Choose, drag, or paste an image",
+    "image_drop_hint": "Supports {formats}. You can also press Ctrl + V to paste an image from the clipboard.",
+    "choose_image": "Choose image",
+    "input_formats": "Supported formats",
+    "local_note": "All conversion runs locally in your browser. Images and Base64 content are not uploaded.",
+    "mime_type": "MIME type",
+    "source_size": "Source size",
+    "output_size": "Output size",
+    "dimensions": "Dimensions",
+    "base64_length": "Base64 length",
+    "copy_data_url": "Copy Data URL",
+    "copy_raw_base64": "Copy raw Base64",
+    "download_txt": "Download TXT",
+    "data_url_label": "Data URL",
+    "to_empty_title": "Waiting for an image",
+    "to_empty_body": "Choose, drag, or press Ctrl + V to paste an image. The Base64 Data URL will appear here.",
+    "base64_input_label": "Base64 input",
+    "choose_text_file": "Choose text file",
+    "base64_placeholder": "Paste a Data URL that starts with data:image, or paste raw image Base64 content",
+    "base64_drop_hint": "Drop a .txt / .base64 text file here, or press Ctrl + V to paste Base64 directly.",
+    "decode_action": "Generate image",
+    "download_image": "Download image",
+    "preview_title": "Image preview",
+    "preview_open_output": "Preview image result",
+    "preview_close": "Close preview",
+    "from_empty_title": "Waiting for Base64",
+    "from_empty_body": "Paste image Base64 or a Data URL to restore the image locally and download it.",
+    "unknown_type": "unknown type",
+    "errors": {
+      "empty_file": "The file is empty. Choose a valid image.",
+      "empty_input": "Enter Base64 or a Data URL.",
+      "unsupported_input": "This image type is not supported yet: {type}.",
+      "file_too_large": "The content is too large. Maximum size is {maxSize}.",
+      "read_failed": "The image could not be read. Try another file.",
+      "invalid_base64": "The Base64 content is invalid. Check that it was copied completely.",
+      "general": "Processing failed. Please try again."
+    }
+  },
   "image_compressor": {
     "settings_title": "Smart compression",
     "results_title": "Compressed images",
@@ -445,11 +491,13 @@
     "drop_hint": "Supports {formats}. All processing stays local.",
     "drop_action": "Choose image",
     "input_formats": "Supported formats",
-    "local_note": "Only process images you own or have permission to modify. AI refine loads the model and runs inference locally in your browser. Images are not uploaded to any server, and data is cleared when you close the page.",
+    "local_note": "Only process images you own or have permission to modify. AI models load and run inference locally in your browser. Images are not uploaded to any server, and data is cleared when you close the page.",
     "method_title": "Processing mode",
-    "method_ai": "AI refine",
+    "method_migan": "High quality AI",
+    "method_ai": "Compatible AI",
     "method_local": "Fast local",
-    "method_ai_description": "Uses the LaMa ONNX model to inpaint the selected area locally in your browser. The first run downloads model assets and works best for photos or richer textures.",
+    "method_migan_description": "Uses the MI-GAN 512 ONNX Pipeline by default for higher quality browser-local inpainting. The first run downloads about 28MB of model assets.",
+    "method_ai_description": "Uses the LaMa ONNX model locally in your browser as a compatible fallback for photos and richer textures.",
     "method_local_description": "Skips the AI model and repairs quickly from nearby pixels, which works well for flat colors, gradients, and screenshot backgrounds.",
     "source_image": "Source image",
     "selection_title": "Watermark area",
@@ -471,6 +519,9 @@
     "empty_title": "Waiting for an image",
     "empty_body": "Upload an image, then drag on the source image to select the watermark area to repair.",
     "output_empty": "The repaired image will appear here",
+    "preview_title": "Output image preview",
+    "preview_open_output": "Preview output image",
+    "preview_close": "Close preview",
     "result_hint": "Select the watermark area and generate a repair to see output details here.",
     "source_size": "Original size",
     "selection_size": "Area size",
@@ -479,7 +530,8 @@
     "duration": "Duration",
     "duration_value": "{value}ms",
     "result_method": "Mode",
-    "method_value_ai": "AI refine",
+    "method_value_migan": "High quality AI",
+    "method_value_ai": "Compatible AI",
     "method_value_local": "Fast local",
     "progress_model": "Loading local AI model",
     "progress_prepare": "Preparing area and mask",
@@ -528,6 +580,9 @@
     "download": "Download image",
     "replace": "Replace image",
     "output_title": "Output preview",
+    "preview_title": "Output image preview",
+    "preview_open_output": "Preview output image",
+    "preview_close": "Close preview",
     "empty_title": "Waiting for an image",
     "empty_body": "Upload an image, move the crop frame, or drag its edges and corners to adjust the crop size.",
     "output_empty": "The cropped image will appear here",
@@ -580,6 +635,9 @@
     "download": "Download image",
     "replace": "Replace image",
     "output_title": "Output preview",
+    "preview_title": "Output image preview",
+    "preview_open_output": "Preview output image",
+    "preview_close": "Close preview",
     "empty_title": "Waiting for an image",
     "empty_body": "Upload an image and enter a target width or height. The other dimension is calculated from the original ratio.",
     "output_empty": "The resized image will appear here",
@@ -952,7 +1010,7 @@
       "items": [
         {
           "question": "Does watermark removal upload my files?",
-          "answer": "No. Images are decoded, inpainted with AI or repaired quickly, and exported locally in your browser. Files are not uploaded to a server. AI refine downloads model assets on the first run and they are usually cached by the browser."
+          "answer": "No. Images are decoded, inpainted with AI or repaired quickly, and exported locally in your browser. Files are not uploaded to a server. The default high-quality AI downloads about 28MB of model assets on first run and is usually cached by the browser."
         },
         {
           "question": "Which watermark areas work best?",
@@ -1045,6 +1103,46 @@
         {
           "question": "Does converting to WebP reduce image quality?",
           "answer": "WebP can use lossy compression or preserve high quality. The quality slider controls the tradeoff between output size and visual quality."
+        }
+      ]
+    },
+    "image-to-base64": {
+      "items": [
+        {
+          "question": "Does Image to Base64 upload my files?",
+          "answer": "No. Images are read and encoded as Base64 locally in your browser. Files are not uploaded to a server."
+        },
+        {
+          "question": "Can I paste an image?",
+          "answer": "Yes. You can choose an image, drag an image in, or press Ctrl + V to paste an image from the clipboard."
+        },
+        {
+          "question": "Does it output raw Base64 or a Data URL?",
+          "answer": "The page shows the full Data URL by default and also provides a button to copy the raw Base64 string."
+        },
+        {
+          "question": "Which images can be converted to Base64?",
+          "answer": "JPG, PNG, WebP, GIF, BMP, SVG, AVIF, and other common browser-readable image formats are supported."
+        }
+      ]
+    },
+    "base64-to-image": {
+      "items": [
+        {
+          "question": "Does Base64 to image upload my content?",
+          "answer": "No. Base64 decoding, preview, and download all happen locally in your browser."
+        },
+        {
+          "question": "Which Base64 inputs are supported?",
+          "answer": "Full data:image Data URLs are supported, as well as raw image Base64. Raw Base64 is detected from the image file signature."
+        },
+        {
+          "question": "Can I drag in a Base64 file?",
+          "answer": "Yes. You can drag in a .txt or .base64 text file, or press Ctrl + V to paste Base64 content directly."
+        },
+        {
+          "question": "How is the output image format chosen?",
+          "answer": "When the input includes a MIME type, it is used first. Raw Base64 is detected from PNG, JPG, WebP, GIF, BMP, SVG, AVIF, and similar signatures."
         }
       ]
     },
@@ -1200,8 +1298,8 @@
   },
   "image_hub": {
     "title": "Image tools",
-    "meta_title": "Free Online Image Tools - Image Editing, Compression, Merge, Background and Watermark Removal, JPG, PNG, and WebP Conversion",
-    "description": "Free online image tools for batch editing, compression, merging, background removal, watermark removal, conversion, cropping, and resizing locally in your browser, with shapes, text, mosaic, blur, AI selection repair, smart compression, image-to-PDF or long-image output, transparent PNG, JPG, PNG, WebP output, preview comparison, and ZIP batch download.",
+    "meta_title": "Free Online Image Tools - Image Editing, Compression, Merge, Background and Watermark Removal, Base64, JPG, PNG, and WebP Conversion",
+    "description": "Free online image tools for batch editing, compression, merging, background removal, watermark removal, Base64 encode/decode, conversion, cropping, and resizing locally in your browser, with shapes, text, mosaic, blur, AI selection repair, smart compression, image-to-PDF or long-image output, transparent PNG, JPG, PNG, WebP output, preview comparison, and ZIP batch download.",
     "all_tools": "Image conversion tools",
     "breadcrumb": "Image tools",
     "privacy_note": "Images are processed locally in your browser and are not uploaded to a server."
@@ -1351,6 +1449,8 @@
       "preview_summary": "{count} rows in total",
       "preview_truncated": "Showing first {count} rows only",
       "idle_desc": "Enter a JSON array or upload a JSON file, then click Download Excel",
+      "switcher_label": "JSON and Excel conversion tool switcher",
+      "reverse_link": "Excel → JSON",
       "errors": {
         "load_failed": "The JSON file could not be read. Please choose the file again."
       }
@@ -1362,7 +1462,9 @@
       "output_title": "JSON Output",
       "drop_title": "Click or drag to upload",
       "drop_hint": "Supports .xlsx / .xls",
-      "empty_output": "Result will appear after uploading a file"
+      "empty_output": "Result will appear after uploading a file",
+      "switcher_label": "JSON and Excel conversion tool switcher",
+      "reverse_link": "JSON → Excel"
     },
     "json-to-ts": {
       "name": "JSON → TypeScript",
@@ -1414,6 +1516,14 @@
     "image-to-webp": {
       "name": "Image to WebP",
       "description": "Free online tool to convert JPG, PNG, GIF, BMP, SVG, AVIF, and other images to WebP locally in your browser"
+    },
+    "image-to-base64": {
+      "name": "Image to Base64",
+      "description": "Free online tool to convert PNG, JPG, WebP, GIF, BMP, SVG, AVIF, and other images to Base64 Data URLs locally in your browser, with choose, drag, and Ctrl + V paste support"
+    },
+    "base64-to-image": {
+      "name": "Base64 to image",
+      "description": "Free online tool to restore Base64 or data:image Data URLs into image files locally in your browser, with preview and download"
     },
     "image-crop": {
       "name": "Image crop",

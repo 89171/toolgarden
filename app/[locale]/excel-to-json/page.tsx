@@ -1,12 +1,14 @@
 'use client';
 import React, { useRef, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
+import { ToolSwitchLinks } from '@/components/ToolSwitchLinks';
 import { Panel } from '@/components/ui/Panel';
 import { Button } from '@/components/ui/Button';
 import { excelBufferToJson } from '@/lib/utils/excel';
 
 export default function ExcelToJsonPage() {
+  const locale = useLocale();
   const t = useTranslations('tools.excel-to-json');
   const tc = useTranslations('common');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -51,6 +53,22 @@ export default function ExcelToJsonPage() {
 
   return (
     <ToolLayout toolId="excel-to-json">
+      <ToolSwitchLinks
+        ariaLabel={t('switcher_label')}
+        currentKey="excel-to-json"
+        links={[
+          {
+            key: 'json-to-excel',
+            href: `/${locale}/json-to-excel`,
+            label: t('reverse_link'),
+          },
+          {
+            key: 'excel-to-json',
+            href: `/${locale}/excel-to-json`,
+            label: t('name'),
+          },
+        ]}
+      />
       <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
         <Panel title={t('upload_title')} className="min-h-64">
           <div

@@ -93,7 +93,7 @@ export interface ImageBackgroundRemovalSuccess {
 
 export type ImageBackgroundRemovalOutcome = ImageBackgroundRemovalSuccess | ImageConversionError;
 
-export type ImageWatermarkRemovalMethod = 'ai' | 'local';
+export type ImageWatermarkRemovalMethod = 'migan' | 'ai' | 'local';
 
 export interface ImageWatermarkRemovalProgress {
   stage: 'model' | 'prepare' | 'compute' | 'encode' | 'fallback';

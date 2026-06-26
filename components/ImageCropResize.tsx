@@ -3,6 +3,7 @@
 /* eslint-disable @next/next/no-img-element -- Image editor previews use local blob URLs. */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { ImagePreviewDialog } from '@/components/ImagePreviewDialog';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
@@ -129,6 +130,7 @@ export function ImageCropResize({ mode }: ImageCropResizeProps) {
   const [outputFormat, setOutputFormat] = useState<ImageTargetFormat>('png');
   const [quality, setQuality] = useState(0.92);
   const [output, setOutput] = useState<OutputState | null>(null);
+  const [isOutputPreviewOpen, setIsOutputPreviewOpen] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -174,6 +176,7 @@ export function ImageCropResize({ mode }: ImageCropResizeProps) {
   }, []);
 
   const clearOutput = useCallback(() => {
+    setIsOutputPreviewOpen(false);
     setOutput((current) => {
       if (current) URL.revokeObjectURL(current.url);
       return null;
@@ -783,11 +786,18 @@ export function ImageCropResize({ mode }: ImageCropResizeProps) {
 
                 <div className="flex aspect-[4/3] items-center justify-center overflow-hidden rounded border border-border-subtle bg-surface">
                   {output ? (
-                    <img
-                      src={output.url}
-                      alt={output.result.filename}
-                      className="max-h-full max-w-full object-contain"
-                    />
+                    <button
+                      type="button"
+                      aria-label={ti('preview_open_output')}
+                      onClick={() => setIsOutputPreviewOpen(true)}
+                      className="flex h-full w-full cursor-zoom-in items-center justify-center transition-colors hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+                    >
+                      <img
+                        src={output.url}
+                        alt={output.result.filename}
+                        className="max-h-full max-w-full object-contain"
+                      />
+                    </button>
                   ) : (
                     <p className="px-4 text-center text-sm text-content-faint">{ti('output_empty')}</p>
                   )}
@@ -808,6 +818,14 @@ export function ImageCropResize({ mode }: ImageCropResizeProps) {
           </div>
         </Panel>
       </div>
+      <ImagePreviewDialog
+        open={Boolean(isOutputPreviewOpen && output)}
+        src={output?.url}
+        alt={output?.result.filename ?? ti('output_title')}
+        title={ti('preview_title')}
+        closeLabel={ti('preview_close')}
+        onClose={() => setIsOutputPreviewOpen(false)}
+      />
     </ToolLayout>
   );
 }
