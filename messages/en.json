@@ -132,6 +132,8 @@
     "file_list_title": "File list",
     "file_count": "{count} files",
     "empty_list": "Uploaded files will appear here.",
+    "move_up": "Move up",
+    "move_down": "Move down",
     "merge_action": "Merge now",
     "merging": "Merging...",
     "mode_descriptions": {
@@ -172,6 +174,10 @@
     "duration_result": "Took {duration}ms",
     "file_preview_note": "The merged file is ready to download.",
     "excel_preview_note": "The Excel output file is ready to download.",
+    "excel_sheet_tabs_label": "Switch preview sheet",
+    "excel_preview_meta": "Previewing {shownRows}/{totalRows} rows and {shownColumns}/{totalColumns} columns",
+    "excel_preview_truncated": "The preview shows partial data only. The downloaded Excel file includes the full merged result.",
+    "excel_preview_empty": "This Sheet has no previewable data.",
     "idle_desc": "You are in {mode} mode. Upload files and click merge.",
     "errors": {
       "empty_selection": "Add at least one file first.",
@@ -702,7 +708,7 @@
       "fill": "Fill"
     },
     "text_content": "Text content",
-    "text_placeholder": "Enter text to place on the image",
+    "text_placeholder": "Optional default text, or type directly on the canvas",
     "font_size": "Font size",
     "mosaic_size": "Mosaic block size",
     "blur_radius": "Blur radius",

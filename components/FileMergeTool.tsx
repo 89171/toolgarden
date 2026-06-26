@@ -55,11 +55,11 @@ function moveItem<T>(items: T[], fromIndex: number, toIndex: number): T[] {
 
 type FileMergeResult = FileTypeMergeOutcome | ExcelMergeOutcome | ImageMergeOutcome;
 
-function isExcelMergeOutcome(result: FileMergeResult | null): result is ExcelMergeOutcome {
+function isExcelMergeOutcome(result: FileMergeResult | null): result is ExcelMergeOutcome & { ok: true } {
   return Boolean(result && result.ok && 'sheetCount' in result);
 }
 
-function isImageMergeOutcome(result: FileMergeResult | null): result is ImageMergeOutcome {
+function isImageMergeOutcome(result: FileMergeResult | null): result is ImageMergeOutcome & { ok: true } {
   return Boolean(result && result.ok && 'imageCount' in result);
 }
 
@@ -76,6 +76,7 @@ export function FileMergeTool({ mode }: FileMergeToolProps) {
   const [currentError, setCurrentError] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [excelStrategy, setExcelStrategy] = useState<ExcelMergeStrategy>('single-sheet');
+  const [activeExcelSheet, setActiveExcelSheet] = useState('');
   const [imageOutput, setImageOutput] = useState<ImageMergeOutput>('pdf');
   const [previewUrl, setPreviewUrl] = useState('');
 
@@ -125,6 +126,19 @@ export function FileMergeTool({ mode }: FileMergeToolProps) {
     const nextUrl = URL.createObjectURL(currentResult.blob);
     setPreviewUrl(nextUrl);
     return () => URL.revokeObjectURL(nextUrl);
+  }, [currentResult]);
+
+  useEffect(() => {
+    if (!isExcelMergeOutcome(currentResult)) {
+      setActiveExcelSheet('');
+      return;
+    }
+
+    setActiveExcelSheet((current) => (
+      currentResult.previewSheets.some((sheet) => sheet.name === current)
+        ? current
+        : currentResult.previewSheets[0]?.name ?? ''
+    ));
   }, [currentResult]);
 
   const getErrorMessage = (code: string): string => {
@@ -386,6 +400,11 @@ export function FileMergeTool({ mode }: FileMergeToolProps) {
     }
 
     if (isExcelMergeOutcome(currentResult)) {
+      const activeSheet = currentResult.previewSheets.find((sheet) => sheet.name === activeExcelSheet)
+        ?? currentResult.previewSheets[0];
+      const hasSheetTabs = currentResult.previewSheets.length > 1;
+      const hasPreviewRows = Boolean(activeSheet && activeSheet.columns.length > 0 && activeSheet.rows.length > 0);
+
       return (
         <div className="flex h-full min-h-0 flex-col gap-3">
           <div className="flex flex-wrap items-center gap-3 text-sm text-content-muted">
@@ -393,9 +412,103 @@ export function FileMergeTool({ mode }: FileMergeToolProps) {
             <span>{t('size_result', { size: formatFileSize(currentResult.outputSize) })}</span>
             <span>{t('duration_result', { duration: currentResult.durationMs })}</span>
           </div>
-          <div className="rounded border border-border-input bg-surface-raised p-4 text-sm text-content-muted">
-            {t('excel_preview_note')}
-          </div>
+
+          {hasSheetTabs ? (
+            <div
+              role="tablist"
+              aria-label={t('excel_sheet_tabs_label')}
+              className="flex gap-2 overflow-x-auto border-b border-border-subtle pb-2"
+            >
+              {currentResult.previewSheets.map((sheet) => {
+                const isActive = sheet.name === activeSheet?.name;
+                return (
+                  <button
+                    key={sheet.name}
+                    type="button"
+                    role="tab"
+                    aria-selected={isActive}
+                    onClick={() => setActiveExcelSheet(sheet.name)}
+                    className={`max-w-56 shrink-0 truncate rounded border px-3 py-2 text-sm font-medium transition-colors ${
+                      isActive
+                        ? 'border-action bg-action text-background'
+                        : 'border-border-base bg-surface text-content-muted hover:border-border-strong hover:bg-surface-hover hover:text-content-secondary'
+                    }`}
+                  >
+                    {sheet.name}
+                  </button>
+                );
+              })}
+            </div>
+          ) : null}
+
+          {activeSheet ? (
+            <div className="flex min-h-0 flex-grow flex-col gap-2">
+              <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-content-muted">
+                <span className="font-medium text-content-secondary">{activeSheet.name}</span>
+                <span>
+                  {t('excel_preview_meta', {
+                    shownRows: activeSheet.rows.length,
+                    totalRows: activeSheet.rowCount,
+                    shownColumns: activeSheet.columns.length,
+                    totalColumns: activeSheet.columnCount,
+                  })}
+                </span>
+              </div>
+
+              {activeSheet.truncatedRows || activeSheet.truncatedColumns ? (
+                <p className="text-xs text-content-faint">{t('excel_preview_truncated')}</p>
+              ) : null}
+
+              {hasPreviewRows ? (
+                <div className="min-h-[28rem] flex-grow overflow-auto rounded border border-border-input bg-surface-raised">
+                  <table className="min-w-full border-separate border-spacing-0 text-sm">
+                    <thead className="sticky top-0 z-10 bg-surface">
+                      <tr>
+                        <th className="sticky left-0 z-20 border-b border-r border-border-subtle bg-surface px-3 py-2 text-left font-mono text-xs font-semibold text-content-faint">
+                          #
+                        </th>
+                        {activeSheet.columns.map((column) => (
+                          <th
+                            key={column}
+                            className="border-b border-r border-border-subtle px-3 py-2 text-left text-xs font-semibold text-content-secondary"
+                          >
+                            <span className="block max-w-64 truncate">{column}</span>
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {activeSheet.rows.map((row, rowIndex) => (
+                        <tr key={`${activeSheet.name}-${rowIndex}`} className="odd:bg-surface-raised even:bg-surface">
+                          <th className="sticky left-0 border-b border-r border-border-subtle bg-inherit px-3 py-2 text-left font-mono text-xs font-medium text-content-faint">
+                            {rowIndex + 1}
+                          </th>
+                          {row.map((cell, cellIndex) => (
+                            <td
+                              key={`${activeSheet.name}-${rowIndex}-${activeSheet.columns[cellIndex]}`}
+                              className="max-w-72 border-b border-r border-border-subtle px-3 py-2 align-top text-content-secondary"
+                            >
+                              <span className="block max-h-24 overflow-hidden whitespace-pre-wrap break-words">
+                                {cell || ''}
+                              </span>
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="flex min-h-[18rem] flex-grow items-center justify-center rounded border border-border-input bg-surface-raised p-4 text-center text-sm text-content-muted">
+                  {t('excel_preview_empty')}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="rounded border border-border-input bg-surface-raised p-4 text-sm text-content-muted">
+              {t('excel_preview_note')}
+            </div>
+          )}
         </div>
       );
     }

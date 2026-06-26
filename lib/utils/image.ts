@@ -256,23 +256,19 @@ export function createImageOutputFilename(filename: string, extension: string): 
 }
 
 export function createCompressedImageFilename(filename: string, extension: string): string {
-  const base = filename.replace(/\.[^.]+$/, '') || 'image';
-  return `${base}-compressed.${extension}`;
+  return createImageOutputFilename(filename, extension);
 }
 
 export function createEditedImageFilename(filename: string, extension: string): string {
-  const base = filename.replace(/\.[^.]+$/, '') || 'image';
-  return `${base}-edited.${extension}`;
+  return createImageOutputFilename(filename, extension);
 }
 
 export function createBackgroundRemovedImageFilename(filename: string): string {
-  const base = filename.replace(/\.[^.]+$/, '') || 'image';
-  return `${base}-no-bg.png`;
+  return createImageOutputFilename(filename, 'png');
 }
 
 export function createWatermarkRemovedImageFilename(filename: string, extension: string): string {
-  const base = filename.replace(/\.[^.]+$/, '') || 'image';
-  return `${base}-no-watermark.${extension}`;
+  return createImageOutputFilename(filename, extension);
 }
 
 export function calculateSavingsRatio(originalSize: number, outputSize: number): number {

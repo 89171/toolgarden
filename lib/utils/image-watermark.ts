@@ -144,8 +144,7 @@ export function validateWatermarkImageDimensions(width: number, height: number):
 }
 
 export function createWatermarkedFilename(filename: string, extension: string): string {
-  const base = filename.replace(/\.[^.]+$/, '') || 'image';
-  return `${base}-watermarked.${extension}`;
+  return createImageOutputFilename(filename, extension);
 }
 
 export function getDefaultTextStyle(): TextWatermarkStyle {

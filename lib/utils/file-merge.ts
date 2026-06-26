@@ -52,6 +52,16 @@ export interface FileTypeMergeSuccess {
 
 export type FileTypeMergeOutcome = FileTypeMergeSuccess | FileMergeError;
 
+export interface ExcelPreviewSheet {
+  name: string;
+  columns: string[];
+  rows: string[][];
+  rowCount: number;
+  columnCount: number;
+  truncatedRows: boolean;
+  truncatedColumns: boolean;
+}
+
 export interface ExcelMergeSuccess {
   ok: true;
   blob: Blob;
@@ -62,6 +72,7 @@ export interface ExcelMergeSuccess {
   durationMs: number;
   sourceCount: number;
   strategy: ExcelMergeStrategy;
+  previewSheets: ExcelPreviewSheet[];
 }
 
 export type ExcelMergeOutcome = ExcelMergeSuccess | FileMergeError;
@@ -117,6 +128,8 @@ const TEXT_MIME_TYPE = 'text/plain;charset=utf-8';
 const MARKDOWN_MIME_TYPE = 'text/markdown;charset=utf-8';
 const RELS_NS = 'http://schemas.openxmlformats.org/package/2006/relationships';
 const PPT_SLIDE_REL_TYPE = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide';
+const EXCEL_PREVIEW_MAX_ROWS = 100;
+const EXCEL_PREVIEW_MAX_COLUMNS = 30;
 
 const fileModeConfig: Record<FileMergeMode, {
   accept: string;
@@ -541,6 +554,64 @@ async function readSheetRows(file: File) {
   return rows;
 }
 
+function formatExcelPreviewCell(value: unknown): string {
+  if (value === null || value === undefined) return '';
+  if (value instanceof Date) return value.toISOString();
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number' || typeof value === 'boolean' || typeof value === 'bigint') {
+    return String(value);
+  }
+
+  try {
+    return JSON.stringify(value);
+  } catch {
+    return String(value);
+  }
+}
+
+function createExcelPreviewColumns(
+  rows: Record<string, unknown>[],
+  preferredColumns: string[] = []
+): string[] {
+  const columns: string[] = [];
+  const seen = new Set<string>();
+
+  const addColumn = (column: string) => {
+    if (seen.has(column)) return;
+    seen.add(column);
+    columns.push(column);
+  };
+
+  preferredColumns.forEach(addColumn);
+  rows.forEach((row) => {
+    Object.keys(row).forEach(addColumn);
+  });
+
+  return columns;
+}
+
+function createExcelPreviewSheet(
+  name: string,
+  rows: Record<string, unknown>[],
+  preferredColumns?: string[]
+): ExcelPreviewSheet {
+  const columns = createExcelPreviewColumns(rows, preferredColumns);
+  const previewColumns = columns.slice(0, EXCEL_PREVIEW_MAX_COLUMNS);
+  const previewRows = rows.slice(0, EXCEL_PREVIEW_MAX_ROWS).map((row) => (
+    previewColumns.map((column) => formatExcelPreviewCell(row[column]))
+  ));
+
+  return {
+    name,
+    columns: previewColumns,
+    rows: previewRows,
+    rowCount: rows.length,
+    columnCount: columns.length,
+    truncatedRows: rows.length > previewRows.length,
+    truncatedColumns: columns.length > previewColumns.length,
+  };
+}
+
 async function mergeExcelToSingleSheet(files: File[]): Promise<ExcelMergeOutcome> {
   const XLSX = await import('xlsx');
   const mergedRows: Record<string, unknown>[] = [];
@@ -588,6 +659,9 @@ async function mergeExcelToSingleSheet(files: File[]): Promise<ExcelMergeOutcome
     durationMs: 0,
     sourceCount,
     strategy: 'single-sheet',
+    previewSheets: [
+      createExcelPreviewSheet('Merged', mergedRows, header),
+    ],
   };
 }
 
@@ -595,6 +669,7 @@ async function mergeExcelToMultiSheet(files: File[]): Promise<ExcelMergeOutcome>
   const XLSX = await import('xlsx');
   const workbook = XLSX.utils.book_new();
   const usedNames = new Set<string>();
+  const previewSheets: ExcelPreviewSheet[] = [];
   let outputSheets = 0;
   let rowCount = 0;
   let sourceCount = 0;
@@ -609,6 +684,7 @@ async function mergeExcelToMultiSheet(files: File[]): Promise<ExcelMergeOutcome>
       const sheetName = createUniqueSheetName(baseName, usedNames);
       const ws = XLSX.utils.json_to_sheet(sheet.data);
       XLSX.utils.book_append_sheet(workbook, ws, sheetName);
+      previewSheets.push(createExcelPreviewSheet(sheetName, sheet.data));
       outputSheets += 1;
     }
   }
@@ -630,6 +706,7 @@ async function mergeExcelToMultiSheet(files: File[]): Promise<ExcelMergeOutcome>
     durationMs: 0,
     sourceCount,
     strategy: 'multi-sheet',
+    previewSheets,
   };
 }
 
@@ -896,7 +973,7 @@ async function mergePlainTextFiles(
 
   return createNativeResult(blob, filename, format, files.length, startedAt, {
     itemCount: files.length,
-    previewText: content.slice(0, 4000),
+    previewText: mode === 'markdown' ? content : content.slice(0, 4000),
   });
 }
 

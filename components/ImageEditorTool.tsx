@@ -12,6 +12,7 @@ import {
   PencilBrush,
   Polyline,
   Rect,
+  Textbox,
   type TPointerEventInfo,
 } from 'fabric';
 import { ToolLayout } from '@/components/ToolLayout';
@@ -58,7 +59,7 @@ interface OutputState {
 }
 
 interface DrawingState {
-  tool: ShapeTool | EffectTool;
+  tool: ShapeTool | EffectTool | 'text';
   start: Point;
   object: FabricObject;
 }
@@ -78,6 +79,8 @@ type ObjectRole = 'base' | 'annotation' | 'transient';
 const OUTPUT_FORMATS: ImageTargetFormat[] = ['png', 'jpg', 'webp'];
 const HISTORY_LIMIT = 40;
 const CANVAS_VIEWPORT_PADDING = 32;
+const TEXTBOX_DEFAULT_WIDTH = 240;
+const TEXTBOX_MIN_WIDTH = 48;
 
 const COLOR_SWATCHES = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#14b8a6', '#3b82f6', '#8b5cf6', '#111827'];
 
@@ -264,6 +267,8 @@ function configureBaseObject(image: FabricImage) {
   image.set({
     left: 0,
     top: 0,
+    originX: 'left',
+    originY: 'top',
     selectable: false,
     evented: false,
     lockMovementX: true,
@@ -287,21 +292,26 @@ function lockBaseObjects(canvas: Canvas) {
 function applyToolInteractivity(canvas: Canvas, tool: EditorTool) {
   const isSelect = tool === 'select';
   const isEraser = tool === 'eraser';
+  const isText = tool === 'text';
 
   canvas.selection = isSelect;
-  canvas.skipTargetFind = !isSelect && !isEraser;
+  canvas.skipTargetFind = !isSelect && !isEraser && !isText;
 
   canvas.getObjects().forEach((object) => {
     if (isBaseObject(object)) return;
     if (getObjectRole(object) === 'transient') return;
 
+    const isTextObject = object instanceof IText;
+    const canSelect = isSelect || (isText && isTextObject);
+    const canReceiveEvents = canSelect || isEraser;
+
     object.set({
-      selectable: isSelect,
-      evented: isSelect || isEraser,
-      hasControls: isSelect,
-      hasBorders: isSelect,
-      lockMovementX: !isSelect,
-      lockMovementY: !isSelect,
+      selectable: canSelect,
+      evented: canReceiveEvents,
+      hasControls: canSelect,
+      hasBorders: canSelect,
+      lockMovementX: !canSelect,
+      lockMovementY: !canSelect,
     });
     object.setCoords();
   });
@@ -319,6 +329,8 @@ function createShapeObject(tool: ShapeTool, point: Point, color: string, strokeW
   const common = {
     left: point.x,
     top: point.y,
+    originX: 'left' as const,
+    originY: 'top' as const,
     stroke: color,
     strokeWidth,
     fill: shapeMode === 'fill' ? color : 'transparent',
@@ -720,34 +732,52 @@ export function ImageEditorTool() {
     recordHistory();
   }, [recordHistory]);
 
-  const addTextAt = useCallback((point: Point) => {
+  const addTextBox = useCallback((start: Point, end: Point) => {
     const canvas = fabricCanvasRef.current;
+    const currentImage = imageInfoRef.current;
     const value = textValueRef.current.trim();
-    if (!canvas) return;
-    if (!value) {
-      setError(ti('errors.empty_text'));
-      return;
-    }
+    if (!canvas || !currentImage) return;
 
     exitActiveTextEditing(canvas);
 
-    const text = new IText(value, {
-      left: point.x,
-      top: point.y,
+    const rect = createNormalizedRect(start, end, currentImage.width, currentImage.height);
+    const isClick = Math.abs(end.x - start.x) < TEXTBOX_MIN_WIDTH && Math.abs(end.y - start.y) < fontSizeRef.current;
+    const left = isClick ? Math.max(0, Math.min(start.x, currentImage.width - TEXTBOX_MIN_WIDTH)) : rect.x;
+    const top = isClick ? Math.max(0, Math.min(start.y, currentImage.height - fontSizeRef.current)) : rect.y;
+    const maxWidth = Math.max(TEXTBOX_MIN_WIDTH, currentImage.width - left);
+    const width = isClick
+      ? Math.min(TEXTBOX_DEFAULT_WIDTH, maxWidth)
+      : Math.max(TEXTBOX_MIN_WIDTH, Math.min(rect.width, maxWidth));
+
+    const text = new Textbox(value, {
+      left,
+      top,
+      width,
+      originX: 'left',
+      originY: 'top',
       fill: colorRef.current,
       fontFamily: 'sans-serif',
       fontSize: fontSizeRef.current,
       fontWeight: '600',
       editable: true,
+      objectCaching: false,
     });
     setObjectRole(text, 'annotation');
     canvas.add(text);
-    text.set({ selectable: true, evented: true });
+    text.set({
+      selectable: true,
+      evented: true,
+      hasControls: true,
+      hasBorders: true,
+      lockMovementX: false,
+      lockMovementY: false,
+    });
     canvas.setActiveObject(text);
     text.enterEditing();
+    text.hiddenTextarea?.focus();
     canvas.requestRenderAll();
     recordHistory();
-  }, [recordHistory, ti]);
+  }, [recordHistory]);
 
   const createEffectPatch = useCallback(async (toolName: EffectTool, start: Point, end: Point) => {
     const canvas = fabricCanvasRef.current;
@@ -780,6 +810,8 @@ export function ImageEditorTool() {
       patchImage.set({
         left: rect.x,
         top: rect.y,
+        originX: 'left',
+        originY: 'top',
         selectable: true,
         evented: true,
       });
@@ -867,8 +899,11 @@ export function ImageEditorTool() {
 
     if (activeTool === 'select' || activeTool === 'brush' || activeTool === 'marker') return;
 
-    if (activeTool === 'text') {
-      addTextAt(pointer);
+    if (activeTool === 'text' && event.target instanceof IText && !isBaseObject(event.target)) {
+      exitActiveTextEditing(canvas);
+      canvas.setActiveObject(event.target);
+      event.target.enterEditing();
+      event.target.hiddenTextarea?.focus();
       return;
     }
 
@@ -883,6 +918,8 @@ export function ImageEditorTool() {
       ? new Rect({
           left: pointer.x,
           top: pointer.y,
+          originX: 'left',
+          originY: 'top',
           width: 1,
           height: 1,
           fill: colorWithAlpha(colorRef.current, 0.14),
@@ -893,12 +930,28 @@ export function ImageEditorTool() {
           evented: false,
           objectCaching: false,
         })
-      : createShapeObject(activeTool, pointer, colorRef.current, strokeWidthRef.current, shapeModeRef.current);
+      : activeTool === 'text'
+        ? new Rect({
+            left: pointer.x,
+            top: pointer.y,
+            originX: 'left',
+            originY: 'top',
+            width: 1,
+            height: 1,
+            fill: colorWithAlpha(colorRef.current, 0.08),
+            stroke: colorRef.current,
+            strokeWidth: 2,
+            strokeDashArray: [6, 5],
+            selectable: false,
+            evented: false,
+            objectCaching: false,
+          })
+        : createShapeObject(activeTool, pointer, colorRef.current, strokeWidthRef.current, shapeModeRef.current);
 
     setObjectRole(object, activeTool === 'mosaic' || activeTool === 'blur' ? 'transient' : 'annotation');
     canvas.add(object);
     drawingStateRef.current = { tool: activeTool, start: pointer, object };
-  }, [addTextAt, removeObjects, updatePolylinePreview]);
+  }, [removeObjects, updatePolylinePreview]);
 
   const handleCanvasMouseMove = useCallback((event: TPointerEventInfo) => {
     const canvas = fabricCanvasRef.current;
@@ -913,7 +966,7 @@ export function ImageEditorTool() {
     const drawingState = drawingStateRef.current;
     if (!drawingState) return;
 
-    updateShapeObject(drawingState.object, drawingState.tool === 'blur' || drawingState.tool === 'mosaic' ? 'rectangle' : drawingState.tool, drawingState.start, pointer);
+    updateShapeObject(drawingState.object, drawingState.tool === 'blur' || drawingState.tool === 'mosaic' || drawingState.tool === 'text' ? 'rectangle' : drawingState.tool, drawingState.start, pointer);
     canvas.requestRenderAll();
   }, [updatePolylinePreview]);
 
@@ -931,8 +984,13 @@ export function ImageEditorTool() {
       return;
     }
 
+    if (drawingState.tool === 'text') {
+      addTextBox(drawingState.start, pointer);
+      return;
+    }
+
     addAnnotationObject(drawingState.object);
-  }, [addAnnotationObject, createEffectPatch]);
+  }, [addAnnotationObject, addTextBox, createEffectPatch]);
 
   useEffect(() => {
     const element = canvasElementRef.current;

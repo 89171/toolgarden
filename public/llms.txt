@@ -1,10 +1,10 @@
-# JSON Toolkit — llms.txt
+# ToolGarden — llms.txt
 
 > A free collection of browser-based JSON processing tools. Tool inputs are processed locally in the browser and are not uploaded to the server.
 
-## What is JSON Toolkit?
+## What is ToolGarden?
 
-JSON Toolkit provides developers with a suite of tools for working with JSON data. All tools run entirely in the browser using client-side JavaScript.
+ToolGarden provides developers with a suite of tools for working with JSON data. All tools run entirely in the browser using client-side JavaScript.
 
 ## Available Tools
 

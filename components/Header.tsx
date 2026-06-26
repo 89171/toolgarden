@@ -97,7 +97,7 @@ const Header: React.FC<HeaderProps> = ({ compact = false }) => {
         <nav className="relative flex flex-wrap items-center justify-start gap-2 text-sm text-content-muted" aria-label={t('nav.title')}>
           <div className="group relative">
             <Link
-              href="/"
+              href={`/${locale}`}
               className="flex items-center gap-2 rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
             >
               <span>{t('nav.json_tools_menu')}</span>
@@ -122,7 +122,7 @@ const Header: React.FC<HeaderProps> = ({ compact = false }) => {
 
           <div className="group relative">
             <Link
-              href="/image"
+              href={`/${locale}/image`}
               className="flex items-center gap-2 rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
             >
               <span>{t('nav.image_toolbar')}</span>
@@ -137,7 +137,7 @@ const Header: React.FC<HeaderProps> = ({ compact = false }) => {
 
           <div className="group relative">
             <Link
-              href="/pdf"
+              href={`/${locale}/pdf`}
               className="flex items-center gap-2 rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
             >
               <span>{t('nav.pdf_tools')}</span>
@@ -197,7 +197,7 @@ const Header: React.FC<HeaderProps> = ({ compact = false }) => {
 
           <div className="group relative">
             <Link
-              href="/subtitle-maker"
+              href={`/${locale}/subtitle-maker`}
               className="flex items-center gap-2 rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
             >
               <span>{t('nav.subtitle_tools')}</span>

@@ -132,6 +132,8 @@
     "file_list_title": "文件列表",
     "file_count": "{count} 个文件",
     "empty_list": "上传文件后会显示在这里。",
+    "move_up": "上移",
+    "move_down": "下移",
     "merge_action": "开始合并",
     "merging": "合并中...",
     "mode_descriptions": {
@@ -172,6 +174,10 @@
     "duration_result": "耗时 {duration}ms",
     "file_preview_note": "合并文件已生成，可直接下载。",
     "excel_preview_note": "Excel 输出文件已生成，可直接下载。",
+    "excel_sheet_tabs_label": "切换预览 Sheet",
+    "excel_preview_meta": "预览 {shownRows}/{totalRows} 行，{shownColumns}/{totalColumns} 列",
+    "excel_preview_truncated": "预览仅展示部分数据，下载的 Excel 包含完整合并结果。",
+    "excel_preview_empty": "这个 Sheet 暂无可预览数据。",
     "idle_desc": "当前为 {mode} 模式，上传文件后点击合并。",
     "errors": {
       "empty_selection": "请先添加至少一个文件。",
@@ -702,7 +708,7 @@
       "fill": "填充"
     },
     "text_content": "文字内容",
-    "text_placeholder": "输入要放到图片上的文字",
+    "text_placeholder": "可选默认文字，也可在画布上直接输入",
     "font_size": "字号",
     "mosaic_size": "马赛克块大小",
     "blur_radius": "模糊半径",
