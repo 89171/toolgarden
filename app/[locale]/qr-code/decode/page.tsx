@@ -24,6 +24,7 @@ export default function QrCodeDecodePage() {
   const [decodeError, setDecodeError] = useState('');
   const [decoding, setDecoding] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [draggingImage, setDraggingImage] = useState(false);
 
   const errorMessage = (code: QrFailureCode, detail?: string) =>
     t(`errors.${code}`, {
@@ -35,6 +36,7 @@ export default function QrCodeDecodePage() {
   const decodeFile = async (file: File | undefined) => {
     if (!file) return;
 
+    setDraggingImage(false);
     setDecoding(true);
     setDecoded(null);
     setDecodeError('');
@@ -61,6 +63,14 @@ export default function QrCodeDecodePage() {
     setDecoded(null);
     setDecodeError('');
     setCopied(false);
+  };
+
+  const hasDraggedFile = (event: React.DragEvent<HTMLElement>) => (
+    Array.from(event.dataTransfer.types).includes('Files')
+  );
+
+  const openFilePicker = () => {
+    fileInputRef.current?.click();
   };
 
   return (
@@ -92,17 +102,38 @@ export default function QrCodeDecodePage() {
                 event.target.value = '';
               }}
             />
-            <div
-              onDragOver={(event) => event.preventDefault()}
+            <button
+              type="button"
+              onClick={openFilePicker}
+              onDragEnter={(event) => {
+                if (!hasDraggedFile(event)) return;
+                event.preventDefault();
+                setDraggingImage(true);
+              }}
+              onDragOver={(event) => {
+                if (!hasDraggedFile(event)) return;
+                event.preventDefault();
+                event.dataTransfer.dropEffect = 'copy';
+                setDraggingImage(true);
+              }}
+              onDragLeave={(event) => {
+                if (event.currentTarget.contains(event.relatedTarget as Node | null)) return;
+                setDraggingImage(false);
+              }}
               onDrop={(event) => {
                 event.preventDefault();
+                setDraggingImage(false);
                 void decodeFile(event.dataTransfer.files?.[0]);
               }}
-              className="flex flex-grow min-h-72 flex-col items-center justify-center rounded border border-dashed border-border-base bg-surface-raised p-6 text-center transition-colors hover:border-border-strong"
+              className={`flex flex-grow min-h-72 cursor-pointer flex-col items-center justify-center rounded border border-dashed p-6 text-center transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong ${
+                draggingImage
+                  ? 'border-border-strong bg-surface-hover ring-2 ring-action/30'
+                  : 'border-border-base bg-surface-raised hover:border-border-strong hover:bg-surface-hover'
+              }`}
             >
               <p className="text-sm font-medium text-content-secondary">{t('drop_title')}</p>
               <p className="mt-2 text-xs text-content-faint">{t('drop_hint')}</p>
-            </div>
+            </button>
           </Panel>
 
           <Panel

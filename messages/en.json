@@ -1786,7 +1786,7 @@
       "decode_title": "Upload QR image",
       "result_title": "Decoded result",
       "choose_image": "Choose image",
-      "drop_title": "Use the button or drop a QR image here",
+      "drop_title": "Click or drop a QR image here",
       "drop_hint": "Supports PNG / JPG / WebP / GIF / BMP",
       "decoding": "Decoding...",
       "empty_decode": "Decoded text will appear after uploading a QR image",

@@ -1786,7 +1786,7 @@
       "decode_title": "上传二维码图片",
       "result_title": "识别结果",
       "choose_image": "选择图片",
-      "drop_title": "点击按钮或拖拽二维码图片到这里",
+      "drop_title": "点击或拖拽二维码图片到这里",
       "drop_hint": "支持 PNG / JPG / WebP / GIF / BMP",
       "decoding": "识别中...",
       "empty_decode": "上传二维码图片后显示识别结果",

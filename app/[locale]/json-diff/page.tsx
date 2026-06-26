@@ -54,10 +54,9 @@ function DiffCell({
 }) {
   const isBlank = (side === 'left' && type === 'added') || (side === 'right' && type === 'removed');
   const styles = side === 'left' ? leftCellStyles[type] : rightCellStyles[type];
-  const sideBorder = side === 'right' ? 'lg:border-l lg:border-border-base' : '';
 
   return (
-    <div className={`min-h-10 border-b border-border-subtle px-3 py-2 font-mono text-xs ${styles} ${sideBorder}`}>
+    <div className={`min-h-10 border-b border-border-subtle px-3 py-2 font-mono text-xs ${styles}`}>
       <div className="grid grid-cols-[1.25rem_minmax(7rem,14rem)_minmax(0,1fr)] gap-2">
         <span className="font-bold text-content-muted">{marker}</span>
         <span className="truncate text-content-faint" title={path || '$'}>{path || '$'}</span>
@@ -69,23 +68,37 @@ function DiffCell({
   );
 }
 
-function SideBySideDiffRow({ line }: { line: DiffLine }) {
+function DiffSideColumn({
+  side,
+  lines,
+  emptyMessage,
+}: {
+  side: 'left' | 'right';
+  lines: DiffLine[];
+  emptyMessage: string;
+}) {
+  const markerMap = side === 'left' ? leftMarker : rightMarker;
+
+  if (lines.length === 0) {
+    return (
+      <div className="flex min-h-36 flex-grow items-center justify-center p-4 text-center text-sm text-content-faint">
+        {emptyMessage}
+      </div>
+    );
+  }
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2">
-      <DiffCell
-        marker={leftMarker[line.type]}
-        path={line.path}
-        value={line.leftValue}
-        type={line.type}
-        side="left"
-      />
-      <DiffCell
-        marker={rightMarker[line.type]}
-        path={line.path}
-        value={line.rightValue}
-        type={line.type}
-        side="right"
-      />
+    <div className="min-h-0 flex-grow overflow-auto">
+      {lines.map((line, index) => (
+        <DiffCell
+          key={`${side}-${line.path}-${index}`}
+          marker={markerMap[line.type]}
+          path={line.path}
+          value={side === 'left' ? line.leftValue : line.rightValue}
+          type={line.type}
+          side={side}
+        />
+      ))}
     </div>
   );
 }
@@ -97,7 +110,6 @@ function EditorPane({
   clearLabel,
   onChange,
   onClear,
-  side,
 }: {
   title: string;
   value: string;
@@ -105,12 +117,9 @@ function EditorPane({
   clearLabel: string;
   onChange: (value: string) => void;
   onClear: () => void;
-  side: 'left' | 'right';
 }) {
-  const sideBorder = side === 'right' ? 'lg:border-l lg:border-border-base' : '';
-
   return (
-    <div className={`border-b border-border-base bg-surface p-4 ${sideBorder}`}>
+    <div className="border-b border-border-base bg-surface p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-lg font-semibold text-content">{title}</h2>
         <Button variant="secondary" onClick={onClear}>{clearLabel}</Button>
@@ -139,6 +148,7 @@ export default function JsonDiffPage() {
     () => (result?.ok ? result.summary.lines.filter((line) => !(hideUnchanged && line.type === 'unchanged')) : []),
     [hideUnchanged, result]
   );
+  const emptyDiffMessage = t('identical');
 
   return (
     <ToolLayout toolId="json-diff">
@@ -155,8 +165,9 @@ export default function JsonDiffPage() {
             </label>
           </div>
         )}
-        <div className="flex-grow overflow-auto rounded-lg border border-border-input bg-surface-raised shadow min-h-0">
-          <div className="grid grid-cols-1 lg:grid-cols-2">
+        {result && !result.ok && <p className="rounded border border-border-base bg-danger-surface p-3 text-sm text-danger-content">{result.message}</p>}
+        <div className="grid flex-grow grid-cols-1 overflow-hidden rounded-lg border border-border-input bg-surface-raised shadow min-h-0 lg:grid-cols-2">
+          <div className="flex min-h-0 flex-col">
             <EditorPane
               title={t('left_title')}
               value={left}
@@ -164,8 +175,12 @@ export default function JsonDiffPage() {
               clearLabel={tc('clear')}
               onChange={setLeft}
               onClear={() => setLeft('')}
-              side="left"
             />
+            {result?.ok ? (
+              <DiffSideColumn side="left" lines={visibleLines} emptyMessage={emptyDiffMessage} />
+            ) : null}
+          </div>
+          <div className="flex min-h-0 flex-col lg:border-l lg:border-border-base">
             <EditorPane
               title={t('right_title')}
               value={right}
@@ -173,13 +188,11 @@ export default function JsonDiffPage() {
               clearLabel={tc('clear')}
               onChange={setRight}
               onClear={() => setRight('')}
-              side="right"
             />
+            {result?.ok ? (
+              <DiffSideColumn side="right" lines={visibleLines} emptyMessage={emptyDiffMessage} />
+            ) : null}
           </div>
-          {result && !result.ok && <p className="p-3 text-sm text-syntax-null">{result.message}</p>}
-          {result?.ok && result.summary.lines.length === 0 && <p className="p-3 text-center text-sm text-content-faint">{t('identical')}</p>}
-          {result?.ok && result.summary.lines.length > 0 && visibleLines.length === 0 && <p className="p-3 text-center text-sm text-content-faint">{t('identical')}</p>}
-          {visibleLines.map((line, index) => <SideBySideDiffRow key={`${line.path}-${index}`} line={line} />)}
         </div>
       </div>
     </ToolLayout>
