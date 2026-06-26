@@ -93,6 +93,14 @@ export interface ImageBackgroundRemovalSuccess {
 
 export type ImageBackgroundRemovalOutcome = ImageBackgroundRemovalSuccess | ImageConversionError;
 
+export type ImageWatermarkRemovalMethod = 'ai' | 'local';
+
+export interface ImageWatermarkRemovalProgress {
+  stage: 'model' | 'prepare' | 'compute' | 'encode' | 'fallback';
+  label: string;
+  percent: number;
+}
+
 export interface ImageCropRect {
   x: number;
   y: number;
@@ -112,6 +120,23 @@ export interface ImageInspectionSuccess {
 }
 
 export type ImageInspectionOutcome = ImageInspectionSuccess | ImageConversionError;
+
+export interface ImageWatermarkRemovalSuccess {
+  ok: true;
+  blob: Blob;
+  filename: string;
+  mimeType: ImageTargetConfig['mimeType'];
+  format: ImageTargetFormat;
+  method: ImageWatermarkRemovalMethod;
+  width: number;
+  height: number;
+  selection: ImageCropRect;
+  originalSize: number;
+  outputSize: number;
+  durationMs: number;
+}
+
+export type ImageWatermarkRemovalOutcome = ImageWatermarkRemovalSuccess | ImageConversionError;
 
 export interface ImageEditSuccess {
   ok: true;
@@ -245,6 +270,11 @@ export function createBackgroundRemovedImageFilename(filename: string): string {
   return `${base}-no-bg.png`;
 }
 
+export function createWatermarkRemovedImageFilename(filename: string, extension: string): string {
+  const base = filename.replace(/\.[^.]+$/, '') || 'image';
+  return `${base}-no-watermark.${extension}`;
+}
+
 export function calculateSavingsRatio(originalSize: number, outputSize: number): number {
   if (originalSize <= 0) return 0;
   return Math.max(0, (originalSize - outputSize) / originalSize);
@@ -276,6 +306,20 @@ export function createInitialCropRect(imageWidth: number, imageHeight: number): 
   return normalizeCropRect({
     x: Math.round((imageWidth - width) / 2),
     y: Math.round((imageHeight - height) / 2),
+    width,
+    height,
+  }, imageWidth, imageHeight);
+}
+
+export function createInitialWatermarkRect(imageWidth: number, imageHeight: number): ImageCropRect {
+  const width = Math.max(1, Math.round(imageWidth * 0.32));
+  const height = Math.max(1, Math.round(imageHeight * 0.14));
+  const marginX = Math.max(0, Math.round(imageWidth * 0.05));
+  const marginY = Math.max(0, Math.round(imageHeight * 0.05));
+
+  return normalizeCropRect({
+    x: imageWidth - width - marginX,
+    y: imageHeight - height - marginY,
     width,
     height,
   }, imageWidth, imageHeight);

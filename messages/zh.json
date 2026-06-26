@@ -438,6 +438,68 @@
       "general": "背景移除失败，请重试。"
     }
   },
+  "image_remove_watermark": {
+    "settings_title": "去水印设置",
+    "editor_title": "AI 选区修复",
+    "drop_title": "点击或拖拽图片上传",
+    "drop_hint": "支持 {formats}，所有处理都在本地完成",
+    "drop_action": "选择图片",
+    "input_formats": "支持格式",
+    "local_note": "请仅处理你拥有权利或已获授权修改的图片。AI 精修会在浏览器本地加载模型推理，图片不会上传到任何服务器，关闭页面后，数据即被清除。",
+    "method_title": "处理方式",
+    "method_ai": "AI 精修",
+    "method_local": "本地快速",
+    "method_ai_description": "使用 LaMa ONNX 模型在浏览器本地补全选区，首次会下载模型资源，适合照片和复杂纹理。",
+    "method_local_description": "不加载 AI 模型，直接用选区周边像素进行快速修复，适合纯色、渐变或截图背景。",
+    "source_image": "源图片",
+    "selection_title": "水印区域",
+    "selection_x": "X",
+    "selection_y": "Y",
+    "selection_width": "宽",
+    "selection_height": "高",
+    "reset_selection": "重置区域",
+    "feather": "边缘融合",
+    "feather_value": "{value}px",
+    "output_format": "输出格式",
+    "quality": "输出质量",
+    "quality_value": "{value}%",
+    "apply": "生成修复图",
+    "processing": "处理中",
+    "loading": "读取中",
+    "download": "下载图片",
+    "replace": "更换图片",
+    "empty_title": "等待图片输入",
+    "empty_body": "上传图片后，在原图上拖拽框选需要修复的水印区域。",
+    "output_empty": "修复后的图片会显示在这里",
+    "result_hint": "框选水印区域并生成修复图后，可在这里查看输出信息。",
+    "source_size": "原始尺寸",
+    "selection_size": "区域尺寸",
+    "output_size": "输出尺寸",
+    "file_size": "文件大小",
+    "duration": "耗时",
+    "duration_value": "{value}ms",
+    "result_method": "处理方式",
+    "method_value_ai": "AI 精修",
+    "method_value_local": "本地快速",
+    "progress_model": "加载本地 AI 模型",
+    "progress_prepare": "准备选区与遮罩",
+    "progress_compute": "AI 补全选区",
+    "progress_encode": "导出图片",
+    "progress_fallback": "切换本地快速修复",
+    "unknown_type": "未知类型",
+    "resize_handle": "调整水印区域",
+    "errors": {
+      "empty_file": "文件为空，请选择有效图片。",
+      "unsupported_input": "暂不支持这种图片类型：{type}。",
+      "file_too_large": "文件过大，最大支持 {maxSize}。",
+      "too_many_pixels": "图片尺寸过大，最大支持 {maxPixels}。",
+      "load_failed": "图片解码失败，文件可能已损坏或当前浏览器不支持该格式。",
+      "canvas_context": "无法创建 Canvas 绘图上下文。",
+      "canvas_export": "图片导出失败，请换一个浏览器重试。",
+      "unsupported_output": "当前浏览器不支持导出 {format}。",
+      "general": "图片修复失败，请重试。"
+    }
+  },
   "image_crop": {
     "settings_title": "图片裁剪",
     "editor_title": "裁剪编辑",
@@ -623,6 +685,77 @@
       "empty_text": "请先输入要放到图片上的文字。",
       "polyline_points": "折线至少需要两个点。",
       "general": "图片编辑失败，请重试。"
+    }
+  },
+  "image_watermark": {
+    "settings_title": "水印设置",
+    "drop_title": "点击或拖拽图片上传",
+    "drop_hint": "支持 {formats}，所有处理都在本地完成",
+    "drop_action": "选择图片",
+    "drop_replace": "释放鼠标以替换当前图片",
+    "replace": "更换图片",
+    "loading": "读取中",
+    "local_note": "所有文件处理都在本地完成，文件不会上传到任何服务器，关闭页面后，数据即被清除。",
+    "types": {
+      "text": "文字水印",
+      "image": "图片水印"
+    },
+    "text_content": "水印文字",
+    "text_placeholder": "输入要添加的水印文字",
+    "font_size": "字号",
+    "stroke_width": "描边",
+    "bold": "加粗",
+    "italic": "斜体",
+    "color": "颜色",
+    "choose_color": "选择颜色 {color}",
+    "upload_watermark": "上传水印图片",
+    "replace_watermark": "更换水印",
+    "image_scale": "水印大小",
+    "opacity": "透明度",
+    "rotation": "旋转",
+    "layout_title": "排列方式",
+    "layouts": {
+      "single": "单个",
+      "tile": "平铺",
+      "diagonal": "对角线"
+    },
+    "anchors": {
+      "top-left": "左上",
+      "top-center": "上中",
+      "top-right": "右上",
+      "middle-left": "左中",
+      "middle-center": "中心",
+      "middle-right": "右中",
+      "bottom-left": "左下",
+      "bottom-center": "下中",
+      "bottom-right": "右下"
+    },
+    "anchor_hint": "选择九宫格位置快速对齐",
+    "drag_hint": "也可以在右侧画布拖动水印到任意位置",
+    "spacing_x": "横向间距",
+    "spacing_y": "纵向间距",
+    "output_format": "输出格式",
+    "quality": "输出质量",
+    "quality_value": "{value}%",
+    "export": "添加水印并下载",
+    "exporting": "处理中",
+    "result_ready": "处理完成",
+    "download": "重新下载",
+    "output_size": "输出尺寸",
+    "file_size": "文件大小",
+    "duration": "耗时",
+    "duration_value": "{value}ms",
+    "unknown_type": "未知类型",
+    "errors": {
+      "empty_file": "文件为空，请选择有效图片。",
+      "unsupported_input": "暂不支持这种图片类型：{type}。",
+      "file_too_large": "文件过大，最大支持 {maxSize}。",
+      "too_many_pixels": "图片尺寸过大，最大支持 {maxPixels}。",
+      "load_failed": "图片解码失败，文件可能已损坏或当前浏览器不支持该格式。",
+      "canvas_context": "无法创建 Canvas 绘图上下文。",
+      "canvas_export": "图片导出失败，请换一个浏览器重试。",
+      "unsupported_output": "当前浏览器不支持导出 {format}。",
+      "general": "添加水印失败，请重试。"
     }
   },
   "qr_code": {
@@ -812,6 +945,46 @@
         {
           "question": "复杂背景能完全移除吗？",
           "answer": "工具会自动识别主体并生成透明背景，但发丝、半透明材质、低对比边缘或主体与背景过于相近时，可能需要后续手动修饰。"
+        }
+      ]
+    },
+    "image-remove-watermark": {
+      "items": [
+        {
+          "question": "图片去水印会上传文件吗？",
+          "answer": "不会。图片会在浏览器本地解码、AI 补全或快速修复并导出，文件不会上传到服务器。AI 精修首次会下载模型资源，之后通常会被浏览器缓存。"
+        },
+        {
+          "question": "什么类型的水印区域效果更好？",
+          "answer": "纯色背景、渐变背景、截图空白区或纹理较简单的区域效果更稳。复杂照片纹理、遮住主体细节或大面积半透明水印可能需要多次小范围框选。"
+        },
+        {
+          "question": "可以选择导出格式吗？",
+          "answer": "可以导出为 JPG、PNG 或 WebP。JPG 不支持透明通道，透明区域会填充为白色。"
+        },
+        {
+          "question": "可以处理任意图片吗？",
+          "answer": "请仅处理你拥有权利或已获授权修改的图片。工具只提供本地选区修复能力。"
+        }
+      ]
+    },
+    "image-watermark": {
+      "items": [
+        {
+          "question": "图片加水印会上传文件吗？",
+          "answer": "不会。图片会在浏览器本地通过 Canvas 渲染并导出，文件不会上传到服务器。"
+        },
+        {
+          "question": "支持哪些水印类型？",
+          "answer": "支持文字水印与图片水印。文字水印可以调字体、字号、颜色、粗体、斜体和描边；图片水印支持上传 PNG/JPG/WebP 等常见格式并调整大小。"
+        },
+        {
+          "question": "可以怎样定位水印？",
+          "answer": "提供三种排列方式：单个、平铺与对角线。单个模式下可点击九宫格快速对齐，或在画布上直接拖动到任意位置；平铺/对角线模式可以分别调整横向和纵向间距。"
+        },
+        {
+          "question": "导出格式有哪些选择？",
+          "answer": "可导出 PNG、JPG 或 WebP；JPG 与 WebP 还可以调整输出质量。JPG 不支持透明通道，透明区域会自动填充为白色。"
         }
       ]
     },
@@ -1027,8 +1200,8 @@
   },
   "image_hub": {
     "title": "图片工具",
-    "meta_title": "免费在线图片工具 - 图片编辑、压缩、合并、去背景、JPG、PNG、WebP 转换",
-    "description": "免费在线批量编辑、压缩、合并、去背景、转换、裁剪和修改图片尺寸，所有处理都在浏览器本地完成，支持绘制形状、文字、马赛克、模糊、智能压缩、图片合成 PDF 或长图、透明 PNG、JPG、PNG、WebP 输出、预览对比和 ZIP 批量下载。",
+    "meta_title": "免费在线图片工具 - 图片编辑、压缩、合并、去背景、去水印、JPG、PNG、WebP 转换",
+    "description": "免费在线批量编辑、压缩、合并、去背景、去水印、转换、裁剪和修改图片尺寸，所有处理都在浏览器本地完成，支持绘制形状、文字、马赛克、模糊、AI 选区修复、智能压缩、图片合成 PDF 或长图、透明 PNG、JPG、PNG、WebP 输出、预览对比和 ZIP 批量下载。",
     "all_tools": "图片转换工具",
     "breadcrumb": "图片工具",
     "privacy_note": "图片仅在本地浏览器处理，不会上传到服务器。"
@@ -1221,6 +1394,14 @@
     "image-remove-bg": {
       "name": "图片去背景",
       "description": "免费在线使用开源模型移除图片背景，在浏览器本地导出透明 PNG"
+    },
+    "image-remove-watermark": {
+      "name": "图片去水印",
+      "description": "免费在线框选图片水印区域，使用浏览器本地 AI 模型补全或快速修复，导出 JPG、PNG 或 WebP"
+    },
+    "image-watermark": {
+      "name": "图片加水印",
+      "description": "免费在线为图片添加文字或图片水印，支持拖动、九宫格定位、平铺、旋转和透明度设置"
     },
     "image-editor": {
       "name": "图片编辑",

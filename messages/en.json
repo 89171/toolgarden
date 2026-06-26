@@ -438,6 +438,68 @@
       "general": "Background removal failed. Please try again."
     }
   },
+  "image_remove_watermark": {
+    "settings_title": "Watermark removal",
+    "editor_title": "AI selection repair",
+    "drop_title": "Click or drop an image",
+    "drop_hint": "Supports {formats}. All processing stays local.",
+    "drop_action": "Choose image",
+    "input_formats": "Supported formats",
+    "local_note": "Only process images you own or have permission to modify. AI refine loads the model and runs inference locally in your browser. Images are not uploaded to any server, and data is cleared when you close the page.",
+    "method_title": "Processing mode",
+    "method_ai": "AI refine",
+    "method_local": "Fast local",
+    "method_ai_description": "Uses the LaMa ONNX model to inpaint the selected area locally in your browser. The first run downloads model assets and works best for photos or richer textures.",
+    "method_local_description": "Skips the AI model and repairs quickly from nearby pixels, which works well for flat colors, gradients, and screenshot backgrounds.",
+    "source_image": "Source image",
+    "selection_title": "Watermark area",
+    "selection_x": "X",
+    "selection_y": "Y",
+    "selection_width": "Width",
+    "selection_height": "Height",
+    "reset_selection": "Reset area",
+    "feather": "Edge blend",
+    "feather_value": "{value}px",
+    "output_format": "Output format",
+    "quality": "Output quality",
+    "quality_value": "{value}%",
+    "apply": "Generate repair",
+    "processing": "Processing",
+    "loading": "Loading",
+    "download": "Download image",
+    "replace": "Replace image",
+    "empty_title": "Waiting for an image",
+    "empty_body": "Upload an image, then drag on the source image to select the watermark area to repair.",
+    "output_empty": "The repaired image will appear here",
+    "result_hint": "Select the watermark area and generate a repair to see output details here.",
+    "source_size": "Original size",
+    "selection_size": "Area size",
+    "output_size": "Output size",
+    "file_size": "File size",
+    "duration": "Duration",
+    "duration_value": "{value}ms",
+    "result_method": "Mode",
+    "method_value_ai": "AI refine",
+    "method_value_local": "Fast local",
+    "progress_model": "Loading local AI model",
+    "progress_prepare": "Preparing area and mask",
+    "progress_compute": "Inpainting selection",
+    "progress_encode": "Exporting image",
+    "progress_fallback": "Switching to fast local repair",
+    "unknown_type": "Unknown type",
+    "resize_handle": "Resize watermark area",
+    "errors": {
+      "empty_file": "The file is empty. Choose a valid image.",
+      "unsupported_input": "This image type is not supported yet: {type}.",
+      "file_too_large": "The file is too large. Maximum size is {maxSize}.",
+      "too_many_pixels": "The image dimensions are too large. Maximum size is {maxPixels}.",
+      "load_failed": "The image could not be decoded. The file may be damaged or unsupported by this browser.",
+      "canvas_context": "Could not create a Canvas drawing context.",
+      "canvas_export": "Image export failed. Try another browser.",
+      "unsupported_output": "This browser cannot export {format}.",
+      "general": "Image repair failed. Please try again."
+    }
+  },
   "image_crop": {
     "settings_title": "Image crop",
     "editor_title": "Crop editor",
@@ -623,6 +685,77 @@
       "empty_text": "Enter text before placing it on the image.",
       "polyline_points": "A polyline needs at least two points.",
       "general": "Image editing failed. Please try again."
+    }
+  },
+  "image_watermark": {
+    "settings_title": "Watermark settings",
+    "drop_title": "Click or drop an image",
+    "drop_hint": "Supports {formats}. Everything runs locally.",
+    "drop_action": "Choose image",
+    "drop_replace": "Drop to replace the current image",
+    "replace": "Replace image",
+    "loading": "Loading",
+    "local_note": "All file processing happens locally. Files are not uploaded to any server and data is cleared when you close the page.",
+    "types": {
+      "text": "Text",
+      "image": "Image"
+    },
+    "text_content": "Watermark text",
+    "text_placeholder": "Enter the text to stamp on the image",
+    "font_size": "Font size",
+    "stroke_width": "Stroke",
+    "bold": "Bold",
+    "italic": "Italic",
+    "color": "Color",
+    "choose_color": "Choose color {color}",
+    "upload_watermark": "Upload watermark image",
+    "replace_watermark": "Replace watermark",
+    "image_scale": "Watermark size",
+    "opacity": "Opacity",
+    "rotation": "Rotation",
+    "layout_title": "Layout",
+    "layouts": {
+      "single": "Single",
+      "tile": "Tile",
+      "diagonal": "Diagonal"
+    },
+    "anchors": {
+      "top-left": "Top left",
+      "top-center": "Top center",
+      "top-right": "Top right",
+      "middle-left": "Middle left",
+      "middle-center": "Center",
+      "middle-right": "Middle right",
+      "bottom-left": "Bottom left",
+      "bottom-center": "Bottom center",
+      "bottom-right": "Bottom right"
+    },
+    "anchor_hint": "Snap to a nine-grid position",
+    "drag_hint": "You can also drag the watermark on the preview to any position",
+    "spacing_x": "Horizontal spacing",
+    "spacing_y": "Vertical spacing",
+    "output_format": "Output format",
+    "quality": "Output quality",
+    "quality_value": "{value}%",
+    "export": "Apply watermark & download",
+    "exporting": "Processing",
+    "result_ready": "Watermark applied",
+    "download": "Download again",
+    "output_size": "Output size",
+    "file_size": "File size",
+    "duration": "Duration",
+    "duration_value": "{value}ms",
+    "unknown_type": "Unknown type",
+    "errors": {
+      "empty_file": "The file is empty. Choose a valid image.",
+      "unsupported_input": "This image type is not supported yet: {type}.",
+      "file_too_large": "The file is too large. Maximum size is {maxSize}.",
+      "too_many_pixels": "The image dimensions are too large. Maximum size is {maxPixels}.",
+      "load_failed": "The image could not be decoded. The file may be damaged or unsupported by this browser.",
+      "canvas_context": "Could not create a Canvas drawing context.",
+      "canvas_export": "Image export failed. Try another browser.",
+      "unsupported_output": "This browser cannot export {format}.",
+      "general": "Watermarking failed. Please try again."
     }
   },
   "qr_code": {
@@ -812,6 +945,46 @@
         {
           "question": "Can it remove every complex background perfectly?",
           "answer": "The tool automatically detects the foreground and creates a transparent background, but hair, translucent materials, low-contrast edges, or similar foreground and background colors may still need manual retouching."
+        }
+      ]
+    },
+    "image-remove-watermark": {
+      "items": [
+        {
+          "question": "Does watermark removal upload my files?",
+          "answer": "No. Images are decoded, inpainted with AI or repaired quickly, and exported locally in your browser. Files are not uploaded to a server. AI refine downloads model assets on the first run and they are usually cached by the browser."
+        },
+        {
+          "question": "Which watermark areas work best?",
+          "answer": "Plain backgrounds, gradients, empty screenshot areas, and simple textures work best. Complex photo textures, subject details, or large translucent overlays may need several smaller selections."
+        },
+        {
+          "question": "Can I choose the output format?",
+          "answer": "Yes. You can export JPG, PNG, or WebP. JPG does not support alpha transparency, so transparent areas are filled with white."
+        },
+        {
+          "question": "Can I process any image?",
+          "answer": "Only process images you own or have permission to modify. The tool provides local AI inpainting and fast browser repair only."
+        }
+      ]
+    },
+    "image-watermark": {
+      "items": [
+        {
+          "question": "Does Add watermark upload my files?",
+          "answer": "No. Images are rendered locally in your browser via Canvas and exported on the spot. Files are never uploaded to a server."
+        },
+        {
+          "question": "What kinds of watermarks are supported?",
+          "answer": "Both text and image watermarks. Text watermarks let you tune font, size, color, bold, italic and stroke; image watermarks accept common formats like PNG, JPG and WebP, with adjustable size."
+        },
+        {
+          "question": "How can I position the watermark?",
+          "answer": "Three layouts: single, tile and diagonal. In single mode you can snap to a nine-grid position or drag the watermark anywhere on the preview. Tile/diagonal layouts expose horizontal and vertical spacing controls."
+        },
+        {
+          "question": "Which output formats can I choose?",
+          "answer": "PNG, JPG, or WebP. JPG and WebP also offer quality controls. JPG does not support transparency — transparent areas are filled with white."
         }
       ]
     },
@@ -1027,8 +1200,8 @@
   },
   "image_hub": {
     "title": "Image tools",
-    "meta_title": "Free Online Image Tools - Image Editing, Compression, Merge, Background Removal, JPG, PNG, and WebP Conversion",
-    "description": "Free online image tools for batch editing, compression, merging, background removal, conversion, cropping, and resizing locally in your browser, with shapes, text, mosaic, blur, smart compression, image-to-PDF or long-image output, transparent PNG, JPG, PNG, WebP output, preview comparison, and ZIP batch download.",
+    "meta_title": "Free Online Image Tools - Image Editing, Compression, Merge, Background and Watermark Removal, JPG, PNG, and WebP Conversion",
+    "description": "Free online image tools for batch editing, compression, merging, background removal, watermark removal, conversion, cropping, and resizing locally in your browser, with shapes, text, mosaic, blur, AI selection repair, smart compression, image-to-PDF or long-image output, transparent PNG, JPG, PNG, WebP output, preview comparison, and ZIP batch download.",
     "all_tools": "Image conversion tools",
     "breadcrumb": "Image tools",
     "privacy_note": "Images are processed locally in your browser and are not uploaded to a server."
@@ -1221,6 +1394,14 @@
     "image-remove-bg": {
       "name": "Remove image background",
       "description": "Free online background remover that processes images locally in your browser with an open-source model and exports a transparent PNG"
+    },
+    "image-remove-watermark": {
+      "name": "Image watermark remover",
+      "description": "Free online tool to select a watermark area, inpaint it with a local browser AI model or fast pixel repair, and export JPG, PNG, or WebP"
+    },
+    "image-watermark": {
+      "name": "Image watermark",
+      "description": "Free online tool to add text or image watermarks with drag positioning, grids, tiling, rotation, and opacity controls"
     },
     "image-editor": {
       "name": "Image editor",

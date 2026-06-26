@@ -96,6 +96,14 @@ Canonical examples:
 - Shows source and output preview comparison with a checkerboard background for transparency
 - Image files are not uploaded to a server
 
+### Image Watermark Remover (/image/remove-watermark)
+- Inpaints selected watermark areas locally in the browser with a LaMa ONNX model, with fast pixel repair as a fallback
+- Users drag or resize a rectangular selection over the area to repair
+- Supports edge blending to soften the repaired area
+- Exports the repaired image as JPG, PNG, or WebP; JPG uses a white background for transparent pixels
+- Best suited for images the user owns or has permission to modify, especially plain backgrounds, gradients, screenshots, simple textures, and moderate photo texture repair
+- Uses ONNX Runtime Web and browser Canvas APIs, and does not upload image data to a server
+
 ### Image Editor (/image/edit)
 - Edits JPG, PNG, WebP, GIF, BMP, SVG, AVIF, and common browser-decodable images locally in the browser
 - Uses a Fabric.js canvas so uploaded images can be edited directly without a separate preview pane

@@ -497,6 +497,38 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/remove-bg" />
   </url>
   <url>
+    <loc>https://toolgarden.xyz/zh/image/remove-watermark</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image/remove-watermark" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image/remove-watermark" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/remove-watermark" />
+  </url>
+  <url>
+    <loc>https://toolgarden.xyz/en/image/remove-watermark</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image/remove-watermark" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image/remove-watermark" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/remove-watermark" />
+  </url>
+  <url>
+    <loc>https://toolgarden.xyz/zh/image/watermark</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image/watermark" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image/watermark" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/watermark" />
+  </url>
+  <url>
+    <loc>https://toolgarden.xyz/en/image/watermark</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image/watermark" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image/watermark" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/watermark" />
+  </url>
+  <url>
     <loc>https://toolgarden.xyz/zh/image/edit</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

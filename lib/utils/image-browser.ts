@@ -5,6 +5,7 @@ import {
   createCompressedImageFilename,
   createEditedImageFilename,
   createImageOutputFilename,
+  createWatermarkRemovedImageFilename,
   formatFileSize,
   formatPixelLimit,
   getImageTargetConfig,
@@ -25,7 +26,14 @@ import {
   type ImageInspectionOutcome,
   type ImageTargetConfig,
   type ImageTargetFormat,
+  type ImageWatermarkRemovalMethod,
+  type ImageWatermarkRemovalOutcome,
+  type ImageWatermarkRemovalProgress,
 } from './image';
+
+type OrtWasmModule = typeof import('onnxruntime-web');
+type OrtInferenceSession = Awaited<ReturnType<OrtWasmModule['InferenceSession']['create']>>;
+type PicaInstance = ReturnType<typeof import('pica')['default']>;
 
 type WorkerFailureCode =
   | 'canvas_context'
@@ -98,6 +106,16 @@ interface QuantizedPngCandidate {
   colors?: number;
 }
 
+interface RasterSize {
+  width: number;
+  height: number;
+}
+
+interface SvgConversionSizes {
+  outputSize: RasterSize;
+  renderSize: RasterSize;
+}
+
 export interface ConvertImageOptions {
   quality?: number;
   jpegBackground?: string;
@@ -115,6 +133,16 @@ export interface CropResizeImageOptions {
   targetFormat: ImageTargetFormat;
   quality?: number;
   jpegBackground?: string;
+}
+
+export interface RemoveImageWatermarkOptions {
+  selection: ImageCropRect;
+  targetFormat: ImageTargetFormat;
+  method?: ImageWatermarkRemovalMethod;
+  quality?: number;
+  feather?: number;
+  jpegBackground?: string;
+  onProgress?: (progress: ImageWatermarkRemovalProgress) => void;
 }
 
 export interface RemoveImageBackgroundOptions {
@@ -139,8 +167,20 @@ const VISIBLE_DIFF_THRESHOLD = {
 const PNG_QUANTIZED_TARGET_SAVINGS = 0.25;
 const BACKGROUND_REMOVAL_PUBLIC_PATH =
   'https://staticimgly.com/@imgly/background-removal-data/${PACKAGE_VERSION}/dist/';
+const ONNX_WASM_PUBLIC_PATH = '/models/onnxruntime-web/';
+const WATERMARK_AI_MODEL_URL = 'https://huggingface.co/Carve/LaMa-ONNX/resolve/main/lama_fp32.onnx';
+const WATERMARK_AI_INPUT_SIZE = 512;
+const SVG_OUTPUT_SCALE = 3;
+const SVG_MIN_RENDER_LONG_SIDE = 2048;
+const SVG_MAX_RENDER_LONG_SIDE = 4096;
 const WATERMARK_TEXT = 'https://toolgarden.xyz';
 const WATERMARK_ALLOWED_ROOT_HOSTNAMES = ['toolgarden.xyz', 'json-toolkit.xyz'] as const;
+const WATERMARK_REPAIR_DISTANCE_POWER = 1.35;
+
+let watermarkInpaintSessionPromise:
+  | Promise<{ ort: OrtWasmModule; session: OrtInferenceSession }>
+  | null = null;
+let svgCanvasResizerPromise: Promise<PicaInstance> | null = null;
 
 interface WatermarkedImageOutput {
   blob: Blob;
@@ -171,6 +211,8 @@ async function convertImageFileInWorker(
   targetFormat: ImageTargetFormat,
   options: ConvertImageOptions
 ): Promise<ImageConversionOutcome | null> {
+  if (inferImageMimeType(file) === 'image/svg+xml') return null;
+
   const worker = getImageWorker();
   if (!worker) return null;
   const activeWorker = worker;
@@ -389,6 +431,244 @@ function loadImage(file: File): Promise<LoadedImage> {
     image.decoding = 'async';
     image.src = url;
   });
+}
+
+function parseSvgLength(value: string | null): number | null {
+  if (!value) return null;
+
+  const match = value.trim().match(/^([+-]?(?:\d+|\d*\.\d+)(?:e[+-]?\d+)?)([a-z%]*)$/i);
+  if (!match) return null;
+
+  const amount = Number(match[1]);
+  if (!Number.isFinite(amount) || amount <= 0) return null;
+
+  switch (match[2].toLowerCase()) {
+    case '':
+    case 'px':
+      return amount;
+    case 'in':
+      return amount * 96;
+    case 'cm':
+      return (amount * 96) / 2.54;
+    case 'mm':
+      return (amount * 96) / 25.4;
+    case 'pt':
+      return (amount * 96) / 72;
+    case 'pc':
+      return amount * 16;
+    default:
+      return null;
+  }
+}
+
+function parseSvgViewBox(value: string | null): RasterSize | null {
+  if (!value) return null;
+
+  const parts = value
+    .trim()
+    .split(/[\s,]+/)
+    .map((part) => Number(part));
+
+  if (parts.length !== 4 || parts.some((part) => !Number.isFinite(part))) return null;
+
+  const [, , width, height] = parts;
+  if (width <= 0 || height <= 0) return null;
+
+  return { width, height };
+}
+
+function getScaledRasterSize(width: number, height: number, targetLongSide: number): RasterSize {
+  const scale = targetLongSide / Math.max(width, height);
+
+  return {
+    width: Math.max(1, Math.round(width * scale)),
+    height: Math.max(1, Math.round(height * scale)),
+  };
+}
+
+function normalizeRasterSize(size: RasterSize): RasterSize {
+  return {
+    width: Math.max(1, Math.round(size.width)),
+    height: Math.max(1, Math.round(size.height)),
+  };
+}
+
+function clampSvgRenderSize(size: RasterSize): RasterSize {
+  let { width, height } = normalizeRasterSize(size);
+
+  if (Math.max(width, height) > SVG_MAX_RENDER_LONG_SIDE) {
+    const scaled = getScaledRasterSize(width, height, SVG_MAX_RENDER_LONG_SIDE);
+    width = scaled.width;
+    height = scaled.height;
+  }
+
+  const pixelCount = width * height;
+  if (pixelCount > MAX_IMAGE_PIXELS) {
+    const scale = Math.sqrt(MAX_IMAGE_PIXELS / pixelCount);
+    width = Math.max(1, Math.floor(width * scale));
+    height = Math.max(1, Math.floor(height * scale));
+  }
+
+  return { width, height };
+}
+
+function getSvgDocumentSize(svgText: string): RasterSize | null {
+  const document = new DOMParser().parseFromString(svgText, 'image/svg+xml');
+  const root = document.documentElement;
+
+  if (!root || root.nodeName.toLowerCase() !== 'svg') return null;
+  if (root.querySelector('parsererror')) return null;
+
+  const viewBox = parseSvgViewBox(root.getAttribute('viewBox'));
+  let width = parseSvgLength(root.getAttribute('width'));
+  let height = parseSvgLength(root.getAttribute('height'));
+
+  if ((!width || !height) && viewBox) {
+    const aspectRatio = viewBox.width / viewBox.height;
+
+    if (width && !height) {
+      height = width / aspectRatio;
+    } else if (!width && height) {
+      width = height * aspectRatio;
+    } else {
+      width = viewBox.width;
+      height = viewBox.height;
+    }
+  }
+
+  if (!width || !height) return viewBox;
+
+  return { width, height };
+}
+
+async function getSvgConversionSizes(file: File, fallback: RasterSize): Promise<SvgConversionSizes> {
+  let baseSize: RasterSize | null = null;
+
+  try {
+    baseSize = getSvgDocumentSize(await file.text());
+  } catch {
+    baseSize = null;
+  }
+
+  const fallbackSize = {
+    width: Math.max(1, fallback.width),
+    height: Math.max(1, fallback.height),
+  };
+  const parsedSize = baseSize && baseSize.width > 0 && baseSize.height > 0 ? baseSize : fallbackSize;
+  const outputSize = normalizeRasterSize({
+    width: parsedSize.width * SVG_OUTPUT_SCALE,
+    height: parsedSize.height * SVG_OUTPUT_SCALE,
+  });
+  const longSide = Math.max(outputSize.width, outputSize.height);
+  const renderBaseSize = longSide < SVG_MIN_RENDER_LONG_SIDE
+    ? getScaledRasterSize(outputSize.width, outputSize.height, SVG_MIN_RENDER_LONG_SIDE)
+    : outputSize;
+
+  return {
+    outputSize,
+    renderSize: longSide < SVG_MIN_RENDER_LONG_SIDE ? clampSvgRenderSize(renderBaseSize) : renderBaseSize,
+  };
+}
+
+async function getSvgCanvasResizer(): Promise<PicaInstance> {
+  if (!svgCanvasResizerPromise) {
+    svgCanvasResizerPromise = import('pica')
+      .then(({ default: createPica }) => createPica({ features: ['js'] }))
+      .catch((error) => {
+        svgCanvasResizerPromise = null;
+        throw error;
+      });
+  }
+
+  return svgCanvasResizerPromise;
+}
+
+function setHighQualitySmoothing(context: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D) {
+  context.imageSmoothingEnabled = true;
+  context.imageSmoothingQuality = 'high';
+}
+
+function createRasterCanvas(size: RasterSize): HTMLCanvasElement {
+  const canvas = document.createElement('canvas');
+  canvas.width = size.width;
+  canvas.height = size.height;
+  return canvas;
+}
+
+function drawCanvasWithSteppedDownscale(sourceCanvas: HTMLCanvasElement, targetCanvas: HTMLCanvasElement): boolean {
+  let currentCanvas = sourceCanvas;
+
+  while (
+    currentCanvas.width > targetCanvas.width * 2 ||
+    currentCanvas.height > targetCanvas.height * 2
+  ) {
+    const nextCanvas = document.createElement('canvas');
+    nextCanvas.width = Math.max(targetCanvas.width, Math.round(currentCanvas.width / 2));
+    nextCanvas.height = Math.max(targetCanvas.height, Math.round(currentCanvas.height / 2));
+    const nextContext = nextCanvas.getContext('2d');
+    if (!nextContext) return false;
+
+    setHighQualitySmoothing(nextContext);
+    nextContext.drawImage(
+      currentCanvas,
+      0,
+      0,
+      currentCanvas.width,
+      currentCanvas.height,
+      0,
+      0,
+      nextCanvas.width,
+      nextCanvas.height
+    );
+    currentCanvas = nextCanvas;
+  }
+
+  const targetContext = targetCanvas.getContext('2d');
+  if (!targetContext) return false;
+
+  targetContext.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
+  setHighQualitySmoothing(targetContext);
+  targetContext.drawImage(
+    currentCanvas,
+    0,
+    0,
+    currentCanvas.width,
+    currentCanvas.height,
+    0,
+    0,
+    targetCanvas.width,
+    targetCanvas.height
+  );
+  return true;
+}
+
+async function resizeSvgRenderCanvas(
+  renderCanvas: HTMLCanvasElement,
+  outputSize: RasterSize
+): Promise<HTMLCanvasElement | null> {
+  const outputCanvas = createRasterCanvas(outputSize);
+
+  if (renderCanvas.width === outputCanvas.width && renderCanvas.height === outputCanvas.height) {
+    const outputContext = outputCanvas.getContext('2d');
+    if (!outputContext) return null;
+
+    outputContext.drawImage(renderCanvas, 0, 0);
+    return outputCanvas;
+  }
+
+  try {
+    const resizer = await getSvgCanvasResizer();
+    await resizer.resize(renderCanvas, outputCanvas, {
+      quality: 3,
+      filter: 'mks2013',
+      unsharpAmount: 40,
+      unsharpRadius: 0.5,
+      unsharpThreshold: 1,
+    });
+    return outputCanvas;
+  } catch {
+    return drawCanvasWithSteppedDownscale(renderCanvas, outputCanvas) ? outputCanvas : null;
+  }
 }
 
 function canvasToBlob(
@@ -650,6 +930,500 @@ function canvasHasAlpha(sample: ImageData): boolean {
     if (data[index] < 250) return true;
   }
   return false;
+}
+
+function readPixel(imageData: ImageData, x: number, y: number): [number, number, number, number] {
+  const sampleX = clampNumber(Math.round(x), 0, imageData.width - 1);
+  const sampleY = clampNumber(Math.round(y), 0, imageData.height - 1);
+  const index = (sampleY * imageData.width + sampleX) * 4;
+  const data = imageData.data;
+
+  return [data[index], data[index + 1], data[index + 2], data[index + 3]];
+}
+
+function writePixel(
+  imageData: ImageData,
+  x: number,
+  y: number,
+  pixel: [number, number, number, number]
+) {
+  const index = (y * imageData.width + x) * 4;
+  const data = imageData.data;
+
+  data[index] = Math.round(pixel[0]);
+  data[index + 1] = Math.round(pixel[1]);
+  data[index + 2] = Math.round(pixel[2]);
+  data[index + 3] = Math.round(pixel[3]);
+}
+
+function estimateRepairPixel(
+  sourceData: ImageData,
+  selection: ImageCropRect,
+  x: number,
+  y: number
+): [number, number, number, number] {
+  const localX = x - selection.x;
+  const localY = y - selection.y;
+  const right = selection.x + selection.width;
+  const bottom = selection.y + selection.height;
+  const channels = [0, 0, 0, 0];
+  let totalWeight = 0;
+
+  function addSample(sampleX: number, sampleY: number, distance: number) {
+    const weight = 1 / Math.pow(Math.max(1, distance), WATERMARK_REPAIR_DISTANCE_POWER);
+    const pixel = readPixel(sourceData, sampleX, sampleY);
+
+    channels[0] += pixel[0] * weight;
+    channels[1] += pixel[1] * weight;
+    channels[2] += pixel[2] * weight;
+    channels[3] += pixel[3] * weight;
+    totalWeight += weight;
+  }
+
+  if (selection.x > 0) {
+    addSample(selection.x - 1, y, localX + 1);
+  }
+  if (right < sourceData.width) {
+    addSample(right, y, selection.width - localX);
+  }
+  if (selection.y > 0) {
+    addSample(x, selection.y - 1, localY + 1);
+  }
+  if (bottom < sourceData.height) {
+    addSample(x, bottom, selection.height - localY);
+  }
+  if (selection.x > 0 && selection.y > 0) {
+    addSample(selection.x - 1, selection.y - 1, Math.hypot(localX + 1, localY + 1));
+  }
+  if (right < sourceData.width && selection.y > 0) {
+    addSample(right, selection.y - 1, Math.hypot(selection.width - localX, localY + 1));
+  }
+  if (selection.x > 0 && bottom < sourceData.height) {
+    addSample(selection.x - 1, bottom, Math.hypot(localX + 1, selection.height - localY));
+  }
+  if (right < sourceData.width && bottom < sourceData.height) {
+    addSample(right, bottom, Math.hypot(selection.width - localX, selection.height - localY));
+  }
+
+  if (totalWeight <= 0) {
+    return readPixel(sourceData, x, y);
+  }
+
+  return [
+    channels[0] / totalWeight,
+    channels[1] / totalWeight,
+    channels[2] / totalWeight,
+    channels[3] / totalWeight,
+  ];
+}
+
+function softenRepairArea(canvas: HTMLCanvasElement, selection: ImageCropRect, feather: number) {
+  const context = canvas.getContext('2d');
+  if (!context || feather <= 0 || selection.width < 3 || selection.height < 3) return;
+
+  const pad = Math.max(2, Math.ceil(feather * 1.5));
+  const sourceX = Math.max(0, selection.x - pad);
+  const sourceY = Math.max(0, selection.y - pad);
+  const sourceRight = Math.min(canvas.width, selection.x + selection.width + pad);
+  const sourceBottom = Math.min(canvas.height, selection.y + selection.height + pad);
+  const sourceWidth = Math.max(1, sourceRight - sourceX);
+  const sourceHeight = Math.max(1, sourceBottom - sourceY);
+  const patch = document.createElement('canvas');
+  patch.width = sourceWidth;
+  patch.height = sourceHeight;
+  const patchContext = patch.getContext('2d');
+  if (!patchContext) return;
+
+  patchContext.drawImage(canvas, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, sourceWidth, sourceHeight);
+
+  context.save();
+  context.beginPath();
+  context.rect(selection.x, selection.y, selection.width, selection.height);
+  context.clip();
+  context.globalAlpha = 0.42;
+  context.filter = `blur(${clampNumber(Math.round(feather / 3), 1, 12)}px)`;
+  context.drawImage(patch, sourceX, sourceY);
+  context.restore();
+}
+
+function repairWatermarkArea(canvas: HTMLCanvasElement, selection: ImageCropRect, feather: number): boolean {
+  const context = canvas.getContext('2d', { willReadFrequently: true });
+  if (!context) return false;
+
+  const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+  const sourceData = new ImageData(new Uint8ClampedArray(imageData.data), imageData.width, imageData.height);
+
+  for (let y = selection.y; y < selection.y + selection.height; y += 1) {
+    for (let x = selection.x; x < selection.x + selection.width; x += 1) {
+      writePixel(imageData, x, y, estimateRepairPixel(sourceData, selection, x, y));
+    }
+  }
+
+  context.putImageData(imageData, 0, 0);
+  softenRepairArea(canvas, selection, feather);
+  return true;
+}
+
+function createWatermarkRemovalProgress(
+  stage: ImageWatermarkRemovalProgress['stage'],
+  label: string,
+  percent: number
+): ImageWatermarkRemovalProgress {
+  return {
+    stage,
+    label,
+    percent: clampNumber(Math.round(percent), 0, 100),
+  };
+}
+
+async function getWatermarkInpaintSession(
+  onProgress?: (progress: ImageWatermarkRemovalProgress) => void
+): Promise<{ ort: OrtWasmModule; session: OrtInferenceSession }> {
+  onProgress?.(createWatermarkRemovalProgress('model', 'model:loading', 8));
+
+  if (!watermarkInpaintSessionPromise) {
+    watermarkInpaintSessionPromise = (async () => {
+      const ort = await import('onnxruntime-web');
+
+      ort.env.wasm.numThreads = 1;
+      ort.env.wasm.proxy = false;
+      ort.env.wasm.wasmPaths = {
+        wasm: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.wasm`,
+        mjs: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.mjs`,
+      };
+
+      const session = await ort.InferenceSession.create(WATERMARK_AI_MODEL_URL, {
+        executionProviders: ['wasm'],
+        executionMode: 'sequential',
+        graphOptimizationLevel: 'all',
+      });
+
+      return { ort, session };
+    })().catch((error) => {
+      watermarkInpaintSessionPromise = null;
+      throw error;
+    });
+  }
+
+  const loaded = await watermarkInpaintSessionPromise;
+  onProgress?.(createWatermarkRemovalProgress('model', 'model:ready', 28));
+  return loaded;
+}
+
+function createCanvasFromLoadedImage(image: LoadedImage): HTMLCanvasElement | null {
+  const canvas = document.createElement('canvas');
+  canvas.width = image.width;
+  canvas.height = image.height;
+
+  const context = canvas.getContext('2d');
+  if (!context) return null;
+
+  context.drawImage(image.element, 0, 0);
+  return canvas;
+}
+
+function createWatermarkInpaintPatchRect(
+  selection: ImageCropRect,
+  imageWidth: number,
+  imageHeight: number
+): ImageCropRect {
+  const centerX = selection.x + selection.width / 2;
+  const centerY = selection.y + selection.height / 2;
+  const contextSize = Math.max(
+    48,
+    Math.round(Math.min(imageWidth, imageHeight) * 0.08),
+    Math.round(Math.max(selection.width, selection.height) * 0.8)
+  );
+  const maxSquareSide = Math.min(imageWidth, imageHeight);
+  const squareSide = clampNumber(
+    Math.round(Math.max(selection.width, selection.height) + contextSize * 2),
+    Math.max(selection.width, selection.height, 1),
+    maxSquareSide
+  );
+
+  if (selection.width <= squareSide && selection.height <= squareSide) {
+    return normalizeCropRect({
+      x: Math.round(clampNumber(centerX - squareSide / 2, 0, Math.max(0, imageWidth - squareSide))),
+      y: Math.round(clampNumber(centerY - squareSide / 2, 0, Math.max(0, imageHeight - squareSide))),
+      width: squareSide,
+      height: squareSide,
+    }, imageWidth, imageHeight);
+  }
+
+  const padX = Math.max(24, Math.round(selection.width * 0.65), Math.round(imageWidth * 0.04));
+  const padY = Math.max(24, Math.round(selection.height * 1.1), Math.round(imageHeight * 0.04));
+  const left = Math.max(0, Math.floor(selection.x - padX));
+  const top = Math.max(0, Math.floor(selection.y - padY));
+  const right = Math.min(imageWidth, Math.ceil(selection.x + selection.width + padX));
+  const bottom = Math.min(imageHeight, Math.ceil(selection.y + selection.height + padY));
+
+  return normalizeCropRect({
+    x: left,
+    y: top,
+    width: Math.max(1, right - left),
+    height: Math.max(1, bottom - top),
+  }, imageWidth, imageHeight);
+}
+
+function createWatermarkPatchCanvas(image: LoadedImage, patch: ImageCropRect): HTMLCanvasElement | null {
+  const canvas = document.createElement('canvas');
+  canvas.width = WATERMARK_AI_INPUT_SIZE;
+  canvas.height = WATERMARK_AI_INPUT_SIZE;
+  const context = canvas.getContext('2d');
+  if (!context) return null;
+
+  context.imageSmoothingEnabled = true;
+  context.imageSmoothingQuality = 'high';
+  context.drawImage(
+    image.element,
+    patch.x,
+    patch.y,
+    patch.width,
+    patch.height,
+    0,
+    0,
+    WATERMARK_AI_INPUT_SIZE,
+    WATERMARK_AI_INPUT_SIZE
+  );
+
+  return canvas;
+}
+
+function createWatermarkMaskCanvas(
+  selection: ImageCropRect,
+  patch: ImageCropRect,
+  feather: number
+): HTMLCanvasElement | null {
+  const canvas = document.createElement('canvas');
+  canvas.width = WATERMARK_AI_INPUT_SIZE;
+  canvas.height = WATERMARK_AI_INPUT_SIZE;
+  const context = canvas.getContext('2d');
+  if (!context) return null;
+
+  const scaleX = WATERMARK_AI_INPUT_SIZE / Math.max(1, patch.width);
+  const scaleY = WATERMARK_AI_INPUT_SIZE / Math.max(1, patch.height);
+  const maskX = (selection.x - patch.x) * scaleX;
+  const maskY = (selection.y - patch.y) * scaleY;
+  const maskWidth = selection.width * scaleX;
+  const maskHeight = selection.height * scaleY;
+  const maskPadding = clampNumber(Math.round(feather / 3), 1, 10);
+
+  context.fillStyle = '#000000';
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = '#ffffff';
+  context.fillRect(
+    Math.floor(maskX - maskPadding),
+    Math.floor(maskY - maskPadding),
+    Math.ceil(maskWidth + maskPadding * 2),
+    Math.ceil(maskHeight + maskPadding * 2)
+  );
+
+  return canvas;
+}
+
+function createWatermarkImageTensor(ort: OrtWasmModule, canvas: HTMLCanvasElement) {
+  const context = canvas.getContext('2d', { willReadFrequently: true });
+  if (!context) throw new Error('Canvas context failed');
+
+  const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+  const pixelCount = canvas.width * canvas.height;
+  const tensorData = new Float32Array(3 * pixelCount);
+  const source = imageData.data;
+
+  for (let pixelIndex = 0; pixelIndex < pixelCount; pixelIndex += 1) {
+    const sourceIndex = pixelIndex * 4;
+    const alpha = source[sourceIndex + 3] / 255;
+    tensorData[pixelIndex] = ((source[sourceIndex] * alpha) + 255 * (1 - alpha)) / 255;
+    tensorData[pixelCount + pixelIndex] = ((source[sourceIndex + 1] * alpha) + 255 * (1 - alpha)) / 255;
+    tensorData[pixelCount * 2 + pixelIndex] = ((source[sourceIndex + 2] * alpha) + 255 * (1 - alpha)) / 255;
+  }
+
+  return new ort.Tensor('float32', tensorData, [1, 3, canvas.height, canvas.width]);
+}
+
+function createWatermarkMaskTensor(ort: OrtWasmModule, canvas: HTMLCanvasElement) {
+  const context = canvas.getContext('2d', { willReadFrequently: true });
+  if (!context) throw new Error('Canvas context failed');
+
+  const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+  const pixelCount = canvas.width * canvas.height;
+  const tensorData = new Float32Array(pixelCount);
+  const source = imageData.data;
+
+  for (let pixelIndex = 0; pixelIndex < pixelCount; pixelIndex += 1) {
+    tensorData[pixelIndex] = source[pixelIndex * 4] > 127 ? 1 : 0;
+  }
+
+  return new ort.Tensor('float32', tensorData, [1, 1, canvas.height, canvas.width]);
+}
+
+interface OrtTensorLike {
+  data: ArrayLike<number>;
+  dims: readonly number[];
+}
+
+function isOrtTensorLike(value: unknown): value is OrtTensorLike {
+  return Boolean(
+    value &&
+    typeof value === 'object' &&
+    'data' in value &&
+    'dims' in value &&
+    Array.isArray((value as { dims?: unknown }).dims)
+  );
+}
+
+function normalizeTensorByte(value: number, normalizedOutput: boolean): number {
+  const scaled = normalizedOutput ? value * 255 : value;
+  return clampNumber(Math.round(scaled), 0, 255);
+}
+
+function tensorToImageCanvas(tensor: OrtTensorLike): HTMLCanvasElement | null {
+  const dims = Array.from(tensor.dims);
+  const data = tensor.data;
+  const maxSample = Math.min(data.length, 512);
+  let sampleMax = -Infinity;
+
+  for (let index = 0; index < maxSample; index += 1) {
+    sampleMax = Math.max(sampleMax, data[index]);
+  }
+
+  const normalizedOutput = sampleMax <= 1.5;
+  let width = WATERMARK_AI_INPUT_SIZE;
+  let height = WATERMARK_AI_INPUT_SIZE;
+  let channels = 3;
+  let layout: 'chw' | 'nhwc' = 'chw';
+  let offset = 0;
+
+  if (dims.length === 4 && dims[1] >= 3) {
+    channels = dims[1];
+    height = dims[2];
+    width = dims[3];
+    layout = 'chw';
+    offset = 0;
+  } else if (dims.length === 4 && dims[3] >= 3) {
+    height = dims[1];
+    width = dims[2];
+    channels = dims[3];
+    layout = 'nhwc';
+    offset = 0;
+  } else if (dims.length === 3 && dims[0] >= 3) {
+    channels = dims[0];
+    height = dims[1];
+    width = dims[2];
+    layout = 'chw';
+  } else if (dims.length === 3 && dims[2] >= 3) {
+    height = dims[0];
+    width = dims[1];
+    channels = dims[2];
+    layout = 'nhwc';
+  } else {
+    return null;
+  }
+
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const context = canvas.getContext('2d');
+  if (!context) return null;
+
+  const output = context.createImageData(width, height);
+  const planeSize = width * height;
+
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const pixelIndex = y * width + x;
+      const targetIndex = pixelIndex * 4;
+      let red: number;
+      let green: number;
+      let blue: number;
+
+      if (layout === 'chw') {
+        red = data[offset + pixelIndex];
+        green = data[offset + planeSize + pixelIndex];
+        blue = data[offset + planeSize * 2 + pixelIndex];
+      } else {
+        const sourceIndex = offset + pixelIndex * channels;
+        red = data[sourceIndex];
+        green = data[sourceIndex + 1];
+        blue = data[sourceIndex + 2];
+      }
+
+      output.data[targetIndex] = normalizeTensorByte(red, normalizedOutput);
+      output.data[targetIndex + 1] = normalizeTensorByte(green, normalizedOutput);
+      output.data[targetIndex + 2] = normalizeTensorByte(blue, normalizedOutput);
+      output.data[targetIndex + 3] = 255;
+    }
+  }
+
+  context.putImageData(output, 0, 0);
+  return canvas;
+}
+
+async function runAiWatermarkInpaint(
+  image: LoadedImage,
+  selection: ImageCropRect,
+  feather: number,
+  onProgress?: (progress: ImageWatermarkRemovalProgress) => void
+): Promise<HTMLCanvasElement> {
+  const { ort, session } = await getWatermarkInpaintSession(onProgress);
+  onProgress?.(createWatermarkRemovalProgress('prepare', 'prepare:patch', 36));
+
+  const patch = createWatermarkInpaintPatchRect(selection, image.width, image.height);
+  const patchCanvas = createWatermarkPatchCanvas(image, patch);
+  const maskCanvas = createWatermarkMaskCanvas(selection, patch, feather);
+
+  if (!patchCanvas || !maskCanvas) {
+    throw new Error('Canvas context failed');
+  }
+
+  const imageTensor = createWatermarkImageTensor(ort, patchCanvas);
+  const maskTensor = createWatermarkMaskTensor(ort, maskCanvas);
+  const imageInputName =
+    session.inputNames.find((name) => /image|img|input/i.test(name)) ?? session.inputNames[0];
+  const maskInputName =
+    session.inputNames.find((name) => /mask/i.test(name)) ??
+    session.inputNames.find((name) => name !== imageInputName);
+
+  if (!imageInputName || !maskInputName) {
+    throw new Error('Unexpected model inputs');
+  }
+
+  onProgress?.(createWatermarkRemovalProgress('compute', 'compute:inpaint', 58));
+
+  const result = await session.run({
+    [imageInputName]: imageTensor,
+    [maskInputName]: maskTensor,
+  });
+  const outputName = session.outputNames[0] ?? Object.keys(result)[0];
+  const output = outputName ? result[outputName] : undefined;
+
+  if (!isOrtTensorLike(output)) {
+    throw new Error('Unexpected model output');
+  }
+
+  const outputPatchCanvas = tensorToImageCanvas(output);
+  const repairCanvas = createCanvasFromLoadedImage(image);
+  if (!outputPatchCanvas || !repairCanvas) {
+    throw new Error('Canvas context failed');
+  }
+
+  const repairContext = repairCanvas.getContext('2d');
+  if (!repairContext) {
+    throw new Error('Canvas context failed');
+  }
+
+  onProgress?.(createWatermarkRemovalProgress('compute', 'compute:blend', 86));
+  repairContext.save();
+  repairContext.beginPath();
+  repairContext.rect(selection.x, selection.y, selection.width, selection.height);
+  repairContext.clip();
+  repairContext.imageSmoothingEnabled = true;
+  repairContext.imageSmoothingQuality = 'high';
+  repairContext.drawImage(outputPatchCanvas, patch.x, patch.y, patch.width, patch.height);
+  repairContext.restore();
+  softenRepairArea(repairCanvas, selection, feather);
+
+  return repairCanvas;
 }
 
 async function loadBlobImage(blob: Blob): Promise<LoadedImage> {
@@ -1001,7 +1775,14 @@ async function convertImageFileOnMainThread(
 
   try {
     const image = await loadImage(sourceFile);
-    const pixelCount = image.width * image.height;
+    const conversionSizes = sourceType === 'image/svg+xml'
+      ? await getSvgConversionSizes(sourceFile, image)
+      : {
+          outputSize: { width: image.width, height: image.height },
+          renderSize: { width: image.width, height: image.height },
+        };
+    const { outputSize, renderSize } = conversionSizes;
+    const pixelCount = outputSize.width * outputSize.height;
 
     if (!image.width || !image.height) {
       return { ok: false, code: 'load_failed' };
@@ -1015,9 +1796,7 @@ async function convertImageFileOnMainThread(
       };
     }
 
-    const canvas = document.createElement('canvas');
-    canvas.width = image.width;
-    canvas.height = image.height;
+    const canvas = createRasterCanvas(outputSize);
 
     const context = canvas.getContext('2d');
     if (!context) return { ok: false, code: 'canvas_context' };
@@ -1027,7 +1806,25 @@ async function convertImageFileOnMainThread(
       context.fillRect(0, 0, canvas.width, canvas.height);
     }
 
-    context.drawImage(image.element, 0, 0);
+    setHighQualitySmoothing(context);
+
+    if (
+      sourceType === 'image/svg+xml' &&
+      (renderSize.width !== outputSize.width || renderSize.height !== outputSize.height)
+    ) {
+      const renderCanvas = createRasterCanvas(renderSize);
+      const renderContext = renderCanvas.getContext('2d', { willReadFrequently: true });
+      if (!renderContext) return { ok: false, code: 'canvas_context' };
+
+      setHighQualitySmoothing(renderContext);
+      renderContext.drawImage(image.element, 0, 0, renderSize.width, renderSize.height);
+      const resizedCanvas = await resizeSvgRenderCanvas(renderCanvas, outputSize);
+      if (!resizedCanvas) return { ok: false, code: 'canvas_context' };
+
+      context.drawImage(resizedCanvas, 0, 0);
+    } else {
+      context.drawImage(image.element, 0, 0, outputSize.width, outputSize.height);
+    }
 
     const quality = target.supportsQuality
       ? normalizeImageQuality(options.quality ?? target.defaultQuality)
@@ -1054,8 +1851,8 @@ async function convertImageFileOnMainThread(
       blob,
       filename: createImageOutputFilename(file.name, output.extension),
       mimeType: output.mimeType,
-      width: image.width,
-      height: image.height,
+      width: outputSize.width,
+      height: outputSize.height,
       originalSize: file.size,
       outputSize: blob.size,
       durationMs: Math.round(performance.now() - startedAt),
@@ -1331,6 +2128,126 @@ export async function cropResizeImageFile(
       sourceWidth: image.width,
       sourceHeight: image.height,
       crop,
+      originalSize: file.size,
+      outputSize: blob.size,
+      durationMs: Math.round(performance.now() - startedAt),
+    };
+  } catch {
+    return { ok: false, code: 'load_failed' };
+  }
+}
+
+export async function removeImageWatermark(
+  file: File,
+  options: RemoveImageWatermarkOptions
+): Promise<ImageWatermarkRemovalOutcome> {
+  if (file.size === 0) return { ok: false, code: 'empty_file' };
+
+  if (file.size > MAX_IMAGE_FILE_SIZE) {
+    return {
+      ok: false,
+      code: 'file_too_large',
+      maxSize: formatFileSize(MAX_IMAGE_FILE_SIZE),
+    };
+  }
+
+  if (!isSupportedImageInput(file)) {
+    return {
+      ok: false,
+      code: 'unsupported_input',
+      detail: inferImageMimeType(file) || 'unknown',
+    };
+  }
+
+  const startedAt = performance.now();
+  const sourceType = inferImageMimeType(file);
+  const sourceFile = sourceType === file.type ? file : new File([file], file.name, { type: sourceType });
+  const target = getImageTargetConfig(options.targetFormat);
+
+  try {
+    const image = await loadImage(sourceFile);
+    const pixelCount = image.width * image.height;
+
+    if (!image.width || !image.height) {
+      return { ok: false, code: 'load_failed' };
+    }
+
+    if (pixelCount > MAX_IMAGE_PIXELS) {
+      return {
+        ok: false,
+        code: 'too_many_pixels',
+        maxPixels: formatPixelLimit(MAX_IMAGE_PIXELS),
+      };
+    }
+
+    const selection = normalizeCropRect(options.selection, image.width, image.height);
+    const feather = clampNumber(Math.round(options.feather ?? 12), 0, 36);
+    let repairCanvas: HTMLCanvasElement | null = null;
+    let method: ImageWatermarkRemovalMethod = 'local';
+
+    if ((options.method ?? 'ai') === 'ai') {
+      try {
+        repairCanvas = await runAiWatermarkInpaint(image, selection, feather, options.onProgress);
+        method = 'ai';
+      } catch {
+        options.onProgress?.(createWatermarkRemovalProgress('fallback', 'fallback:local', 90));
+      }
+    }
+
+    if (!repairCanvas) {
+      repairCanvas = createCanvasFromLoadedImage(image);
+      if (!repairCanvas) return { ok: false, code: 'canvas_context' };
+
+      if (!repairWatermarkArea(repairCanvas, selection, feather)) {
+        return { ok: false, code: 'canvas_context' };
+      }
+    }
+
+    const outputCanvas = document.createElement('canvas');
+    outputCanvas.width = image.width;
+    outputCanvas.height = image.height;
+    const outputContext = outputCanvas.getContext('2d');
+    if (!outputContext) return { ok: false, code: 'canvas_context' };
+
+    if (target.mimeType === 'image/jpeg') {
+      outputContext.fillStyle = options.jpegBackground ?? '#ffffff';
+      outputContext.fillRect(0, 0, outputCanvas.width, outputCanvas.height);
+    }
+    outputContext.drawImage(repairCanvas, 0, 0);
+
+    options.onProgress?.(createWatermarkRemovalProgress('encode', 'encode:image', 96));
+
+    const quality = target.supportsQuality
+      ? normalizeImageQuality(options.quality ?? target.defaultQuality)
+      : undefined;
+    const output = shouldWatermarkImageOutput()
+      ? await addWatermarkToCanvasBlob(outputCanvas, target, quality)
+      : {
+          blob: await canvasToBlob(outputCanvas, target.mimeType, quality),
+          mimeType: target.mimeType,
+          format: target.format,
+          extension: target.extension,
+        };
+    const blob = output.blob;
+
+    if (blob.type && blob.type !== output.mimeType) {
+      return {
+        ok: false,
+        code: 'unsupported_output',
+        detail: target.label,
+      };
+    }
+
+    return {
+      ok: true,
+      blob,
+      filename: createWatermarkRemovedImageFilename(file.name, output.extension),
+      mimeType: output.mimeType,
+      format: output.format,
+      method,
+      width: image.width,
+      height: image.height,
+      selection,
       originalSize: file.size,
       outputSize: blob.size,
       durationMs: Math.round(performance.now() - startedAt),
