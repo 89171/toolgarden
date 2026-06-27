@@ -79,8 +79,12 @@ type ObjectRole = 'base' | 'annotation' | 'transient';
 const OUTPUT_FORMATS: ImageTargetFormat[] = ['png', 'jpg', 'webp'];
 const HISTORY_LIMIT = 40;
 const CANVAS_VIEWPORT_PADDING = 32;
+const CANVAS_MIN_ZOOM_SCALE = 0.05;
+const CANVAS_MAX_ZOOM_SCALE = 6;
+const CANVAS_ZOOM_FACTOR = 1.25;
 const TEXTBOX_DEFAULT_WIDTH = 240;
 const TEXTBOX_MIN_WIDTH = 48;
+const POLYLINE_DUPLICATE_POINT_DISTANCE = 2;
 
 const COLOR_SWATCHES = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#14b8a6', '#3b82f6', '#8b5cf6', '#111827'];
 
@@ -197,6 +201,46 @@ const IconDownload: React.FC<IconProps> = ({ className }) => (
     <path d="M12 4v12" />
     <path d="m7 11 5 5 5-5" />
     <path d="M4 20h16" />
+  </svg>
+);
+const IconFullscreen: React.FC<IconProps> = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M8 3H3v5" />
+    <path d="M16 3h5v5" />
+    <path d="M21 16v5h-5" />
+    <path d="M8 21H3v-5" />
+  </svg>
+);
+const IconExitFullscreen: React.FC<IconProps> = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M9 3v6H3" />
+    <path d="M15 3v6h6" />
+    <path d="M21 15h-6v6" />
+    <path d="M3 15h6v6" />
+  </svg>
+);
+const IconZoomIn: React.FC<IconProps> = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <circle cx="10.5" cy="10.5" r="6.5" />
+    <path d="M10.5 7.5v6" />
+    <path d="M7.5 10.5h6" />
+    <path d="m16 16 5 5" />
+  </svg>
+);
+const IconZoomOut: React.FC<IconProps> = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <circle cx="10.5" cy="10.5" r="6.5" />
+    <path d="M7.5 10.5h6" />
+    <path d="m16 16 5 5" />
+  </svg>
+);
+const IconFit: React.FC<IconProps> = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M4 9V4h5" />
+    <path d="M20 9V4h-5" />
+    <path d="M20 15v5h-5" />
+    <path d="M4 15v5h5" />
+    <rect x="8" y="8" width="8" height="8" rx="1" />
   </svg>
 );
 
@@ -321,8 +365,13 @@ function exitActiveTextEditing(canvas: Canvas) {
   canvas.getObjects().forEach((object) => {
     if (object instanceof IText && object.isEditing) {
       object.exitEditing();
+      object.hiddenTextarea?.blur();
     }
   });
+}
+
+function getActiveEditingText(canvas: Canvas): IText | undefined {
+  return canvas.getObjects().find((object): object is IText => object instanceof IText && object.isEditing);
 }
 
 function createShapeObject(tool: ShapeTool, point: Point, color: string, strokeWidth: number, shapeMode: ShapeMode): FabricObject {
@@ -368,14 +417,51 @@ function updateShapeObject(object: FabricObject, tool: ShapeTool, start: Point, 
   object.setCoords();
 }
 
-function getCanvasDisplaySize(width: number, height: number, viewport: HTMLElement | null): { width: number; height: number } {
+function getPointDistance(a: Point, b: Point): number {
+  return Math.hypot(a.x - b.x, a.y - b.y);
+}
+
+function createPolylineFromScenePoints(points: Point[], options: NonNullable<ConstructorParameters<typeof Polyline>[1]>): Polyline {
+  const left = Math.min(...points.map((point) => point.x));
+  const top = Math.min(...points.map((point) => point.y));
+  const localPoints = points.map((point) => ({
+    x: point.x - left,
+    y: point.y - top,
+  }));
+
+  const polyline = new Polyline(localPoints, {
+    ...options,
+    left,
+    top,
+    originX: 'left',
+    originY: 'top',
+  });
+  polyline.setCoords();
+  return polyline;
+}
+
+function getCanvasFitScale(width: number, height: number, viewport: HTMLElement | null): number {
   const fallbackWidth = Math.max(160, Math.min(width, window.innerWidth - 48));
   const fallbackHeight = Math.max(160, Math.min(height, Math.round(window.innerHeight * 0.7)));
   const availableWidth = viewport ? viewport.clientWidth - CANVAS_VIEWPORT_PADDING : fallbackWidth;
   const availableHeight = viewport ? viewport.clientHeight - CANVAS_VIEWPORT_PADDING : fallbackHeight;
   const maxWidth = Math.max(160, availableWidth);
   const maxHeight = Math.max(160, availableHeight);
-  const scale = Math.min(maxWidth / width, maxHeight / height, 1);
+
+  return Math.max(CANVAS_MIN_ZOOM_SCALE, Math.min(maxWidth / width, maxHeight / height, 1));
+}
+
+function clampCanvasZoomScale(scale: number): number {
+  return Math.min(CANVAS_MAX_ZOOM_SCALE, Math.max(CANVAS_MIN_ZOOM_SCALE, scale));
+}
+
+function getCanvasDisplaySize(
+  width: number,
+  height: number,
+  viewport: HTMLElement | null,
+  zoomScale = getCanvasFitScale(width, height, viewport)
+): { width: number; height: number } {
+  const scale = clampCanvasZoomScale(zoomScale);
 
   return {
     width: Math.max(1, Math.floor(width * scale)),
@@ -383,8 +469,14 @@ function getCanvasDisplaySize(width: number, height: number, viewport: HTMLEleme
   };
 }
 
-function fitCanvasDisplaySize(canvas: Canvas, width: number, height: number, viewport: HTMLElement | null) {
-  const displaySize = getCanvasDisplaySize(width, height, viewport);
+function fitCanvasDisplaySize(
+  canvas: Canvas,
+  width: number,
+  height: number,
+  viewport: HTMLElement | null,
+  zoomScale?: number
+) {
+  const displaySize = getCanvasDisplaySize(width, height, viewport, zoomScale);
   canvas.setDimensions({ width: `${displaySize.width}px`, height: `${displaySize.height}px` }, { cssOnly: true });
 
   const wrapper = canvas.wrapperEl;
@@ -406,29 +498,53 @@ function fitCanvasDisplaySize(canvas: Canvas, width: number, height: number, vie
   });
 }
 
-function syncCanvasDisplaySize(canvas: Canvas, width: number, height: number, viewport: HTMLElement | null) {
+function syncCanvasDisplaySize(
+  canvas: Canvas,
+  width: number,
+  height: number,
+  viewport: HTMLElement | null,
+  zoomScale?: number
+) {
   canvas.setDimensions({ width, height });
-  fitCanvasDisplaySize(canvas, width, height, viewport);
+  fitCanvasDisplaySize(canvas, width, height, viewport, zoomScale);
 }
 
-function createPatchCanvasFromDataUrl(dataUrl: string, width: number, height: number): Promise<HTMLCanvasElement> {
-  return new Promise((resolve, reject) => {
-    const image = new Image();
-    image.onload = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = width;
-      canvas.height = height;
-      const context = canvas.getContext('2d');
-      if (!context) {
-        reject(new Error('Canvas context unavailable.'));
-        return;
-      }
-      context.drawImage(image, 0, 0, width, height);
-      resolve(canvas);
-    };
-    image.onerror = () => reject(new Error('Patch image could not be loaded.'));
-    image.src = dataUrl;
-  });
+function drawSourceToCanvas(
+  canvas: HTMLCanvasElement,
+  source: CanvasImageSource,
+  width: number,
+  height: number
+): boolean {
+  canvas.width = width;
+  canvas.height = height;
+  const context = canvas.getContext('2d');
+  if (!context) return false;
+  context.clearRect(0, 0, width, height);
+  context.drawImage(source, 0, 0, width, height);
+  return true;
+}
+
+function getBaseImageObject(canvas: Canvas): FabricImage | null {
+  const baseObject = canvas.getObjects().find((object) => isBaseObject(object)) ?? canvas.getObjects()[0];
+  return baseObject instanceof FabricImage ? baseObject : null;
+}
+
+function syncBaseCanvasFromBaseImage(
+  canvas: Canvas,
+  image: ImageInfo,
+  existingCanvas: HTMLCanvasElement | null
+): HTMLCanvasElement | null {
+  const baseImage = getBaseImageObject(canvas);
+  const element = baseImage?.getElement();
+  if (!element) return null;
+
+  const baseCanvas = existingCanvas ?? document.createElement('canvas');
+  const ok = drawSourceToCanvas(baseCanvas, element, image.width, image.height);
+  return ok ? baseCanvas : null;
+}
+
+async function createImageElementFromDataUrl(dataUrl: string): Promise<HTMLImageElement> {
+  return createImageSourceFromUrl(dataUrl).then((source) => source.element);
 }
 
 interface IconActionProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -487,12 +603,14 @@ export function ImageEditorTool() {
   const canvasViewportRef = useRef<HTMLDivElement>(null);
   const canvasElementRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<Canvas | null>(null);
+  const baseCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const sourceRef = useRef<EditorImageSource | null>(null);
   const sourceUrlRef = useRef('');
   const outputRef = useRef<OutputState | null>(null);
   const loadRequestRef = useRef(0);
   const drawingStateRef = useRef<DrawingState | null>(null);
   const polylineRef = useRef<PolylineState>({ points: [], preview: null });
+  const suppressNextTextCreateRef = useRef(false);
   const historyRef = useRef<string[]>([]);
   const historyIndexRef = useRef(-1);
   const isRestoringRef = useRef(false);
@@ -500,11 +618,12 @@ export function ImageEditorTool() {
   const colorRef = useRef('#ef4444');
   const strokeWidthRef = useRef(6);
   const shapeModeRef = useRef<ShapeMode>('stroke');
-  const textValueRef = useRef('');
   const fontSizeRef = useRef(36);
   const mosaicBlockSizeRef = useRef(18);
   const blurRadiusRef = useRef(8);
   const imageInfoRef = useRef<ImageInfo | null>(null);
+  const zoomScaleRef = useRef(1);
+  const zoomFitRef = useRef(true);
 
   const [canvasReady, setCanvasReady] = useState(false);
   const [imageInfo, setImageInfo] = useState<ImageInfo | null>(null);
@@ -513,7 +632,6 @@ export function ImageEditorTool() {
   const [color, setColor] = useState('#ef4444');
   const [strokeWidth, setStrokeWidth] = useState(6);
   const [shapeMode, setShapeMode] = useState<ShapeMode>('stroke');
-  const [textValue, setTextValue] = useState('');
   const [fontSize, setFontSize] = useState(36);
   const [mosaicBlockSize, setMosaicBlockSize] = useState(18);
   const [blurRadius, setBlurRadius] = useState(8);
@@ -526,6 +644,8 @@ export function ImageEditorTool() {
   const [isLoading, setIsLoading] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [draggingFile, setDraggingFile] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [zoomScale, setZoomScale] = useState(1);
 
   const accept = getImageAcceptValue();
   const target = getImageTargetConfig(outputFormat);
@@ -533,18 +653,25 @@ export function ImageEditorTool() {
   const canEdit = Boolean(imageInfo && canvasReady);
   const canExport = Boolean(imageInfo && canvasReady && !isLoading && !isExporting);
   const usesStrokeWidth = tool === 'brush' || tool === 'marker' || tool === 'rectangle' || tool === 'ellipse' || tool === 'polyline';
+  const zoomPercent = `${Math.round(zoomScale * 100)}%`;
+  const editorShellClassName = clsx(
+    'flex min-h-0 flex-grow flex-col gap-3',
+    isFullscreen
+      ? 'fixed inset-0 z-50 bg-background p-2 text-foreground sm:p-3'
+      : 'pb-4 sm:pb-8',
+  );
 
   useEffect(() => { toolRef.current = tool; }, [tool]);
   useEffect(() => { colorRef.current = color; }, [color]);
   useEffect(() => { strokeWidthRef.current = strokeWidth; }, [strokeWidth]);
   useEffect(() => { shapeModeRef.current = shapeMode; }, [shapeMode]);
-  useEffect(() => { textValueRef.current = textValue; }, [textValue]);
   useEffect(() => { fontSizeRef.current = fontSize; }, [fontSize]);
   useEffect(() => { mosaicBlockSizeRef.current = mosaicBlockSize; }, [mosaicBlockSize]);
   useEffect(() => { blurRadiusRef.current = blurRadius; }, [blurRadius]);
   useEffect(() => { imageInfoRef.current = imageInfo; }, [imageInfo]);
   useEffect(() => { sourceUrlRef.current = sourceUrl; }, [sourceUrl]);
   useEffect(() => { outputRef.current = output; }, [output]);
+  useEffect(() => { zoomScaleRef.current = zoomScale; }, [zoomScale]);
 
   const clearOutput = useCallback(() => {
     setOutput((current) => {
@@ -609,7 +736,15 @@ export function ImageEditorTool() {
       applyToolInteractivity(canvas, toolRef.current);
       const currentImage = imageInfoRef.current;
       if (currentImage) {
-        fitCanvasDisplaySize(canvas, currentImage.width, currentImage.height, canvasViewportRef.current);
+        const viewport = canvasViewportRef.current;
+        const nextScale = zoomFitRef.current
+          ? getCanvasFitScale(currentImage.width, currentImage.height, viewport)
+          : zoomScaleRef.current;
+        zoomScaleRef.current = nextScale;
+        setZoomScale(nextScale);
+        fitCanvasDisplaySize(canvas, currentImage.width, currentImage.height, viewport, nextScale);
+        const syncedBaseCanvas = syncBaseCanvasFromBaseImage(canvas, currentImage, baseCanvasRef.current);
+        if (syncedBaseCanvas) baseCanvasRef.current = syncedBaseCanvas;
       }
       canvas.discardActiveObject();
       canvas.requestRenderAll();
@@ -672,17 +807,66 @@ export function ImageEditorTool() {
     removeObjects(canvas.getActiveObjects());
   }, [removeObjects]);
 
+  const applyCanvasZoom = useCallback((nextScale: number, fitToViewport = false) => {
+    const canvas = fabricCanvasRef.current;
+    const currentImage = imageInfoRef.current;
+    if (!canvas || !currentImage) return;
+
+    const viewport = canvasViewportRef.current;
+    const scrollCenter = viewport
+      ? {
+          x: (viewport.scrollLeft + viewport.clientWidth / 2) / Math.max(1, viewport.scrollWidth),
+          y: (viewport.scrollTop + viewport.clientHeight / 2) / Math.max(1, viewport.scrollHeight),
+        }
+      : null;
+    const scale = clampCanvasZoomScale(nextScale);
+
+    zoomFitRef.current = fitToViewport;
+    zoomScaleRef.current = scale;
+    setZoomScale(scale);
+    fitCanvasDisplaySize(canvas, currentImage.width, currentImage.height, viewport, scale);
+    canvas.requestRenderAll();
+
+    if (viewport && scrollCenter) {
+      window.requestAnimationFrame(() => {
+        viewport.scrollLeft = scrollCenter.x * viewport.scrollWidth - viewport.clientWidth / 2;
+        viewport.scrollTop = scrollCenter.y * viewport.scrollHeight - viewport.clientHeight / 2;
+      });
+    }
+  }, []);
+
   const fitCurrentCanvas = useCallback(() => {
     const canvas = fabricCanvasRef.current;
     const currentImage = imageInfoRef.current;
     if (!canvas || !currentImage) return;
-    fitCanvasDisplaySize(canvas, currentImage.width, currentImage.height, canvasViewportRef.current);
+    const viewport = canvasViewportRef.current;
+    const nextScale = zoomFitRef.current
+      ? getCanvasFitScale(currentImage.width, currentImage.height, viewport)
+      : zoomScaleRef.current;
+    zoomScaleRef.current = nextScale;
+    setZoomScale(nextScale);
+    fitCanvasDisplaySize(canvas, currentImage.width, currentImage.height, viewport, nextScale);
     canvas.requestRenderAll();
   }, []);
+
+  const fitCanvasToViewport = useCallback(() => {
+    const currentImage = imageInfoRef.current;
+    if (!currentImage) return;
+    applyCanvasZoom(getCanvasFitScale(currentImage.width, currentImage.height, canvasViewportRef.current), true);
+  }, [applyCanvasZoom]);
+
+  const zoomIn = useCallback(() => {
+    applyCanvasZoom(zoomScaleRef.current * CANVAS_ZOOM_FACTOR);
+  }, [applyCanvasZoom]);
+
+  const zoomOut = useCallback(() => {
+    applyCanvasZoom(zoomScaleRef.current / CANVAS_ZOOM_FACTOR);
+  }, [applyCanvasZoom]);
 
   const selectTool = useCallback((nextTool: EditorTool) => {
     const canvas = fabricCanvasRef.current;
     drawingStateRef.current = null;
+    suppressNextTextCreateRef.current = false;
     if (toolRef.current === 'polyline' && nextTool !== 'polyline') resetPolyline();
 
     if (canvas) {
@@ -735,7 +919,6 @@ export function ImageEditorTool() {
   const addTextBox = useCallback((start: Point, end: Point) => {
     const canvas = fabricCanvasRef.current;
     const currentImage = imageInfoRef.current;
-    const value = textValueRef.current.trim();
     if (!canvas || !currentImage) return;
 
     exitActiveTextEditing(canvas);
@@ -749,7 +932,7 @@ export function ImageEditorTool() {
       ? Math.min(TEXTBOX_DEFAULT_WIDTH, maxWidth)
       : Math.max(TEXTBOX_MIN_WIDTH, Math.min(rect.width, maxWidth));
 
-    const text = new Textbox(value, {
+    const text = new Textbox('', {
       left,
       top,
       width,
@@ -779,6 +962,39 @@ export function ImageEditorTool() {
     recordHistory();
   }, [recordHistory]);
 
+  const syncBaseCanvasFromFabric = useCallback((): boolean => {
+    const canvas = fabricCanvasRef.current;
+    const currentImage = imageInfoRef.current;
+    if (!canvas || !currentImage) return false;
+
+    const baseCanvas = syncBaseCanvasFromBaseImage(canvas, currentImage, baseCanvasRef.current);
+    if (!baseCanvas) return false;
+
+    baseCanvasRef.current = baseCanvas;
+    return true;
+  }, []);
+
+  const replaceBaseImageFromCanvas = useCallback(async (): Promise<boolean> => {
+    const canvas = fabricCanvasRef.current;
+    const currentImage = imageInfoRef.current;
+    const baseCanvas = baseCanvasRef.current;
+    if (!canvas || !currentImage || !baseCanvas) return false;
+
+    const baseImage = getBaseImageObject(canvas);
+    if (!baseImage) return false;
+
+    const imageElement = await createImageElementFromDataUrl(baseCanvas.toDataURL('image/png'));
+    baseImage.setElement(imageElement, {
+      width: currentImage.width,
+      height: currentImage.height,
+    });
+    configureBaseObject(baseImage);
+    canvas.sendObjectToBack(baseImage);
+    baseImage.setCoords();
+    canvas.requestRenderAll();
+    return true;
+  }, []);
+
   const createEffectPatch = useCallback(async (toolName: EffectTool, start: Point, end: Point) => {
     const canvas = fabricCanvasRef.current;
     const currentImage = imageInfoRef.current;
@@ -788,39 +1004,38 @@ export function ImageEditorTool() {
     if (rect.width < 2 || rect.height < 2) return;
 
     try {
-      const snapshot = canvas.toDataURL({
-        format: 'png',
-        multiplier: 1,
-        left: rect.x,
-        top: rect.y,
-        width: rect.width,
-        height: rect.height,
-        enableRetinaScaling: false,
-      });
-      const patchCanvas = await createPatchCanvasFromDataUrl(snapshot, rect.width, rect.height);
+      if (!baseCanvasRef.current && !syncBaseCanvasFromFabric()) {
+        setError(ti('errors.canvas_context'));
+        return;
+      }
+
+      const baseCanvas = baseCanvasRef.current;
+      if (!baseCanvas) {
+        setError(ti('errors.canvas_context'));
+        return;
+      }
+
       const ok = toolName === 'mosaic'
-        ? applyMosaic(patchCanvas, { x: 0, y: 0, width: rect.width, height: rect.height }, mosaicBlockSizeRef.current)
-        : applyBlur(patchCanvas, { x: 0, y: 0, width: rect.width, height: rect.height }, blurRadiusRef.current);
+        ? applyMosaic(baseCanvas, rect, mosaicBlockSizeRef.current)
+        : applyBlur(baseCanvas, rect, blurRadiusRef.current);
       if (!ok) {
         setError(ti('errors.canvas_context'));
         return;
       }
 
-      const patchImage = await FabricImage.fromURL(patchCanvas.toDataURL('image/png'));
-      patchImage.set({
-        left: rect.x,
-        top: rect.y,
-        originX: 'left',
-        originY: 'top',
-        selectable: true,
-        evented: true,
-      });
-      setObjectRole(patchImage, 'annotation');
-      addAnnotationObject(patchImage);
+      const replaced = await replaceBaseImageFromCanvas();
+      if (!replaced) {
+        setError(ti('errors.canvas_context'));
+        return;
+      }
+
+      canvas.discardActiveObject();
+      canvas.requestRenderAll();
+      recordHistory();
     } catch {
       setError(ti('errors.canvas_export'));
     }
-  }, [addAnnotationObject, ti]);
+  }, [recordHistory, replaceBaseImageFromCanvas, syncBaseCanvasFromFabric, ti]);
 
   const updatePolylinePreview = useCallback((pointer?: Point) => {
     const canvas = fabricCanvasRef.current;
@@ -830,30 +1045,23 @@ export function ImageEditorTool() {
     const points = pointer ? [...state.points, pointer] : state.points;
     if (points.length < 2) return;
 
-    if (!state.preview) {
-      const preview = new Polyline(points, {
-        fill: 'transparent',
-        stroke: colorRef.current,
-        strokeWidth: strokeWidthRef.current,
-        strokeLineCap: 'round',
-        strokeLineJoin: 'round',
-        strokeDashArray: [8, 6],
-        selectable: false,
-        evented: false,
-        objectCaching: false,
-      });
-      setObjectRole(preview, 'transient');
-      canvas.add(preview);
-      state.preview = preview;
-    } else {
-      state.preview.set({
-        points,
-        stroke: colorRef.current,
-        strokeWidth: strokeWidthRef.current,
-      });
-      state.preview.setDimensions();
-      state.preview.setCoords();
+    if (state.preview) {
+      canvas.remove(state.preview);
     }
+    const preview = createPolylineFromScenePoints(points, {
+      fill: 'transparent',
+      stroke: colorRef.current,
+      strokeWidth: strokeWidthRef.current,
+      strokeLineCap: 'round',
+      strokeLineJoin: 'round',
+      strokeDashArray: [8, 6],
+      selectable: false,
+      evented: false,
+      objectCaching: false,
+    });
+    setObjectRole(preview, 'transient');
+    canvas.add(preview);
+    polylineRef.current.preview = preview;
     canvas.requestRenderAll();
   }, []);
 
@@ -868,7 +1076,7 @@ export function ImageEditorTool() {
     }
 
     if (state.preview) canvas.remove(state.preview);
-    const polyline = new Polyline(state.points, {
+    const polyline = createPolylineFromScenePoints(state.points, {
       fill: 'transparent',
       stroke: colorRef.current,
       strokeWidth: strokeWidthRef.current,
@@ -880,6 +1088,33 @@ export function ImageEditorTool() {
     setPolylineCount(0);
     addAnnotationObject(polyline);
   }, [addAnnotationObject, ti]);
+
+  const addPolylinePoint = useCallback((point: Point): number => {
+    const state = polylineRef.current;
+    const lastPoint = state.points.at(-1);
+    if (lastPoint && getPointDistance(lastPoint, point) <= POLYLINE_DUPLICATE_POINT_DISTANCE) {
+      return state.points.length;
+    }
+
+    const points = [...state.points, point];
+    polylineRef.current.points = points;
+    setPolylineCount(points.length);
+    return points.length;
+  }, []);
+
+  const handleCanvasMouseDownBefore = useCallback((event: TPointerEventInfo) => {
+    const canvas = fabricCanvasRef.current;
+    if (!canvas || toolRef.current !== 'text') return;
+
+    const editingText = getActiveEditingText(canvas);
+    if (!editingText || event.target === editingText) return;
+
+    editingText.exitEditing();
+    editingText.hiddenTextarea?.blur();
+    canvas.discardActiveObject();
+    canvas.requestRenderAll();
+    suppressNextTextCreateRef.current = true;
+  }, []);
 
   const handleCanvasMouseDown = useCallback((event: TPointerEventInfo) => {
     const canvas = fabricCanvasRef.current;
@@ -899,6 +1134,11 @@ export function ImageEditorTool() {
 
     if (activeTool === 'select' || activeTool === 'brush' || activeTool === 'marker') return;
 
+    if (activeTool === 'text' && suppressNextTextCreateRef.current) {
+      suppressNextTextCreateRef.current = false;
+      return;
+    }
+
     if (activeTool === 'text' && event.target instanceof IText && !isBaseObject(event.target)) {
       exitActiveTextEditing(canvas);
       canvas.setActiveObject(event.target);
@@ -908,8 +1148,7 @@ export function ImageEditorTool() {
     }
 
     if (activeTool === 'polyline') {
-      polylineRef.current.points = [...polylineRef.current.points, pointer];
-      setPolylineCount(polylineRef.current.points.length);
+      addPolylinePoint(pointer);
       updatePolylinePreview();
       return;
     }
@@ -951,7 +1190,17 @@ export function ImageEditorTool() {
     setObjectRole(object, activeTool === 'mosaic' || activeTool === 'blur' ? 'transient' : 'annotation');
     canvas.add(object);
     drawingStateRef.current = { tool: activeTool, start: pointer, object };
-  }, [removeObjects, updatePolylinePreview]);
+  }, [addPolylinePoint, removeObjects, updatePolylinePreview]);
+
+  const handleCanvasDoubleClick = useCallback((event: TPointerEventInfo) => {
+    if (toolRef.current !== 'polyline') return;
+
+    const pointer = getCanvasPoint(event);
+    addPolylinePoint(pointer);
+    event.e.preventDefault();
+    event.e.stopPropagation();
+    finishPolyline();
+  }, [addPolylinePoint, finishPolyline]);
 
   const handleCanvasMouseMove = useCallback((event: TPointerEventInfo) => {
     const canvas = fabricCanvasRef.current;
@@ -1019,7 +1268,9 @@ export function ImageEditorTool() {
     if (!canvas || !canvasReady) return;
 
     const disposers = [
+      canvas.on('mouse:down:before', handleCanvasMouseDownBefore),
       canvas.on('mouse:down', handleCanvasMouseDown),
+      canvas.on('mouse:dblclick', handleCanvasDoubleClick),
       canvas.on('mouse:move', handleCanvasMouseMove),
       canvas.on('mouse:up', handleCanvasMouseUp),
       canvas.on('object:modified', () => recordHistory()),
@@ -1034,7 +1285,7 @@ export function ImageEditorTool() {
     return () => {
       disposers.forEach((dispose) => dispose());
     };
-  }, [canvasReady, handleCanvasMouseDown, handleCanvasMouseMove, handleCanvasMouseUp, recordHistory]);
+  }, [canvasReady, handleCanvasDoubleClick, handleCanvasMouseDown, handleCanvasMouseDownBefore, handleCanvasMouseMove, handleCanvasMouseUp, recordHistory]);
 
   useEffect(() => {
     const canvas = fabricCanvasRef.current;
@@ -1061,6 +1312,12 @@ export function ImageEditorTool() {
     };
   }, [canvasReady, fitCurrentCanvas, imageInfo]);
 
+  useEffect(() => {
+    if (!canvasReady) return;
+    const frame = window.requestAnimationFrame(fitCurrentCanvas);
+    return () => window.cancelAnimationFrame(frame);
+  }, [canvasReady, fitCurrentCanvas, isFullscreen]);
+
   useEffect(() => () => {
     if (sourceUrlRef.current) URL.revokeObjectURL(sourceUrlRef.current);
     if (outputRef.current) URL.revokeObjectURL(outputRef.current.url);
@@ -1071,6 +1328,10 @@ export function ImageEditorTool() {
       const targetElement = event.target as HTMLElement | null;
       const tagName = targetElement?.tagName.toLowerCase();
       if (tagName === 'input' || tagName === 'textarea' || targetElement?.isContentEditable) return;
+      if (event.key === 'Escape' && isFullscreen) {
+        setIsFullscreen(false);
+        return;
+      }
       if (event.key === 'Delete' || event.key === 'Backspace') {
         deleteSelected();
       }
@@ -1078,7 +1339,7 @@ export function ImageEditorTool() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [deleteSelected]);
+  }, [deleteSelected, isFullscreen]);
 
   const prepareFabricCanvas = useCallback((source: EditorImageSource) => {
     const canvas = fabricCanvasRef.current;
@@ -1086,7 +1347,16 @@ export function ImageEditorTool() {
 
     canvas.clear();
     canvas.backgroundColor = '#ffffff';
-    syncCanvasDisplaySize(canvas, source.width, source.height, canvasViewportRef.current);
+    const fitScale = getCanvasFitScale(source.width, source.height, canvasViewportRef.current);
+    zoomFitRef.current = true;
+    zoomScaleRef.current = fitScale;
+    setZoomScale(fitScale);
+    syncCanvasDisplaySize(canvas, source.width, source.height, canvasViewportRef.current, fitScale);
+    const baseCanvas = baseCanvasRef.current ?? document.createElement('canvas');
+    if (!drawSourceToCanvas(baseCanvas, source.element, source.width, source.height)) {
+      return false;
+    }
+    baseCanvasRef.current = baseCanvas;
 
     const baseImage = new FabricImage(source.element);
     configureBaseObject(baseImage);
@@ -1113,6 +1383,10 @@ export function ImageEditorTool() {
     resetPolyline();
     sourceRef.current = null;
     drawingStateRef.current = null;
+    baseCanvasRef.current = null;
+    zoomFitRef.current = true;
+    zoomScaleRef.current = 1;
+    setZoomScale(1);
     historyRef.current = [];
     historyIndexRef.current = -1;
     updateHistoryStatus();
@@ -1295,6 +1569,14 @@ export function ImageEditorTool() {
     }
   }, [handleFiles]);
 
+  const handleViewportWheel = useCallback((event: React.WheelEvent<HTMLDivElement>) => {
+    if (!imageInfoRef.current || (!event.ctrlKey && !event.metaKey)) return;
+    event.preventDefault();
+    applyCanvasZoom(
+      zoomScaleRef.current * (event.deltaY < 0 ? CANVAS_ZOOM_FACTOR : 1 / CANVAS_ZOOM_FACTOR)
+    );
+  }, [applyCanvasZoom]);
+
   return (
     <ToolLayout toolId="image-editor">
       <input
@@ -1308,10 +1590,10 @@ export function ImageEditorTool() {
         }}
       />
 
-      <div className="flex flex-grow flex-col gap-3 pb-4 min-h-0 sm:pb-8">
+      <div className={editorShellClassName}>
 
         {/* 顶部操作条 */}
-        <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border-base bg-surface px-3 py-2">
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border-base bg-surface px-3 py-2">
           <div className="flex items-center gap-2">
             <Button size="md" onClick={() => inputRef.current?.click()}>
               <span className="inline-flex items-center gap-1.5">
@@ -1346,6 +1628,30 @@ export function ImageEditorTool() {
               <IconReset className="h-4 w-4" />
             </IconAction>
             <span className="mx-1 h-5 w-px bg-border-subtle" aria-hidden />
+            <IconAction label={ti('zoom_out')} onClick={zoomOut} disabled={!imageInfo || zoomScale <= CANVAS_MIN_ZOOM_SCALE + 0.001}>
+              <IconZoomOut className="h-4 w-4" />
+            </IconAction>
+            <span className="min-w-12 text-center font-mono text-xs text-content-muted" aria-label={ti('zoom_level', { value: zoomPercent })}>
+              {zoomPercent}
+            </span>
+            <IconAction label={ti('zoom_in')} onClick={zoomIn} disabled={!imageInfo || zoomScale >= CANVAS_MAX_ZOOM_SCALE - 0.001}>
+              <IconZoomIn className="h-4 w-4" />
+            </IconAction>
+            <IconAction label={ti('zoom_fit')} onClick={fitCanvasToViewport} disabled={!imageInfo}>
+              <IconFit className="h-4 w-4" />
+            </IconAction>
+            <span className="mx-1 h-5 w-px bg-border-subtle" aria-hidden />
+            <IconAction
+              label={isFullscreen ? ti('exit_fullscreen') : ti('fullscreen')}
+              onClick={() => {
+                setIsFullscreen((current) => !current);
+                window.setTimeout(fitCurrentCanvas, 0);
+              }}
+              disabled={!canvasReady}
+            >
+              {isFullscreen ? <IconExitFullscreen className="h-4 w-4" /> : <IconFullscreen className="h-4 w-4" />}
+            </IconAction>
+            <span className="mx-1 h-5 w-px bg-border-subtle" aria-hidden />
             <Button variant="secondary" onClick={clearImage} disabled={!imageInfo && !error}>
               {tc('clear')}
             </Button>
@@ -1353,10 +1659,17 @@ export function ImageEditorTool() {
         </div>
 
         {/* 主编辑区：左工具栏 + 画布 + 右输出 */}
-        <div className="grid flex-grow min-h-0 grid-cols-1 gap-3 lg:grid-cols-[56px_minmax(0,1fr)_300px]">
+        <div
+          className={clsx(
+            'grid min-h-0 flex-grow grid-cols-1 gap-3',
+            isFullscreen
+              ? 'lg:grid-cols-[52px_minmax(0,1fr)_260px]'
+              : 'lg:grid-cols-[52px_minmax(0,1fr)_240px] xl:grid-cols-[52px_minmax(0,1fr)_260px]',
+          )}
+        >
 
           {/* 左侧垂直工具栏 */}
-          <div className="flex flex-row gap-1 overflow-x-auto rounded-lg border border-border-base bg-surface p-1.5 lg:flex-col lg:overflow-visible">
+          <div className="flex flex-row gap-1 overflow-x-auto rounded-md border border-border-base bg-surface p-1.5 lg:min-h-0 lg:flex-col lg:overflow-visible">
             {EDITOR_TOOLS.map(({ tool: option, Icon }) => (
               <IconAction
                 key={option}
@@ -1374,7 +1687,7 @@ export function ImageEditorTool() {
           <div className="flex min-h-0 flex-col gap-2">
 
             {/* 上下文选项条 */}
-            <div className="flex min-h-[44px] flex-wrap items-center gap-3 rounded-lg border border-border-base bg-surface px-3 py-2">
+            <div className="flex min-h-[44px] flex-wrap items-center gap-3 rounded-md border border-border-base bg-surface px-3 py-2">
               {/* 颜色（除选择/橡皮擦外都需要） */}
               {tool !== 'eraser' && tool !== 'select' && (
                 <div className="flex items-center gap-2">
@@ -1441,23 +1754,14 @@ export function ImageEditorTool() {
 
               {/* 文字 */}
               {tool === 'text' && (
-                <div className="flex flex-1 flex-wrap items-center gap-3">
-                  <input
-                    type="text"
-                    value={textValue}
-                    onChange={(event) => setTextValue(event.target.value)}
-                    placeholder={ti('text_placeholder')}
-                    className="min-w-[160px] flex-1 rounded-md border border-border-input bg-surface px-2.5 py-1.5 text-sm text-content outline-none transition-colors focus:border-border-strong"
-                  />
-                  <InlineRange
-                    label={ti('font_size')}
-                    value={fontSize}
-                    min={12}
-                    max={128}
-                    unit="px"
-                    onChange={setFontSize}
-                  />
-                </div>
+                <InlineRange
+                  label={ti('font_size')}
+                  value={fontSize}
+                  min={12}
+                  max={128}
+                  unit="px"
+                  onChange={setFontSize}
+                />
               )}
 
               {/* 马赛克 */}
@@ -1526,8 +1830,10 @@ export function ImageEditorTool() {
               onDragOver={handleViewportDragOver}
               onDragLeave={handleViewportDragLeave}
               onDrop={handleViewportDrop}
+              onWheel={handleViewportWheel}
               className={clsx(
-                'relative flex min-h-[26rem] flex-grow items-center justify-center overflow-hidden rounded-lg p-4 transition-colors lg:min-h-0',
+                'relative flex flex-grow items-center justify-center overflow-auto rounded-md p-3 transition-colors sm:p-4',
+                isFullscreen ? 'min-h-0' : 'min-h-[32rem] lg:min-h-0',
                 imageInfo ? 'bg-background' : 'bg-surface-raised',
                 draggingFile && 'ring-2 ring-action ring-offset-2 ring-offset-background',
               )}
@@ -1540,7 +1846,7 @@ export function ImageEditorTool() {
                 <button
                   type="button"
                   onClick={() => inputRef.current?.click()}
-                  className="absolute inset-4 flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed border-border-subtle bg-surface/70 transition-colors hover:border-border-strong hover:bg-surface"
+                  className="absolute inset-4 flex flex-col items-center justify-center gap-3 rounded-md border-2 border-dashed border-border-subtle bg-surface/70 transition-colors hover:border-border-strong hover:bg-surface"
                 >
                   <span className="flex h-14 w-14 items-center justify-center rounded-full bg-surface-hover text-content-muted">
                     <IconUpload className="h-7 w-7" />
@@ -1557,7 +1863,7 @@ export function ImageEditorTool() {
               )}
 
               {draggingFile && imageInfo && (
-                <div className="pointer-events-none absolute inset-2 flex items-center justify-center rounded-lg border-2 border-dashed border-action bg-action/10 text-sm font-semibold text-action">
+                <div className="pointer-events-none absolute inset-2 flex items-center justify-center rounded-md border-2 border-dashed border-action bg-action/10 text-sm font-semibold text-action">
                   {ti('drop_replace')}
                 </div>
               )}
@@ -1565,7 +1871,12 @@ export function ImageEditorTool() {
           </div>
 
           {/* 右侧输出/导出面板 */}
-          <aside className="flex min-h-0 flex-col gap-3 rounded-lg border border-border-base bg-surface p-3">
+          <aside
+            className={clsx(
+              'flex min-h-0 flex-col gap-3 rounded-md border border-border-base bg-surface p-3',
+              !isFullscreen && 'max-lg:min-h-[14rem]',
+            )}
+          >
             <div>
               <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-content-faint">{ti('output_format')}</h3>
               <div className="grid grid-cols-3 gap-1.5">

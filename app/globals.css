@@ -5,6 +5,10 @@
    修改主题时只需改这一层，其余自动生效
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 :root {
+  /* Typography */
+  --font-geist-sans:  ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-geist-mono:  ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+
   /* Page canvas */
   --background:        #ffffff;
   --foreground:        #171717;

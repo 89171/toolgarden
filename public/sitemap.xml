@@ -545,6 +545,22 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/edit" />
   </url>
   <url>
+    <loc>https://toolgarden.xyz/zh/image/to-icon</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image/to-icon" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image/to-icon" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/to-icon" />
+  </url>
+  <url>
+    <loc>https://toolgarden.xyz/en/image/to-icon</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image/to-icon" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image/to-icon" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/to-icon" />
+  </url>
+  <url>
     <loc>https://toolgarden.xyz/zh/image/to-jpg</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

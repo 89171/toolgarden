@@ -266,6 +266,15 @@ export const toolRegistry: ToolMeta[] = [
     featured: true,
   },
   {
+    id: 'image-to-icon',
+    name: '图片转 Icon',
+    description: '在浏览器本地将 PNG、SVG、JPG 等图片制作成 ICO、ICNS 或多尺寸 PNG ZIP 图标',
+    path: '/image/to-icon',
+    icon: 'ICO',
+    category: 'convert',
+    featured: true,
+  },
+  {
     id: 'image-to-jpg',
     name: '图片转 JPG',
     description: '在浏览器本地将 PNG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 JPG',

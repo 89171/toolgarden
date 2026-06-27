@@ -332,6 +332,79 @@
       "general": "转换失败，请重试。"
     }
   },
+  "image_icon_converter": {
+    "settings_title": "图标设置",
+    "workspace_title": "图标编辑",
+    "demo_title": "浏览器预览",
+    "output_title": "导出结果",
+    "drop_title": "上传图片制作图标",
+    "drop_hint": "支持 {formats}，所有处理都在浏览器本地完成",
+    "drop_action": "选择图片",
+    "loading": "读取中...",
+    "replace": "更换图片",
+    "source_dimensions": "源尺寸",
+    "source_size": "源文件",
+    "format_label": "输出格式",
+    "scale": "缩放",
+    "scale_value": "{value}%",
+    "radius": "角弧度",
+    "radius_value": "{value}%",
+    "remove_background": "一键移除背景",
+    "removing_background": "移除背景中...",
+    "background_removed": "已移除背景",
+    "restore_source": "还原原图",
+    "background_progress": "背景移除进度",
+    "reset": "重置位置",
+    "generate": "生成图标",
+    "generating": "生成中...",
+    "download": "下载图标",
+    "download_actions": {
+      "ico": "下载 ICO 容器文件",
+      "icns": "下载 ICNS 容器文件",
+      "png-zip": "下载 PNG ZIP"
+    },
+    "download_zip_actions": {
+      "ico": "下载多尺寸 ICO ZIP",
+      "icns": "下载多尺寸 ICNS ZIP",
+      "png-zip": "下载 PNG ZIP"
+    },
+    "canvas_label": "图标编辑画布",
+    "drag_hint": "拖动画布移动图像，拖拽右下角控制点或滚轮缩放",
+    "empty_title": "上传图片后编辑图标",
+    "empty_body": "预览区域会显示可拖拽缩放的图标和浏览器使用场景。",
+    "favicon_title": "Tool Garden",
+    "address_text": "toolgarden.xyz",
+    "favorites_demo": "收藏夹",
+    "output_format": "格式",
+    "output_size": "文件大小",
+    "zip_output_size": "ZIP 大小",
+    "icon_sizes": "包含尺寸",
+    "empty_output_title": "等待生成",
+    "empty_output_body": "选择 {format} 后生成图标，结果会显示在这里。",
+    "unknown_type": "未知类型",
+    "format_descriptions": {
+      "ico": "Windows favicon 与桌面图标，内含 16 到 256 像素的多尺寸图标条目。",
+      "icns": "macOS 图标容器，内含最高 1024 像素的多尺寸图标资源。",
+      "png-zip": "导出一组透明 PNG 图标，适合 PWA、网页和应用资源。"
+    },
+    "output_notes": {
+      "ico": "ICO 容器文件包含多套尺寸，浏览器、Windows、快捷方式、favicon 场景会自动选择合适的尺寸；ZIP 包会提供这些尺寸的独立 ICO 文件。",
+      "icns": "ICNS 容器文件包含多套尺寸，macOS、Finder 和应用图标场景会自动选择合适的尺寸；ZIP 包会提供这些尺寸的独立 ICNS 文件。",
+      "png-zip": "PNG ZIP 会下载一个压缩包，里面包含多个独立尺寸的 PNG 文件。"
+    },
+    "errors": {
+      "empty_file": "文件为空，请选择有效图片。",
+      "unsupported_input": "暂不支持这种图片类型：{type}。",
+      "file_too_large": "文件过大，最大支持 {maxSize}。",
+      "too_many_pixels": "图片尺寸过大，最大支持 {maxPixels}。",
+      "load_failed": "图片解码失败，文件可能已损坏或当前浏览器不支持该格式。",
+      "canvas_context": "无法创建 Canvas 绘图上下文。",
+      "canvas_export": "图标导出失败，请换一个浏览器重试。",
+      "unsupported_output": "当前浏览器不支持导出 {format}。",
+      "background_remove_failed": "背景移除失败，请换一张图片或稍后重试。",
+      "general": "图标生成失败，请重试。"
+    }
+  },
   "image_base64": {
     "to_settings_title": "图片转 Base64",
     "to_results_title": "Base64 结果",
@@ -693,7 +766,7 @@
     "polyline_title": "折线绘制",
     "polyline_count": "已添加 {count} 个点",
     "polyline_hint": "在画布上连续点击添加折线路径，完成后点击生成折线。",
-    "polyline_hint_inline": "连续点击画布添加点，至少 2 个点后可完成",
+    "polyline_hint_inline": "连续点击画布添加点，双击结束绘制",
     "select_hint": "在画布上点选/拖动对象，Delete 键可删除选中。",
     "drop_replace": "释放鼠标以替换当前图片",
     "finish_polyline": "完成",
@@ -726,6 +799,12 @@
     "redo": "重做",
     "delete_selected": "删除选中",
     "reset_all": "重置图片",
+    "zoom_in": "放大画布",
+    "zoom_out": "缩小画布",
+    "zoom_fit": "适配视口",
+    "zoom_level": "当前缩放 {value}",
+    "fullscreen": "全屏编辑",
+    "exit_fullscreen": "退出全屏",
     "result_ready": "导出完成",
     "download": "下载图片",
     "filename": "文件名",
@@ -1109,6 +1188,26 @@
         {
           "question": "转换为 WebP 会损失画质吗？",
           "answer": "WebP 可以有损压缩，也可以保留较高质量。页面提供质量滑块，用于控制输出体积和视觉质量。"
+        }
+      ]
+    },
+    "image-to-icon": {
+      "items": [
+        {
+          "question": "图片转 Icon 会上传文件吗？",
+          "answer": "不会。图片读取、缩放、圆角处理、ICO/ICNS 打包和预览都在浏览器本地完成。"
+        },
+        {
+          "question": "支持哪些输入图片？",
+          "answer": "支持 PNG、JPG、WebP、SVG、BMP、AVIF 等当前浏览器可解码的常见图片格式。"
+        },
+        {
+          "question": "ICO 和 ICNS 有什么区别？",
+          "answer": "ICO 常用于 Windows 图标和 favicon，ICNS 常用于 macOS 应用图标。页面也提供多尺寸 PNG ZIP，方便网页和 PWA 使用。"
+        },
+        {
+          "question": "可以直接移除背景吗？",
+          "answer": "可以。页面提供一键移除背景按钮，会在本地浏览器中生成透明 PNG 后继续制作图标。"
         }
       ]
     },
@@ -1514,6 +1613,10 @@
     "image-editor": {
       "name": "图片编辑",
       "description": "免费在线为图片绘制形状、折线、画笔、记号笔、文字、马赛克、模糊和橡皮擦标注"
+    },
+    "image-to-icon": {
+      "name": "图片转 Icon",
+      "description": "免费在线将 PNG、SVG、JPG、WebP 等图片制作成 ICO、ICNS 或多尺寸 PNG ZIP 图标，支持去背景、拖拽缩放、圆角和浏览器预览"
     },
     "image-to-png": {
       "name": "图片转 PNG",

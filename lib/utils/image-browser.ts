@@ -20,6 +20,7 @@ import {
   type ImageBackgroundRemovalProgress,
   type ImageCompressionOutputMode,
   type ImageCompressionOutcome,
+  type ImageCompressionStrategy,
   type ImageConversionOutcome,
   type ImageCropRect,
   type ImageEditOutcome,
@@ -516,12 +517,29 @@ function clampSvgRenderSize(size: RasterSize): RasterSize {
   return { width, height };
 }
 
-function getSvgDocumentSize(svgText: string): RasterSize | null {
-  const document = new DOMParser().parseFromString(svgText, 'image/svg+xml');
+function parseSvgDocument(svgText: string): Document | null {
+  const normalizedText = svgText.replace(/^\uFEFF/, '').trim();
+  const document = new DOMParser().parseFromString(normalizedText, 'image/svg+xml');
   const root = document.documentElement;
 
   if (!root || root.nodeName.toLowerCase() !== 'svg') return null;
   if (root.querySelector('parsererror')) return null;
+
+  return document;
+}
+
+function getSvgDocumentRoot(svgText: string): Element | null {
+  const document = parseSvgDocument(svgText);
+  if (!document) return null;
+
+  const root = document.documentElement;
+
+  return root;
+}
+
+function getSvgDocumentSize(svgText: string): RasterSize | null {
+  const root = getSvgDocumentRoot(svgText);
+  if (!root) return null;
 
   const viewBox = parseSvgViewBox(root.getAttribute('viewBox'));
   let width = parseSvgLength(root.getAttribute('width'));
@@ -543,6 +561,235 @@ function getSvgDocumentSize(svgText: string): RasterSize | null {
   if (!width || !height) return viewBox;
 
   return { width, height };
+}
+
+function minifySvgText(svgText: string): string {
+  return svgText
+    .replace(/^\uFEFF/, '')
+    .replace(/<\?xml[\s\S]*?\?>\s*/i, '')
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/<metadata\b[\s\S]*?<\/metadata>/gi, '')
+    .replace(/>\s+</g, '><')
+    .replace(/\s+\/>/g, '/>')
+    .replace(/\s+>/g, '>')
+    .trim();
+}
+
+const SVG_REMOVABLE_ELEMENT_NAMES = new Set([
+  'metadata',
+  'sodipodi:namedview',
+]);
+
+const SVG_REMOVABLE_ATTRIBUTE_NAMES = new Set([
+  'baseProfile',
+  'version',
+]);
+
+const SVG_REMOVABLE_ATTRIBUTE_PREFIXES = [
+  'data-',
+  'inkscape:',
+  'sodipodi:',
+  'sketch:',
+];
+
+const SVG_REMOVABLE_NAMESPACE_PREFIXES = [
+  'cc',
+  'dc',
+  'inkscape',
+  'rdf',
+  'serif',
+  'sketch',
+  'sodipodi',
+];
+
+const SVG_NUMERIC_ATTRIBUTE_NAMES = new Set([
+  'cx',
+  'cy',
+  'dx',
+  'dy',
+  'fill-opacity',
+  'font-size',
+  'height',
+  'letter-spacing',
+  'offset',
+  'opacity',
+  'r',
+  'rx',
+  'ry',
+  'stroke-dasharray',
+  'stroke-dashoffset',
+  'stroke-miterlimit',
+  'stroke-opacity',
+  'stroke-width',
+  'viewBox',
+  'width',
+  'word-spacing',
+  'x',
+  'x1',
+  'x2',
+  'y',
+  'y1',
+  'y2',
+]);
+
+const SVG_TRANSFORM_ATTRIBUTE_NAMES = new Set([
+  'gradientTransform',
+  'patternTransform',
+  'transform',
+]);
+
+function normalizeSvgNumberToken(token: string): string {
+  if (/[eE]/.test(token)) return token;
+
+  let output = token
+    .replace(/^(-?)0+(\d)/, '$1$2')
+    .replace(/(\.\d*?)0+$/, '$1')
+    .replace(/\.$/, '')
+    .replace(/^(-?)0\./, '$1.');
+
+  if (output === '-0') output = '0';
+  if (output === '' || output === '-' || output === '-.') return token;
+
+  return output;
+}
+
+function minifySvgNumbers(value: string): string {
+  return value.replace(/-?(?:\d+\.\d+|\d+\.|\.\d+)/g, normalizeSvgNumberToken);
+}
+
+function minifySvgListValue(value: string): string {
+  return minifySvgNumbers(value)
+    .trim()
+    .replace(/\s*,\s*/g, ',')
+    .replace(/\s+/g, ' ')
+    .replace(/ ?([+\-])(?=\d|\.)/g, '$1');
+}
+
+function minifySvgPathData(value: string): string {
+  return minifySvgNumbers(value)
+    .trim()
+    .replace(/\s*,\s*/g, ',')
+    .replace(/\s+/g, ' ')
+    .replace(/\s*([AaCcHhLlMmQqSsTtVvZz])\s*/g, '$1')
+    .replace(/ ?([+\-])(?=\d|\.)/g, '$1')
+    .replace(/([AaCcHhLlMmQqSsTtVvZz]),/g, '$1')
+    .replace(/,([AaCcHhLlMmQqSsTtVvZz])/g, '$1');
+}
+
+function minifySvgTransformValue(value: string): string {
+  return minifySvgListValue(value)
+    .replace(/\(\s+/g, '(')
+    .replace(/\s+\)/g, ')')
+    .replace(/\s*,\s*/g, ',')
+    .replace(/\s+\)/g, ')');
+}
+
+function minifySvgStyleValue(value: string): string {
+  return value
+    .split(';')
+    .map((entry) => entry.trim())
+    .filter(Boolean)
+    .map((entry) => {
+      const separatorIndex = entry.indexOf(':');
+      if (separatorIndex === -1) return entry;
+
+      const property = entry.slice(0, separatorIndex).trim();
+      const propertyValue = entry.slice(separatorIndex + 1).trim();
+      return `${property}:${minifySvgNumbers(propertyValue).replace(/\s+/g, ' ')}`;
+    })
+    .join(';');
+}
+
+function shouldRemoveSvgAttribute(name: string): boolean {
+  if (SVG_REMOVABLE_ATTRIBUTE_NAMES.has(name)) return true;
+  return SVG_REMOVABLE_ATTRIBUTE_PREFIXES.some((prefix) => name.startsWith(prefix));
+}
+
+function optimizeSvgAttributeValue(name: string, value: string): string {
+  if (name === 'd') return minifySvgPathData(value);
+  if (name === 'points' || SVG_NUMERIC_ATTRIBUTE_NAMES.has(name)) return minifySvgListValue(value);
+  if (name === 'style') return minifySvgStyleValue(value);
+  if (SVG_TRANSFORM_ATTRIBUTE_NAMES.has(name)) return minifySvgTransformValue(value);
+
+  return value.trim();
+}
+
+function optimizeSvgElement(element: Element) {
+  const elementName = element.nodeName;
+  if (SVG_REMOVABLE_ELEMENT_NAMES.has(elementName)) {
+    element.remove();
+    return;
+  }
+
+  for (const attribute of Array.from(element.attributes)) {
+    if (shouldRemoveSvgAttribute(attribute.name)) {
+      element.removeAttribute(attribute.name);
+      continue;
+    }
+
+    const optimizedValue = optimizeSvgAttributeValue(attribute.name, attribute.value);
+    if (optimizedValue !== attribute.value) {
+      element.setAttribute(attribute.name, optimizedValue);
+    }
+  }
+
+  for (const child of Array.from(element.children)) {
+    optimizeSvgElement(child);
+  }
+}
+
+function optimizeSvgWithDom(svgText: string): string | null {
+  const document = parseSvgDocument(svgText);
+  if (!document) return null;
+
+  const root = document.documentElement;
+  optimizeSvgElement(root);
+
+  let optimizedText = minifySvgText(new XMLSerializer().serializeToString(root));
+  for (const prefix of ['xlink', ...SVG_REMOVABLE_NAMESPACE_PREFIXES]) {
+    const textWithoutDeclaration = optimizedText.replace(new RegExp(`\\s+xmlns:${prefix}="[^"]*"`, 'i'), '');
+    if (!textWithoutDeclaration.includes(`${prefix}:`)) {
+      optimizedText = textWithoutDeclaration;
+    }
+  }
+
+  return optimizedText;
+}
+
+function chooseSmallestValidSvgText(svgText: string): string {
+  const fallback = minifySvgText(svgText);
+  const candidates = [fallback];
+  const domOptimized = optimizeSvgWithDom(svgText);
+  if (domOptimized) candidates.push(domOptimized);
+
+  return candidates
+    .filter((candidate) => Boolean(getSvgDocumentRoot(candidate)))
+    .reduce(
+      (best, candidate) => (
+        new Blob([candidate], { type: 'image/svg+xml' }).size < new Blob([best], { type: 'image/svg+xml' }).size
+          ? candidate
+          : best
+      ),
+      fallback
+    );
+}
+
+async function getSvgDisplaySize(file: File, svgText: string): Promise<RasterSize> {
+  const parsedSize = getSvgDocumentSize(svgText);
+  if (parsedSize && parsedSize.width > 0 && parsedSize.height > 0) {
+    return normalizeRasterSize(parsedSize);
+  }
+
+  try {
+    const typedFile = new File([file], file.name, { type: 'image/svg+xml' });
+    const image = await loadImage(typedFile);
+    return {
+      width: Math.max(1, image.width),
+      height: Math.max(1, image.height),
+    };
+  } catch {
+    return { width: 0, height: 0 };
+  }
 }
 
 async function getSvgConversionSizes(file: File, fallback: RasterSize): Promise<SvgConversionSizes> {
@@ -1788,6 +2035,10 @@ async function compressImageFileOnMainThread(
   const jpegBackground = options.jpegBackground ?? '#ffffff';
   const outputMode = options.outputMode ?? 'preserve';
 
+  if (sourceType === 'image/svg+xml' && outputMode === 'preserve') {
+    return compressSvgFilePreservingFormat(file, startedAt);
+  }
+
   try {
     const image = await loadImage(sourceFile);
     const pixelCount = image.width * image.height;
@@ -1914,6 +2165,54 @@ async function compressImageFileOnMainThread(
       quality: best.quality,
       quantizedColors: best.quantizedColors,
       strategy: 'reencoded',
+    };
+  } catch {
+    return { ok: false, code: 'load_failed' };
+  }
+}
+
+async function compressSvgFilePreservingFormat(
+  file: File,
+  startedAt = performance.now()
+): Promise<ImageCompressionOutcome> {
+  try {
+    const svgText = await file.text();
+    if (!getSvgDocumentRoot(svgText)) return { ok: false, code: 'load_failed' };
+
+    const size = await getSvgDisplaySize(file, svgText);
+    if (!size.width || !size.height) return { ok: false, code: 'load_failed' };
+
+    const pixelCount = size.width * size.height;
+
+    if (pixelCount > MAX_IMAGE_PIXELS) {
+      return {
+        ok: false,
+        code: 'too_many_pixels',
+        maxPixels: formatPixelLimit(MAX_IMAGE_PIXELS),
+      };
+    }
+
+    const minifiedText = chooseSmallestValidSvgText(svgText);
+    const minifiedBlob = new Blob([minifiedText], { type: 'image/svg+xml' });
+    const originalBlob = file.type === 'image/svg+xml'
+      ? file
+      : new Blob([svgText], { type: 'image/svg+xml' });
+    const blob = minifiedBlob.size < file.size ? minifiedBlob : originalBlob;
+    const strategy: ImageCompressionStrategy = blob === minifiedBlob ? 'reencoded' : 'kept-original';
+
+    return {
+      ok: true,
+      blob,
+      filename: createCompressedImageFilename(file.name, 'svg'),
+      mimeType: 'image/svg+xml',
+      format: 'original',
+      width: size.width,
+      height: size.height,
+      originalSize: file.size,
+      outputSize: blob.size,
+      durationMs: Math.round(performance.now() - startedAt),
+      savingsRatio: calculateSavingsRatio(file.size, blob.size),
+      strategy,
     };
   } catch {
     return { ok: false, code: 'load_failed' };
@@ -2505,6 +2804,10 @@ export async function compressImageFile(
 
   const sourceType = inferImageMimeType(file);
   const outputMode = options.outputMode ?? 'preserve';
+  if (sourceType === 'image/svg+xml' && outputMode === 'preserve') {
+    return compressSvgFilePreservingFormat(file);
+  }
+
   const shouldUseWorker = !(sourceType === 'image/png' && outputMode === 'preserve');
   const workerResult = shouldUseWorker ? await compressImageFileInWorker(file, options) : null;
   if (workerResult) {

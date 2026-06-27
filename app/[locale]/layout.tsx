@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -17,9 +16,6 @@ import { FeedbackButton } from '@/components/FeedbackButton';
 import { PwaRegistration } from '@/components/PwaRegistration';
 import { SiteProtection } from '@/components/SiteProtection';
 import '../globals.css';
-
-const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'], display: 'swap' });
-const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'], display: 'swap' });
 
 type Locale = (typeof routing.locales)[number];
 
@@ -108,7 +104,7 @@ export default async function LocaleLayout({
           dangerouslySetInnerHTML={{ __html: toJsonLd(createSiteJsonLd(normalizedLocale)) }}
         />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className="antialiased">
         <NextIntlClientProvider locale={normalizedLocale} messages={m}>
           {children}
           <FeedbackButton />

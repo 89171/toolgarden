@@ -332,6 +332,79 @@
       "general": "Conversion failed. Please try again."
     }
   },
+  "image_icon_converter": {
+    "settings_title": "Icon settings",
+    "workspace_title": "Icon editor",
+    "demo_title": "Browser preview",
+    "output_title": "Export result",
+    "drop_title": "Upload an image to make an icon",
+    "drop_hint": "Supports {formats}. Everything runs locally in your browser.",
+    "drop_action": "Choose image",
+    "loading": "Loading...",
+    "replace": "Replace image",
+    "source_dimensions": "Source size",
+    "source_size": "Source file",
+    "format_label": "Output format",
+    "scale": "Scale",
+    "scale_value": "{value}%",
+    "radius": "Corner radius",
+    "radius_value": "{value}%",
+    "remove_background": "Remove background",
+    "removing_background": "Removing background...",
+    "background_removed": "Background removed",
+    "restore_source": "Restore source",
+    "background_progress": "Background removal progress",
+    "reset": "Reset position",
+    "generate": "Generate icon",
+    "generating": "Generating...",
+    "download": "Download icon",
+    "download_actions": {
+      "ico": "Download ICO container",
+      "icns": "Download ICNS container",
+      "png-zip": "Download PNG ZIP"
+    },
+    "download_zip_actions": {
+      "ico": "Download multi-size ICO ZIP",
+      "icns": "Download multi-size ICNS ZIP",
+      "png-zip": "Download PNG ZIP"
+    },
+    "canvas_label": "Icon editing canvas",
+    "drag_hint": "Drag the canvas to move the image. Drag the lower-right handle or use the wheel to scale.",
+    "empty_title": "Upload an image to edit an icon",
+    "empty_body": "The preview area will show a draggable, scalable icon and browser usage examples.",
+    "favicon_title": "Tool Garden",
+    "address_text": "toolgarden.xyz",
+    "favorites_demo": "Favorites",
+    "output_format": "Format",
+    "output_size": "File size",
+    "zip_output_size": "ZIP size",
+    "icon_sizes": "Included sizes",
+    "empty_output_title": "Waiting to generate",
+    "empty_output_body": "Choose {format}, then generate the icon. The result will appear here.",
+    "unknown_type": "unknown type",
+    "format_descriptions": {
+      "ico": "Windows favicon and desktop icon container with multi-resolution icon entries from 16 to 256 px.",
+      "icns": "macOS icon container with multi-resolution icon resources up to 1024 px.",
+      "png-zip": "Exports transparent PNG icons for PWA, web, and app assets."
+    },
+    "output_notes": {
+      "ico": "The ICO container includes multiple sizes, so browsers, Windows, shortcuts, and favicon use cases can automatically choose the right size; the ZIP contains separate ICO files for those sizes.",
+      "icns": "The ICNS container includes multiple sizes, so macOS, Finder, and app icon use cases can automatically choose the right size; the ZIP contains separate ICNS files for those sizes.",
+      "png-zip": "PNG ZIP downloads one archive containing separate PNG files for each size."
+    },
+    "errors": {
+      "empty_file": "The file is empty. Choose a valid image.",
+      "unsupported_input": "This image type is not supported yet: {type}.",
+      "file_too_large": "The file is too large. Maximum size is {maxSize}.",
+      "too_many_pixels": "The image dimensions are too large. Maximum size is {maxPixels}.",
+      "load_failed": "The image could not be decoded. The file may be damaged or unsupported by this browser.",
+      "canvas_context": "Could not create a Canvas drawing context.",
+      "canvas_export": "Icon export failed. Try another browser.",
+      "unsupported_output": "This browser cannot export {format}.",
+      "background_remove_failed": "Background removal failed. Try another image or try again later.",
+      "general": "Icon generation failed. Please try again."
+    }
+  },
   "image_base64": {
     "to_settings_title": "Image to Base64",
     "to_results_title": "Base64 result",
@@ -693,7 +766,7 @@
     "polyline_title": "Polyline drawing",
     "polyline_count": "{count} points added",
     "polyline_hint": "Click on the canvas to add path points, then finish to draw the polyline.",
-    "polyline_hint_inline": "Click on the canvas to add points, finish once you have at least two",
+    "polyline_hint_inline": "Click on the canvas to add points, then double-click to finish",
     "select_hint": "Click or drag objects on the canvas. Press Delete to remove the selection.",
     "drop_replace": "Drop to replace the current image",
     "finish_polyline": "Finish",
@@ -726,6 +799,12 @@
     "redo": "Redo",
     "delete_selected": "Delete selected",
     "reset_all": "Reset image",
+    "zoom_in": "Zoom in canvas",
+    "zoom_out": "Zoom out canvas",
+    "zoom_fit": "Fit to viewport",
+    "zoom_level": "Current zoom {value}",
+    "fullscreen": "Fullscreen edit",
+    "exit_fullscreen": "Exit fullscreen",
     "result_ready": "Export ready",
     "download": "Download image",
     "filename": "Filename",
@@ -1109,6 +1188,26 @@
         {
           "question": "Does converting to WebP reduce image quality?",
           "answer": "WebP can use lossy compression or preserve high quality. The quality slider controls the tradeoff between output size and visual quality."
+        }
+      ]
+    },
+    "image-to-icon": {
+      "items": [
+        {
+          "question": "Does Image to Icon upload my files?",
+          "answer": "No. Image loading, scaling, corner radius rendering, ICO/ICNS packaging, and previews all happen locally in your browser."
+        },
+        {
+          "question": "Which input images are supported?",
+          "answer": "PNG, JPG, WebP, SVG, BMP, AVIF, and other common browser-decodable image formats are supported."
+        },
+        {
+          "question": "What is the difference between ICO and ICNS?",
+          "answer": "ICO is commonly used for Windows icons and favicons, while ICNS is commonly used for macOS app icons. The page also provides a multi-size PNG ZIP for web and PWA assets."
+        },
+        {
+          "question": "Can it remove the background directly?",
+          "answer": "Yes. The remove background button runs locally in the browser, creates a transparent PNG, and then continues making the icon from it."
         }
       ]
     },
@@ -1514,6 +1613,10 @@
     "image-editor": {
       "name": "Image editor",
       "description": "Free online image editor for shapes, polylines, brush, marker, text, mosaic, blur, and eraser annotations"
+    },
+    "image-to-icon": {
+      "name": "Image to Icon",
+      "description": "Free online tool to turn PNG, SVG, JPG, WebP, and other images into ICO, ICNS, or multi-size PNG ZIP icons with background removal, drag scaling, corner radius, and browser previews"
     },
     "image-to-png": {
       "name": "Image to PNG",

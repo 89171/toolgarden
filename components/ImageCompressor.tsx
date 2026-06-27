@@ -55,6 +55,8 @@ function downloadUrl(url: string, filename: string) {
 
 function getFormatLabel(result: ImageCompressionSuccess): string {
   if (result.format === 'original') {
+    if (result.mimeType === 'image/svg+xml') return 'SVG';
+
     return result.mimeType.replace(/^image\//, '').toUpperCase() || 'Original';
   }
 
