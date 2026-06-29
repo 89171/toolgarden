@@ -299,6 +299,14 @@ export const toolRegistry: ToolMeta[] = [
     category: 'convert',
   },
   {
+    id: 'image-to-avif',
+    name: '图片转 AVIF',
+    description: '在浏览器本地将 JPG、PNG、WebP、GIF、BMP、SVG 等图片转换为 AVIF',
+    path: '/image/to-avif',
+    icon: 'AVF',
+    category: 'convert',
+  },
+  {
     id: 'image-to-base64',
     name: '图片转 Base64',
     description: '在浏览器本地将图片转换为 Base64 Data URL，支持选择、拖拽和粘贴图片',

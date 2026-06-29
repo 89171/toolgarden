@@ -29,6 +29,13 @@ const TARGETS = {
     extension: 'webp',
     supportsQuality: true,
   },
+  avif: {
+    format: 'avif',
+    label: 'AVIF',
+    mimeType: 'image/avif',
+    extension: 'avif',
+    supportsQuality: true,
+  },
 };
 
 const JPEG_COMPRESSION_QUALITIES = [0.92, 0.88, 0.84, 0.8, 0.76, 0.72, 0.68];

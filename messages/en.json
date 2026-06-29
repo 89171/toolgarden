@@ -1191,6 +1191,26 @@
         }
       ]
     },
+    "image-to-avif": {
+      "items": [
+        {
+          "question": "Does Image to AVIF upload my files?",
+          "answer": "No. Images are converted locally in your browser with Canvas or a Worker. Files are not uploaded to a server."
+        },
+        {
+          "question": "What is AVIF good for?",
+          "answer": "AVIF often keeps strong visual quality at smaller file sizes, making it useful for web images, cover images, thumbnails, and image assets that need extra compression."
+        },
+        {
+          "question": "Which images can be converted to AVIF?",
+          "answer": "JPG, PNG, WebP, GIF, BMP, SVG, AVIF, and other common browser-decodable image formats are supported."
+        },
+        {
+          "question": "Does AVIF conversion have browser limits?",
+          "answer": "AVIF encoding depends on browser support. If your browser cannot export AVIF, the page shows an unsupported output message. Use a recent Chrome, Edge, or Firefox release."
+        }
+      ]
+    },
     "image-to-icon": {
       "items": [
         {
@@ -1428,8 +1448,8 @@
   },
   "image_hub": {
     "title": "Image tools",
-    "meta_title": "Free Online Image Tools - Image Editing, Compression, Merge, Background and Watermark Removal, Base64, JPG, PNG, and WebP Conversion",
-    "description": "Free online image tools for batch editing, compression, merging, background removal, watermark removal, Base64 encode/decode, conversion, cropping, and resizing locally in your browser, with shapes, text, mosaic, blur, AI selection repair, smart compression, image-to-PDF or long-image output, transparent PNG, JPG, PNG, WebP output, preview comparison, and ZIP batch download.",
+    "meta_title": "Free Online Image Tools - Image Editing, Compression, Merge, Background and Watermark Removal, Base64, JPG, PNG, WebP, and AVIF Conversion",
+    "description": "Free online image tools for batch editing, compression, merging, background removal, watermark removal, Base64 encode/decode, conversion, cropping, and resizing locally in your browser, with shapes, text, mosaic, blur, AI selection repair, smart compression, image-to-PDF or long-image output, transparent PNG, JPG, PNG, WebP, AVIF output, preview comparison, and ZIP batch download.",
     "all_tools": "Image conversion tools",
     "breadcrumb": "Image tools",
     "privacy_note": "Images are processed locally in your browser and are not uploaded to a server."
@@ -1659,6 +1679,10 @@
     "image-to-webp": {
       "name": "Image to WebP",
       "description": "Free online tool to convert JPG, PNG, GIF, BMP, SVG, AVIF, and other images to WebP locally in your browser"
+    },
+    "image-to-avif": {
+      "name": "Image to AVIF",
+      "description": "Free online tool to convert JPG, PNG, WebP, GIF, BMP, SVG, and other images to AVIF locally in your browser"
     },
     "image-to-base64": {
       "name": "Image to Base64",

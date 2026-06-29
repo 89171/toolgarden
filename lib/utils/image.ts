@@ -1,10 +1,20 @@
-export type ImageTargetFormat = 'jpg' | 'png' | 'webp';
+export type ImageTargetFormat = 'jpg' | 'png' | 'webp' | 'avif';
+export type BasicImageTargetFormat = Exclude<ImageTargetFormat, 'avif'>;
 
 export interface ImageTargetConfig {
   format: ImageTargetFormat;
   label: string;
+  mimeType: 'image/jpeg' | 'image/png' | 'image/webp' | 'image/avif';
+  extension: 'jpg' | 'png' | 'webp' | 'avif';
+  supportsQuality: boolean;
+  defaultQuality: number;
+}
+
+export interface BasicImageTargetConfig {
+  format: BasicImageTargetFormat;
+  label: string;
   mimeType: 'image/jpeg' | 'image/png' | 'image/webp';
-  extension: 'jpg' | 'png' | 'webp';
+  extension: BasicImageTargetFormat;
   supportsQuality: boolean;
   defaultQuality: number;
 }
@@ -159,7 +169,7 @@ export type ImageEditOutcome = ImageEditSuccess | ImageConversionError;
 export const MAX_IMAGE_FILE_SIZE = 50 * 1024 * 1024;
 export const MAX_IMAGE_PIXELS = 40_000_000;
 
-export const imageTargetConfigs: Record<ImageTargetFormat, ImageTargetConfig> = {
+export const imageTargetConfigs = {
   jpg: {
     format: 'jpg',
     label: 'JPG',
@@ -184,7 +194,15 @@ export const imageTargetConfigs: Record<ImageTargetFormat, ImageTargetConfig> = 
     supportsQuality: true,
     defaultQuality: 0.9,
   },
-};
+  avif: {
+    format: 'avif',
+    label: 'AVIF',
+    mimeType: 'image/avif',
+    extension: 'avif',
+    supportsQuality: true,
+    defaultQuality: 0.82,
+  },
+} satisfies Record<ImageTargetFormat, ImageTargetConfig>;
 
 export const supportedImageInputs: ImageInputFormat[] = [
   { mimeType: 'image/jpeg', label: 'JPG', extensions: ['jpg', 'jpeg'] },
@@ -205,6 +223,10 @@ const extensionToMime = new Map(
 const supportedInputMimes = new Set(supportedImageInputs.map((format) => format.mimeType));
 
 export function getImageTargetConfig(format: ImageTargetFormat): ImageTargetConfig {
+  return imageTargetConfigs[format];
+}
+
+export function getBasicImageTargetConfig(format: BasicImageTargetFormat): BasicImageTargetConfig {
   return imageTargetConfigs[format];
 }
 

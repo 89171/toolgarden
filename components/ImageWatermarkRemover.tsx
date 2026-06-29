@@ -12,17 +12,17 @@ import {
   createCropRectFromPoints,
   createInitialWatermarkRect,
   formatFileSize,
+  getBasicImageTargetConfig,
   getImageAcceptValue,
-  getImageTargetConfig,
   getSupportedImageInputLabel,
   inferImageMimeType,
+  type BasicImageTargetFormat,
   moveCropRect,
   resizeCropRect,
   type ImageConversionError,
   type ImageCropHandle,
   type ImageCropRect,
   type ImageInspectionSuccess,
-  type ImageTargetFormat,
   type ImageWatermarkRemovalMethod,
   type ImageWatermarkRemovalProgress,
   type ImageWatermarkRemovalSuccess,
@@ -42,7 +42,7 @@ interface OutputState {
   url: string;
 }
 
-const OUTPUT_FORMATS: ImageTargetFormat[] = ['jpg', 'png', 'webp'];
+const OUTPUT_FORMATS: BasicImageTargetFormat[] = ['jpg', 'png', 'webp'];
 const REMOVAL_METHODS: ImageWatermarkRemovalMethod[] = ['migan', 'ai', 'local'];
 
 const SELECTION_HANDLES: Array<{ handle: ImageCropHandle; className: string }> = [
@@ -70,7 +70,7 @@ function downloadUrl(url: string, filename: string) {
   window.setTimeout(() => anchor.remove(), 0);
 }
 
-function getDefaultOutputFormat(file: File): ImageTargetFormat {
+function getDefaultOutputFormat(file: File): BasicImageTargetFormat {
   const sourceType = inferImageMimeType(file);
   if (sourceType === 'image/jpeg') return 'jpg';
   if (sourceType === 'image/webp') return 'webp';
@@ -103,7 +103,7 @@ export function ImageWatermarkRemover() {
   const [image, setImage] = useState<ImageInspectionSuccess | null>(null);
   const [selection, setSelection] = useState<ImageCropRect | null>(null);
   const [method, setMethod] = useState<ImageWatermarkRemovalMethod>('migan');
-  const [outputFormat, setOutputFormat] = useState<ImageTargetFormat>('png');
+  const [outputFormat, setOutputFormat] = useState<BasicImageTargetFormat>('png');
   const [quality, setQuality] = useState(0.92);
   const [feather, setFeather] = useState(12);
   const [output, setOutput] = useState<OutputState | null>(null);
@@ -117,7 +117,7 @@ export function ImageWatermarkRemover() {
 
   const accept = getImageAcceptValue();
   const inputFormatLabels = useMemo(() => getSupportedImageInputLabel().split(' / '), []);
-  const target = getImageTargetConfig(outputFormat);
+  const target = getBasicImageTargetConfig(outputFormat);
   const showQuality = target.supportsQuality;
   const canProcess = Boolean(file && image && selection && !isLoading && !isProcessing);
   const canDownload = Boolean(output?.url);
@@ -612,7 +612,7 @@ export function ImageWatermarkRemover() {
                   </span>
                   <div className="grid grid-cols-3 gap-2">
                     {OUTPUT_FORMATS.map((format) => {
-                      const config = getImageTargetConfig(format);
+                      const config = getBasicImageTargetConfig(format);
                       const active = outputFormat === format;
                       return (
                         <button

@@ -2,14 +2,14 @@ import {
   createEditedImageFilename,
   formatFileSize,
   formatPixelLimit,
-  getImageTargetConfig,
+  getBasicImageTargetConfig,
   inferImageMimeType,
   isSupportedImageInput,
   MAX_IMAGE_FILE_SIZE,
   MAX_IMAGE_PIXELS,
   normalizeImageQuality,
+  type BasicImageTargetFormat,
   type ImageConversionError,
-  type ImageTargetFormat,
 } from './image';
 
 export interface Point {
@@ -28,7 +28,7 @@ export interface ExportEditedImageOptions {
   drawingCanvas: HTMLCanvasElement;
   sourceFilename: string;
   originalSize: number;
-  targetFormat: ImageTargetFormat;
+  targetFormat: BasicImageTargetFormat;
   quality?: number;
   jpegBackground?: string;
 }
@@ -37,7 +37,7 @@ export interface ExportEditedImageDataUrlOptions {
   dataUrl: string;
   sourceFilename: string;
   originalSize: number;
-  targetFormat: ImageTargetFormat;
+  targetFormat: BasicImageTargetFormat;
   width: number;
   height: number;
 }
@@ -48,7 +48,7 @@ export type ExportEditedImageOutcome =
       blob: Blob;
       filename: string;
       mimeType: 'image/jpeg' | 'image/png' | 'image/webp';
-      format: ImageTargetFormat;
+      format: BasicImageTargetFormat;
       width: number;
       height: number;
       originalSize: number;
@@ -284,7 +284,7 @@ export async function exportEditedImage({
   }
 
   const startedAt = now();
-  const target = getImageTargetConfig(targetFormat);
+  const target = getBasicImageTargetConfig(targetFormat);
   const outputCanvas = document.createElement('canvas');
   outputCanvas.width = baseCanvas.width;
   outputCanvas.height = baseCanvas.height;
@@ -339,7 +339,7 @@ export function exportEditedImageDataUrl({
   }
 
   const startedAt = now();
-  const target = getImageTargetConfig(targetFormat);
+  const target = getBasicImageTargetConfig(targetFormat);
   const blob = dataUrlToBlob(dataUrl);
   if (!blob) return { ok: false, code: 'canvas_export' };
 

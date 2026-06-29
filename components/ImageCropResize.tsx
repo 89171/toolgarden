@@ -12,12 +12,13 @@ import {
   createCropRectFromPoints,
   createInitialCropRect,
   formatFileSize,
+  getBasicImageTargetConfig,
   getImageAcceptValue,
-  getImageTargetConfig,
   getLinkedHeight,
   getLinkedWidth,
   getSupportedImageInputLabel,
   inferImageMimeType,
+  type BasicImageTargetFormat,
   moveCropRect,
   resizeCropRect,
   type ImageConversionError,
@@ -25,7 +26,6 @@ import {
   type ImageCropRect,
   type ImageEditSuccess,
   type ImageInspectionSuccess,
-  type ImageTargetFormat,
 } from '@/lib/utils/image';
 
 type DragMode = 'draw' | 'move' | 'resize';
@@ -48,7 +48,7 @@ interface OutputState {
   url: string;
 }
 
-const OUTPUT_FORMATS: ImageTargetFormat[] = ['jpg', 'png', 'webp'];
+const OUTPUT_FORMATS: BasicImageTargetFormat[] = ['jpg', 'png', 'webp'];
 
 const CROP_HANDLES: Array<{ handle: ImageCropHandle; className: string }> = [
   { handle: 'nw', className: '-left-2 -top-2 cursor-nwse-resize' },
@@ -80,7 +80,7 @@ function downloadUrl(url: string, filename: string) {
   window.setTimeout(() => anchor.remove(), 0);
 }
 
-function getDefaultOutputFormat(file: File): ImageTargetFormat {
+function getDefaultOutputFormat(file: File): BasicImageTargetFormat {
   const sourceType = inferImageMimeType(file);
   if (sourceType === 'image/jpeg') return 'jpg';
   if (sourceType === 'image/webp') return 'webp';
@@ -127,7 +127,7 @@ export function ImageCropResize({ mode }: ImageCropResizeProps) {
   const [crop, setCrop] = useState<ImageCropRect | null>(null);
   const [outputWidth, setOutputWidth] = useState('');
   const [outputHeight, setOutputHeight] = useState('');
-  const [outputFormat, setOutputFormat] = useState<ImageTargetFormat>('png');
+  const [outputFormat, setOutputFormat] = useState<BasicImageTargetFormat>('png');
   const [quality, setQuality] = useState(0.92);
   const [output, setOutput] = useState<OutputState | null>(null);
   const [isOutputPreviewOpen, setIsOutputPreviewOpen] = useState(false);
@@ -139,7 +139,7 @@ export function ImageCropResize({ mode }: ImageCropResizeProps) {
 
   const accept = getImageAcceptValue();
   const inputFormatLabels = getSupportedImageInputLabel().split(' / ');
-  const target = getImageTargetConfig(outputFormat);
+  const target = getBasicImageTargetConfig(outputFormat);
   const showQuality = target.supportsQuality;
   const isCropMode = mode === 'crop';
   const toolId = isCropMode ? 'image-crop' : 'image-resize';
@@ -633,7 +633,7 @@ export function ImageCropResize({ mode }: ImageCropResizeProps) {
                   </span>
                   <div className="grid grid-cols-3 gap-2">
                     {OUTPUT_FORMATS.map((format) => {
-                      const config = getImageTargetConfig(format);
+                      const config = getBasicImageTargetConfig(format);
                       const active = outputFormat === format;
                       return (
                         <button

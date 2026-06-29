@@ -127,6 +127,11 @@ Canonical examples:
 - Converts JPG, PNG, GIF, BMP, SVG, AVIF, and common browser-decodable images to WebP
 - Supports output quality control, preview comparison, per-file download, and ZIP batch download
 
+### Image to AVIF (/image/to-avif)
+- Converts JPG, PNG, WebP, GIF, BMP, SVG, and common browser-decodable images to AVIF
+- Supports output quality control, preview comparison, per-file download, and ZIP batch download
+- AVIF encoding depends on browser support; unsupported browsers report an output format error instead of uploading files
+
 ### Image to Base64 (/image/to-base64)
 - Converts JPG, PNG, WebP, GIF, BMP, SVG, AVIF, and common browser-decodable images to Base64 Data URLs locally in the browser
 - Supports file selection, drag-and-drop image upload, and Ctrl+V clipboard image paste

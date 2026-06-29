@@ -1191,6 +1191,26 @@
         }
       ]
     },
+    "image-to-avif": {
+      "items": [
+        {
+          "question": "图片转 AVIF 会上传文件吗？",
+          "answer": "不会。图片会在浏览器本地通过 Canvas 或 Worker 转换，文件不会上传到服务器。"
+        },
+        {
+          "question": "AVIF 适合什么场景？",
+          "answer": "AVIF 通常能在较小文件体积下保留较好的画质，适合网页图片、封面图、缩略图和需要进一步压缩体积的图片资源。"
+        },
+        {
+          "question": "哪些图片可以转换为 AVIF？",
+          "answer": "支持 JPG、PNG、WebP、GIF、BMP、SVG、AVIF 等浏览器可解码的常见图片格式。"
+        },
+        {
+          "question": "转换为 AVIF 有兼容性限制吗？",
+          "answer": "AVIF 编码依赖浏览器支持。如果当前浏览器不支持导出 AVIF，页面会提示输出格式不受支持，可以换用最新版 Chrome、Edge 或 Firefox。"
+        }
+      ]
+    },
     "image-to-icon": {
       "items": [
         {
@@ -1428,8 +1448,8 @@
   },
   "image_hub": {
     "title": "图片工具",
-    "meta_title": "免费在线图片工具 - 图片编辑、压缩、合并、去背景、去水印、Base64、JPG、PNG、WebP 转换",
-    "description": "免费在线批量编辑、压缩、合并、去背景、去水印、Base64 编解码、转换、裁剪和修改图片尺寸，所有处理都在浏览器本地完成，支持绘制形状、文字、马赛克、模糊、AI 选区修复、智能压缩、图片合成 PDF 或长图、透明 PNG、JPG、PNG、WebP 输出、预览对比和 ZIP 批量下载。",
+    "meta_title": "免费在线图片工具 - 图片编辑、压缩、合并、去背景、去水印、Base64、JPG、PNG、WebP、AVIF 转换",
+    "description": "免费在线批量编辑、压缩、合并、去背景、去水印、Base64 编解码、转换、裁剪和修改图片尺寸，所有处理都在浏览器本地完成，支持绘制形状、文字、马赛克、模糊、AI 选区修复、智能压缩、图片合成 PDF 或长图、透明 PNG、JPG、PNG、WebP、AVIF 输出、预览对比和 ZIP 批量下载。",
     "all_tools": "图片转换工具",
     "breadcrumb": "图片工具",
     "privacy_note": "图片仅在本地浏览器处理，不会上传到服务器。"
@@ -1659,6 +1679,10 @@
     "image-to-webp": {
       "name": "图片转 WebP",
       "description": "免费在线将 JPG、PNG、GIF、BMP、SVG、AVIF 等图片转换为 WebP"
+    },
+    "image-to-avif": {
+      "name": "图片转 AVIF",
+      "description": "免费在线将 JPG、PNG、WebP、GIF、BMP、SVG 等图片转换为 AVIF"
     },
     "image-to-base64": {
       "name": "图片转 Base64",

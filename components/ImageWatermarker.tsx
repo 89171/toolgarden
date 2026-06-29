@@ -23,12 +23,12 @@ import {
 } from '@/lib/utils/image-watermark';
 import {
   formatFileSize,
+  getBasicImageTargetConfig,
   getImageAcceptValue,
-  getImageTargetConfig,
   getSupportedImageInputLabel,
   inferImageMimeType,
+  type BasicImageTargetFormat,
   type ImageConversionError,
-  type ImageTargetFormat,
 } from '@/lib/utils/image';
 
 type WatermarkSuccess = Extract<WatermarkApplyOutcome, { ok: true }>;
@@ -46,7 +46,7 @@ interface OutputState {
   url: string;
 }
 
-const OUTPUT_FORMATS: ImageTargetFormat[] = ['png', 'jpg', 'webp'];
+const OUTPUT_FORMATS: BasicImageTargetFormat[] = ['png', 'jpg', 'webp'];
 const COLOR_SWATCHES = ['#ffffff', '#000000', '#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#8b5cf6'];
 const FONT_FAMILIES = [
   { value: 'system-ui, sans-serif', label: 'Sans' },
@@ -75,7 +75,7 @@ function downloadUrl(url: string, filename: string) {
   window.setTimeout(() => anchor.remove(), 0);
 }
 
-function getDefaultOutputFormat(file: File): ImageTargetFormat {
+function getDefaultOutputFormat(file: File): BasicImageTargetFormat {
   const sourceType = inferImageMimeType(file);
   if (sourceType === 'image/jpeg') return 'jpg';
   if (sourceType === 'image/webp') return 'webp';
@@ -172,7 +172,7 @@ export function ImageWatermarker() {
   const [watermarkImageName, setWatermarkImageName] = useState('');
   const [options, setOptions] = useState<WatermarkOptions>(getDefaultWatermarkOptions);
   const [activeAnchor, setActiveAnchor] = useState<WatermarkAnchor>('middle-center');
-  const [outputFormat, setOutputFormat] = useState<ImageTargetFormat>('png');
+  const [outputFormat, setOutputFormat] = useState<BasicImageTargetFormat>('png');
   const [quality, setQuality] = useState(0.92);
   const [output, setOutput] = useState<OutputState | null>(null);
   const [error, setError] = useState('');
@@ -181,7 +181,7 @@ export function ImageWatermarker() {
   const [draggingFile, setDraggingFile] = useState(false);
 
   const accept = useMemo(() => getImageAcceptValue(), []);
-  const target = getImageTargetConfig(outputFormat);
+  const target = getBasicImageTargetConfig(outputFormat);
   const showQuality = target.supportsQuality;
   const canExport = Boolean(imageInfo && !isLoading && !isExporting);
 
@@ -761,7 +761,7 @@ export function ImageWatermarker() {
             </span>
             <div className="grid grid-cols-3 gap-1.5">
               {OUTPUT_FORMATS.map((format) => {
-                const config = getImageTargetConfig(format);
+                const config = getBasicImageTargetConfig(format);
                 const active = outputFormat === format;
                 return (
                   <button

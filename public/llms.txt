@@ -27,6 +27,7 @@ ToolGarden provides developers with a suite of tools for working with JSON data.
 - **Image to JPG** (`/image/to-jpg`): Convert PNG, WebP, GIF, BMP, SVG, AVIF, and other images to JPG locally in the browser.
 - **Image to PNG** (`/image/to-png`): Convert JPG, WebP, GIF, BMP, SVG, AVIF, and other images to PNG locally in the browser.
 - **Image to WebP** (`/image/to-webp`): Convert JPG, PNG, GIF, BMP, SVG, AVIF, and other images to WebP locally in the browser.
+- **Image to AVIF** (`/image/to-avif`): Convert JPG, PNG, WebP, GIF, BMP, SVG, and other images to AVIF locally in the browser.
 - **Image to Base64** (`/image/to-base64`): Convert JPG, PNG, WebP, GIF, BMP, SVG, AVIF, and other images to Base64 Data URLs locally in the browser with file selection, drag-and-drop, and clipboard paste support.
 - **Base64 to Image** (`/image/base64-to-image`): Restore image Base64 strings or `data:image` Data URLs into previewable downloadable image files locally in the browser.
 - **Image Crop** (`/image/crop`): Crop images with a draggable frame locally in the browser.

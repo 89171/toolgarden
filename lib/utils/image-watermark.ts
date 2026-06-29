@@ -2,14 +2,14 @@ import {
   createImageOutputFilename,
   formatFileSize,
   formatPixelLimit,
-  getImageTargetConfig,
+  getBasicImageTargetConfig,
   inferImageMimeType,
   isSupportedImageInput,
   MAX_IMAGE_FILE_SIZE,
   MAX_IMAGE_PIXELS,
   normalizeImageQuality,
+  type BasicImageTargetFormat,
   type ImageConversionError,
-  type ImageTargetFormat,
 } from './image';
 
 export type WatermarkType = 'text' | 'image';
@@ -63,7 +63,7 @@ export interface WatermarkApplyInput {
   source: ImageWatermarkAsset;
   sourceFilename: string;
   originalSize: number;
-  targetFormat: ImageTargetFormat;
+  targetFormat: BasicImageTargetFormat;
   quality?: number;
   options: WatermarkOptions;
   jpegBackground?: string;
@@ -74,7 +74,7 @@ export interface WatermarkApplySuccess {
   blob: Blob;
   filename: string;
   mimeType: 'image/jpeg' | 'image/png' | 'image/webp';
-  format: ImageTargetFormat;
+  format: BasicImageTargetFormat;
   width: number;
   height: number;
   originalSize: number;
@@ -318,7 +318,7 @@ export async function applyWatermark({
   }
 
   const startedAt = now();
-  const target = getImageTargetConfig(targetFormat);
+  const target = getBasicImageTargetConfig(targetFormat);
   const canvas = document.createElement('canvas');
   canvas.width = source.width;
   canvas.height = source.height;

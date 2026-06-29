@@ -37,6 +37,30 @@ type OrtInferenceSession = Awaited<ReturnType<OrtWasmModule['InferenceSession'][
 type PicaInstance = ReturnType<typeof import('pica')['default']>;
 type SvgoBrowserModule = typeof import('svgo/browser');
 
+interface AvifEncodeOptions {
+  quality: number;
+  qualityAlpha: number;
+  denoiseLevel: number;
+  tileRowsLog2: number;
+  tileColsLog2: number;
+  speed: number;
+  subsample: number;
+  chromaDeltaQ: boolean;
+  sharpness: number;
+  enableSharpYUV: boolean;
+  tune: number;
+  bitDepth: number;
+}
+
+interface AvifEncoderModule {
+  encode(data: BufferSource, width: number, height: number, options: AvifEncodeOptions): Uint8Array | null;
+}
+
+type AvifModuleFactory = (options?: {
+  locateFile?: (path: string) => string;
+  noInitialRun?: boolean;
+}) => Promise<AvifEncoderModule>;
+
 type WorkerFailureCode =
   | 'canvas_context'
   | 'conversion_failed'
@@ -188,6 +212,7 @@ let watermarkMiganSessionPromise:
   | null = null;
 let svgCanvasResizerPromise: Promise<PicaInstance> | null = null;
 let svgoBrowserPromise: Promise<SvgoBrowserModule> | null = null;
+let avifEncoderPromise: Promise<AvifEncoderModule> | null = null;
 
 interface WatermarkedImageOutput {
   blob: Blob;
@@ -218,6 +243,7 @@ async function convertImageFileInWorker(
   targetFormat: ImageTargetFormat,
   options: ConvertImageOptions
 ): Promise<ImageConversionOutcome | null> {
+  if (targetFormat === 'avif') return null;
   if (inferImageMimeType(file) === 'image/svg+xml') return null;
 
   const worker = getImageWorker();
@@ -987,7 +1013,89 @@ function isWatermarkAllowedHostname(hostname: string): boolean {
 function getWatermarkTargetConfig(mimeType: string): ImageTargetConfig {
   if (mimeType === 'image/jpeg') return getImageTargetConfig('jpg');
   if (mimeType === 'image/webp') return getImageTargetConfig('webp');
+  if (mimeType === 'image/avif') return getImageTargetConfig('avif');
   return getImageTargetConfig('png');
+}
+
+async function importPublicEsmModule<T>(url: string): Promise<T> {
+  const runtimeImport = new Function('moduleUrl', 'return import(moduleUrl)') as (moduleUrl: string) => Promise<T>;
+  return runtimeImport(url);
+}
+
+async function getAvifEncoder(): Promise<AvifEncoderModule> {
+  if (!avifEncoderPromise) {
+    avifEncoderPromise = importPublicEsmModule<{ default: AvifModuleFactory }>('/vendor/jsquash-avif/avif_enc.js')
+      .then((module) => module.default({
+        noInitialRun: true,
+        locateFile: (path) => `/vendor/jsquash-avif/${path}`,
+      }));
+  }
+
+  return avifEncoderPromise;
+}
+
+async function encodeCanvasToAvifBlob(
+  canvas: HTMLCanvasElement,
+  quality?: number
+): Promise<Blob> {
+  const context = canvas.getContext('2d', { willReadFrequently: true });
+  if (!context) throw new Error('Canvas context failed');
+
+  const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+  const avifEncoder = await getAvifEncoder();
+  const encoded = avifEncoder.encode(new Uint8Array(imageData.data.buffer), imageData.width, imageData.height, {
+    quality: Math.round(normalizeImageQuality(quality ?? getImageTargetConfig('avif').defaultQuality) * 100),
+    qualityAlpha: -1,
+    denoiseLevel: 0,
+    tileRowsLog2: 0,
+    tileColsLog2: 0,
+    bitDepth: 8,
+    speed: 6,
+    subsample: 1,
+    chromaDeltaQ: false,
+    sharpness: 0,
+    enableSharpYUV: false,
+    tune: 0,
+  });
+  if (!encoded) throw new Error('AVIF encoding failed');
+
+  const bytes = new Uint8Array(encoded.byteLength);
+  bytes.set(encoded);
+  return new Blob([bytes], { type: 'image/avif' });
+}
+
+function bytesStartWith(bytes: Uint8Array, signature: number[]): boolean {
+  if (bytes.length < signature.length) return false;
+  return signature.every((byte, index) => bytes[index] === byte);
+}
+
+function bytesAscii(bytes: Uint8Array, start: number, end: number): string {
+  return String.fromCharCode(...bytes.slice(start, end));
+}
+
+function bytesMatchMime(bytes: Uint8Array, mimeType: string): boolean {
+  if (mimeType === 'image/png') {
+    return bytesStartWith(bytes, [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+  }
+
+  if (mimeType === 'image/jpeg') {
+    return bytesStartWith(bytes, [0xff, 0xd8, 0xff]);
+  }
+
+  if (mimeType === 'image/webp') {
+    return bytesAscii(bytes, 0, 4) === 'RIFF' && bytesAscii(bytes, 8, 12) === 'WEBP';
+  }
+
+  if (mimeType === 'image/avif') {
+    return bytesAscii(bytes, 4, 8) === 'ftyp' && /avif|avis/i.test(bytesAscii(bytes, 8, 32));
+  }
+
+  return true;
+}
+
+async function blobMatchesMime(blob: Blob, mimeType: string): Promise<boolean> {
+  const bytes = new Uint8Array(await blob.slice(0, 32).arrayBuffer());
+  return bytesMatchMime(bytes, mimeType);
 }
 
 function drawWatermark(context: CanvasRenderingContext2D, width: number, height: number) {
@@ -1040,9 +1148,11 @@ async function addWatermarkToCanvasBlob(
   if (!context) throw new Error('Canvas context failed');
 
   drawWatermark(context, canvas.width, canvas.height);
-  const blob = await canvasToBlob(canvas, target.mimeType, quality);
+  const blob = target.mimeType === 'image/avif'
+    ? await encodeCanvasToAvifBlob(canvas, quality)
+    : await canvasToBlob(canvas, target.mimeType, quality);
 
-  if (!blob.type || blob.type === target.mimeType) {
+  if ((!blob.type || blob.type === target.mimeType) && await blobMatchesMime(blob, target.mimeType)) {
     return {
       blob,
       mimeType: target.mimeType,
@@ -2356,13 +2466,15 @@ async function convertImageFileOnMainThread(
     const output = shouldWatermarkImageOutput()
       ? await addWatermarkToCanvasBlob(canvas, target, quality)
       : {
-          blob: await canvasToBlob(canvas, target.mimeType, quality),
+          blob: target.mimeType === 'image/avif'
+            ? await encodeCanvasToAvifBlob(canvas, quality)
+            : await canvasToBlob(canvas, target.mimeType, quality),
           mimeType: target.mimeType,
           extension: target.extension,
         };
     const blob = output.blob;
 
-    if (blob.type && blob.type !== output.mimeType) {
+    if ((blob.type && blob.type !== output.mimeType) || !(await blobMatchesMime(blob, output.mimeType))) {
       return {
         ok: false,
         code: 'unsupported_output',

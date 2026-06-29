@@ -625,6 +625,22 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/to-webp" />
   </url>
   <url>
+    <loc>https://toolgarden.xyz/zh/image/to-avif</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image/to-avif" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image/to-avif" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/to-avif" />
+  </url>
+  <url>
+    <loc>https://toolgarden.xyz/en/image/to-avif</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/image/to-avif" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/image/to-avif" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/image/to-avif" />
+  </url>
+  <url>
     <loc>https://toolgarden.xyz/zh/image/to-base64</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

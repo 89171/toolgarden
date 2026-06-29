@@ -36,7 +36,7 @@ interface ImageItem {
 }
 
 interface ImageTargetConverterProps {
-  toolId: 'image-to-jpg' | 'image-to-png' | 'image-to-webp';
+  toolId: 'image-to-jpg' | 'image-to-png' | 'image-to-webp' | 'image-to-avif';
   targetFormat: ImageTargetFormat;
 }
 
