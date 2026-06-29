@@ -214,8 +214,8 @@ export const toolRegistry: ToolMeta[] = [
   },
   {
     id: 'image-merge',
-    name: '图片合并',
-    description: '将多张图片合并成 PDF，或垂直拼接成长图 PNG',
+    name: '图片合并长图',
+    description: '将多张图片垂直拼接成长图 PNG，或合成为 PDF',
     path: '/file-merge/images',
     icon: 'IMG',
     category: 'convert',

@@ -954,7 +954,7 @@
           "answer": "可以选择合并到同一个 Sheet，把所有来源表的数据汇总到一张表；也可以保留每个来源 Sheet，输出到同一个工作簿的不同 Sheet 中。"
         },
         {
-          "question": "图片合并可以输出什么格式？",
+          "question": "图片合并长图可以输出什么格式？",
           "answer": "可以合并成一个 PDF，也可以把多张图片垂直拼接成长图 PNG，适合归档和分享。"
         }
       ]
@@ -1030,11 +1030,11 @@
     "image-merge": {
       "items": [
         {
-          "question": "图片合并可以输出哪些格式？",
+          "question": "图片合并长图可以输出哪些格式？",
           "answer": "可以输出 PDF，也可以把多张图片垂直拼接为长图 PNG。"
         },
         {
-          "question": "图片合并会压缩原图吗？",
+          "question": "图片合并长图会压缩原图吗？",
           "answer": "长图会按浏览器 Canvas 渲染导出 PNG；PDF 输出会把图片按页面尺寸嵌入，不会上传到服务器处理。"
         }
       ]
@@ -1419,7 +1419,7 @@
   },
   "file_merge_hub": {
     "title": "文件合并工具",
-    "meta_title": "免费在线文件合并工具 - PDF、Word、PPT、Excel、图片合并",
+    "meta_title": "免费在线文件合并工具 - PDF、Word、PPT、Excel、图片合并长图",
     "description": "免费在线合并 PDF、Word、PPT、TXT、Markdown、CSV、RTF、Excel 和图片，按文件类型导出原格式：PDF 合并为 PDF，Word 合并为 DOCX，PPT 合并为 PPTX，图片可合成 PDF 或长图。所有处理都在浏览器本地完成。",
     "all_tools": "文件合并工具",
     "breadcrumb": "文件合并工具",
@@ -1687,8 +1687,8 @@
       "description": "免费在线合并多个 Excel / CSV 文件，支持汇总到同一个 Sheet 或保留多个来源 Sheet"
     },
     "image-merge": {
-      "name": "图片合并",
-      "description": "免费在线将多张图片合并成 PDF，或垂直拼接成长图 PNG"
+      "name": "图片合并长图",
+      "description": "免费在线将多张图片垂直拼接成长图 PNG，或合成为 PDF"
     },
     "pdf-split": {
       "name": "拆分 PDF",

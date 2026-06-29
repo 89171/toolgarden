@@ -610,7 +610,6 @@ export function ImageEditorTool() {
   const loadRequestRef = useRef(0);
   const drawingStateRef = useRef<DrawingState | null>(null);
   const polylineRef = useRef<PolylineState>({ points: [], preview: null });
-  const suppressNextTextCreateRef = useRef(false);
   const historyRef = useRef<string[]>([]);
   const historyIndexRef = useRef(-1);
   const isRestoringRef = useRef(false);
@@ -866,7 +865,6 @@ export function ImageEditorTool() {
   const selectTool = useCallback((nextTool: EditorTool) => {
     const canvas = fabricCanvasRef.current;
     drawingStateRef.current = null;
-    suppressNextTextCreateRef.current = false;
     if (toolRef.current === 'polyline' && nextTool !== 'polyline') resetPolyline();
 
     if (canvas) {
@@ -1111,9 +1109,10 @@ export function ImageEditorTool() {
 
     editingText.exitEditing();
     editingText.hiddenTextarea?.blur();
+    if (event.target instanceof IText && !isBaseObject(event.target)) return;
+
     canvas.discardActiveObject();
     canvas.requestRenderAll();
-    suppressNextTextCreateRef.current = true;
   }, []);
 
   const handleCanvasMouseDown = useCallback((event: TPointerEventInfo) => {
@@ -1133,11 +1132,6 @@ export function ImageEditorTool() {
     }
 
     if (activeTool === 'select' || activeTool === 'brush' || activeTool === 'marker') return;
-
-    if (activeTool === 'text' && suppressNextTextCreateRef.current) {
-      suppressNextTextCreateRef.current = false;
-      return;
-    }
 
     if (activeTool === 'text' && event.target instanceof IText && !isBaseObject(event.target)) {
       exitActiveTextEditing(canvas);
