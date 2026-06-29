@@ -14,7 +14,7 @@ export const toolRegistry: ToolMeta[] = [
   {
     id: 'json-format',
     name: 'JSON 格式化',
-    description: '格式化、压缩、验证 JSON，支持树形展示与节点操作',
+    description: '格式化、压缩、验证 JSON / JSONC / JSON5，支持树形展示与节点操作',
     path: '/json-format',
     icon: '{}',
     category: 'format',
@@ -31,7 +31,7 @@ export const toolRegistry: ToolMeta[] = [
   {
     id: 'json-repair',
     name: 'JSON 修复清洗',
-    description: '修复注释、尾逗号、单引号、未加引号 key 等常见 JSON 问题',
+    description: '修复 JSONC / JSON5 注释、尾逗号、单引号、未加引号 key 等常见问题',
     path: '/json-repair',
     icon: 'FIX',
     category: 'format',
@@ -40,7 +40,7 @@ export const toolRegistry: ToolMeta[] = [
   {
     id: 'json-diff',
     name: 'JSON 对比',
-    description: '可视化对比两份 JSON 的差异，高亮增删改',
+    description: '可视化对比两份 JSON / JSONC / JSON5 的差异，高亮增删改',
     path: '/json-diff',
     icon: '≠',
     category: 'format',

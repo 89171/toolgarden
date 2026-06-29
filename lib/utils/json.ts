@@ -5,166 +5,20 @@
  * 页面组件只负责 UI 状态管理，逻辑调用此模块。
  */
 
+import JSON5 from 'json5';
+
 // ── 解析 ────────────────────────────────────────────────────────
 
-function isIdentifierStart(char: string): boolean {
-  return /[a-zA-Z_$]/.test(char);
-}
-
-function isIdentifierPart(char: string): boolean {
-  return /[a-zA-Z0-9_$]/.test(char);
-}
-
-function previousSignificantChar(input: string, index: number): string | undefined {
-  for (let i = index - 1; i >= 0; i -= 1) {
-    if (!/\s/.test(input[i])) return input[i];
-  }
-  return undefined;
-}
-
-function quoteUnquotedKeys(input: string): string {
-  let output = '';
-  let quote: '"' | "'" | null = null;
-  let escaped = false;
-
-  for (let i = 0; i < input.length; i += 1) {
-    const char = input[i];
-
-    if (quote) {
-      output += char;
-      if (escaped) {
-        escaped = false;
-      } else if (char === '\\') {
-        escaped = true;
-      } else if (char === quote) {
-        quote = null;
-      }
-      continue;
-    }
-
-    if (char === '"' || char === "'") {
-      quote = char;
-      output += char;
-      continue;
-    }
-
-    const prev = previousSignificantChar(input, i);
-    if ((prev === '{' || prev === ',') && isIdentifierStart(char)) {
-      let end = i + 1;
-      while (end < input.length && isIdentifierPart(input[end])) end += 1;
-
-      let next = end;
-      while (/\s/.test(input[next] ?? '')) next += 1;
-
-      if (input[next] === ':') {
-        output += `"${input.slice(i, end)}"`;
-        i = end - 1;
-        continue;
-      }
-    }
-
-    output += char;
-  }
-
-  return output;
-}
-
-function convertSingleQuotedStrings(input: string): string {
-  let output = '';
-  let inDoubleQuote = false;
-  let inSingleQuote = false;
-  let escaped = false;
-
-  for (let i = 0; i < input.length; i += 1) {
-    const char = input[i];
-
-    if (inDoubleQuote) {
-      output += char;
-      if (escaped) {
-        escaped = false;
-      } else if (char === '\\') {
-        escaped = true;
-      } else if (char === '"') {
-        inDoubleQuote = false;
-      }
-      continue;
-    }
-
-    if (inSingleQuote) {
-      if (escaped) {
-        if (char === "'") {
-          output += "'";
-        } else if (char === '"') {
-          output += '\\"';
-        } else {
-          output += `\\${char}`;
-        }
-        escaped = false;
-        continue;
-      }
-
-      if (char === '\\') {
-        escaped = true;
-        continue;
-      }
-
-      if (char === "'") {
-        output += '"';
-        inSingleQuote = false;
-        continue;
-      }
-
-      if (char === '"') {
-        output += '\\"';
-        continue;
-      }
-
-      if (char === '\n') {
-        output += '\\n';
-        continue;
-      }
-
-      if (char === '\r') {
-        output += '\\r';
-        continue;
-      }
-
-      output += char;
-      continue;
-    }
-
-    if (char === '"') {
-      inDoubleQuote = true;
-      output += char;
-      continue;
-    }
-
-    if (char === "'") {
-      inSingleQuote = true;
-      output += '"';
-      continue;
-    }
-
-    output += char;
-  }
-
-  return output;
-}
-
-function normalizeLooseJSON(input: string): string {
-  return convertSingleQuotedStrings(quoteUnquotedKeys(input));
-}
-
 /**
- * 宽松解析 JSON（兼容 JS 对象字面量风格）
- * - 支持无引号的 key
- * - 支持单引号字符串
+ * 宽松解析 JSON。
+ * - 标准 JSON 走原生 JSON.parse
+ * - JSONC / JSON5 语法走 JSON5.parse，例如注释、尾逗号、单引号、未加引号 key 等
  */
 export function parseLooseJSON(input: string): unknown {
   try {
     return JSON.parse(input);
   } catch {
-    return JSON.parse(normalizeLooseJSON(input)); // 若仍失败则向上抛出
+    return JSON5.parse(input);
   }
 }
 
