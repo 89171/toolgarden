@@ -1351,6 +1351,30 @@
         }
       ]
     },
+    "text-word-count": {
+      "items": [
+        {
+          "question": "Does Word Count upload my text?",
+          "answer": "No. Character, word, line, paragraph, and byte counts are calculated locally in your browser."
+        },
+        {
+          "question": "How are mixed Chinese and English texts counted?",
+          "answer": "The tool shows characters, non-space characters, words, and CJK character counts separately, so it works well for Chinese, English, and mixed text."
+        }
+      ]
+    },
+    "text-diff": {
+      "items": [
+        {
+          "question": "Does Text Diff upload my content?",
+          "answer": "No. The comparison runs locally in your browser, and the two text inputs are not sent to a server."
+        },
+        {
+          "question": "Which diff algorithm does Text Diff use?",
+          "answer": "The tool uses the open-source jsdiff algorithm for line-level comparison, then highlights word-level changes inside modified lines."
+        }
+      ]
+    },
     "subtitle-maker": {
       "items": [
         {
@@ -1382,6 +1406,7 @@
     "file_merge_tools": "File merge tools",
     "info_codec_tools": "Info codec",
     "qr_tools": "QR tools",
+    "text_tools": "Text tools",
     "subtitle_tools": "Subtitle tools",
     "github": "GitHub"
   },
@@ -1424,6 +1449,14 @@
     "all_tools": "File merge tools",
     "breadcrumb": "File merge tools",
     "privacy_note": "Files are processed locally in your browser and are not uploaded to a server."
+  },
+  "text_hub": {
+    "title": "Text tools",
+    "meta_title": "Free Online Text Tools - Word Count and Text Diff",
+    "description": "Free online text tools for character count, word count, line count, paragraph count, and visual text diff comparison. All processing runs locally in your browser with no upload required.",
+    "all_tools": "Text tools",
+    "breadcrumb": "Text tools",
+    "privacy_note": "Text is processed locally in your browser and is not uploaded to a server."
   },
   "home": {
     "title": "JSON Toolkit",
@@ -1701,6 +1734,40 @@
     "pdf-organize": {
       "name": "Organize PDF",
       "description": "Free online tool to reorder, duplicate, and delete PDF pages before exporting a new document"
+    },
+    "text-word-count": {
+      "name": "Word Count",
+      "description": "Free online text counter for characters, words, lines, paragraphs, sentences, and byte size",
+      "input_title": "Input text",
+      "result_title": "Statistics",
+      "placeholder": "Paste or type the text to count...",
+      "characters": "Characters",
+      "characters_no_spaces": "Characters without spaces",
+      "words": "Words",
+      "cjk_characters": "CJK characters",
+      "lines": "Lines",
+      "paragraphs": "Paragraphs",
+      "sentences": "Sentences",
+      "bytes": "Bytes",
+      "reading_minutes": "Reading minutes"
+    },
+    "text-diff": {
+      "name": "Text Diff",
+      "description": "Free online text diff using an open-source diff algorithm to highlight line and word changes",
+      "left_title": "Left text (original)",
+      "right_title": "Right text (new)",
+      "left_result": "Original text",
+      "right_result": "New text",
+      "left_placeholder": "Paste the original text...",
+      "right_placeholder": "Paste the new text...",
+      "line_count": "{count} lines",
+      "hide_unchanged": "Hide unchanged lines",
+      "added": "added lines",
+      "removed": "removed lines",
+      "changed": "changed lines",
+      "unchanged": "unchanged lines",
+      "identical": "The two texts are identical",
+      "empty_result": "Enter two texts to see differences"
     },
     "subtitle-maker": {
       "name": "Subtitle Maker",

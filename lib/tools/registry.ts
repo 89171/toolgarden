@@ -339,6 +339,24 @@ export const toolRegistry: ToolMeta[] = [
     category: 'convert',
     featured: true,
   },
+  {
+    id: 'text-word-count',
+    name: '字数统计',
+    description: '统计文本字数、词数、行数、段落、句子和字节大小',
+    path: '/text/word-count',
+    icon: 'ABC',
+    category: 'validate',
+    featured: true,
+  },
+  {
+    id: 'text-diff',
+    name: '文本对比',
+    description: '使用开源 diff 算法对比两段文本差异，按行和词高亮增删改',
+    path: '/text/diff',
+    icon: 'TXT',
+    category: 'format',
+    featured: true,
+  },
 
   // ── 验证 ───────────────────────────────────────────────────────
   {
@@ -449,6 +467,11 @@ export function getSubtitleTools(): ToolMeta[] {
   return toolRegistry.filter((tool) => tool.path.startsWith('/subtitle'));
 }
 
+/** 获取文本工具集合 */
+export function getTextTools(): ToolMeta[] {
+  return toolRegistry.filter((tool) => tool.path.startsWith('/text/'));
+}
+
 /** 获取二维码工具集合 */
 export function getQrCodeTools(): ToolMeta[] {
   return toolRegistry.filter((tool) => tool.path.startsWith('/qr-code/'));
@@ -465,12 +488,13 @@ function isNonJsonTopLevelTool(tool: ToolMeta): boolean {
     tool.path.startsWith('/pdf/') ||
     tool.path.startsWith('/file-merge/') ||
     tool.path.startsWith('/subtitle') ||
+    tool.path.startsWith('/text/') ||
     tool.path.startsWith('/qr-code/') ||
     tool.path.startsWith('/info-codec')
   );
 }
 
-/** 获取 JSON 工具集合，不包含图片、PDF、文件合并、字幕、二维码和信息编码工具 */
+/** 获取 JSON 工具集合，不包含图片、PDF、文件合并、字幕、文本、二维码和信息编码工具 */
 export function getJsonTools(): ToolMeta[] {
   return toolRegistry.filter((tool) => !isNonJsonTopLevelTool(tool));
 }

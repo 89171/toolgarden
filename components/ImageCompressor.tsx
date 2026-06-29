@@ -68,6 +68,7 @@ export function ImageCompressor() {
   const ti = useTranslations('image_compressor');
   const inputRef = useRef<HTMLInputElement>(null);
   const itemsRef = useRef<CompressorItem[]>([]);
+  const outputModeRef = useRef<ImageCompressionOutputMode>('preserve');
   const [items, setItems] = useState<CompressorItem[]>([]);
   const [outputWebp, setOutputWebp] = useState(false);
   const [dragging, setDragging] = useState(false);
@@ -92,6 +93,10 @@ export function ImageCompressor() {
   useEffect(() => {
     itemsRef.current = items;
   }, [items]);
+
+  useEffect(() => {
+    outputModeRef.current = outputMode;
+  }, [outputMode]);
 
   useEffect(() => () => {
     itemsRef.current.forEach(revokeItemUrls);
@@ -133,7 +138,7 @@ export function ImageCompressor() {
 
   const compressItems = useCallback(async (
     targetItems: CompressorItem[],
-    mode: ImageCompressionOutputMode = outputMode
+    mode: ImageCompressionOutputMode = outputModeRef.current
   ) => {
     for (const item of targetItems) {
       updateItem(item.id, (current) => {
@@ -172,11 +177,12 @@ export function ImageCompressor() {
         }));
       }
     }
-  }, [outputMode, updateItem]);
+  }, [updateItem]);
 
   const handleWebpChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked;
     const nextMode: ImageCompressionOutputMode = checked ? 'webp' : 'preserve';
+    outputModeRef.current = nextMode;
     setOutputWebp(checked);
 
     if (itemsRef.current.length > 0) {
@@ -199,12 +205,12 @@ export function ImageCompressor() {
 
     itemsRef.current = nextItems;
     setItems(nextItems);
-    void compressItems(nextItems);
+    void compressItems(nextItems, outputModeRef.current);
   }, [compressItems]);
 
   const recompress = useCallback(() => {
     if (itemsRef.current.length === 0) return;
-    void compressItems(itemsRef.current);
+    void compressItems(itemsRef.current, outputModeRef.current);
   }, [compressItems]);
 
   const downloadItem = useCallback((item: CompressorItem) => {
@@ -633,7 +639,7 @@ export function ImageCompressor() {
                             <Button
                               variant="secondary"
                               onClick={() => {
-                                void compressItems([item]);
+                                void compressItems([item], outputModeRef.current);
                               }}
                               disabled={item.status === 'compressing'}
                             >

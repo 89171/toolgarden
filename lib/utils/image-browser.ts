@@ -2075,6 +2075,13 @@ async function compressImageFileOnMainThread(
           quantizedColors?: number;
         }
       | null = null;
+    let forcedWebpFallback:
+      | {
+          blob: Blob;
+          candidate: CompressionCandidate;
+          quality?: number;
+        }
+      | null = null;
 
     if (sourceType === 'image/png' && outputMode === 'preserve') {
       const quantized = await findBestQuantizedPng(sourceCanvas, sourceSample, file.size, hasAlpha);
@@ -2099,6 +2106,10 @@ async function compressImageFileOnMainThread(
           !shouldUseCandidate(blob.size, file.size, outputMode)
         ) continue;
 
+        if (outputMode === 'webp' && !forcedWebpFallback) {
+          forcedWebpFallback = { blob, candidate, quality };
+        }
+
         const diff = await compareBlobToSample(blob, sourceSample);
         if (!isVisuallySafe(diff, hasAlpha)) continue;
         if (!best || blob.size < best.blob.size) {
@@ -2107,7 +2118,15 @@ async function compressImageFileOnMainThread(
       }
     }
 
+    if (!best && forcedWebpFallback) {
+      best = forcedWebpFallback;
+    }
+
     if (!best) {
+      if (outputMode === 'webp') {
+        return { ok: false, code: 'unsupported_output', detail: 'WebP' };
+      }
+
       const watermarked = await maybeWatermarkImageBlob(file, sourceType || file.type, {
         jpegBackground,
       });

@@ -217,6 +217,7 @@ async function handleCompression(id, file, options) {
   const outputMode = options.outputMode || 'preserve';
   const candidates = getCompressionCandidates(file.type, outputMode);
   let best = null;
+  let forcedWebpFallback = null;
 
   for (const candidate of candidates) {
     for (const quality of candidate.qualities) {
@@ -227,6 +228,10 @@ async function handleCompression(id, file, options) {
         !shouldUseCandidate(blob.size, file.size, outputMode)
       ) continue;
 
+      if (outputMode === 'webp' && !forcedWebpFallback) {
+        forcedWebpFallback = { blob, candidate, quality };
+      }
+
       const diff = await compareBlobToSample(blob, sourceSample);
       if (!isVisuallySafe(diff, hasAlpha)) continue;
       if (!best || blob.size < best.blob.size) {
@@ -235,7 +240,16 @@ async function handleCompression(id, file, options) {
     }
   }
 
+  if (!best && forcedWebpFallback) {
+    best = forcedWebpFallback;
+  }
+
   if (!best) {
+    if (outputMode === 'webp') {
+      postError(id, ERROR.UNSUPPORTED_OUTPUT, 'WebP');
+      return;
+    }
+
     self.postMessage({
       id,
       ok: true,

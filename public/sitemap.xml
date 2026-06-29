@@ -65,6 +65,22 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/file-merge" />
   </url>
   <url>
+    <loc>https://toolgarden.xyz/zh/text</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/text" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/text" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/text" />
+  </url>
+  <url>
+    <loc>https://toolgarden.xyz/en/text</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/text" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/text" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/text" />
+  </url>
+  <url>
     <loc>https://toolgarden.xyz/zh/json-format</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -687,6 +703,38 @@
     <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/subtitle-maker" />
     <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/subtitle-maker" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/subtitle-maker" />
+  </url>
+  <url>
+    <loc>https://toolgarden.xyz/zh/text/word-count</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/text/word-count" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/text/word-count" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/text/word-count" />
+  </url>
+  <url>
+    <loc>https://toolgarden.xyz/en/text/word-count</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/text/word-count" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/text/word-count" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/text/word-count" />
+  </url>
+  <url>
+    <loc>https://toolgarden.xyz/zh/text/diff</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/text/diff" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/text/diff" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/text/diff" />
+  </url>
+  <url>
+    <loc>https://toolgarden.xyz/en/text/diff</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://toolgarden.xyz/zh/text/diff" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://toolgarden.xyz/en/text/diff" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://toolgarden.xyz/en/text/diff" />
   </url>
   <url>
     <loc>https://toolgarden.xyz/zh/json-schema</loc>

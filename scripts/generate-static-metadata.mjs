@@ -8,7 +8,7 @@ const publicDir = path.join(rootDir, 'public');
 const BASE_URL = 'https://toolgarden.xyz';
 const locales = ['zh', 'en'];
 const defaultLocale = 'en';
-const hubPaths = ['/image', '/pdf', '/file-merge'];
+const hubPaths = ['/image', '/pdf', '/file-merge', '/text'];
 
 function cleanBuildArtifacts() {
   for (const dir of ['.next', 'out']) {

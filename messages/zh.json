@@ -1351,6 +1351,30 @@
         }
       ]
     },
+    "text-word-count": {
+      "items": [
+        {
+          "question": "字数统计会上传文本吗？",
+          "answer": "不会。字数、词数、行数、段落和字节大小都在浏览器本地计算。"
+        },
+        {
+          "question": "中英文混合文本怎么统计？",
+          "answer": "工具会分别展示字符数、去空白字符数、词数和 CJK 字符数，适合中文、英文和混合文本快速检查。"
+        }
+      ]
+    },
+    "text-diff": {
+      "items": [
+        {
+          "question": "文本对比会上传内容吗？",
+          "answer": "不会。两段文本的对比会在浏览器本地完成，输入内容不会发送到服务器。"
+        },
+        {
+          "question": "文本对比使用什么算法？",
+          "answer": "工具基于开源 jsdiff 算法进行逐行对比，并在修改行内继续高亮词级差异。"
+        }
+      ]
+    },
     "subtitle-maker": {
       "items": [
         {
@@ -1382,6 +1406,7 @@
     "file_merge_tools": "文件合并工具",
     "info_codec_tools": "信息编码",
     "qr_tools": "二维码工具",
+    "text_tools": "文本工具",
     "subtitle_tools": "字幕工具",
     "github": "GitHub"
   },
@@ -1424,6 +1449,14 @@
     "all_tools": "文件合并工具",
     "breadcrumb": "文件合并工具",
     "privacy_note": "文件仅在本地浏览器处理，不会上传到服务器。"
+  },
+  "text_hub": {
+    "title": "文本工具",
+    "meta_title": "免费在线文本工具 - 字数统计、文本对比",
+    "description": "免费在线处理文本内容，支持字数统计、词数统计、行数统计、段落统计和两段文本差异对比。所有处理都在浏览器本地完成，无需上传。",
+    "all_tools": "文本工具",
+    "breadcrumb": "文本工具",
+    "privacy_note": "文本仅在本地浏览器处理，不会上传到服务器。"
   },
   "home": {
     "title": "JSON 工具包",
@@ -1701,6 +1734,40 @@
     "pdf-organize": {
       "name": "整理 PDF",
       "description": "免费在线重新排序、复制和删除 PDF 页面，拖放整理后导出新文档"
+    },
+    "text-word-count": {
+      "name": "字数统计",
+      "description": "免费在线统计文本字数、词数、行数、段落、句子和字节大小",
+      "input_title": "输入文本",
+      "result_title": "统计结果",
+      "placeholder": "粘贴或输入需要统计的文本...",
+      "characters": "字符数",
+      "characters_no_spaces": "去空白字符数",
+      "words": "词数",
+      "cjk_characters": "中日韩字符数",
+      "lines": "行数",
+      "paragraphs": "段落数",
+      "sentences": "句子数",
+      "bytes": "字节大小",
+      "reading_minutes": "预计阅读分钟"
+    },
+    "text-diff": {
+      "name": "文本对比",
+      "description": "免费在线使用开源 diff 算法对比两段文本差异，按行和词高亮增删改",
+      "left_title": "左侧文本（原始）",
+      "right_title": "右侧文本（新版）",
+      "left_result": "原始文本",
+      "right_result": "新版文本",
+      "left_placeholder": "粘贴原始文本...",
+      "right_placeholder": "粘贴新版文本...",
+      "line_count": "{count} 行",
+      "hide_unchanged": "隐藏未变行",
+      "added": "新增行",
+      "removed": "删除行",
+      "changed": "修改行",
+      "unchanged": "未变行",
+      "identical": "两段文本完全相同",
+      "empty_result": "输入两段文本后会显示差异"
     },
     "subtitle-maker": {
       "name": "字幕编辑器",

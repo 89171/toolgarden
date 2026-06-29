@@ -10,6 +10,7 @@ import {
   getPdfTools,
   getQrCodeTools,
   getSubtitleTools,
+  getTextTools,
 } from '@/lib/tools/registry';
 import type { ToolMeta } from '@/lib/tools/types';
 import { LanguageSwitcher } from './LanguageSwitcher';
@@ -60,6 +61,7 @@ const Header: React.FC<HeaderProps> = ({ compact = false }) => {
   const infoCodecTools = getInfoCodecTools();
   const qrCodeTools = getQrCodeTools();
   const subtitleTools = getSubtitleTools();
+  const textTools = getTextTools();
   const infoCodecMenuPath = infoCodecTools[0] ? getLocalizedToolPath(infoCodecTools[0], locale) : `/${locale}/info-codec`;
   const qrCodeMenuPath = qrCodeTools[0] ? getLocalizedToolPath(qrCodeTools[0], locale) : `/${locale}/qr-code/generate`;
 
@@ -131,6 +133,21 @@ const Header: React.FC<HeaderProps> = ({ compact = false }) => {
             <MenuDropdownPanel>
                 <div className="grid gap-1 sm:grid-cols-2">
                   {imageTools.map(renderToolLink)}
+                </div>
+            </MenuDropdownPanel>
+          </div>
+
+          <div className="group relative">
+            <Link
+              href={`/${locale}/text`}
+              className="flex items-center gap-2 rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+            >
+              <span>{t('nav.text_tools')}</span>
+              <MenuDropdownCaret />
+            </Link>
+            <MenuDropdownPanel>
+                <div className="grid gap-1">
+                  {textTools.map(renderToolLink)}
                 </div>
             </MenuDropdownPanel>
           </div>
