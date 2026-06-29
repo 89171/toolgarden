@@ -44,7 +44,7 @@ export default async function FileMergeHubPage({
         <header className="mb-8">
           <nav className="mb-4 flex items-center gap-1 text-sm text-content-muted" aria-label="breadcrumb">
             <Link href={`/${normalizedLocale}`} className="hover:text-content-secondary">
-              {m.nav.title}
+              {m.home.breadcrumb}
             </Link>
             <span>/</span>
             <span className="font-medium text-content-secondary">{m.file_merge_hub.breadcrumb}</span>

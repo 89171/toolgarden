@@ -1,5 +1,5 @@
 import { unzipSync } from 'fflate';
-import { PDFDocument, type PDFImage } from 'pdf-lib';
+import type { PDFDocument, PDFImage } from 'pdf-lib';
 import { formatFileSize } from './image';
 import {
   createPdfDerivedFilename,
@@ -22,6 +22,15 @@ interface CanvasPage {
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D;
   cursorY: number;
+}
+
+type PdfLibModule = typeof import('pdf-lib');
+
+let pdfLibPromise: Promise<PdfLibModule> | null = null;
+
+function loadPdfLib(): Promise<PdfLibModule> {
+  pdfLibPromise ??= import('pdf-lib');
+  return pdfLibPromise;
 }
 
 export type PdfOperationErrorCode =
@@ -786,6 +795,7 @@ async function addCanvasPage(pdf: PDFDocument, canvasPage: CanvasPage): Promise<
 async function createPdfFromBlocks(blocks: TextBlock[]): Promise<Blob> {
   if (blocks.length === 0) throw new Error('No document content.');
 
+  const { PDFDocument } = await loadPdfLib();
   const pdf = await PDFDocument.create();
   let page = createPage();
   let renderedBlocks = 0;
@@ -867,6 +877,7 @@ async function embedWebpImage(pdf: PDFDocument, file: File): Promise<PDFImage> {
 }
 
 async function createPdfFromImage(file: File): Promise<Blob> {
+  const { PDFDocument } = await loadPdfLib();
   const pdf = await PDFDocument.create();
   const bytes = await file.arrayBuffer();
   const mimeType = file.type || '';
@@ -951,6 +962,7 @@ export async function convertFileToPdf(file: File): Promise<PdfConversionOutcome
 
   try {
     const blob = await createPdfBlobForFile(file);
+    const { PDFDocument } = await loadPdfLib();
     const pageCount = await PDFDocument.load(await blob.arrayBuffer()).then((pdf) => pdf.getPageCount());
 
     return {
@@ -977,6 +989,7 @@ export async function inspectPdfFile(file: File): Promise<PdfFileInspectionOutco
   if (validationError) return validationError;
 
   try {
+    const { PDFDocument } = await loadPdfLib();
     const pdf = await PDFDocument.load(await file.arrayBuffer());
     return {
       ok: true,
@@ -1017,6 +1030,7 @@ export async function mergePdfBlobs(
   if (blobs.length === 0) return { ok: false, code: 'empty_selection' };
 
   try {
+    const { PDFDocument } = await loadPdfLib();
     const output = await PDFDocument.create();
 
     for (const blob of blobs) {
@@ -1055,6 +1069,7 @@ export async function extractPdfPages(
   const startedAt = now();
 
   try {
+    const { PDFDocument } = await loadPdfLib();
     const source = await PDFDocument.load(await file.arrayBuffer());
     const output = await PDFDocument.create();
     const copiedPages = await output.copyPages(source, pages);
@@ -1084,6 +1099,7 @@ export async function splitPdfFile(file: File, groups: PdfPageGroup[]): Promise<
   const startedAt = now();
 
   try {
+    const { PDFDocument } = await loadPdfLib();
     const source = await PDFDocument.load(await file.arrayBuffer());
     const files: PdfSplitFile[] = [];
 
@@ -1121,6 +1137,7 @@ export async function organizePdfPages(
   const startedAt = now();
 
   try {
+    const { PDFDocument } = await loadPdfLib();
     const source = await PDFDocument.load(await file.arrayBuffer());
     const output = await PDFDocument.create();
     const copiedPages = await output.copyPages(

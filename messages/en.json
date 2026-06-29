@@ -1460,6 +1460,7 @@
   },
   "home": {
     "title": "JSON Toolkit",
+    "breadcrumb": "Home",
     "meta_title": "Free Online JSON Toolkit - Format, Convert, Validate, and Decode JWT",
     "subtitle": "Free online tools to format, minify, diff, convert, validate, and inspect JSON in your browser. Includes JSON/YAML/XML/CSV/Excel/TypeScript conversion, JSON Schema, JSONPath, and JWT tools. Image tools now live in the top image toolbar, and your data still stays local.",
     "featured": "Popular JSON tools",

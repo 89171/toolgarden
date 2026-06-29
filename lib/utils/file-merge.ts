@@ -1,5 +1,4 @@
 import { strFromU8, strToU8, unzipSync, zipSync } from 'fflate';
-import { convertFileToPdf, mergePdfBlobs } from './pdf-browser';
 import { getImageAcceptValue, inferImageMimeType, supportedImageInputs } from './image';
 
 export type FileMergeMode =
@@ -1111,6 +1110,7 @@ export async function mergeImageFiles(
   const startedAt = typeof performance === 'undefined' ? Date.now() : performance.now();
 
   if (output === 'pdf') {
+    const { convertFileToPdf, mergePdfBlobs } = await import('./pdf-browser');
     const blobs: Blob[] = [];
     for (const file of files) {
       const mimeType = inferImageMimeType(file);

@@ -1460,6 +1460,7 @@
   },
   "home": {
     "title": "JSON 工具包",
+    "breadcrumb": "首页",
     "meta_title": "免费在线 JSON 工具包 - 格式化、转换、校验、JWT 解析",
     "subtitle": "免费在线完成 JSON 格式化、压缩、对比，JSON/YAML/XML/CSV/Excel/TypeScript 转换，JSON Schema、JSONPath 与 JWT 解析。图片处理工具已整理到顶部图片工具栏，数据仍只在本地处理，无需上传。",
     "featured": "常用 JSON 工具",

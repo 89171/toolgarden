@@ -44,7 +44,7 @@ export default async function PdfHubPage({
         <header className="mb-8">
           <nav className="mb-4 flex items-center gap-1 text-sm text-content-muted" aria-label="breadcrumb">
             <Link href={`/${normalizedLocale}`} className="hover:text-content-secondary">
-              {m.nav.title}
+              {m.home.breadcrumb}
             </Link>
             <span>/</span>
             <span className="font-medium text-content-secondary">{m.pdf_hub.breadcrumb}</span>

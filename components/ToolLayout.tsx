@@ -28,7 +28,7 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
   const isImageTool = Boolean(tool?.path.startsWith('/image/'));
   const isPdfTool = Boolean(tool?.path.startsWith('/pdf/'));
   const isFileMergeTool = Boolean(tool?.path.startsWith('/file-merge/'));
-  const homeLabel = t('nav.title');
+  const homeLabel = t('home.breadcrumb');
   const imageHubLabel = t('image_hub.breadcrumb');
   const pdfHubLabel = t('pdf_hub.breadcrumb');
   const fileMergeHubLabel = t('file_merge_hub.breadcrumb');

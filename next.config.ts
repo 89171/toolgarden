@@ -3,6 +3,7 @@ import path from 'path';
 import securityHeaders from './lib/security/static-headers.json';
 
 const nextIntlRequestConfig = './i18n/request.ts';
+const onnxRuntimeWasmEntry = 'onnxruntime-web/wasm';
 const sharedSecurityHeaders = securityHeaders as Array<{ key: string; value: string }>;
 
 const nextConfig: NextConfig = {
@@ -33,6 +34,8 @@ const nextConfig: NextConfig = {
   turbopack: {
     resolveAlias: {
       'next-intl/config': nextIntlRequestConfig,
+      'onnxruntime-web': onnxRuntimeWasmEntry,
+      'onnxruntime-web/webgpu': onnxRuntimeWasmEntry,
     },
   },
   webpack(config) {
@@ -40,6 +43,8 @@ const nextConfig: NextConfig = {
       config.context,
       nextIntlRequestConfig,
     );
+    config.resolve.alias['onnxruntime-web$'] = onnxRuntimeWasmEntry;
+    config.resolve.alias['onnxruntime-web/webgpu$'] = onnxRuntimeWasmEntry;
 
     return config;
   },

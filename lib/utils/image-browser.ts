@@ -32,9 +32,10 @@ import {
   type ImageWatermarkRemovalProgress,
 } from './image';
 
-type OrtWasmModule = typeof import('onnxruntime-web');
+type OrtWasmModule = typeof import('onnxruntime-web/wasm');
 type OrtInferenceSession = Awaited<ReturnType<OrtWasmModule['InferenceSession']['create']>>;
 type PicaInstance = ReturnType<typeof import('pica')['default']>;
+type SvgoBrowserModule = typeof import('svgo/browser');
 
 type WorkerFailureCode =
   | 'canvas_context'
@@ -186,6 +187,7 @@ let watermarkMiganSessionPromise:
   | Promise<{ ort: OrtWasmModule; session: OrtInferenceSession }>
   | null = null;
 let svgCanvasResizerPromise: Promise<PicaInstance> | null = null;
+let svgoBrowserPromise: Promise<SvgoBrowserModule> | null = null;
 
 interface WatermarkedImageOutput {
   blob: Blob;
@@ -756,11 +758,40 @@ function optimizeSvgWithDom(svgText: string): string | null {
   return optimizedText;
 }
 
-function chooseSmallestValidSvgText(svgText: string): string {
+function getSvgoBrowser(): Promise<SvgoBrowserModule> {
+  svgoBrowserPromise ??= import('svgo/browser').catch((error) => {
+    svgoBrowserPromise = null;
+    throw error;
+  });
+
+  return svgoBrowserPromise;
+}
+
+async function optimizeSvgWithSvgo(svgText: string): Promise<string | null> {
+  try {
+    const { optimize } = await getSvgoBrowser();
+    const result = optimize(svgText, {
+      multipass: true,
+      floatPrecision: 3,
+      plugins: ['preset-default'],
+      js2svg: {
+        pretty: false,
+      },
+    });
+
+    return result.data;
+  } catch {
+    return null;
+  }
+}
+
+async function chooseSmallestValidSvgText(svgText: string): Promise<string> {
   const fallback = minifySvgText(svgText);
   const candidates = [fallback];
   const domOptimized = optimizeSvgWithDom(svgText);
   if (domOptimized) candidates.push(domOptimized);
+  const svgoOptimized = await optimizeSvgWithSvgo(svgText);
+  if (svgoOptimized) candidates.push(svgoOptimized);
 
   return candidates
     .filter((candidate) => Boolean(getSvgDocumentRoot(candidate)))
@@ -1334,7 +1365,7 @@ async function getWatermarkInpaintSession(
 
   if (!watermarkInpaintSessionPromise) {
     watermarkInpaintSessionPromise = (async () => {
-      const ort = await import('onnxruntime-web');
+      const ort = await import('onnxruntime-web/wasm');
 
       ort.env.wasm.numThreads = 1;
       ort.env.wasm.proxy = false;
@@ -1368,7 +1399,7 @@ async function getWatermarkMiganSession(
 
   if (!watermarkMiganSessionPromise) {
     watermarkMiganSessionPromise = (async () => {
-      const ort = await import('onnxruntime-web');
+      const ort = await import('onnxruntime-web/wasm');
 
       ort.env.wasm.numThreads = 1;
       ort.env.wasm.proxy = false;
@@ -2211,7 +2242,7 @@ async function compressSvgFilePreservingFormat(
       };
     }
 
-    const minifiedText = chooseSmallestValidSvgText(svgText);
+    const minifiedText = await chooseSmallestValidSvgText(svgText);
     const minifiedBlob = new Blob([minifiedText], { type: 'image/svg+xml' });
     const originalBlob = file.type === 'image/svg+xml'
       ? file

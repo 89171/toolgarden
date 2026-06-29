@@ -13,7 +13,9 @@ import {
   toolRegistry,
 } from './registry';
 
-export const BASE_URL = 'https://toolgarden.xyz';
+const DEFAULT_BASE_URL = 'https://toolgarden.xyz';
+
+export const BASE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? DEFAULT_BASE_URL).replace(/\/+$/, '');
 export const REPOSITORY_URL = 'https://github.com/89171/json-toolkit';
 const EXPOSE_SOURCE_METADATA = process.env.NEXT_PUBLIC_EXPOSE_SOURCE === 'true';
 
@@ -461,17 +463,19 @@ export function createBreadcrumbJsonLd(toolId: string, locale: string) {
 
   if (!tool || !localizedTool) return null;
 
+  const homeListItem = {
+    '@type': 'ListItem',
+    position: 1,
+    name: m.home.breadcrumb,
+    item: getLocalizedUrl(normalizedLocale),
+  };
+
   if (tool.path.startsWith('/image/')) {
     return {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        {
-          '@type': 'ListItem',
-          position: 1,
-          name: m.home.title,
-          item: getLocalizedUrl(normalizedLocale),
-        },
+        homeListItem,
         {
           '@type': 'ListItem',
           position: 2,
@@ -493,12 +497,7 @@ export function createBreadcrumbJsonLd(toolId: string, locale: string) {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        {
-          '@type': 'ListItem',
-          position: 1,
-          name: m.home.title,
-          item: getLocalizedUrl(normalizedLocale),
-        },
+        homeListItem,
         {
           '@type': 'ListItem',
           position: 2,
@@ -520,12 +519,7 @@ export function createBreadcrumbJsonLd(toolId: string, locale: string) {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        {
-          '@type': 'ListItem',
-          position: 1,
-          name: m.home.title,
-          item: getLocalizedUrl(normalizedLocale),
-        },
+        homeListItem,
         {
           '@type': 'ListItem',
           position: 2,
@@ -547,12 +541,7 @@ export function createBreadcrumbJsonLd(toolId: string, locale: string) {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        {
-          '@type': 'ListItem',
-          position: 1,
-          name: m.home.title,
-          item: getLocalizedUrl(normalizedLocale),
-        },
+        homeListItem,
         {
           '@type': 'ListItem',
           position: 2,
@@ -573,12 +562,7 @@ export function createBreadcrumbJsonLd(toolId: string, locale: string) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: m.home.title,
-        item: getLocalizedUrl(normalizedLocale),
-      },
+      homeListItem,
       {
         '@type': 'ListItem',
         position: 2,
