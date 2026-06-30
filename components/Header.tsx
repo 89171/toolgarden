@@ -229,6 +229,13 @@ const Header: React.FC<HeaderProps> = ({ compact = false }) => {
                 </div>
             </MenuDropdownPanel>
           </div>
+
+          <Link
+            href={`/${locale}/blog`}
+            className="flex min-h-10 shrink-0 snap-start items-center gap-2 whitespace-nowrap rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+          >
+            <span>{t('nav.blog')}</span>
+          </Link>
         </nav>
       </div>
 

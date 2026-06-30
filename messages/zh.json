@@ -1428,6 +1428,7 @@
     "qr_tools": "二维码工具",
     "text_tools": "文本工具",
     "subtitle_tools": "字幕工具",
+    "blog": "博客",
     "github": "GitHub"
   },
   "footer": {
@@ -1477,6 +1478,18 @@
     "all_tools": "文本工具",
     "breadcrumb": "文本工具",
     "privacy_note": "文本仅在本地浏览器处理，不会上传到服务器。"
+  },
+  "blog": {
+    "title": "ToolGarden 博客",
+    "meta_title": "ToolGarden 博客 - JSON、前端工具与开发效率文章",
+    "description": "分享 JSON、JSONC、JSON5、前端工具链、浏览器本地处理和开发效率相关的实用文章。",
+    "breadcrumb": "博客",
+    "eyebrow": "文章分享",
+    "all_articles": "最新文章",
+    "read_more": "阅读文章",
+    "published_label": "发布于",
+    "updated_label": "更新于",
+    "related_tools": "相关工具"
   },
   "home": {
     "title": "JSON 工具包",

@@ -2,6 +2,11 @@ import type { Metadata } from 'next';
 import { routing } from '@/i18n/routing';
 import zhMessages from '@/messages/zh.json';
 import enMessages from '@/messages/en.json';
+import {
+  BLOG_INDEX_PATH,
+  getLocalizedBlogArticle,
+  getLocalizedBlogArticles,
+} from '@/lib/blog/articles';
 import { stringifyJSONValue } from '@/lib/utils/json';
 import {
   getFileMergeTools,
@@ -228,6 +233,55 @@ export function createTextHubMetadata(locale: string): Metadata {
   };
 }
 
+export function createBlogIndexMetadata(locale: string): Metadata {
+  const normalizedLocale = normalizeLocale(locale);
+  const m = getLocaleMessages(normalizedLocale);
+
+  return {
+    title: m.blog.meta_title,
+    description: m.blog.description,
+    alternates: {
+      canonical: getLocalizedPath(normalizedLocale, BLOG_INDEX_PATH),
+      languages: getLanguageAlternates(BLOG_INDEX_PATH),
+    },
+    openGraph: {
+      title: `${m.blog.title} | ${m.home.title}`,
+      description: m.blog.description,
+      type: 'website',
+      locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
+      siteName: m.home.title,
+      url: getLocalizedPath(normalizedLocale, BLOG_INDEX_PATH),
+    },
+  };
+}
+
+export function createBlogArticleMetadata(slug: string, locale: string): Metadata | null {
+  const normalizedLocale = normalizeLocale(locale);
+  const m = getLocaleMessages(normalizedLocale);
+  const article = getLocalizedBlogArticle(slug, normalizedLocale);
+
+  if (!article) return null;
+
+  return {
+    title: article.metaTitle,
+    description: article.metaDescription,
+    alternates: {
+      canonical: getLocalizedPath(normalizedLocale, article.path),
+      languages: getLanguageAlternates(article.path),
+    },
+    openGraph: {
+      title: `${article.metaTitle} | ${m.home.title}`,
+      description: article.metaDescription,
+      type: 'article',
+      publishedTime: article.publishedAt,
+      modifiedTime: article.updatedAt,
+      locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
+      siteName: m.home.title,
+      url: getLocalizedPath(normalizedLocale, article.path),
+    },
+  };
+}
+
 export function createToolMetadata(toolId: ToolMessageId, locale: string): Metadata {
   const normalizedLocale = normalizeLocale(locale);
   const m = getLocaleMessages(normalizedLocale);
@@ -384,6 +438,26 @@ export function createTextToolItemListJsonLd(locale: string) {
   };
 }
 
+export function createBlogItemListJsonLd(locale: string) {
+  const normalizedLocale = normalizeLocale(locale);
+  const m = getLocaleMessages(normalizedLocale);
+  const articles = getLocalizedBlogArticles(normalizedLocale);
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: m.blog.title,
+    description: m.blog.description,
+    itemListElement: articles.map((article, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      url: getLocalizedUrl(normalizedLocale, article.path),
+      name: article.title,
+      description: article.excerpt,
+    })),
+  };
+}
+
 export function createFaqJsonLd(locale: string) {
   const m = getLocaleMessages(locale);
   const faq = m.home.faq;
@@ -451,6 +525,44 @@ export function createToolJsonLd(toolId: string, locale: string) {
       '@type': 'WebSite',
       name: m.home.title,
       url: getLocalizedUrl(normalizedLocale),
+    },
+  };
+}
+
+export function createBlogArticleJsonLd(slug: string, locale: string) {
+  const normalizedLocale = normalizeLocale(locale);
+  const m = getLocaleMessages(normalizedLocale);
+  const article = getLocalizedBlogArticle(slug, normalizedLocale);
+
+  if (!article) return null;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: article.title,
+    description: article.metaDescription,
+    datePublished: article.publishedAt,
+    dateModified: article.updatedAt,
+    inLanguage: normalizedLocale === 'zh' ? 'zh-CN' : 'en',
+    isAccessibleForFree: true,
+    author: {
+      '@type': 'Organization',
+      name: m.home.title,
+      url: getLocalizedUrl(normalizedLocale),
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: m.home.title,
+      url: getLocalizedUrl(normalizedLocale),
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': getLocalizedUrl(normalizedLocale, article.path),
+    },
+    isPartOf: {
+      '@type': 'Blog',
+      name: m.blog.title,
+      url: getLocalizedUrl(normalizedLocale, BLOG_INDEX_PATH),
     },
   };
 }
@@ -568,6 +680,39 @@ export function createBreadcrumbJsonLd(toolId: string, locale: string) {
         position: 2,
         name: localizedTool.name,
         item: getLocalizedUrl(normalizedLocale, tool.path),
+      },
+    ],
+  };
+}
+
+export function createBlogArticleBreadcrumbJsonLd(slug: string, locale: string) {
+  const normalizedLocale = normalizeLocale(locale);
+  const m = getLocaleMessages(normalizedLocale);
+  const article = getLocalizedBlogArticle(slug, normalizedLocale);
+
+  if (!article) return null;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: m.home.breadcrumb,
+        item: getLocalizedUrl(normalizedLocale),
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: m.blog.breadcrumb,
+        item: getLocalizedUrl(normalizedLocale, BLOG_INDEX_PATH),
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: article.title,
+        item: getLocalizedUrl(normalizedLocale, article.path),
       },
     ],
   };

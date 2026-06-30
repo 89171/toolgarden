@@ -8,6 +8,9 @@ ToolGarden provides developers with a suite of tools for working with JSON data.
 
 ## Available Tools
 
+- **Developer Blog** (`/blog`): Articles about JSON, JSONC, JSON5, frontend toolchains, browser-local processing, and developer productivity.
+  - **Why Do Images Look Blurry After Compression?** (`/blog/why-image-compression-looks-blurry`): Explains lossy compression, repeated exports, resizing, format choice, and how to keep JPG, PNG, and WebP images clear.
+  - **How to Compress an Image to a Target File Size** (`/blog/compress-image-to-target-size`): Practical workflow for reaching 200KB, 500KB, 1MB, or other limits by adjusting dimensions, format, and quality.
 - **JSON Formatter** (`/json-format`): Format, minify, and validate JSON with an interactive tree view. Supports loose JSON (unquoted keys, single quotes).
 - **JSON Escape** (`/json-escape`): Minify and escape JSON for embedding in strings; unescape back to readable format.
 - **JSON Repair / Clean** (`/json-repair`): Repair common JSON issues such as comments, trailing commas, single quotes, unquoted keys, smart quotes, and Python-style booleans/nulls.
@@ -53,6 +56,7 @@ ToolGarden provides developers with a suite of tools for working with JSON data.
 
 - English: `/en/...` (default)
 - Chinese (Simplified): `/zh/...`
+- Blog articles: `/en/blog/...` and `/zh/blog/...`
 
 ## Technical Details
 

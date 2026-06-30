@@ -9,11 +9,33 @@ Supported locales: en (English, default), zh (Chinese Simplified)
 URL pattern: /{locale}/{tool-path}
 Image tools hub: /{locale}/image
 PDF tools hub: /{locale}/pdf
+Blog index: /{locale}/blog
 Canonical examples:
 - Home: https://toolgarden.xyz/en
 - Tool: https://toolgarden.xyz/en/json-format
 - Image hub: https://toolgarden.xyz/en/image
 - PDF hub: https://toolgarden.xyz/en/pdf
+- Blog article: https://toolgarden.xyz/en/blog/why-json-can-have-comments
+
+## Blog Reference
+
+### Why Do Images Look Blurry After Compression? (/blog/why-image-compression-looks-blurry)
+- Locales: English and Chinese Simplified
+- Explains why compressed JPG, PNG, and WebP images can become blurry, including aggressive quality settings, repeated compression, resizing, and mismatched formats
+- Recommends preserving clarity by starting with moderate quality settings, choosing the right format, resizing before over-compressing, and comparing previews
+- Points users to Image Compressor and Image Resize for browser-local optimization workflows
+
+### How to Compress an Image to a Target File Size (/blog/compress-image-to-target-size)
+- Locales: English and Chinese Simplified
+- Explains how to reach targets such as 200KB, 500KB, or 1MB by balancing pixel dimensions, output format, quality, and image complexity
+- Covers common use cases such as avatars, document photos, blog images, product images, and screenshots
+- Points users to Image Compressor and Image to WebP for browser-local compression and format conversion
+
+### Why Can Some JSON Files Have Comments? (/blog/why-json-can-have-comments)
+- Locales: English and Chinese Simplified
+- Explains why standard JSON forbids comments, why TypeScript tsconfig.json and VS Code configuration files can contain comments, and how JSONC differs from JSON5
+- Covers JSONC support in TypeScript, VS Code, Visual Studio, Azure configuration, selected ESLint configs, and Monaco Editor
+- Points users to JSON Repair / Clean for converting JSONC-style configuration into standard JSON
 
 ## Tool Reference
 

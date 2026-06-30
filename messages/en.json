@@ -1428,6 +1428,7 @@
     "qr_tools": "QR tools",
     "text_tools": "Text tools",
     "subtitle_tools": "Subtitle tools",
+    "blog": "Blog",
     "github": "GitHub"
   },
   "footer": {
@@ -1477,6 +1478,18 @@
     "all_tools": "Text tools",
     "breadcrumb": "Text tools",
     "privacy_note": "Text is processed locally in your browser and is not uploaded to a server."
+  },
+  "blog": {
+    "title": "ToolGarden Blog",
+    "meta_title": "ToolGarden Blog - JSON, Frontend Tools, and Developer Productivity",
+    "description": "Practical articles about JSON, JSONC, JSON5, frontend toolchains, browser-local processing, and developer productivity.",
+    "breadcrumb": "Blog",
+    "eyebrow": "Articles",
+    "all_articles": "Latest articles",
+    "read_more": "Read article",
+    "published_label": "Published",
+    "updated_label": "Updated",
+    "related_tools": "Related tools"
   },
   "home": {
     "title": "JSON Toolkit",
