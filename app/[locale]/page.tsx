@@ -40,7 +40,7 @@ export default async function HomePage({
   ] as const;
 
   return (
-    <div className="flex min-h-screen flex-col bg-background text-foreground">
+    <div className="flex min-h-[100dvh] flex-col bg-background text-foreground">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: toJsonLd(createToolItemListJsonLd(normalizedLocale)) }}
@@ -49,14 +49,14 @@ export default async function HomePage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: toJsonLd(createFaqJsonLd(normalizedLocale)) }}
       />
-      <div className="flex w-full flex-grow flex-col px-4 py-4 sm:px-6 lg:px-10 xl:px-14 2xl:px-20">
+      <div className="flex w-full flex-grow flex-col px-3 py-3 sm:px-6 sm:py-4 lg:px-10 xl:px-14 2xl:px-20">
         <Header compact />
 
-        <header className="mb-10 text-center">
-          <h1 className="text-4xl font-bold text-content">
+        <header className="mb-8 text-center sm:mb-10">
+          <h1 className="text-3xl font-bold leading-tight text-content sm:text-4xl">
             {m.home.title}
           </h1>
-          <p className="mx-auto mt-3 max-w-3xl text-lg leading-relaxed text-content-muted">
+          <p className="mx-auto mt-3 max-w-3xl text-base leading-relaxed text-content-muted sm:text-lg">
             {m.home.subtitle}
           </p>
           <p className="mx-auto mt-3 max-w-2xl text-sm text-content-faint">

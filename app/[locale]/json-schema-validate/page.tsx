@@ -61,7 +61,7 @@ export default function JsonSchemaValidatePage() {
   return (
     <ToolLayout toolId="json-schema-validate">
       <div className="flex-grow flex flex-col gap-4 min-h-0">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0" style={{ minHeight: '40vh' }}>
+        <div className="grid min-h-0 grid-cols-1 gap-4 sm:gap-6 lg:min-h-[40dvh] lg:grid-cols-2">
           <Panel title={t('json_title')} className="min-h-64">
             <textarea
               value={jsonInput}

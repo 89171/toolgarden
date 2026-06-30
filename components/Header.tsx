@@ -34,7 +34,7 @@ function MenuDropdownCaret() {
   return (
     <span
       aria-hidden="true"
-      className="inline-flex shrink-0 transition-transform duration-150 group-hover:rotate-180 group-focus-within:rotate-180"
+      className="hidden shrink-0 transition-transform duration-150 group-hover:rotate-180 group-focus-within:rotate-180 lg:inline-flex"
     >
       <img src="/down-arrow.svg" alt="" width={12} height={12} className="h-3 w-3" />
     </span>
@@ -43,7 +43,7 @@ function MenuDropdownCaret() {
 
 function MenuDropdownPanel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="absolute left-0 top-full z-20 hidden w-max max-w-[calc(100vw-3rem)] pt-2 group-hover:block group-focus-within:block">
+    <div className="absolute left-0 top-full z-20 hidden w-max max-w-[calc(100vw-3rem)] pt-2 lg:group-hover:block lg:group-focus-within:block">
       <div className="rounded-lg border border-border-base bg-surface p-3 shadow-lg">
         {children}
       </div>
@@ -77,7 +77,7 @@ const Header: React.FC<HeaderProps> = ({ compact = false }) => {
   );
 
   return (
-    <header className={`${compact ? 'mb-4 pb-3' : 'mb-6 pb-4'} flex flex-col gap-3 border-b border-border-subtle lg:flex-row lg:items-start lg:justify-between`}>
+    <header className={`${compact ? 'mb-3 pb-3 sm:mb-4' : 'mb-5 pb-4 sm:mb-6'} flex min-w-0 flex-col gap-3 border-b border-border-subtle lg:flex-row lg:items-start lg:justify-between`}>
       <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center">
         <div className="flex items-center justify-between gap-3">
           <Link
@@ -96,11 +96,14 @@ const Header: React.FC<HeaderProps> = ({ compact = false }) => {
           </div>
         </div>
 
-        <nav className="relative flex flex-wrap items-center justify-start gap-2 text-sm text-content-muted" aria-label={t('nav.title')}>
-          <div className="group relative">
+        <nav
+          className="relative -mx-1 flex min-w-0 snap-x items-center gap-2 overflow-x-auto px-1 pb-1 text-sm text-content-muted [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0 lg:pb-0"
+          aria-label={t('nav.title')}
+        >
+          <div className="group relative shrink-0 snap-start">
             <Link
               href={`/${locale}`}
-              className="flex items-center gap-2 rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+              className="flex min-h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
             >
               <span>{t('nav.json_tools_menu')}</span>
               <MenuDropdownCaret />
@@ -122,10 +125,10 @@ const Header: React.FC<HeaderProps> = ({ compact = false }) => {
             </MenuDropdownPanel>
           </div>
 
-          <div className="group relative">
+          <div className="group relative shrink-0 snap-start">
             <Link
               href={`/${locale}/image`}
-              className="flex items-center gap-2 rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+              className="flex min-h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
             >
               <span>{t('nav.image_toolbar')}</span>
               <MenuDropdownCaret />
@@ -137,10 +140,10 @@ const Header: React.FC<HeaderProps> = ({ compact = false }) => {
             </MenuDropdownPanel>
           </div>
 
-          <div className="group relative">
+          <div className="group relative shrink-0 snap-start">
             <Link
               href={`/${locale}/text`}
-              className="flex items-center gap-2 rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+              className="flex min-h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
             >
               <span>{t('nav.text_tools')}</span>
               <MenuDropdownCaret />
@@ -152,10 +155,10 @@ const Header: React.FC<HeaderProps> = ({ compact = false }) => {
             </MenuDropdownPanel>
           </div>
 
-          <div className="group relative">
+          <div className="group relative shrink-0 snap-start">
             <Link
               href={`/${locale}/pdf`}
-              className="flex items-center gap-2 rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+              className="flex min-h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
             >
               <span>{t('nav.pdf_tools')}</span>
               <MenuDropdownCaret />
@@ -167,10 +170,10 @@ const Header: React.FC<HeaderProps> = ({ compact = false }) => {
             </MenuDropdownPanel>
           </div>
 
-          <div className="group relative">
+          <div className="group relative shrink-0 snap-start">
             <Link
               href={`/${locale}/file-merge`}
-              className="flex items-center gap-2 rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+              className="flex min-h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
             >
               <span>{t('nav.file_merge_tools')}</span>
               <MenuDropdownCaret />
@@ -182,10 +185,10 @@ const Header: React.FC<HeaderProps> = ({ compact = false }) => {
             </MenuDropdownPanel>
           </div>
 
-          <div className="group relative">
+          <div className="group relative shrink-0 snap-start">
             <Link
               href={infoCodecMenuPath}
-              className="flex items-center gap-2 rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+              className="flex min-h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
             >
               <span>{t('nav.info_codec_tools')}</span>
               <MenuDropdownCaret />
@@ -197,10 +200,10 @@ const Header: React.FC<HeaderProps> = ({ compact = false }) => {
             </MenuDropdownPanel>
           </div>
 
-          <div className="group relative">
+          <div className="group relative shrink-0 snap-start">
             <Link
               href={qrCodeMenuPath}
-              className="flex items-center gap-2 rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+              className="flex min-h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
             >
               <span>{t('nav.qr_tools')}</span>
               <MenuDropdownCaret />
@@ -212,10 +215,10 @@ const Header: React.FC<HeaderProps> = ({ compact = false }) => {
             </MenuDropdownPanel>
           </div>
 
-          <div className="group relative">
+          <div className="group relative shrink-0 snap-start">
             <Link
               href={`/${locale}/subtitle-maker`}
-              className="flex items-center gap-2 rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+              className="flex min-h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
             >
               <span>{t('nav.subtitle_tools')}</span>
               <MenuDropdownCaret />

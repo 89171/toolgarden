@@ -33,12 +33,12 @@ export default async function PdfHubPage({
   const pdfTools = getLocalizedToolCards(normalizedLocale).filter((tool) => pdfToolIds.has(tool.id));
 
   return (
-    <div className="flex min-h-screen flex-col bg-background text-foreground">
+    <div className="flex min-h-[100dvh] flex-col bg-background text-foreground">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: toJsonLd(createPdfToolItemListJsonLd(normalizedLocale)) }}
       />
-      <div className="flex w-full flex-grow flex-col px-4 py-4 sm:px-6 lg:px-10 xl:px-14 2xl:px-20">
+      <div className="flex w-full flex-grow flex-col px-3 py-3 sm:px-6 sm:py-4 lg:px-10 xl:px-14 2xl:px-20">
         <Header compact />
 
         <header className="mb-8">
@@ -49,7 +49,7 @@ export default async function PdfHubPage({
             <span>/</span>
             <span className="font-medium text-content-secondary">{m.pdf_hub.breadcrumb}</span>
           </nav>
-          <h1 className="text-3xl font-bold text-content">{m.pdf_hub.title}</h1>
+          <h1 className="text-2xl font-bold leading-tight text-content sm:text-3xl">{m.pdf_hub.title}</h1>
           <p className="mt-3 max-w-3xl text-base leading-relaxed text-content-muted">
             {m.pdf_hub.description}
           </p>
@@ -66,7 +66,7 @@ export default async function PdfHubPage({
                 key={tool.id}
                 href={tool.localizedPath}
                 aria-label={`${tool.name}: ${tool.description}`}
-                className="group flex min-h-36 flex-col gap-3 rounded-lg border border-border-base bg-surface p-5 transition-all hover:border-border-strong hover:bg-surface-hover hover:shadow-sm"
+                className="group flex min-h-32 flex-col gap-3 rounded-lg border border-border-base bg-surface p-4 transition-all hover:border-border-strong hover:bg-surface-hover hover:shadow-sm sm:min-h-36 sm:p-5"
               >
                 <span
                   aria-hidden="true"

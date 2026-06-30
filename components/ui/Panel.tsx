@@ -10,11 +10,11 @@ interface PanelProps {
 
 /** 输入/输出面板通用骨架 */
 export const Panel: React.FC<PanelProps> = ({ title, actions, children, className }) => (
-  <div className={clsx('bg-surface rounded-lg shadow p-4 flex flex-col', className)}>
-    <div className="flex flex-wrap justify-between items-center mb-4 gap-2">
-      <h2 className="text-lg font-semibold">{title}</h2>
-      {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
+  <div className={clsx('flex min-w-0 flex-col rounded-lg bg-surface p-3 shadow sm:p-4', className)}>
+    <div className="mb-4 flex flex-wrap items-start justify-between gap-2 sm:items-center">
+      <h2 className="min-w-0 text-base font-semibold text-content sm:text-lg">{title}</h2>
+      {actions && <div className="flex w-full flex-wrap gap-2 sm:w-auto sm:justify-end">{actions}</div>}
     </div>
-    <div className="flex-grow flex flex-col min-h-0">{children}</div>
+    <div className="flex min-h-0 flex-grow flex-col">{children}</div>
   </div>
 );

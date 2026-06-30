@@ -56,70 +56,70 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
           dangerouslySetInnerHTML={{ __html: toJsonLd(faqJsonLd) }}
         />
       )}
-      <div className="h-screen bg-background text-foreground flex flex-col">
-        <div className="flex-grow flex w-full flex-col px-3 py-4 sm:px-4 lg:px-6 xl:px-8 2xl:px-10 min-h-0">
+      <div className="flex min-h-[100dvh] flex-col bg-background text-foreground">
+        <div className="flex w-full flex-1 flex-col px-3 py-3 sm:px-4 sm:py-4 lg:min-h-0 lg:px-6 xl:px-8 2xl:px-10">
         <Header compact />
         {/* 面包屑 */}
-        <nav className="text-sm text-content-muted mb-4 flex items-center gap-1" aria-label="breadcrumb">
-          <Link href={`/${locale}`} className="hover:text-content-secondary transition-colors">
+        <nav className="mb-3 flex items-center gap-1 overflow-x-auto whitespace-nowrap pb-1 text-sm text-content-muted sm:mb-4" aria-label="breadcrumb">
+          <Link href={`/${locale}`} className="shrink-0 transition-colors hover:text-content-secondary">
             {homeLabel}
           </Link>
           {tool && isImageTool && (
             <>
-              <span>/</span>
-              <Link href={`/${locale}/image`} className="text-content-secondary font-medium hover:text-content">
+              <span className="shrink-0">/</span>
+              <Link href={`/${locale}/image`} className="shrink-0 font-medium text-content-secondary hover:text-content">
                 {imageHubLabel}
               </Link>
-              <span>/</span>
-              <span className="text-content-secondary font-medium">{toolName}</span>
+              <span className="shrink-0">/</span>
+              <span className="font-medium text-content-secondary">{toolName}</span>
             </>
           )}
           {tool && isPdfTool && (
             <>
-              <span>/</span>
-              <Link href={`/${locale}/pdf`} className="text-content-secondary font-medium hover:text-content">
+              <span className="shrink-0">/</span>
+              <Link href={`/${locale}/pdf`} className="shrink-0 font-medium text-content-secondary hover:text-content">
                 {pdfHubLabel}
               </Link>
-              <span>/</span>
-              <span className="text-content-secondary font-medium">{toolName}</span>
+              <span className="shrink-0">/</span>
+              <span className="font-medium text-content-secondary">{toolName}</span>
             </>
           )}
           {tool && isFileMergeTool && (
             <>
-              <span>/</span>
-              <Link href={`/${locale}/file-merge`} className="text-content-secondary font-medium hover:text-content">
+              <span className="shrink-0">/</span>
+              <Link href={`/${locale}/file-merge`} className="shrink-0 font-medium text-content-secondary hover:text-content">
                 {fileMergeHubLabel}
               </Link>
-              <span>/</span>
-              <span className="text-content-secondary font-medium">{toolName}</span>
+              <span className="shrink-0">/</span>
+              <span className="font-medium text-content-secondary">{toolName}</span>
             </>
           )}
           {tool && !isImageTool && !isPdfTool && !isFileMergeTool && (
             <>
-              <span>/</span>
-              <span className="text-content-faint text-xs px-1 py-0.5 bg-surface-hover rounded">
+              <span className="shrink-0">/</span>
+              <span className="shrink-0 rounded bg-surface-hover px-1 py-0.5 text-xs text-content-faint">
                 {catLabel}
               </span>
-              <span>/</span>
-              <span className="text-content-secondary font-medium">{toolName}</span>
+              <span className="shrink-0">/</span>
+              <span className="font-medium text-content-secondary">{toolName}</span>
             </>
           )}
         </nav>
 
         {/* 工具标题 */}
         {tool && (
-          <div className="mb-4 flex flex-wrap items-end gap-x-2 gap-y-1">
-            <h1 className="text-2xl font-bold flex shrink-0 items-center gap-2">
-              <span aria-hidden="true" className="font-mono text-content-faint">{tool.icon}</span>
-              {toolName}
+          <div className="mb-4 flex min-w-0 flex-col gap-1 sm:flex-row sm:flex-wrap sm:items-end sm:gap-x-2">
+            <h1 className="flex min-w-0 items-center gap-2 text-xl font-bold text-content sm:text-2xl">
+              <span aria-hidden="true" className="shrink-0 font-mono text-content-faint">{tool.icon}</span>
+              <span className="min-w-0 break-words">{toolName}</span>
             </h1>
             {toolDesc ? (
-              <p className="min-w-0 text-sm text-content-muted">{toolDesc}</p>
+              <p className="min-w-0 text-sm leading-relaxed text-content-muted">{toolDesc}</p>
             ) : null}
           </div>
         )}
 
-        <div className="flex-grow flex flex-col min-h-0">{children}</div>
+        <div className="flex flex-1 flex-col lg:min-h-0">{children}</div>
         <Footer />
       </div>
       </div>
