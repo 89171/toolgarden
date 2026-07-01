@@ -31,6 +31,24 @@ Canonical examples:
 - Covers common use cases such as avatars, document photos, blog images, product images, and screenshots
 - Points users to Image Compressor and Image to WebP for browser-local compression and format conversion
 
+### Why Does a Favicon Look Blurry? (/blog/why-favicon-looks-blurry)
+- Locales: English and Chinese Simplified
+- Explains why favicons become blurry, including small source images, missing icon sizes, complex marks, transparency edges, and repeated compression
+- Covers multi-size ICO generation, high-quality Canvas resizing, alpha preservation, favicon HTML references, and real browser preview checks
+- Points users to Image to Icon for browser-local favicon generation
+
+### How to Convert an Image to ICO (/blog/convert-image-to-ico)
+- Locales: English and Chinese Simplified
+- Explains how PNG, JPG, WebP, SVG, and other browser-decodable images can be turned into true ICO container files
+- Covers browser-local image decoding, multi-size Canvas rendering, ICONDIR and ICONDIRENTRY structure, BGRA DIB entries, PNG-backed 256px entries, and favicon usage
+- Points users to Image to Icon and Remove Image Background for transparent icon workflows
+
+### ICO vs ICNS vs PNG Icons (/blog/ico-vs-icns-vs-png-icons)
+- Locales: English and Chinese Simplified
+- Compares ICO, ICNS, and PNG for website favicons, Windows icons, macOS app icons, PWA icons, and brand asset packages
+- Explains ICO little-endian directory entries, ICNS resource chunks, PNG single-image structure, and multi-size PNG ZIP workflows
+- Points users to Image to Icon for exporting ICO, ICNS, and PNG ZIP from one source image
+
 ### Why Can Some JSON Files Have Comments? (/blog/why-json-can-have-comments)
 - Locales: English and Chinese Simplified
 - Explains why standard JSON forbids comments, why TypeScript tsconfig.json and VS Code configuration files can contain comments, and how JSONC differs from JSON5
@@ -134,6 +152,15 @@ Canonical examples:
 - Mosaic and blur create editable region objects; the eraser deletes annotation objects without erasing the original image
 - Exports the edited image as JPG, PNG, or WebP; JPG uses a white background for transparent pixels
 - Uses browser Canvas APIs and does not upload image data to a server
+
+### Image to Icon (/image/to-icon)
+- Converts PNG, SVG, JPG, WebP, BMP, AVIF, and other browser-decodable images into ICO, ICNS, or multi-size PNG ZIP icons locally in the browser
+- Loads the source image through browser image decoding, validates dimensions and file size, and renders each icon size on Canvas
+- Supports draggable positioning, scale adjustment, high-quality Canvas smoothing, corner radius clipping, and optional browser-local background removal before packaging
+- ICO output includes multi-resolution entries from 16 to 256px; smaller entries use 32-bit BGRA DIB data and 256px entries can use PNG bytes
+- ICNS output writes an `icns` container with resource chunks such as `icp4`, `icp5`, `icp6`, `ic07`, `ic08`, `ic09`, and `ic10` up to 1024px
+- PNG ZIP output provides separate transparent PNG files from 16 to 1024px for web, PWA, app, and brand asset workflows
+- Supports browser-style favicon previews, per-format downloads, and ZIP downloads without uploading image files
 
 ### Image to JPG (/image/to-jpg)
 - Converts PNG, WebP, GIF, BMP, SVG, AVIF, and common browser-decodable images to JPG

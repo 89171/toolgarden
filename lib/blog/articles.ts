@@ -768,6 +768,795 @@ export const blogArticles: BlogArticle[] = [
     },
   },
   {
+    slug: 'why-favicon-looks-blurry',
+    publishedAt: '2026-07-01',
+    updatedAt: '2026-07-01',
+    translations: {
+      zh: {
+        title: '为什么 favicon 看起来模糊？如何制作清晰的网站图标',
+        excerpt: 'favicon 变模糊通常不是浏览器的问题，而是源图尺寸、图标格式、多尺寸资源和缩放方式没有处理好。',
+        metaTitle: '为什么 favicon 看起来模糊？制作清晰网站图标的方法',
+        metaDescription: '解释 favicon 模糊的常见原因，包括源图太小、没有多尺寸 ICO、透明边缘处理不当和浏览器缩放，并介绍如何制作清晰的网站图标。',
+        readingTime: '约 7 分钟阅读',
+        tags: ['favicon', 'ICO', '网站图标', '图片转 Icon'],
+        relatedTools: [
+          {
+            label: '图片转 Icon',
+            href: '/image/to-icon',
+            description: '把 PNG、SVG、JPG、WebP 等图片转换成 ICO、ICNS 或多尺寸 PNG ZIP 图标。',
+          },
+          {
+            label: '图片尺寸修改',
+            href: '/image/resize',
+            description: '在制作图标前，把大图缩放到更适合的尺寸。',
+          },
+        ],
+        blocks: [
+          {
+            type: 'lead',
+            text: 'favicon 很小，但它对网站识别度很重要。问题是，很多 logo 放进浏览器标签页后会变糊：边缘发虚、文字看不清、圆角像被压扁。',
+          },
+          {
+            type: 'paragraph',
+            text: 'favicon 模糊通常不是浏览器坏了，而是图标资源没有为小尺寸场景准备好。浏览器标签页、收藏夹、快捷方式、搜索结果和系统桌面可能会使用不同尺寸，如果只提供一张不合适的图片，浏览器只能临时缩放。',
+          },
+          { type: 'heading', level: 2, text: 'favicon 为什么会模糊？' },
+          {
+            type: 'list',
+            items: [
+              '源图太小：用 32px 图片去生成 128px 或 256px 图标，放大后一定会发虚。',
+              '只提供单一尺寸：浏览器需要 16px、32px、48px 等不同尺寸时，只能缩放同一张图。',
+              '图案太复杂：细文字、细线条和复杂渐变在 16px 标签页里很难保持清晰。',
+              '没有透明边缘：背景没有处理干净，缩小后会出现灰边、白边或锯齿。',
+              '格式不合适：直接把 JPG 当 favicon 用，透明背景会丢失，小尺寸边缘也更容易糊。',
+              '重复压缩：先压缩再转图标，会把边缘细节提前损坏。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '清晰 favicon 的核心原则' },
+          {
+            type: 'table',
+            headers: ['原则', '建议', '原因'],
+            rows: [
+              ['从大图开始', '最好使用 512px 或 1024px 的源图', '向下缩小比向上放大更清晰'],
+              ['保持图形简单', '减少小字、细线和复杂阴影', '16px 场景没有足够像素展示复杂细节'],
+              ['输出多尺寸', '至少包含 16、32、48、64、128、256px', '浏览器和系统可以选择最合适的资源'],
+              ['保留透明背景', '优先使用 PNG、SVG 或透明 WebP 源图', '缩小后边缘更干净'],
+              ['制作前预览', '同时看浏览器标签页和收藏夹效果', '小尺寸问题必须在真实场景里检查'],
+            ],
+          },
+          { type: 'heading', level: 2, text: '技术上，清晰 favicon 是怎么生成的？' },
+          {
+            type: 'paragraph',
+            text: '一个高质量 favicon 不是简单地把图片改名成 favicon.ico。更稳妥的做法是：先把源图解码到浏览器 Canvas，再按多个目标尺寸重新绘制，最后打包成 ICO 或导出多尺寸 PNG。',
+          },
+          {
+            type: 'list',
+            items: [
+              '高质量缩放：Canvas 绘制时开启 imageSmoothingEnabled 和 high 级别的 imageSmoothingQuality，让向下缩小时边缘更平滑。',
+              '居中裁切：把原图按正方形图标容器适配，允许用户拖动位置和缩放，避免主体被裁掉。',
+              '圆角裁剪：先绘制圆角路径，再 clip 到图标画布，适合 App 图标和品牌图标。',
+              '透明通道：使用 PNG 数据保留 Alpha，让图标边缘在深色和浅色浏览器主题下都更自然。',
+              '多尺寸打包：ICO 容器会写入 ICONDIR 文件头和多个图标条目，浏览器可以按显示场景选择 16px、32px 或更大尺寸。',
+              '256px 资源处理：常见 ICO 会把 256px 图标以 PNG 数据写入容器，较小尺寸可以使用 32 位 BGRA 位图数据。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '如何在 HTML 中使用 favicon？' },
+          {
+            type: 'paragraph',
+            text: '常见网站可以同时提供 ICO 和 PNG 图标。ICO 兼容性强，PNG 则适合现代浏览器、Apple Touch Icon 和 PWA 场景。',
+          },
+          {
+            type: 'code',
+            language: 'html',
+            code: '<link rel="icon" href="/favicon.ico" sizes="any">\n<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">\n<link rel="apple-touch-icon" href="/apple-touch-icon.png">',
+          },
+          { type: 'heading', level: 2, text: '用 toolgarden.xyz 制作清晰 favicon' },
+          {
+            type: 'paragraph',
+            text: 'ToolGarden 的图片转 Icon 工具会在浏览器本地读取图片，不上传文件。它会把源图渲染成多种标准图标尺寸，并生成 ICO、ICNS 或多尺寸 PNG ZIP。制作 favicon 时，推荐选择 ICO，因为 ICO 容器可以同时包含 16 到 256 像素的多套图标资源。',
+          },
+          {
+            type: 'callout',
+            title: 'toolgarden.xyz 图片转 Icon',
+            text: '上传 PNG、SVG、JPG 或 WebP 后，可以拖动主体、调整缩放、设置圆角、移除背景，并生成多尺寸 ICO。预览区会模拟浏览器标签页和收藏夹效果，方便检查小尺寸是否清晰。',
+            href: '/image/to-icon',
+            linkLabel: '打开图片转 Icon',
+          },
+          { type: 'heading', level: 2, text: '制作清晰 favicon 的步骤' },
+          {
+            type: 'list',
+            ordered: true,
+            items: [
+              '准备一张尽量清晰的源图，建议 512px 或更大。',
+              '如果背景复杂，先移除背景或换成透明底。',
+              '在图标编辑区调整缩放和位置，让主体在小尺寸里仍然可识别。',
+              '生成 ICO，并同时保存多尺寸 ZIP 作为备用资源。',
+              '把 favicon.ico 放到站点根目录，并在 HTML 或框架 metadata 中引用。',
+              '刷新浏览器缓存后，在标签页、收藏夹和移动端快捷方式里检查效果。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '总结' },
+          {
+            type: 'paragraph',
+            text: 'favicon 模糊的根本原因通常是像素不够、尺寸不全或缩放方式不合适。想让网站图标清晰，应该从高分辨率源图开始，简化图形，保留透明边缘，并输出多尺寸图标资源。',
+          },
+          {
+            type: 'paragraph',
+            text: '好的 favicon 不是只在 256px 预览里好看，而是在 16px 的浏览器标签页里也能被一眼认出来。',
+          },
+        ],
+      },
+      en: {
+        title: 'Why Does a Favicon Look Blurry? How to Make a Sharp Website Icon',
+        excerpt: 'A blurry favicon is usually caused by the source image, missing icon sizes, transparency issues, or browser scaling rather than the browser itself.',
+        metaTitle: 'Why Does a Favicon Look Blurry? How to Make a Sharp Website Icon',
+        metaDescription: 'Learn why favicons look blurry, how multi-size ICO files work, and how to create a sharp website icon from PNG, SVG, JPG, or WebP images.',
+        readingTime: '7 min read',
+        tags: ['favicon', 'ICO', 'website icon', 'image to icon'],
+        relatedTools: [
+          {
+            label: 'Image to Icon',
+            href: '/image/to-icon',
+            description: 'Convert PNG, SVG, JPG, WebP, and other images into ICO, ICNS, or multi-size PNG ZIP icons.',
+          },
+          {
+            label: 'Image Resize',
+            href: '/image/resize',
+            description: 'Resize images before icon generation when the source dimensions are larger than needed.',
+          },
+        ],
+        blocks: [
+          {
+            type: 'lead',
+            text: 'A favicon is tiny, but it carries a lot of brand recognition. When it looks blurry in the browser tab, the logo feels less polished immediately.',
+          },
+          {
+            type: 'paragraph',
+            text: 'The browser is rarely the real problem. A favicon can be shown in tabs, bookmarks, shortcuts, search results, and operating system surfaces. Each place may need a different pixel size. If you only provide one weak image, the browser has to scale it.',
+          },
+          { type: 'heading', level: 2, text: 'Why favicons become blurry' },
+          {
+            type: 'list',
+            items: [
+              'The source image is too small, so larger icon sizes are created by upscaling.',
+              'Only one size is available, so the browser stretches or shrinks it for every use case.',
+              'The design is too detailed, with small text, thin strokes, or complex gradients.',
+              'Transparency is not clean, which creates gray or white edges after resizing.',
+              'The wrong format is used, such as JPG for an icon that needs a transparent background.',
+              'The image was compressed before conversion, so edge detail was already damaged.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Rules for a sharp favicon' },
+          {
+            type: 'table',
+            headers: ['Rule', 'Suggestion', 'Why it helps'],
+            rows: [
+              ['Start large', 'Use a 512px or 1024px source when possible', 'Downscaling is cleaner than upscaling'],
+              ['Simplify the mark', 'Avoid tiny text, hairline strokes, and complex shadows', 'A 16px tab icon has very little room for detail'],
+              ['Export multiple sizes', 'Include 16, 32, 48, 64, 128, and 256px', 'Browsers and systems can choose the best resource'],
+              ['Keep transparency', 'Use PNG, SVG, or transparent WebP as the source', 'Edges look cleaner on light and dark themes'],
+              ['Preview the real context', 'Check tabs and bookmarks, not only the large preview', 'Small-size issues only show up at small sizes'],
+            ],
+          },
+          { type: 'heading', level: 2, text: 'How a sharp favicon is generated technically' },
+          {
+            type: 'paragraph',
+            text: 'A good favicon workflow does more than rename an image to favicon.ico. A better pipeline decodes the source image into a browser Canvas, redraws it at multiple target sizes, and then packages those renders as ICO or multi-size PNG assets.',
+          },
+          {
+            type: 'list',
+            items: [
+              'High-quality resizing: Canvas rendering can enable imageSmoothingEnabled and high imageSmoothingQuality for cleaner downscaling.',
+              'Centered composition: the image is fitted into a square icon canvas, with user-controlled scaling and positioning so the subject is not cropped badly.',
+              'Corner clipping: a rounded rectangle path can be applied before drawing when app-style rounded icons are needed.',
+              'Alpha preservation: PNG render data keeps transparency so edges work on both light and dark browser themes.',
+              'Multi-size packaging: an ICO container writes an ICONDIR header and several icon entries, letting browsers choose 16px, 32px, or larger resources as needed.',
+              '256px handling: modern ICO files often store the 256px entry as PNG data, while smaller entries can use 32-bit BGRA bitmap data.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'How to add favicon files in HTML' },
+          {
+            type: 'paragraph',
+            text: 'Many sites provide both an ICO file and PNG icons. ICO is broadly compatible, while PNG files are useful for modern browsers, Apple Touch Icon, and PWA surfaces.',
+          },
+          {
+            type: 'code',
+            language: 'html',
+            code: '<link rel="icon" href="/favicon.ico" sizes="any">\n<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">\n<link rel="apple-touch-icon" href="/apple-touch-icon.png">',
+          },
+          { type: 'heading', level: 2, text: 'Make a sharp favicon with toolgarden.xyz' },
+          {
+            type: 'paragraph',
+            text: 'The Image to Icon tool on ToolGarden reads the image locally in your browser and does not upload files. It renders the source image into standard icon sizes and generates ICO, ICNS, or a multi-size PNG ZIP. For favicons, ICO is usually the safest choice because one container can include icon resources from 16 to 256 pixels.',
+          },
+          {
+            type: 'callout',
+            title: 'toolgarden.xyz Image to Icon',
+            text: 'Upload PNG, SVG, JPG, or WebP, then adjust position, scale, corner radius, or remove the background. ToolGarden generates a multi-size ICO and shows browser-style previews so you can check whether the icon stays readable at small sizes.',
+            href: '/image/to-icon',
+            linkLabel: 'Open Image to Icon',
+          },
+          { type: 'heading', level: 2, text: 'Step-by-step workflow' },
+          {
+            type: 'list',
+            ordered: true,
+            items: [
+              'Start with a clean source image, ideally 512px or larger.',
+              'Remove or clean the background if the icon needs transparency.',
+              'Adjust scale and position so the mark stays recognizable when small.',
+              'Generate an ICO file and keep the multi-size ZIP as backup assets.',
+              'Place favicon.ico at the site root or reference it through your framework metadata.',
+              'Clear browser cache and check the tab, bookmarks, and mobile shortcut surfaces.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Summary' },
+          {
+            type: 'paragraph',
+            text: 'A favicon usually looks blurry because the source is too small, the icon does not include enough sizes, or the design cannot survive tiny pixel dimensions. Start from a high-resolution source, simplify the mark, preserve transparent edges, and export multiple icon sizes.',
+          },
+          {
+            type: 'paragraph',
+            text: 'A good favicon is not just clean at 256px. It should still be recognizable in a 16px browser tab.',
+          },
+        ],
+      },
+    },
+  },
+  {
+    slug: 'convert-image-to-ico',
+    publishedAt: '2026-07-01',
+    updatedAt: '2026-07-01',
+    translations: {
+      zh: {
+        title: '如何把图片转换成 ICO 图标？PNG/JPG/WebP 转 ICO 完整教程',
+        excerpt: '把普通图片转换成 ICO，不只是改扩展名。真正可用的 ICO 应该包含多尺寸图标资源，并正确处理透明背景和缩放。',
+        metaTitle: '如何把图片转换成 ICO 图标？PNG/JPG/WebP 转 ICO 教程',
+        metaDescription: '完整介绍 PNG、JPG、WebP、SVG 等图片如何转换成 ICO 图标，包括 favicon 尺寸、透明背景、多尺寸 ICO 容器和 ToolGarden 在线转换方法。',
+        readingTime: '约 8 分钟阅读',
+        tags: ['ICO', 'PNG 转 ICO', 'favicon', '图片转 Icon'],
+        relatedTools: [
+          {
+            label: '图片转 Icon',
+            href: '/image/to-icon',
+            description: '在浏览器本地把 PNG、SVG、JPG、WebP 等图片制作成 ICO、ICNS 或多尺寸 PNG ZIP。',
+          },
+          {
+            label: '图片去背景',
+            href: '/image/remove-bg',
+            description: '生成透明背景图片，适合在制作图标前清理背景。',
+          },
+        ],
+        blocks: [
+          {
+            type: 'lead',
+            text: 'ICO 是网站 favicon、Windows 快捷方式和桌面图标里最常见的图标格式之一。很多人以为把 png 改名成 ico 就可以了，但这并不是真正的 ICO 文件。',
+          },
+          {
+            type: 'paragraph',
+            text: '真正的 ICO 是一个容器格式。它可以在一个文件里包含多张不同尺寸的图标，比如 16x16、32x32、48x48、128x128 和 256x256。浏览器或系统会根据显示场景自动选择最合适的尺寸。',
+          },
+          { type: 'heading', level: 2, text: '哪些图片适合转换成 ICO？' },
+          {
+            type: 'table',
+            headers: ['源格式', '是否适合', '注意事项'],
+            rows: [
+              ['PNG', '非常适合', '支持透明背景，适合 logo、图标和 UI 标识'],
+              ['SVG', '适合', '矢量图缩放清晰，但需要浏览器能正确解码'],
+              ['JPG/JPEG', '可以使用', '没有透明通道，适合照片类图标，不适合透明 logo'],
+              ['WebP', '可以使用', '支持透明和压缩，但兼容性取决于浏览器解码能力'],
+              ['BMP/AVIF', '视浏览器而定', '只要当前浏览器能解码，就可以先绘制到 Canvas 再导出'],
+            ],
+          },
+          { type: 'heading', level: 2, text: 'PNG/JPG/WebP 转 ICO 的推荐步骤' },
+          {
+            type: 'list',
+            ordered: true,
+            items: [
+              '准备清晰源图，建议至少 512x512 像素。',
+              '如果是 logo，优先使用透明背景 PNG 或 SVG。',
+              '把主体放在正方形画布中央，避免边缘过于贴近画布。',
+              '生成多尺寸 ICO，而不是只生成一个 32x32 图标。',
+              '在浏览器标签页、收藏夹和 Windows 快捷方式中检查显示效果。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '技术实现：ICO 文件是怎么生成的？' },
+          {
+            type: 'paragraph',
+            text: '图片转 ICO 的核心流程通常包括解码、重绘、导出和打包四步。浏览器里的实现可以完全在本地完成，不需要把图片上传到服务器。',
+          },
+          {
+            type: 'list',
+            items: [
+              '图片解码：读取用户上传的 PNG、JPG、WebP、SVG 等文件，通过浏览器 Image 对象解码出真实宽高。',
+              'Canvas 重绘：为每个目标尺寸创建正方形 Canvas，例如 16、24、32、48、64、128、256px。',
+              '高质量缩放：使用 Canvas drawImage 按比例绘制，并开启高质量平滑，减少缩小后的锯齿和发虚。',
+              '透明处理：PNG、SVG、WebP 的 Alpha 通道可以保留；JPG 没有透明通道，通常会保留不透明背景。',
+              'ICO 目录：文件开头写入 ICONDIR header，再为每个尺寸写入 ICONDIRENTRY，记录宽高、位深、数据长度和偏移。',
+              '像素数据：小尺寸可以写入 32 位 BGRA DIB 数据，256px 尺寸常直接写入 PNG 字节，兼顾兼容性和体积。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '为什么 ICO 要包含多个尺寸？' },
+          {
+            type: 'paragraph',
+            text: '如果 ICO 只包含一个尺寸，浏览器和系统遇到其他显示场景时只能强行缩放。例如你只提供 32px 图标，浏览器标签页可能看起来还可以，但 Windows 快捷方式或高分屏场景就可能变糊。',
+          },
+          {
+            type: 'list',
+            items: [
+              '16x16：浏览器标签页、地址栏、传统小图标场景。',
+              '32x32：高分屏浏览器标签页、收藏夹和常规 favicon 场景。',
+              '48x48：Windows 资源管理器和快捷方式常见尺寸。',
+              '128x128 / 256x256：大图标、高分屏和桌面场景。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '用 toolgarden.xyz 转换成 ICO' },
+          {
+            type: 'paragraph',
+            text: 'ToolGarden 的图片转 Icon 工具支持 PNG、SVG、JPG、WebP、BMP、AVIF 等常见输入格式。图片会在浏览器本地读取、缩放、圆角裁剪和打包，整个过程不会上传到服务器。',
+          },
+          {
+            type: 'callout',
+            title: 'toolgarden.xyz 图片转 ICO',
+            text: '上传图片后选择 ICO 输出，ToolGarden 会生成包含 16 到 256 像素多尺寸资源的 ICO 容器，并额外提供多尺寸 ICO ZIP，方便你按需取用单个尺寸。',
+            href: '/image/to-icon',
+            linkLabel: '打开图片转 Icon',
+          },
+          { type: 'heading', level: 2, text: '网站 favicon 怎么引用 ICO？' },
+          {
+            type: 'paragraph',
+            text: '生成 ICO 后，最简单的做法是把它命名为 favicon.ico，并放到网站根目录。现代框架也可以通过 metadata 或 head 标签引用。',
+          },
+          {
+            type: 'code',
+            language: 'html',
+            code: '<link rel="icon" href="/favicon.ico" sizes="any">',
+          },
+          { type: 'heading', level: 2, text: '常见问题' },
+          {
+            type: 'heading',
+            level: 3,
+            text: 'ICO 可以保留透明背景吗？',
+          },
+          {
+            type: 'paragraph',
+            text: '可以。只要源图有透明通道，并且生成过程使用 32 位颜色数据或 PNG 图标数据，ICO 就可以保留透明背景。',
+          },
+          {
+            type: 'heading',
+            level: 3,
+            text: 'JPG 转 ICO 后为什么没有透明背景？',
+          },
+          {
+            type: 'paragraph',
+            text: '因为 JPG 格式本身没有 Alpha 通道。想要透明图标，建议先使用 PNG、SVG 或 WebP 源图，或者先移除背景再转换。',
+          },
+          { type: 'heading', level: 2, text: '总结' },
+          {
+            type: 'paragraph',
+            text: 'PNG、JPG、WebP 转 ICO 的关键不是扩展名，而是生成真正的 ICO 容器，并包含多套尺寸。这样浏览器、Windows 和快捷方式场景才能选择最合适的图标资源。',
+          },
+          {
+            type: 'paragraph',
+            text: '如果你只是临时做一个网站 favicon，用 toolgarden.xyz 这类浏览器本地工具会更方便：上传、预览、生成多尺寸 ICO，一步到位。',
+          },
+        ],
+      },
+      en: {
+        title: 'How to Convert an Image to ICO: Complete PNG, JPG, and WebP to ICO Guide',
+        excerpt: 'Converting an image to ICO is not just changing the extension. A useful ICO file should contain multiple icon sizes and handle transparency correctly.',
+        metaTitle: 'How to Convert an Image to ICO: PNG, JPG, WebP to ICO Guide',
+        metaDescription: 'Learn how to convert PNG, JPG, WebP, and SVG images to ICO icons, how ICO containers work, which favicon sizes matter, and how to generate ICO files with ToolGarden.',
+        readingTime: '8 min read',
+        tags: ['ICO', 'PNG to ICO', 'favicon', 'image to icon'],
+        relatedTools: [
+          {
+            label: 'Image to Icon',
+            href: '/image/to-icon',
+            description: 'Create ICO, ICNS, or multi-size PNG ZIP icons from PNG, SVG, JPG, WebP, and other images locally in the browser.',
+          },
+          {
+            label: 'Remove Image Background',
+            href: '/image/remove-bg',
+            description: 'Create a transparent image before turning a logo or photo into an icon.',
+          },
+        ],
+        blocks: [
+          {
+            type: 'lead',
+            text: 'ICO is one of the most common formats for website favicons, Windows shortcuts, and desktop icons. But renaming image.png to image.ico does not create a real ICO file.',
+          },
+          {
+            type: 'paragraph',
+            text: 'A real ICO file is a container. It can hold several icon images at different sizes, such as 16x16, 32x32, 48x48, 128x128, and 256x256. The browser or operating system can then choose the best size for each display context.',
+          },
+          { type: 'heading', level: 2, text: 'Which images work well as ICO sources?' },
+          {
+            type: 'table',
+            headers: ['Source format', 'Good fit?', 'Notes'],
+            rows: [
+              ['PNG', 'Excellent', 'Supports transparency and works well for logos, icons, and UI marks'],
+              ['SVG', 'Good', 'Vector artwork scales cleanly, as long as the browser decodes it correctly'],
+              ['JPG/JPEG', 'Usable', 'No alpha channel, better for photo-like icons than transparent logos'],
+              ['WebP', 'Usable', 'Can support transparency, depending on browser decoding support'],
+              ['BMP/AVIF', 'Browser-dependent', 'If the browser can decode it, it can be rendered to Canvas first'],
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Recommended PNG/JPG/WebP to ICO workflow' },
+          {
+            type: 'list',
+            ordered: true,
+            items: [
+              'Start with a clear source image, ideally at least 512x512 pixels.',
+              'For logos, prefer transparent PNG or SVG.',
+              'Place the subject in the center of a square canvas with enough padding.',
+              'Generate a multi-size ICO instead of a single 32x32 icon.',
+              'Check the result in browser tabs, bookmarks, and Windows shortcut views.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Technical implementation: how ICO files are generated' },
+          {
+            type: 'paragraph',
+            text: 'An image-to-ICO converter usually follows four stages: decode, redraw, export, and package. This can run fully inside the browser without uploading the image to a server.',
+          },
+          {
+            type: 'list',
+            items: [
+              'Image decoding: the uploaded PNG, JPG, WebP, SVG, or other image is loaded through the browser and its real dimensions are read.',
+              'Canvas rendering: a square Canvas is created for each target size, such as 16, 24, 32, 48, 64, 128, and 256px.',
+              'High-quality scaling: drawImage renders the source proportionally, with smoothing enabled to reduce jagged edges after downscaling.',
+              'Transparency handling: PNG, SVG, and transparent WebP can preserve alpha; JPG has no alpha channel and remains opaque.',
+              'ICO directory: the file starts with an ICONDIR header, followed by ICONDIRENTRY records that store size, bit depth, data length, and offset.',
+              'Pixel data: smaller entries can use 32-bit BGRA DIB data, while 256px entries are often stored as PNG bytes for better size and compatibility.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Why a multi-size ICO matters' },
+          {
+            type: 'paragraph',
+            text: 'If an ICO contains only one size, the browser or operating system must scale it for every other use case. A 32px-only icon may look fine in one tab but soft in Windows shortcuts or high-density displays.',
+          },
+          {
+            type: 'list',
+            items: [
+              '16x16: browser tabs, address bars, and classic small icon surfaces.',
+              '32x32: high-density browser tabs, bookmarks, and common favicon usage.',
+              '48x48: Windows Explorer and shortcut views.',
+              '128x128 / 256x256: large icons, high-density screens, and desktop surfaces.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Convert images to ICO with toolgarden.xyz' },
+          {
+            type: 'paragraph',
+            text: 'ToolGarden Image to Icon supports common input formats including PNG, SVG, JPG, WebP, BMP, and AVIF. Image loading, scaling, corner clipping, preview, and packaging happen locally in the browser, so the image is not uploaded to a server.',
+          },
+          {
+            type: 'callout',
+            title: 'toolgarden.xyz PNG/JPG/WebP to ICO',
+            text: 'Upload an image and choose ICO output. ToolGarden generates a multi-size ICO container from 16 to 256 pixels and also offers a ZIP with separate ICO files for each size.',
+            href: '/image/to-icon',
+            linkLabel: 'Open Image to Icon',
+          },
+          { type: 'heading', level: 2, text: 'How to reference an ICO favicon' },
+          {
+            type: 'paragraph',
+            text: 'After generating the ICO file, the simplest setup is to name it favicon.ico and place it at the website root. Modern frameworks can also reference it through metadata or head tags.',
+          },
+          {
+            type: 'code',
+            language: 'html',
+            code: '<link rel="icon" href="/favicon.ico" sizes="any">',
+          },
+          { type: 'heading', level: 2, text: 'Common questions' },
+          { type: 'heading', level: 3, text: 'Can ICO preserve transparency?' },
+          {
+            type: 'paragraph',
+            text: 'Yes. If the source image has alpha and the output uses 32-bit color data or PNG icon data, the ICO can preserve transparent backgrounds.',
+          },
+          { type: 'heading', level: 3, text: 'Why does a JPG-to-ICO file have no transparent background?' },
+          {
+            type: 'paragraph',
+            text: 'JPG does not have an alpha channel. For transparent icons, use PNG, SVG, or transparent WebP as the source, or remove the background before converting.',
+          },
+          { type: 'heading', level: 2, text: 'Summary' },
+          {
+            type: 'paragraph',
+            text: 'The key to converting PNG, JPG, or WebP to ICO is not the file extension. It is generating a real ICO container with several icon sizes so browsers, Windows, and shortcut surfaces can choose the right resource.',
+          },
+          {
+            type: 'paragraph',
+            text: 'For a quick favicon or desktop icon, a browser-local tool like toolgarden.xyz is convenient: upload, preview, generate a multi-size ICO, and download.',
+          },
+        ],
+      },
+    },
+  },
+  {
+    slug: 'ico-vs-icns-vs-png-icons',
+    publishedAt: '2026-07-01',
+    updatedAt: '2026-07-01',
+    translations: {
+      zh: {
+        title: 'ICO、ICNS、PNG 图标有什么区别？网站、Windows 和 macOS 图标怎么选',
+        excerpt: 'ICO、ICNS 和 PNG 都能用作图标，但它们面向的系统、容器结构、尺寸管理和透明支持方式并不相同。',
+        metaTitle: 'ICO、ICNS、PNG 图标区别：网站、Windows、macOS 怎么选',
+        metaDescription: '对比 ICO、ICNS、PNG 图标格式的区别，解释网站 favicon、Windows 图标、macOS 图标和 PWA 多尺寸图标应该如何选择。',
+        readingTime: '约 8 分钟阅读',
+        tags: ['ICO', 'ICNS', 'PNG', 'favicon', 'macOS 图标'],
+        relatedTools: [
+          {
+            label: '图片转 Icon',
+            href: '/image/to-icon',
+            description: '一次生成 ICO、ICNS 或多尺寸 PNG ZIP，适合网站、Windows、macOS 和 PWA 图标资源。',
+          },
+          {
+            label: '图片转 PNG',
+            href: '/image/to-png',
+            description: '把其他图片转换成 PNG，适合准备透明图标源文件。',
+          },
+        ],
+        blocks: [
+          {
+            type: 'lead',
+            text: '做图标时经常会遇到三个格式：ICO、ICNS 和 PNG。它们看起来都能表示图标，但用途并不一样。选错格式，轻则显示模糊，重则系统或浏览器不识别。',
+          },
+          {
+            type: 'paragraph',
+            text: '简单来说：ICO 更适合网站 favicon 和 Windows；ICNS 更适合 macOS 应用；PNG 更适合网页、PWA、移动端和作为图标源文件。',
+          },
+          { type: 'heading', level: 2, text: 'ICO、ICNS、PNG 快速对比' },
+          {
+            type: 'table',
+            headers: ['格式', '主要用途', '是否是容器', '常见尺寸'],
+            rows: [
+              ['ICO', 'favicon、Windows 图标、快捷方式', '是，可以包含多尺寸图标', '16、24、32、48、64、128、256px'],
+              ['ICNS', 'macOS 应用图标、Finder 图标', '是，可以包含多尺寸资源', '16、32、64、128、256、512、1024px'],
+              ['PNG', '网页图标、PWA、移动端、图标源文件', '不是，单个文件通常只有一个尺寸', '32、64、180、192、512、1024px'],
+            ],
+          },
+          { type: 'heading', level: 2, text: '什么时候选择 ICO？' },
+          {
+            type: 'paragraph',
+            text: '如果你要做网站 favicon，ICO 仍然是非常稳妥的选择。它兼容历史浏览器，也能在一个文件里放入多种尺寸。浏览器标签页、收藏夹、桌面快捷方式可能需要不同尺寸，ICO 容器可以让它们自动选择。',
+          },
+          {
+            type: 'list',
+            items: [
+              '网站 favicon：推荐提供 favicon.ico。',
+              'Windows 桌面图标：ICO 是原生常用格式。',
+              '快捷方式图标：ICO 可以适配多种显示尺寸。',
+              '需要兼容旧环境：ICO 的兼容性更稳。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '什么时候选择 ICNS？' },
+          {
+            type: 'paragraph',
+            text: 'ICNS 是 macOS 图标容器格式，常用于 macOS 应用图标和 Finder 显示。它也可以包含多套尺寸，最高常见到 1024px，以适配 Retina 屏和不同 Finder 视图。',
+          },
+          {
+            type: 'list',
+            items: [
+              'macOS 应用图标：优先使用 ICNS。',
+              'Finder 大图标预览：需要高分辨率资源。',
+              'Electron 或桌面应用打包：macOS 平台通常需要 ICNS。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '什么时候选择 PNG？' },
+          {
+            type: 'paragraph',
+            text: 'PNG 不是图标容器，但它清晰、无损、支持透明背景，所以非常适合作为网页图标、PWA 图标和图标制作的源文件。缺点是每个 PNG 通常只代表一个尺寸，你需要生成多张不同尺寸的 PNG。',
+          },
+          {
+            type: 'list',
+            items: [
+              'PWA manifest icons：常见 192x192 和 512x512 PNG。',
+              'Apple Touch Icon：常见 180x180 PNG。',
+              '网页 UI 图标：PNG 适合需要位图透明效果的场景。',
+              '图标源文件：后续可以继续转换成 ICO 或 ICNS。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '技术实现差异：它们到底哪里不一样？' },
+          {
+            type: 'paragraph',
+            text: 'ICO、ICNS 和 PNG 的最大区别不只是扩展名，而是文件结构。ICO 和 ICNS 是图标容器，PNG 是单张位图图片。',
+          },
+          {
+            type: 'list',
+            items: [
+              'ICO：文件头使用 little-endian 结构，包含 ICONDIR 和多个 ICONDIRENTRY，每个条目指向一张指定尺寸的图标数据。',
+              'ICO 像素数据：小尺寸常使用 32 位 BGRA DIB 数据，256px 条目经常直接保存 PNG 字节。',
+              'ICNS：文件以 icns 标识开头，使用 big-endian 长度字段，每个资源块有自己的类型，例如 icp4、icp5、icp6、ic07、ic08、ic09、ic10。',
+              'ICNS 图像数据：现代 ICNS 常把不同尺寸的 PNG 数据放入对应资源块，适配 macOS 多尺寸显示。',
+              'PNG：单文件只描述一张图片，包含 IHDR、IDAT、IEND 等块，支持无损压缩和 Alpha 透明，但不会自动包含多尺寸版本。',
+              '多尺寸 PNG ZIP：本质上是把 16、32、64、128、256、512、1024px 等 PNG 文件打包成 ZIP，方便网页或 PWA 按需引用。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '不同场景怎么选？' },
+          {
+            type: 'table',
+            headers: ['场景', '推荐格式', '说明'],
+            rows: [
+              ['网站 favicon', 'ICO + PNG', 'ICO 做兼容，PNG 补充现代浏览器和 Apple Touch Icon'],
+              ['Windows 桌面图标', 'ICO', '系统原生支持，适合快捷方式和桌面图标'],
+              ['macOS 应用图标', 'ICNS', 'macOS 原生图标容器，支持高分辨率资源'],
+              ['PWA 图标', 'PNG ZIP', 'manifest 通常引用多张 PNG，例如 192px 和 512px'],
+              ['设计源文件', 'SVG 或高分辨率 PNG', '便于后续生成 ICO、ICNS 和 PNG 多尺寸资源'],
+            ],
+          },
+          { type: 'heading', level: 2, text: '用 toolgarden.xyz 一次生成三类图标' },
+          {
+            type: 'paragraph',
+            text: 'ToolGarden 的图片转 Icon 工具会在浏览器本地把源图渲染成多种尺寸，然后根据你选择的格式打包：ICO 会生成 16 到 256px 图标条目，ICNS 会生成最高 1024px 的 macOS 图标资源，PNG ZIP 会生成一组独立 PNG 文件。',
+          },
+          {
+            type: 'callout',
+            title: 'toolgarden.xyz 图片转 Icon',
+            text: '上传一张 PNG、SVG、JPG 或 WebP，就可以选择导出 ICO、ICNS 或 PNG ZIP。工具支持拖动缩放、圆角、背景移除和浏览器预览，所有处理都在本地完成。',
+            href: '/image/to-icon',
+            linkLabel: '打开图片转 Icon',
+          },
+          { type: 'heading', level: 2, text: '推荐输出组合' },
+          {
+            type: 'list',
+            items: [
+              '普通网站：生成 ICO，再额外保存 32x32 PNG 和 Apple Touch Icon。',
+              'PWA：生成 PNG ZIP，挑选 192x192 和 512x512 写入 manifest。',
+              '跨平台桌面应用：Windows 使用 ICO，macOS 使用 ICNS。',
+              '品牌资源包：同时导出 ICO、ICNS 和 PNG ZIP，覆盖网站、桌面和移动端场景。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '总结' },
+          {
+            type: 'paragraph',
+            text: 'ICO、ICNS、PNG 没有绝对谁更好，关键看使用场景。网站和 Windows 优先 ICO，macOS 应用优先 ICNS，网页、PWA 和设计源文件优先 PNG。',
+          },
+          {
+            type: 'paragraph',
+            text: '最省心的做法是从一张高质量源图出发，一次生成多种图标格式。这样网站、Windows、macOS 和 PWA 都能拿到合适的图标资源。',
+          },
+        ],
+      },
+      en: {
+        title: 'ICO vs ICNS vs PNG Icons: Which Format Should You Use for Web, Windows, and macOS?',
+        excerpt: 'ICO, ICNS, and PNG can all be used for icons, but they target different platforms and handle sizes, containers, and transparency differently.',
+        metaTitle: 'ICO vs ICNS vs PNG Icons: Web, Windows, and macOS Format Guide',
+        metaDescription: 'Compare ICO, ICNS, and PNG icon formats for website favicons, Windows icons, macOS app icons, and PWA assets. Learn which format to choose and why.',
+        readingTime: '8 min read',
+        tags: ['ICO', 'ICNS', 'PNG', 'favicon', 'macOS icon'],
+        relatedTools: [
+          {
+            label: 'Image to Icon',
+            href: '/image/to-icon',
+            description: 'Generate ICO, ICNS, or multi-size PNG ZIP assets for websites, Windows, macOS, and PWA icon workflows.',
+          },
+          {
+            label: 'Image to PNG',
+            href: '/image/to-png',
+            description: 'Convert images to PNG when you need a transparent source file for icon generation.',
+          },
+        ],
+        blocks: [
+          {
+            type: 'lead',
+            text: 'Icon workflows often mention three formats: ICO, ICNS, and PNG. They can all represent icons, but they are not interchangeable. Choosing the wrong one can make icons blurry or unsupported.',
+          },
+          {
+            type: 'paragraph',
+            text: 'In short: ICO is best for favicons and Windows, ICNS is best for macOS apps, and PNG is best for web assets, PWA icons, mobile surfaces, and source files.',
+          },
+          { type: 'heading', level: 2, text: 'ICO, ICNS, and PNG at a glance' },
+          {
+            type: 'table',
+            headers: ['Format', 'Main use', 'Container?', 'Common sizes'],
+            rows: [
+              ['ICO', 'Favicons, Windows icons, shortcuts', 'Yes, can contain multiple icon sizes', '16, 24, 32, 48, 64, 128, 256px'],
+              ['ICNS', 'macOS app icons and Finder icons', 'Yes, can contain multiple icon resources', '16, 32, 64, 128, 256, 512, 1024px'],
+              ['PNG', 'Web icons, PWA icons, mobile assets, source images', 'No, one file usually represents one size', '32, 64, 180, 192, 512, 1024px'],
+            ],
+          },
+          { type: 'heading', level: 2, text: 'When to choose ICO' },
+          {
+            type: 'paragraph',
+            text: 'If you are creating a website favicon, ICO is still a safe choice. It has strong compatibility and can store several sizes in one file. Browser tabs, bookmarks, and desktop shortcuts may need different pixel sizes, and the ICO container lets them choose.',
+          },
+          {
+            type: 'list',
+            items: [
+              'Website favicons: provide favicon.ico for broad compatibility.',
+              'Windows desktop icons: ICO is the native common format.',
+              'Shortcut icons: ICO adapts well to several display sizes.',
+              'Older environments: ICO remains the safest fallback.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'When to choose ICNS' },
+          {
+            type: 'paragraph',
+            text: 'ICNS is the macOS icon container format. It is commonly used for macOS app icons and Finder display. It can include high-resolution resources up to 1024px for Retina screens and different Finder views.',
+          },
+          {
+            type: 'list',
+            items: [
+              'macOS app icons: use ICNS.',
+              'Finder large icon preview: include high-resolution resources.',
+              'Electron or desktop app packaging: macOS builds usually need ICNS.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'When to choose PNG' },
+          {
+            type: 'paragraph',
+            text: 'PNG is not an icon container, but it is crisp, lossless, and supports transparency. That makes it excellent for web icons, PWA icons, and source files. The tradeoff is that each PNG usually covers one size, so you need multiple PNG files for multiple contexts.',
+          },
+          {
+            type: 'list',
+            items: [
+              'PWA manifest icons: 192x192 and 512x512 PNG are common.',
+              'Apple Touch Icon: 180x180 PNG is commonly used.',
+              'Web UI icons: PNG works well when bitmap transparency is needed.',
+              'Icon source files: PNG can be converted later to ICO or ICNS.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Technical differences: what changes inside the file?' },
+          {
+            type: 'paragraph',
+            text: 'The difference is not just the extension. ICO and ICNS are icon containers. PNG is a single bitmap image format.',
+          },
+          {
+            type: 'list',
+            items: [
+              'ICO: starts with a little-endian ICONDIR structure and multiple ICONDIRENTRY records, each pointing to one icon image.',
+              'ICO pixel data: smaller entries often use 32-bit BGRA DIB data, while 256px entries are often stored as PNG bytes.',
+              'ICNS: starts with an icns signature and big-endian length fields. Each resource block has a type such as icp4, icp5, icp6, ic07, ic08, ic09, or ic10.',
+              'ICNS image data: modern ICNS files often place PNG data in the resource block for each size.',
+              'PNG: a single file describes one image with chunks such as IHDR, IDAT, and IEND, plus lossless compression and optional alpha.',
+              'Multi-size PNG ZIP: this is a ZIP archive of separate PNG files such as 16, 32, 64, 128, 256, 512, and 1024px, ready for web or PWA references.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Which format should you use?' },
+          {
+            type: 'table',
+            headers: ['Use case', 'Recommended format', 'Why'],
+            rows: [
+              ['Website favicon', 'ICO + PNG', 'ICO for compatibility, PNG for modern browsers and Apple Touch Icon'],
+              ['Windows desktop icon', 'ICO', 'Native system support for shortcuts and desktop icons'],
+              ['macOS app icon', 'ICNS', 'Native macOS icon container with high-resolution resources'],
+              ['PWA icon', 'PNG ZIP', 'Manifests usually reference separate PNG files, such as 192px and 512px'],
+              ['Design source', 'SVG or high-resolution PNG', 'Easy to regenerate ICO, ICNS, and PNG assets later'],
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Generate all three icon formats with toolgarden.xyz' },
+          {
+            type: 'paragraph',
+            text: 'ToolGarden Image to Icon renders the source image locally into multiple sizes, then packages the result based on the selected format. ICO includes entries from 16 to 256px, ICNS includes macOS resources up to 1024px, and PNG ZIP contains separate PNG files for each size.',
+          },
+          {
+            type: 'callout',
+            title: 'toolgarden.xyz Image to Icon',
+            text: 'Upload PNG, SVG, JPG, or WebP, then export ICO, ICNS, or PNG ZIP. The tool supports drag scaling, corner radius, background removal, and browser previews. All processing runs locally in the browser.',
+            href: '/image/to-icon',
+            linkLabel: 'Open Image to Icon',
+          },
+          { type: 'heading', level: 2, text: 'Recommended output sets' },
+          {
+            type: 'list',
+            items: [
+              'Standard website: generate ICO, then keep 32x32 PNG and Apple Touch Icon PNG.',
+              'PWA: generate PNG ZIP and reference 192x192 and 512x512 in the manifest.',
+              'Cross-platform desktop app: use ICO for Windows and ICNS for macOS.',
+              'Brand asset package: export ICO, ICNS, and PNG ZIP to cover web, desktop, and mobile use cases.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Summary' },
+          {
+            type: 'paragraph',
+            text: 'ICO, ICNS, and PNG are all useful, but for different targets. Use ICO for websites and Windows, ICNS for macOS apps, and PNG for web, PWA, mobile, and source assets.',
+          },
+          {
+            type: 'paragraph',
+            text: 'The easiest workflow is to start from one high-quality source image and generate multiple icon formats at once. That gives websites, Windows, macOS, and PWA surfaces the assets they expect.',
+          },
+        ],
+      },
+    },
+  },
+  {
     slug: 'why-json-can-have-comments',
     publishedAt: '2026-07-01',
     updatedAt: '2026-07-01',

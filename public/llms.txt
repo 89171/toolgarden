@@ -11,6 +11,9 @@ ToolGarden provides developers with a suite of tools for working with JSON data.
 - **Developer Blog** (`/blog`): Articles about JSON, JSONC, JSON5, frontend toolchains, browser-local processing, and developer productivity.
   - **Why Do Images Look Blurry After Compression?** (`/blog/why-image-compression-looks-blurry`): Explains lossy compression, repeated exports, resizing, format choice, and how to keep JPG, PNG, and WebP images clear.
   - **How to Compress an Image to a Target File Size** (`/blog/compress-image-to-target-size`): Practical workflow for reaching 200KB, 500KB, 1MB, or other limits by adjusting dimensions, format, and quality.
+  - **Why Does a Favicon Look Blurry?** (`/blog/why-favicon-looks-blurry`): Explains why favicons become soft or fuzzy and how multi-size ICO generation, transparency, and clean source images keep website icons sharp.
+  - **How to Convert an Image to ICO** (`/blog/convert-image-to-ico`): Complete PNG, JPG, WebP, and SVG to ICO workflow covering browser-local decoding, Canvas rendering, ICO directory entries, and favicon usage.
+  - **ICO vs ICNS vs PNG Icons** (`/blog/ico-vs-icns-vs-png-icons`): Compares icon formats for websites, Windows, macOS, and PWA assets, including container structure and size selection.
 - **JSON Formatter** (`/json-format`): Format, minify, and validate JSON with an interactive tree view. Supports loose JSON (unquoted keys, single quotes).
 - **JSON Escape** (`/json-escape`): Minify and escape JSON for embedding in strings; unescape back to readable format.
 - **JSON Repair / Clean** (`/json-repair`): Repair common JSON issues such as comments, trailing commas, single quotes, unquoted keys, smart quotes, and Python-style booleans/nulls.
@@ -27,6 +30,7 @@ ToolGarden provides developers with a suite of tools for working with JSON data.
 - **Remove Image Background** (`/image/remove-bg`): Remove image backgrounds locally in the browser with an open-source model and export a transparent PNG.
 - **Image Watermark Remover** (`/image/remove-watermark`): Select a watermark area, inpaint it with the default browser-local MI-GAN high-quality AI model, LaMa fallback, or fast pixel repair, and export JPG, PNG, or WebP.
 - **Image Editor** (`/image/edit`): Edit images directly on a Fabric.js canvas with shapes, polylines, brush strokes, marker strokes, text, mosaic, blur, object erasing, undo, and redo locally in the browser.
+- **Image to Icon** (`/image/to-icon`): Convert PNG, SVG, JPG, WebP, BMP, AVIF, and other images to ICO, ICNS, or multi-size PNG ZIP icons locally in the browser with drag scaling, corner radius, background removal, and browser previews.
 - **Image to JPG** (`/image/to-jpg`): Convert PNG, WebP, GIF, BMP, SVG, AVIF, and other images to JPG locally in the browser.
 - **Image to PNG** (`/image/to-png`): Convert JPG, WebP, GIF, BMP, SVG, AVIF, and other images to PNG locally in the browser.
 - **Image to WebP** (`/image/to-webp`): Convert JPG, PNG, GIF, BMP, SVG, AVIF, and other images to WebP locally in the browser.
