@@ -49,6 +49,30 @@ Canonical examples:
 - Explains ICO little-endian directory entries, ICNS resource chunks, PNG single-image structure, and multi-size PNG ZIP workflows
 - Points users to Image to Icon for exporting ICO, ICNS, and PNG ZIP from one source image
 
+### JPG, PNG, WebP, and AVIF Differences (/blog/jpg-png-webp-avif-differences)
+- Locales: English and Chinese Simplified
+- Compares JPG, PNG, WebP, and AVIF by compression mode, transparency support, compatibility, quality tradeoffs, and best use cases
+- Covers photos, screenshots, transparent logos, web images, thumbnails, hero images, and maximum-compression workflows
+- Points users to Image to WebP, Image to AVIF, Image to JPG, and Image to PNG for browser-local format conversion
+
+### How to Convert Images to WebP (/blog/convert-images-to-webp)
+- Locales: English and Chinese Simplified
+- Explains how JPG, PNG, GIF, SVG, AVIF, and other browser-decodable images can be converted to WebP
+- Covers browser-local decoding, Canvas rendering, WebP quality settings, transparency support, output validation, preview, and ZIP batch download
+- Points users to Image to WebP and Image Compressor for web image optimization workflows
+
+### How to Convert Images to AVIF (/blog/convert-images-to-avif)
+- Locales: English and Chinese Simplified
+- Explains when AVIF is useful, especially for hero images, cover images, thumbnails, and highly compressed web assets
+- Covers browser-local Canvas pixel extraction, AVIF encoding, quality settings, alpha preservation, output signature validation, compatibility limits, and WebP/JPG fallbacks
+- Points users to Image to AVIF and Image to WebP for modern image conversion
+
+### PNG to JPG and JPG to PNG (/blog/png-to-jpg-jpg-to-png-transparency)
+- Locales: English and Chinese Simplified
+- Explains what happens when converting PNG to JPG or JPG to PNG, including transparency loss, white background fill, file-size changes, lossy vs lossless compression, and quality settings
+- Covers browser-local Canvas rendering, JPG quality, PNG alpha preservation, output validation, and common use cases such as platform uploads and editing workflows
+- Points users to Image to JPG and Image to PNG for local format conversion
+
 ### Why Can Some JSON Files Have Comments? (/blog/why-json-can-have-comments)
 - Locales: English and Chinese Simplified
 - Explains why standard JSON forbids comments, why TypeScript tsconfig.json and VS Code configuration files can contain comments, and how JSONC differs from JSON5
@@ -165,19 +189,25 @@ Canonical examples:
 ### Image to JPG (/image/to-jpg)
 - Converts PNG, WebP, GIF, BMP, SVG, AVIF, and common browser-decodable images to JPG
 - Uses a white background for transparent pixels because JPG has no alpha channel
+- Decodes input locally, redraws it to same-size Canvas with high-quality smoothing, exports `image/jpeg` with an adjustable quality value, and validates the JPEG signature
 - Supports output quality control, preview comparison, per-file download, and ZIP batch download
 
 ### Image to PNG (/image/to-png)
 - Converts JPG, WebP, GIF, BMP, SVG, AVIF, and common browser-decodable images to PNG
 - Preserves transparency when the browser decoder exposes alpha information
+- Decodes input locally, redraws it to same-size Canvas, exports `image/png` without a quality slider, and validates the PNG signature
 - Supports preview comparison, per-file download, and ZIP batch download
 
 ### Image to WebP (/image/to-webp)
 - Converts JPG, PNG, GIF, BMP, SVG, AVIF, and common browser-decodable images to WebP
+- Preserves alpha when the browser decoder exposes transparency and uses an adjustable quality value to balance size and visual quality
+- Decodes input locally, renders SVG sources to bitmap when needed, redraws to Canvas, exports `image/webp`, and validates the RIFF/WEBP signature
 - Supports output quality control, preview comparison, per-file download, and ZIP batch download
 
 ### Image to AVIF (/image/to-avif)
 - Converts JPG, PNG, WebP, GIF, BMP, SVG, and common browser-decodable images to AVIF
+- Uses a browser-side AVIF encoder: Canvas pixels are read as RGBA with `getImageData`, encoded to AVIF bytes with quality settings, and validated with an AVIF file signature check
+- Supports alpha preservation for transparent images when the browser and encoder path support it
 - Supports output quality control, preview comparison, per-file download, and ZIP batch download
 - AVIF encoding depends on browser support; unsupported browsers report an output format error instead of uploading files
 

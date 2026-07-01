@@ -14,6 +14,10 @@ ToolGarden provides developers with a suite of tools for working with JSON data.
   - **Why Does a Favicon Look Blurry?** (`/blog/why-favicon-looks-blurry`): Explains why favicons become soft or fuzzy and how multi-size ICO generation, transparency, and clean source images keep website icons sharp.
   - **How to Convert an Image to ICO** (`/blog/convert-image-to-ico`): Complete PNG, JPG, WebP, and SVG to ICO workflow covering browser-local decoding, Canvas rendering, ICO directory entries, and favicon usage.
   - **ICO vs ICNS vs PNG Icons** (`/blog/ico-vs-icns-vs-png-icons`): Compares icon formats for websites, Windows, macOS, and PWA assets, including container structure and size selection.
+  - **JPG, PNG, WebP, and AVIF Differences** (`/blog/jpg-png-webp-avif-differences`): Explains which image format to choose for photos, screenshots, transparent assets, thumbnails, and web performance.
+  - **How to Convert Images to WebP** (`/blog/convert-images-to-webp`): Covers JPG, PNG, GIF, SVG, and AVIF to WebP conversion, quality settings, transparency, and batch browser-local output.
+  - **How to Convert Images to AVIF** (`/blog/convert-images-to-avif`): Explains AVIF conversion, browser-side encoding, quality settings, transparency, compatibility, and WebP/JPG fallbacks.
+  - **PNG to JPG and JPG to PNG** (`/blog/png-to-jpg-jpg-to-png-transparency`): Explains transparency loss, file-size changes, JPG quality, PNG lossless output, and when each conversion makes sense.
 - **JSON Formatter** (`/json-format`): Format, minify, and validate JSON with an interactive tree view. Supports loose JSON (unquoted keys, single quotes).
 - **JSON Escape** (`/json-escape`): Minify and escape JSON for embedding in strings; unescape back to readable format.
 - **JSON Repair / Clean** (`/json-repair`): Repair common JSON issues such as comments, trailing commas, single quotes, unquoted keys, smart quotes, and Python-style booleans/nulls.

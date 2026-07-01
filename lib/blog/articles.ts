@@ -1557,6 +1557,1012 @@ export const blogArticles: BlogArticle[] = [
     },
   },
   {
+    slug: 'jpg-png-webp-avif-differences',
+    publishedAt: '2026-07-01',
+    updatedAt: '2026-07-01',
+    translations: {
+      zh: {
+        title: 'JPG、PNG、WebP、AVIF 有什么区别？网页图片格式怎么选',
+        excerpt: 'JPG、PNG、WebP、AVIF 都能用于网页图片，但它们在压缩方式、透明背景、清晰度、兼容性和适用场景上差异很大。',
+        metaTitle: 'JPG、PNG、WebP、AVIF 区别：网页图片格式怎么选',
+        metaDescription: '对比 JPG、PNG、WebP、AVIF 四种图片格式的区别，解释照片、截图、透明图、网页首图、缩略图应该如何选择，并介绍如何用 ToolGarden 转换格式。',
+        readingTime: '约 8 分钟阅读',
+        tags: ['图片格式', 'JPG', 'PNG', 'WebP', 'AVIF'],
+        relatedTools: [
+          {
+            label: '图片转 WebP',
+            href: '/image/to-webp',
+            description: '把 JPG、PNG、GIF、BMP、SVG、AVIF 等图片转换为 WebP。',
+          },
+          {
+            label: '图片转 AVIF',
+            href: '/image/to-avif',
+            description: '把 JPG、PNG、WebP、GIF、BMP、SVG 等图片转换为 AVIF。',
+          },
+          {
+            label: '图片转 JPG',
+            href: '/image/to-jpg',
+            description: '把 PNG、WebP、SVG、AVIF 等图片转换为 JPG，适合照片类图片。',
+          },
+          {
+            label: '图片转 PNG',
+            href: '/image/to-png',
+            description: '把 JPG、WebP、SVG、AVIF 等图片转换为 PNG，适合透明图和截图。',
+          },
+        ],
+        blocks: [
+          {
+            type: 'lead',
+            text: '同一张图片，保存成 JPG、PNG、WebP 或 AVIF，文件大小和显示效果可能完全不同。选对格式，网页加载更快；选错格式，可能文件变大、透明背景丢失，或者画质变糊。',
+          },
+          {
+            type: 'paragraph',
+            text: '图片格式没有绝对好坏，只有适不适合。照片、截图、透明 logo、商品图、首屏大图、缩略图和图标，对压缩、透明通道和兼容性的要求都不一样。',
+          },
+          { type: 'heading', level: 2, text: '四种格式快速对比' },
+          {
+            type: 'table',
+            headers: ['格式', '压缩方式', '透明背景', '适合场景'],
+            rows: [
+              ['JPG', '有损压缩', '不支持', '照片、商品图、社交分享图'],
+              ['PNG', '无损压缩', '支持', '截图、图标、透明 logo、文字图片'],
+              ['WebP', '有损或无损', '支持', '网页图片、缩略图、需要兼顾体积和质量的图片'],
+              ['AVIF', '高效率有损或无损', '支持', '追求更小体积的网页大图、封面图和图片资产'],
+            ],
+          },
+          { type: 'heading', level: 2, text: '什么时候用 JPG？' },
+          {
+            type: 'paragraph',
+            text: 'JPG 适合照片类图片，因为自然纹理和渐变对少量有损压缩不敏感。它的兼容性非常好，几乎所有浏览器、系统和平台都能打开。',
+          },
+          {
+            type: 'list',
+            items: [
+              '适合：摄影照片、商品图、文章配图、社交分享图。',
+              '不适合：透明背景 logo、截图、二维码、文字很多的图片。',
+              '注意：JPG 不支持透明通道，透明区域在转换时通常会被填充为白色背景。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '什么时候用 PNG？' },
+          {
+            type: 'paragraph',
+            text: 'PNG 使用无损压缩，能保留清晰边缘和透明背景。它非常适合截图、UI 图、图标和需要透明通道的素材，但照片类图片往往会比 JPG 或 WebP 大很多。',
+          },
+          {
+            type: 'list',
+            items: [
+              '适合：截图、透明 logo、图标、二维码、文字说明图。',
+              '不适合：大尺寸照片、背景图、需要极致压缩的网页图片。',
+              '注意：PNG 转 JPG 会丢失透明背景，PNG 转 WebP 通常可以保留透明。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '什么时候用 WebP？' },
+          {
+            type: 'paragraph',
+            text: 'WebP 是现代网页图片的常见选择。它通常能在比 JPG 更小的体积下保持不错画质，也支持透明背景。对大多数网站图片来说，WebP 是很均衡的默认选择。',
+          },
+          {
+            type: 'list',
+            items: [
+              '适合：网页图片、缩略图、商品图、博客配图、透明素材。',
+              '优点：体积通常小于 JPG/PNG，同时兼顾画质和透明通道。',
+              '注意：如果目标平台很老，仍然需要 JPG 或 PNG 作为备用格式。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '什么时候用 AVIF？' },
+          {
+            type: 'paragraph',
+            text: 'AVIF 的压缩效率通常比 WebP 更强，适合想进一步减少网页图片体积的场景。它对照片、封面图和复杂纹理图片很有价值，但编码更慢，兼容性和平台支持也要确认。',
+          },
+          {
+            type: 'list',
+            items: [
+              '适合：网页首图、封面图、图库缩略图、需要强压缩的图片资产。',
+              '优点：同等视觉质量下通常能比 JPG 和 WebP 更小。',
+              '注意：AVIF 编码依赖浏览器支持，不支持时需要回退到 WebP 或 JPG。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '技术实现：浏览器里格式转换是怎么做的？' },
+          {
+            type: 'paragraph',
+            text: 'ToolGarden 的图片格式转换工具在浏览器本地完成：先读取并解码图片，再绘制到 Canvas，最后按目标 MIME 类型导出为 JPG、PNG、WebP 或 AVIF。这个过程不需要把图片上传到服务器。',
+          },
+          {
+            type: 'list',
+            items: [
+              '输入识别：根据文件 MIME 和扩展名识别 JPG、PNG、WebP、GIF、BMP、SVG、AVIF 等常见格式。',
+              '本地解码：通过浏览器图片解码能力读取真实宽高，并限制过大的文件和像素数量。',
+              'Canvas 重绘：把图片绘制到同尺寸 Canvas，并开启高质量平滑，减少重绘时的边缘问题。',
+              'JPG 输出：使用 image/jpeg 导出，质量参数可调，透明区域会先填充为白色。',
+              'PNG 输出：使用 image/png 导出，保留透明通道，但文件可能比有损格式更大。',
+              'WebP 输出：使用 image/webp 导出，质量参数控制体积和画质平衡。',
+              'AVIF 输出：使用浏览器端 AVIF 编码器从 Canvas 像素数据生成 image/avif，并校验输出文件签名。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '用 toolgarden.xyz 转换图片格式' },
+          {
+            type: 'callout',
+            title: 'ToolGarden 图片格式转换',
+            text: '你可以直接在 toolgarden.xyz 使用图片转 JPG、PNG、WebP、AVIF 工具。上传图片后，转换、预览、批量 ZIP 下载都在浏览器本地完成，文件不会上传到服务器。',
+            href: '/image/to-webp',
+            linkLabel: '打开图片转 WebP',
+          },
+          { type: 'heading', level: 2, text: '推荐选择' },
+          {
+            type: 'table',
+            headers: ['场景', '推荐格式', '原因'],
+            rows: [
+              ['普通照片', 'JPG 或 WebP', '兼容性好，体积和画质容易平衡'],
+              ['网页图片', 'WebP，必要时 AVIF', '现代浏览器加载更快'],
+              ['透明 logo', 'PNG 或 WebP', '保留 Alpha 透明通道'],
+              ['截图和文字图片', 'PNG 或高质量 WebP', '保护文字边缘和界面线条'],
+              ['极致压缩', 'AVIF', '适合对文件大小敏感的图片资产'],
+            ],
+          },
+          { type: 'heading', level: 2, text: '总结' },
+          {
+            type: 'paragraph',
+            text: 'JPG、PNG、WebP、AVIF 的选择，本质上是在兼容性、文件体积、透明背景和画质之间做平衡。照片优先 JPG/WebP，透明和截图优先 PNG/WebP，追求更小体积可以尝试 AVIF。',
+          },
+          {
+            type: 'paragraph',
+            text: '如果不确定，先把图片转成 WebP 做对比，再根据透明背景、兼容性和体积要求决定是否保留 PNG/JPG 或进一步尝试 AVIF。',
+          },
+        ],
+      },
+      en: {
+        title: 'JPG, PNG, WebP, and AVIF: Which Image Format Should You Use for the Web?',
+        excerpt: 'JPG, PNG, WebP, and AVIF all work for web images, but they differ in compression, transparency, quality, compatibility, and best use cases.',
+        metaTitle: 'JPG vs PNG vs WebP vs AVIF: Web Image Format Guide',
+        metaDescription: 'Compare JPG, PNG, WebP, and AVIF for photos, screenshots, transparent images, hero images, thumbnails, and web assets. Learn how to convert images with ToolGarden.',
+        readingTime: '8 min read',
+        tags: ['image formats', 'JPG', 'PNG', 'WebP', 'AVIF'],
+        relatedTools: [
+          {
+            label: 'Image to WebP',
+            href: '/image/to-webp',
+            description: 'Convert JPG, PNG, GIF, BMP, SVG, AVIF, and other images to WebP.',
+          },
+          {
+            label: 'Image to AVIF',
+            href: '/image/to-avif',
+            description: 'Convert JPG, PNG, WebP, GIF, BMP, SVG, and other images to AVIF.',
+          },
+          {
+            label: 'Image to JPG',
+            href: '/image/to-jpg',
+            description: 'Convert PNG, WebP, SVG, AVIF, and other images to JPG for photo-like output.',
+          },
+          {
+            label: 'Image to PNG',
+            href: '/image/to-png',
+            description: 'Convert JPG, WebP, SVG, AVIF, and other images to PNG for transparency and sharp edges.',
+          },
+        ],
+        blocks: [
+          {
+            type: 'lead',
+            text: 'The same image can look and load very differently depending on whether it is saved as JPG, PNG, WebP, or AVIF. The right format can make a page faster. The wrong one can make files larger, remove transparency, or soften details.',
+          },
+          {
+            type: 'paragraph',
+            text: 'There is no single best image format. Photos, screenshots, transparent logos, product images, hero images, thumbnails, and icons all have different needs.',
+          },
+          { type: 'heading', level: 2, text: 'Quick comparison' },
+          {
+            type: 'table',
+            headers: ['Format', 'Compression', 'Transparency', 'Best for'],
+            rows: [
+              ['JPG', 'Lossy', 'No', 'Photos, product images, social share images'],
+              ['PNG', 'Lossless', 'Yes', 'Screenshots, icons, transparent logos, text-heavy images'],
+              ['WebP', 'Lossy or lossless', 'Yes', 'Web images, thumbnails, balanced size and quality'],
+              ['AVIF', 'High-efficiency lossy or lossless', 'Yes', 'Hero images, cover images, assets that need extra compression'],
+            ],
+          },
+          { type: 'heading', level: 2, text: 'When to use JPG' },
+          {
+            type: 'paragraph',
+            text: 'JPG works well for photos because natural texture and gradients can tolerate moderate lossy compression. It also has excellent compatibility across browsers, operating systems, and platforms.',
+          },
+          {
+            type: 'list',
+            items: [
+              'Good for: photos, product images, article images, social share images.',
+              'Not ideal for: transparent logos, screenshots, QR codes, and text-heavy images.',
+              'Remember: JPG has no alpha channel, so transparent areas are usually filled with white during conversion.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'When to use PNG' },
+          {
+            type: 'paragraph',
+            text: 'PNG uses lossless compression and preserves sharp edges and transparency. It is excellent for screenshots, UI images, icons, and transparent assets, but photo-like images can be much larger than JPG or WebP.',
+          },
+          {
+            type: 'list',
+            items: [
+              'Good for: screenshots, transparent logos, icons, QR codes, and text images.',
+              'Not ideal for: large photos, backgrounds, and assets that need aggressive compression.',
+              'Remember: PNG to JPG loses transparency, while PNG to WebP can usually preserve it.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'When to use WebP' },
+          {
+            type: 'paragraph',
+            text: 'WebP is a strong default for modern web images. It often keeps good visual quality at a smaller size than JPG, and it can preserve transparency.',
+          },
+          {
+            type: 'list',
+            items: [
+              'Good for: web images, thumbnails, product images, blog images, transparent assets.',
+              'Strength: often smaller than JPG or PNG while keeping a good quality balance.',
+              'Remember: older target platforms may still need JPG or PNG fallback files.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'When to use AVIF' },
+          {
+            type: 'paragraph',
+            text: 'AVIF often compresses better than WebP, especially for photos and complex textures. It is useful when image size matters a lot, but encoding can be slower and platform support should be checked.',
+          },
+          {
+            type: 'list',
+            items: [
+              'Good for: hero images, cover images, gallery thumbnails, highly compressed web assets.',
+              'Strength: often smaller than JPG and WebP at similar visual quality.',
+              'Remember: AVIF encoding depends on browser support, so WebP or JPG fallback is still useful.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Technical workflow: how browser image conversion works' },
+          {
+            type: 'paragraph',
+            text: 'ToolGarden converts image formats locally in the browser. It reads and decodes the image, draws it to Canvas, and exports the result as JPG, PNG, WebP, or AVIF without uploading the file.',
+          },
+          {
+            type: 'list',
+            items: [
+              'Input detection: file MIME type and extension are used to recognize JPG, PNG, WebP, GIF, BMP, SVG, AVIF, and other common images.',
+              'Local decoding: the browser reads real dimensions and rejects empty, oversized, or unsupported inputs.',
+              'Canvas rendering: the decoded image is drawn to a same-size Canvas with high-quality smoothing.',
+              'JPG output: exported as image/jpeg with an adjustable quality value; transparent pixels are filled with white first.',
+              'PNG output: exported as image/png and can preserve alpha, but may produce larger files.',
+              'WebP output: exported as image/webp with an adjustable quality value.',
+              'AVIF output: generated from Canvas pixel data with a browser-side AVIF encoder, then validated by file signature.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Convert image formats with toolgarden.xyz' },
+          {
+            type: 'callout',
+            title: 'ToolGarden Image Format Conversion',
+            text: 'Use toolgarden.xyz to convert images to JPG, PNG, WebP, or AVIF. Upload, preview, convert, and download single files or a ZIP batch locally in your browser. Files are not uploaded to a server.',
+            href: '/image/to-webp',
+            linkLabel: 'Open Image to WebP',
+          },
+          { type: 'heading', level: 2, text: 'Recommended choices' },
+          {
+            type: 'table',
+            headers: ['Use case', 'Recommended format', 'Why'],
+            rows: [
+              ['Regular photos', 'JPG or WebP', 'Good compatibility and balanced file size'],
+              ['Web images', 'WebP, with AVIF when useful', 'Faster loading on modern browsers'],
+              ['Transparent logos', 'PNG or WebP', 'Preserves alpha transparency'],
+              ['Screenshots and text images', 'PNG or high-quality WebP', 'Protects UI lines and text edges'],
+              ['Maximum compression', 'AVIF', 'Useful for file-size-sensitive image assets'],
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Summary' },
+          {
+            type: 'paragraph',
+            text: 'Choosing between JPG, PNG, WebP, and AVIF means balancing compatibility, file size, transparency, and visual quality. Use JPG or WebP for photos, PNG or WebP for transparent and sharp-edged images, and AVIF when you need smaller web assets.',
+          },
+          {
+            type: 'paragraph',
+            text: 'When unsure, convert to WebP first and compare the result. Then decide whether to keep JPG/PNG for compatibility or try AVIF for extra compression.',
+          },
+        ],
+      },
+    },
+  },
+  {
+    slug: 'convert-images-to-webp',
+    publishedAt: '2026-07-01',
+    updatedAt: '2026-07-01',
+    translations: {
+      zh: {
+        title: '如何把图片转换成 WebP？JPG、PNG、GIF 转 WebP 完整教程',
+        excerpt: 'WebP 通常能在较小体积下保持不错画质，也支持透明背景，适合网页图片、缩略图和批量图片优化。',
+        metaTitle: '如何把图片转换成 WebP？JPG/PNG/GIF 转 WebP 教程',
+        metaDescription: '介绍 JPG、PNG、GIF、SVG、AVIF 等图片如何转换成 WebP，解释 WebP 的优势、透明背景、质量参数、批量转换和 ToolGarden 在线转换方法。',
+        readingTime: '约 7 分钟阅读',
+        tags: ['WebP', '图片转 WebP', 'JPG 转 WebP', 'PNG 转 WebP'],
+        relatedTools: [
+          {
+            label: '图片转 WebP',
+            href: '/image/to-webp',
+            description: '在浏览器本地把 JPG、PNG、GIF、BMP、SVG、AVIF 等图片转换为 WebP。',
+          },
+          {
+            label: '图片压缩',
+            href: '/image/compress',
+            description: '智能压缩 JPG、PNG、WebP 等图片，支持预览对比和批量下载。',
+          },
+        ],
+        blocks: [
+          {
+            type: 'lead',
+            text: '如果你在优化网页加载速度，WebP 往往是最值得尝试的图片格式之一。它通常比 JPG 更小，又比 PNG 更适合网页大图，还能保留透明背景。',
+          },
+          {
+            type: 'paragraph',
+            text: '把 JPG、PNG、GIF 或 SVG 转成 WebP，并不只是换一个扩展名。真正的转换需要先解码源图，再重新编码成 image/webp，同时根据质量参数控制文件大小和画质。',
+          },
+          { type: 'heading', level: 2, text: 'WebP 适合哪些图片？' },
+          {
+            type: 'list',
+            items: [
+              '网页配图：博客封面、文章插图、商品图片通常能明显减小体积。',
+              '缩略图：列表页和图库缩略图很适合批量转 WebP。',
+              '透明素材：WebP 支持 Alpha 透明通道，可以替代部分 PNG。',
+              '移动端图片：更小的体积能减少加载时间和流量消耗。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '什么时候不一定要转 WebP？' },
+          {
+            type: 'paragraph',
+            text: 'WebP 很实用，但不是所有图片都必须转换。比如极小的 PNG 图标、已经高度压缩的小图片，或者需要兼容非常旧平台的图片，转成 WebP 后收益可能不明显。',
+          },
+          {
+            type: 'table',
+            headers: ['源格式', '转 WebP 的效果', '注意事项'],
+            rows: [
+              ['JPG', '通常能减小体积', '质量参数太低会损失细节'],
+              ['PNG', '照片类 PNG 收益明显', '截图和文字图要检查边缘清晰度'],
+              ['GIF', '静态图可转换', '动画 GIF 是否保留动画取决于工具实现'],
+              ['SVG', '会栅格化为位图', '矢量可编辑性会丢失'],
+              ['AVIF', '不一定更小', 'AVIF 通常已经很高效，转 WebP 多用于兼容'],
+            ],
+          },
+          { type: 'heading', level: 2, text: '技术实现：WebP 转换过程是什么？' },
+          {
+            type: 'paragraph',
+            text: 'ToolGarden 的图片转 WebP 工具完全在浏览器本地运行。它会读取源文件，使用浏览器解码图片，再将图像绘制到 Canvas，最后通过 Canvas 导出 image/webp。',
+          },
+          {
+            type: 'list',
+            items: [
+              '文件读取：支持 JPG、PNG、WebP、GIF、BMP、SVG、AVIF 等浏览器可解码格式。',
+              '尺寸校验：空文件、过大文件和像素数过高的图片会被拦截，避免浏览器卡死。',
+              'SVG 处理：SVG 会先按实际尺寸渲染成位图，再输出 WebP。',
+              'Canvas 重绘：使用 drawImage 绘制源图，并启用高质量平滑。',
+              '质量控制：WebP 支持质量参数，数值越低，文件越小，但细节损失越明显。',
+              '输出校验：导出后会检查 Blob 类型和 WebP 文件签名，确认浏览器真的生成了 WebP。',
+              '批量下载：多张图片转换完成后，可以打包成 ZIP 下载。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '用 toolgarden.xyz 转 WebP 的步骤' },
+          {
+            type: 'list',
+            ordered: true,
+            items: [
+              '打开 ToolGarden 的图片转 WebP 工具。',
+              '上传一张或多张 JPG、PNG、GIF、SVG、AVIF 图片。',
+              '根据画质需求调整质量滑块，通常可以先从 85 到 90 开始。',
+              '查看输出文件大小和预览效果。',
+              '单张下载，或把所有结果打包成 ZIP 下载。',
+            ],
+          },
+          {
+            type: 'callout',
+            title: 'toolgarden.xyz 图片转 WebP',
+            text: 'ToolGarden 会在浏览器本地完成 WebP 转换、预览和 ZIP 打包。图片不会上传到服务器，适合处理网页素材、产品图和批量缩略图。',
+            href: '/image/to-webp',
+            linkLabel: '打开图片转 WebP',
+          },
+          { type: 'heading', level: 2, text: '推荐质量参数' },
+          {
+            type: 'table',
+            headers: ['图片类型', '建议质量', '说明'],
+            rows: [
+              ['照片和商品图', '80-90', '通常能兼顾清晰度和体积'],
+              ['网页缩略图', '70-85', '尺寸较小时可以适度降低质量'],
+              ['截图和文字图', '90-100', '保护文字边缘，或保留 PNG'],
+              ['透明 logo', '90 以上', '避免边缘变糊或出现色块'],
+            ],
+          },
+          { type: 'heading', level: 2, text: '总结' },
+          {
+            type: 'paragraph',
+            text: 'WebP 是现代网页图片优化的常用格式，适合照片、商品图、缩略图和部分透明素材。转换时重点关注质量参数和预览效果，不要只看文件大小。',
+          },
+          {
+            type: 'paragraph',
+            text: '如果你想快速优化网页图片，可以先用 toolgarden.xyz 批量转 WebP，再对比原图和输出体积，保留视觉效果最稳定的版本。',
+          },
+        ],
+      },
+      en: {
+        title: 'How to Convert Images to WebP: JPG, PNG, and GIF to WebP Guide',
+        excerpt: 'WebP often keeps good visual quality at smaller file sizes, supports transparency, and works well for web images, thumbnails, and batch optimization.',
+        metaTitle: 'How to Convert Images to WebP: JPG/PNG/GIF to WebP Guide',
+        metaDescription: 'Learn how to convert JPG, PNG, GIF, SVG, AVIF, and other images to WebP, how WebP quality works, when to use it, and how to convert with ToolGarden.',
+        readingTime: '7 min read',
+        tags: ['WebP', 'image to WebP', 'JPG to WebP', 'PNG to WebP'],
+        relatedTools: [
+          {
+            label: 'Image to WebP',
+            href: '/image/to-webp',
+            description: 'Convert JPG, PNG, GIF, BMP, SVG, AVIF, and other images to WebP locally in your browser.',
+          },
+          {
+            label: 'Image Compressor',
+            href: '/image/compress',
+            description: 'Compress JPG, PNG, WebP, and other images with preview comparison and batch download.',
+          },
+        ],
+        blocks: [
+          {
+            type: 'lead',
+            text: 'If you are optimizing website speed, WebP is one of the first formats worth trying. It is often smaller than JPG, more web-friendly than PNG for photos, and it can preserve transparency.',
+          },
+          {
+            type: 'paragraph',
+            text: 'Converting JPG, PNG, GIF, or SVG to WebP is not just changing the file extension. The image must be decoded, rendered, and encoded again as image/webp with a quality setting that controls size and visual detail.',
+          },
+          { type: 'heading', level: 2, text: 'Which images are good WebP candidates?' },
+          {
+            type: 'list',
+            items: [
+              'Website images: blog covers, article images, and product images often become smaller.',
+              'Thumbnails: galleries and listing pages are good batch conversion targets.',
+              'Transparent assets: WebP supports alpha and can replace some PNG files.',
+              'Mobile images: smaller files reduce loading time and bandwidth usage.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'When WebP may not help much' },
+          {
+            type: 'paragraph',
+            text: 'WebP is useful, but not every image needs conversion. Tiny PNG icons, already compressed small images, or assets that must support very old platforms may not benefit much.',
+          },
+          {
+            type: 'table',
+            headers: ['Source format', 'WebP result', 'Notes'],
+            rows: [
+              ['JPG', 'Often smaller', 'Low quality can lose detail'],
+              ['PNG', 'Strong gains for photo-like PNGs', 'Check text and screenshot edges'],
+              ['GIF', 'Static conversion is possible', 'Animation support depends on the tool workflow'],
+              ['SVG', 'Rasterized to bitmap', 'Vector editability is lost'],
+              ['AVIF', 'May not be smaller', 'AVIF is already efficient; WebP can be a compatibility fallback'],
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Technical workflow: how WebP conversion works' },
+          {
+            type: 'paragraph',
+            text: 'ToolGarden Image to WebP runs locally in the browser. It reads the source file, decodes it with browser image APIs, draws it to Canvas, and exports image/webp.',
+          },
+          {
+            type: 'list',
+            items: [
+              'File input: JPG, PNG, WebP, GIF, BMP, SVG, AVIF, and other browser-decodable images are accepted.',
+              'Safety checks: empty files, oversized files, and excessive pixel counts are rejected before conversion.',
+              'SVG handling: SVG is rendered at its resolved size before being encoded as WebP.',
+              'Canvas rendering: drawImage renders the source with high-quality smoothing.',
+              'Quality control: WebP supports a quality value; lower values reduce size but can lose detail.',
+              'Output validation: the tool checks Blob type and WebP file signature to confirm the browser produced a real WebP.',
+              'Batch download: multiple converted files can be bundled into a ZIP archive.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Convert to WebP with toolgarden.xyz' },
+          {
+            type: 'list',
+            ordered: true,
+            items: [
+              'Open the ToolGarden Image to WebP tool.',
+              'Upload one or more JPG, PNG, GIF, SVG, or AVIF images.',
+              'Adjust the quality slider. Starting around 85 to 90 is usually safe.',
+              'Compare output size and preview quality.',
+              'Download one result or export all converted files as a ZIP.',
+            ],
+          },
+          {
+            type: 'callout',
+            title: 'toolgarden.xyz Image to WebP',
+            text: 'ToolGarden converts, previews, and ZIP-packages WebP files locally in the browser. Images are not uploaded to a server, which is useful for web assets, product images, and batch thumbnails.',
+            href: '/image/to-webp',
+            linkLabel: 'Open Image to WebP',
+          },
+          { type: 'heading', level: 2, text: 'Recommended quality settings' },
+          {
+            type: 'table',
+            headers: ['Image type', 'Suggested quality', 'Why'],
+            rows: [
+              ['Photos and product images', '80-90', 'Usually balances clarity and size'],
+              ['Web thumbnails', '70-85', 'Small display sizes can tolerate more compression'],
+              ['Screenshots and text images', '90-100', 'Protects text edges, or keep PNG'],
+              ['Transparent logos', '90+', 'Reduces soft edges and block artifacts'],
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Summary' },
+          {
+            type: 'paragraph',
+            text: 'WebP is a strong modern format for website optimization, especially for photos, product images, thumbnails, and some transparent assets. Watch the quality setting and preview, not only the file size.',
+          },
+          {
+            type: 'paragraph',
+            text: 'A practical workflow is to batch convert images to WebP with toolgarden.xyz, compare size and visual quality, then keep the output that remains visually stable.',
+          },
+        ],
+      },
+    },
+  },
+  {
+    slug: 'convert-images-to-avif',
+    publishedAt: '2026-07-01',
+    updatedAt: '2026-07-01',
+    translations: {
+      zh: {
+        title: '如何把图片转换成 AVIF？什么时候应该使用 AVIF',
+        excerpt: 'AVIF 通常能比 JPG 和 WebP 更小，但编码更慢、兼容性更需要确认。适合网页首图、封面图和需要强压缩的图片资产。',
+        metaTitle: '如何把图片转换成 AVIF？JPG/PNG/WebP 转 AVIF 教程',
+        metaDescription: '介绍 JPG、PNG、WebP、SVG 等图片如何转换成 AVIF，解释 AVIF 的优势、浏览器限制、质量参数、透明背景和 ToolGarden 在线转换方法。',
+        readingTime: '约 7 分钟阅读',
+        tags: ['AVIF', '图片转 AVIF', 'WebP vs AVIF', '图片优化'],
+        relatedTools: [
+          {
+            label: '图片转 AVIF',
+            href: '/image/to-avif',
+            description: '在浏览器本地把 JPG、PNG、WebP、GIF、BMP、SVG 等图片转换为 AVIF。',
+          },
+          {
+            label: '图片转 WebP',
+            href: '/image/to-webp',
+            description: '在需要更稳兼容性时，把图片转换成 WebP 作为 AVIF 的备用格式。',
+          },
+        ],
+        blocks: [
+          {
+            type: 'lead',
+            text: 'AVIF 是一种高压缩效率的现代图片格式。很多时候，它能在接近相同视觉质量下，比 JPG 和 WebP 生成更小的文件。',
+          },
+          {
+            type: 'paragraph',
+            text: '不过 AVIF 不是“无脑替换所有图片”的格式。它更适合体积敏感的网页大图、封面图和缩略图；如果需要极致兼容性，仍然要准备 WebP 或 JPG 备用。',
+          },
+          { type: 'heading', level: 2, text: 'AVIF 适合什么场景？' },
+          {
+            type: 'list',
+            items: [
+              '网页首图和封面图：大图体积下降对加载速度影响明显。',
+              '图库缩略图：大量图片同时加载时，AVIF 的体积优势更明显。',
+              '照片类内容：自然纹理和渐变通常能获得不错压缩效果。',
+              '需要支持透明的现代网页图片：AVIF 可以保留 Alpha 通道。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '什么时候不建议只用 AVIF？' },
+          {
+            type: 'paragraph',
+            text: 'AVIF 的压缩率很强，但编码更慢，某些浏览器或平台的支持仍然可能有限。如果目标用户环境复杂，建议同时提供 WebP 或 JPG fallback。',
+          },
+          {
+            type: 'table',
+            headers: ['问题', '影响', '建议'],
+            rows: [
+              ['编码较慢', '批量转换可能耗时更长', '先转换关键大图，不必所有小图都转'],
+              ['浏览器依赖', '不支持时无法导出或显示', '准备 WebP/JPG 备用'],
+              ['细文字截图', '低质量可能出现边缘损失', '提高质量或保留 PNG'],
+              ['小图标', '收益可能不明显', '继续使用 PNG/SVG/WebP'],
+            ],
+          },
+          { type: 'heading', level: 2, text: '技术实现：AVIF 是怎么在浏览器里生成的？' },
+          {
+            type: 'paragraph',
+            text: 'ToolGarden 的图片转 AVIF 工具会先把源图片解码到 Canvas，再读取像素数据交给浏览器端 AVIF 编码器生成 image/avif 文件。整个过程在本地完成，不上传图片。',
+          },
+          {
+            type: 'list',
+            items: [
+              '源图解码：支持 JPG、PNG、WebP、GIF、BMP、SVG 等浏览器可解码输入。',
+              'SVG 栅格化：如果源图是 SVG，会先渲染成目标尺寸位图。',
+              'Canvas 像素读取：通过 getImageData 读取 RGBA 像素数据。',
+              'AVIF 编码：使用浏览器端 AVIF 编码模块，把像素数据编码为 AVIF 字节。',
+              '质量参数：质量滑块会映射为编码器质量值，影响体积和细节。',
+              'Alpha 处理：编码参数会保留透明信息，适合透明图片场景。',
+              '文件校验：导出后检查 AVIF 文件签名，确认结果是真正的 image/avif。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '用 toolgarden.xyz 转 AVIF 的步骤' },
+          {
+            type: 'list',
+            ordered: true,
+            items: [
+              '打开 ToolGarden 的图片转 AVIF 工具。',
+              '上传 JPG、PNG、WebP、SVG 或其他支持的图片。',
+              '从默认质量开始转换，如果体积仍然偏大，再逐步降低质量。',
+              '对比预览，重点检查人脸、文字、暗部和渐变区域。',
+              '下载 AVIF 文件，或批量打包成 ZIP。',
+              '上线网页时，建议同时准备 WebP 或 JPG fallback。',
+            ],
+          },
+          {
+            type: 'callout',
+            title: 'toolgarden.xyz 图片转 AVIF',
+            text: 'ToolGarden 在浏览器本地完成 AVIF 编码、预览和批量下载。适合把网页大图、封面图、产品图转换成更小的现代格式。',
+            href: '/image/to-avif',
+            linkLabel: '打开图片转 AVIF',
+          },
+          { type: 'heading', level: 2, text: 'AVIF 和 WebP 怎么选？' },
+          {
+            type: 'table',
+            headers: ['目标', '优先选择', '说明'],
+            rows: [
+              ['最大压缩率', 'AVIF', '通常更小，但编码更慢'],
+              ['兼容性更稳', 'WebP', '现代网页支持广泛'],
+              ['照片大图', 'AVIF 或 WebP', '都可以尝试，按预览和体积决定'],
+              ['透明素材', 'WebP 或 AVIF', '都支持透明，但需要检查平台支持'],
+              ['旧平台兼容', 'JPG/PNG', '作为 fallback 更稳'],
+            ],
+          },
+          { type: 'heading', level: 2, text: '总结' },
+          {
+            type: 'paragraph',
+            text: 'AVIF 适合追求更小文件体积的现代网页图片，尤其是首图、封面图和大量缩略图。它的缺点是编码更慢，并且兼容性需要确认。',
+          },
+          {
+            type: 'paragraph',
+            text: '实际项目里，可以用 toolgarden.xyz 先把几张关键图片转成 AVIF，与 WebP/JPG 对比后再决定是否批量使用。',
+          },
+        ],
+      },
+      en: {
+        title: 'How to Convert Images to AVIF and When You Should Use AVIF',
+        excerpt: 'AVIF can be smaller than JPG and WebP, but encoding is slower and compatibility should be checked. It is best for hero images, cover images, and highly compressed web assets.',
+        metaTitle: 'How to Convert Images to AVIF: JPG/PNG/WebP to AVIF Guide',
+        metaDescription: 'Learn how to convert JPG, PNG, WebP, SVG, and other images to AVIF, how AVIF quality works, browser limits, transparency support, and ToolGarden conversion workflow.',
+        readingTime: '7 min read',
+        tags: ['AVIF', 'image to AVIF', 'WebP vs AVIF', 'image optimization'],
+        relatedTools: [
+          {
+            label: 'Image to AVIF',
+            href: '/image/to-avif',
+            description: 'Convert JPG, PNG, WebP, GIF, BMP, SVG, and other images to AVIF locally in your browser.',
+          },
+          {
+            label: 'Image to WebP',
+            href: '/image/to-webp',
+            description: 'Convert images to WebP when you need a more widely compatible fallback for AVIF.',
+          },
+        ],
+        blocks: [
+          {
+            type: 'lead',
+            text: 'AVIF is a modern image format with strong compression efficiency. In many cases, it can produce smaller files than JPG or WebP at similar visual quality.',
+          },
+          {
+            type: 'paragraph',
+            text: 'That does not mean every image should become AVIF. It is most useful for file-size-sensitive hero images, cover images, and thumbnails. If broad compatibility matters, keep WebP or JPG fallbacks.',
+          },
+          { type: 'heading', level: 2, text: 'Where AVIF works well' },
+          {
+            type: 'list',
+            items: [
+              'Hero images and cover images: large files benefit most from size reduction.',
+              'Gallery thumbnails: the size advantage adds up when many images load together.',
+              'Photo-like content: natural texture and gradients often compress well.',
+              'Modern transparent web images: AVIF can preserve alpha transparency.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'When not to rely only on AVIF' },
+          {
+            type: 'paragraph',
+            text: 'AVIF compresses well, but encoding can be slower and support varies by environment. If your audience uses many platforms, provide WebP or JPG fallback files.',
+          },
+          {
+            type: 'table',
+            headers: ['Issue', 'Impact', 'Suggestion'],
+            rows: [
+              ['Slower encoding', 'Batch conversion can take longer', 'Convert key large images first'],
+              ['Browser dependency', 'Unsupported environments may fail to export or display', 'Prepare WebP/JPG fallback'],
+              ['Text-heavy screenshots', 'Low quality can harm edges', 'Raise quality or keep PNG'],
+              ['Tiny icons', 'Benefits may be small', 'Keep PNG/SVG/WebP'],
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Technical workflow: how AVIF is generated in the browser' },
+          {
+            type: 'paragraph',
+            text: 'ToolGarden Image to AVIF decodes the source image into Canvas, reads pixel data, and passes it to a browser-side AVIF encoder to produce image/avif output. The image is not uploaded.',
+          },
+          {
+            type: 'list',
+            items: [
+              'Source decoding: JPG, PNG, WebP, GIF, BMP, SVG, and other browser-decodable images are supported.',
+              'SVG rasterization: SVG sources are rendered to a target bitmap size first.',
+              'Canvas pixel read: getImageData extracts RGBA pixel data from the Canvas.',
+              'AVIF encoding: a browser-side AVIF module encodes the pixel buffer into AVIF bytes.',
+              'Quality value: the quality slider maps to the encoder quality setting and changes size/detail tradeoff.',
+              'Alpha handling: encoder settings preserve transparency for images with alpha.',
+              'File validation: the output signature is checked to confirm a real image/avif file.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Convert to AVIF with toolgarden.xyz' },
+          {
+            type: 'list',
+            ordered: true,
+            items: [
+              'Open the ToolGarden Image to AVIF tool.',
+              'Upload JPG, PNG, WebP, SVG, or another supported image.',
+              'Start from the default quality and lower it gradually only if the file is still too large.',
+              'Compare the preview, especially faces, text, shadows, and gradients.',
+              'Download the AVIF file or export all results as a ZIP.',
+              'For production websites, prepare WebP or JPG fallback files too.',
+            ],
+          },
+          {
+            type: 'callout',
+            title: 'toolgarden.xyz Image to AVIF',
+            text: 'ToolGarden performs AVIF encoding, preview, and batch download locally in the browser. It is useful for turning hero images, cover images, and product images into smaller modern assets.',
+            href: '/image/to-avif',
+            linkLabel: 'Open Image to AVIF',
+          },
+          { type: 'heading', level: 2, text: 'AVIF or WebP?' },
+          {
+            type: 'table',
+            headers: ['Goal', 'Prefer', 'Why'],
+            rows: [
+              ['Maximum compression', 'AVIF', 'Often smaller, but slower to encode'],
+              ['Reliable modern compatibility', 'WebP', 'Widely supported on modern web platforms'],
+              ['Large photos', 'AVIF or WebP', 'Try both and compare size and preview'],
+              ['Transparent assets', 'WebP or AVIF', 'Both can preserve alpha, but platform support matters'],
+              ['Old platform support', 'JPG/PNG', 'More reliable as fallback formats'],
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Summary' },
+          {
+            type: 'paragraph',
+            text: 'AVIF is best for modern web images where smaller file size matters, especially hero images, cover images, and large thumbnail sets. Its tradeoffs are slower encoding and compatibility checks.',
+          },
+          {
+            type: 'paragraph',
+            text: 'A good workflow is to convert a few key images to AVIF with toolgarden.xyz, compare them with WebP and JPG, then decide whether AVIF is worth using broadly.',
+          },
+        ],
+      },
+    },
+  },
+  {
+    slug: 'png-to-jpg-jpg-to-png-transparency',
+    publishedAt: '2026-07-01',
+    updatedAt: '2026-07-01',
+    translations: {
+      zh: {
+        title: 'PNG 转 JPG、JPG 转 PNG 会发生什么？透明背景和画质怎么处理',
+        excerpt: 'PNG 和 JPG 的差异不只是扩展名。PNG 支持透明和无损压缩，JPG 适合照片但不支持透明背景。',
+        metaTitle: 'PNG 转 JPG、JPG 转 PNG 会发生什么？透明背景和画质说明',
+        metaDescription: '解释 PNG 转 JPG、JPG 转 PNG 时透明背景、文件体积、画质和压缩方式会发生什么，并介绍如何用 ToolGarden 转换 JPG 和 PNG。',
+        readingTime: '约 7 分钟阅读',
+        tags: ['PNG 转 JPG', 'JPG 转 PNG', '透明背景', '图片格式转换'],
+        relatedTools: [
+          {
+            label: '图片转 JPG',
+            href: '/image/to-jpg',
+            description: '把 PNG、WebP、SVG、AVIF 等图片转换为 JPG，可调整质量参数。',
+          },
+          {
+            label: '图片转 PNG',
+            href: '/image/to-png',
+            description: '把 JPG、WebP、SVG、AVIF 等图片转换为 PNG，适合透明图和截图。',
+          },
+        ],
+        blocks: [
+          {
+            type: 'lead',
+            text: '很多人会把 PNG 和 JPG 当成两种“图片后缀”，需要时互相转换。但 PNG 转 JPG、JPG 转 PNG 之后，透明背景、文件大小和画质都会发生变化。',
+          },
+          {
+            type: 'paragraph',
+            text: '理解这两个格式的差异，可以避免常见问题：为什么透明背景变白了？为什么 JPG 转 PNG 后文件变大了？为什么截图转 JPG 后文字变糊了？',
+          },
+          { type: 'heading', level: 2, text: 'PNG 和 JPG 的核心区别' },
+          {
+            type: 'table',
+            headers: ['对比项', 'PNG', 'JPG'],
+            rows: [
+              ['压缩方式', '无损压缩', '有损压缩'],
+              ['透明背景', '支持 Alpha 透明通道', '不支持透明'],
+              ['适合内容', '截图、图标、文字、透明 logo', '照片、商品图、自然场景'],
+              ['文件体积', '照片类图片通常较大', '照片类图片通常更小'],
+              ['画质风险', '基本保留原始像素', '质量过低会出现模糊和色块'],
+            ],
+          },
+          { type: 'heading', level: 2, text: 'PNG 转 JPG 会发生什么？' },
+          {
+            type: 'paragraph',
+            text: 'PNG 转 JPG 时，最重要的变化是透明背景会消失。因为 JPG 没有 Alpha 通道，透明像素必须被填充成某种颜色。ToolGarden 默认会把透明区域填充为白色。',
+          },
+          {
+            type: 'list',
+            items: [
+              '透明背景会变成白色背景。',
+              '文件体积通常会变小，尤其是照片类 PNG。',
+              '质量参数会影响细节，质量越低体积越小，但越容易糊。',
+              '截图、二维码、文字图片转 JPG 后，边缘可能出现噪点或压缩块。',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'JPG 转 PNG 会发生什么？' },
+          {
+            type: 'paragraph',
+            text: 'JPG 转 PNG 不会恢复已经丢失的细节，也不会自动生成透明背景。它只是把当前 JPG 像素重新保存为 PNG。因为 PNG 是无损压缩，照片类 JPG 转 PNG 后文件经常会变大。',
+          },
+          {
+            type: 'list',
+            items: [
+              '不会恢复 JPG 压缩时丢失的画质。',
+              '不会自动抠出透明背景。',
+              '文件体积可能明显变大。',
+              '适合需要继续编辑、避免再次有损压缩的场景。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '技术实现：ToolGarden 怎么处理 JPG 和 PNG 转换？' },
+          {
+            type: 'paragraph',
+            text: 'ToolGarden 的图片转 JPG 和图片转 PNG 工具都在浏览器本地运行。源图会被解码到 Canvas，再根据目标格式导出。',
+          },
+          {
+            type: 'list',
+            items: [
+              '本地读取：图片文件通过浏览器解码，不上传到服务器。',
+              '格式识别：根据 MIME 类型和扩展名识别 JPG、PNG、WebP、GIF、BMP、SVG、AVIF 等输入。',
+              'Canvas 重绘：源图会被绘制到同尺寸 Canvas，保留原始宽高。',
+              '转 JPG：透明区域会先填充为白色，工具会先用白色填充画布背景，再绘制图片，避免透明像素变成黑色或不可控颜色。',
+              'JPG 质量：使用 image/jpeg 导出时传入质量参数，控制文件体积和画质。',
+              '转 PNG：使用 image/png 导出，不使用质量滑块，并尽量保留透明通道。',
+              '输出校验：导出后检查 JPG 或 PNG 文件签名，确认浏览器实际生成了目标格式。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '什么时候 PNG 转 JPG？什么时候 JPG 转 PNG？' },
+          {
+            type: 'table',
+            headers: ['需求', '建议', '原因'],
+            rows: [
+              ['照片体积太大', 'PNG 转 JPG 或 WebP', '照片适合有损压缩，文件会小很多'],
+              ['透明 logo', '不要转 JPG', 'JPG 会丢失透明背景'],
+              ['截图要保持文字清晰', '保留 PNG 或高质量 WebP', 'JPG 容易让文字边缘发糊'],
+              ['JPG 需要继续编辑', '可转 PNG', '避免多次 JPG 有损保存'],
+              ['上传平台只接受 JPG', 'PNG 转 JPG', '接受透明变白或先换背景色'],
+            ],
+          },
+          {
+            type: 'callout',
+            title: 'toolgarden.xyz JPG / PNG 转换',
+            text: 'ToolGarden 提供图片转 JPG 和图片转 PNG 工具。你可以上传多张图片，调整 JPG 质量，预览输出结果，并批量下载 ZIP。所有转换都在浏览器本地完成。',
+            href: '/image/to-jpg',
+            linkLabel: '打开图片转 JPG',
+          },
+          { type: 'heading', level: 2, text: '总结' },
+          {
+            type: 'paragraph',
+            text: 'PNG 转 JPG 适合压缩照片类图片，但会丢失透明背景；JPG 转 PNG 适合后续编辑和无损保存，但不会让画质变好，也可能让文件变大。',
+          },
+          {
+            type: 'paragraph',
+            text: '转换前先判断图片内容：照片用 JPG/WebP，截图和透明素材用 PNG/WebP。格式选对，才不会在体积和清晰度之间反复踩坑。',
+          },
+        ],
+      },
+      en: {
+        title: 'What Happens When You Convert PNG to JPG or JPG to PNG?',
+        excerpt: 'PNG and JPG differ in more than file extensions. PNG supports transparency and lossless compression, while JPG is better for photos but does not support alpha.',
+        metaTitle: 'PNG to JPG and JPG to PNG: Transparency, Quality, and File Size',
+        metaDescription: 'Learn what happens when converting PNG to JPG or JPG to PNG, including transparency loss, file size changes, quality settings, and ToolGarden conversion workflow.',
+        readingTime: '7 min read',
+        tags: ['PNG to JPG', 'JPG to PNG', 'transparency', 'image conversion'],
+        relatedTools: [
+          {
+            label: 'Image to JPG',
+            href: '/image/to-jpg',
+            description: 'Convert PNG, WebP, SVG, AVIF, and other images to JPG with adjustable quality.',
+          },
+          {
+            label: 'Image to PNG',
+            href: '/image/to-png',
+            description: 'Convert JPG, WebP, SVG, AVIF, and other images to PNG for transparency and sharp edges.',
+          },
+        ],
+        blocks: [
+          {
+            type: 'lead',
+            text: 'PNG and JPG are often treated as simple file extensions, but converting between them changes transparency, file size, and sometimes visual quality.',
+          },
+          {
+            type: 'paragraph',
+            text: 'Knowing the difference helps explain common surprises: why did the transparent background turn white, why did JPG to PNG become larger, and why did screenshot text look worse after JPG conversion?',
+          },
+          { type: 'heading', level: 2, text: 'PNG vs JPG basics' },
+          {
+            type: 'table',
+            headers: ['Factor', 'PNG', 'JPG'],
+            rows: [
+              ['Compression', 'Lossless', 'Lossy'],
+              ['Transparency', 'Supports alpha', 'No transparency'],
+              ['Best for', 'Screenshots, icons, text, transparent logos', 'Photos, product images, natural scenes'],
+              ['File size', 'Often large for photos', 'Often smaller for photos'],
+              ['Quality risk', 'Preserves pixels closely', 'Low quality can create blur and blocks'],
+            ],
+          },
+          { type: 'heading', level: 2, text: 'What happens when PNG becomes JPG?' },
+          {
+            type: 'paragraph',
+            text: 'The biggest change is that transparency disappears. JPG has no alpha channel, so transparent pixels must be filled with a color. ToolGarden fills transparent areas with white by default.',
+          },
+          {
+            type: 'list',
+            items: [
+              'Transparent backgrounds become white backgrounds.',
+              'File size often becomes smaller, especially for photo-like PNG files.',
+              'Quality controls affect detail: lower quality means smaller files but more visible loss.',
+              'Screenshots, QR codes, and text images can develop noisy or blocky edges.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'What happens when JPG becomes PNG?' },
+          {
+            type: 'paragraph',
+            text: 'JPG to PNG does not restore detail that JPG compression already removed, and it does not magically create transparency. It simply saves the current pixels as PNG. Because PNG is lossless, photo-like JPG files often become larger.',
+          },
+          {
+            type: 'list',
+            items: [
+              'Lost JPG detail does not come back.',
+              'The background does not become transparent automatically.',
+              'File size can become much larger.',
+              'It can be useful before editing, to avoid another lossy JPG save.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Technical workflow: how ToolGarden handles JPG and PNG conversion' },
+          {
+            type: 'paragraph',
+            text: 'ToolGarden Image to JPG and Image to PNG both run locally in the browser. The source image is decoded to Canvas and then exported in the target format.',
+          },
+          {
+            type: 'list',
+            items: [
+              'Local loading: image files are decoded by the browser and are not uploaded.',
+              'Format detection: MIME type and extension identify JPG, PNG, WebP, GIF, BMP, SVG, AVIF, and similar inputs.',
+              'Canvas redraw: the source is drawn to a same-size Canvas, preserving dimensions.',
+              'JPG conversion: the Canvas is filled with white first, then the image is drawn so transparent pixels have a predictable background.',
+              'JPG quality: image/jpeg export receives a quality value to balance size and visual detail.',
+              'PNG conversion: image/png export does not use a quality slider and can preserve alpha.',
+              'Output validation: JPG or PNG signatures are checked after export to confirm the target format.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'When should you convert PNG to JPG or JPG to PNG?' },
+          {
+            type: 'table',
+            headers: ['Need', 'Recommendation', 'Reason'],
+            rows: [
+              ['Photo file is too large', 'Convert PNG to JPG or WebP', 'Photos compress well with lossy formats'],
+              ['Transparent logo', 'Do not convert to JPG', 'JPG removes transparency'],
+              ['Screenshot text must stay sharp', 'Keep PNG or use high-quality WebP', 'JPG can soften text edges'],
+              ['JPG needs more editing', 'Convert to PNG if needed', 'Avoid repeated lossy JPG saves'],
+              ['Platform only accepts JPG', 'Convert PNG to JPG', 'Accept white background or choose a background color first'],
+            ],
+          },
+          {
+            type: 'callout',
+            title: 'toolgarden.xyz JPG / PNG Conversion',
+            text: 'ToolGarden provides Image to JPG and Image to PNG tools. Upload multiple images, adjust JPG quality, preview results, and download a ZIP batch. All conversion runs locally in your browser.',
+            href: '/image/to-jpg',
+            linkLabel: 'Open Image to JPG',
+          },
+          { type: 'heading', level: 2, text: 'Summary' },
+          {
+            type: 'paragraph',
+            text: 'PNG to JPG is useful for compressing photo-like images, but it removes transparency. JPG to PNG can be useful before editing, but it does not improve already-lost quality and can make files larger.',
+          },
+          {
+            type: 'paragraph',
+            text: 'Choose based on content: JPG or WebP for photos, PNG or WebP for screenshots and transparent assets. The right format prevents repeated quality and file-size surprises.',
+          },
+        ],
+      },
+    },
+  },
+  {
     slug: 'why-json-can-have-comments',
     publishedAt: '2026-07-01',
     updatedAt: '2026-07-01',

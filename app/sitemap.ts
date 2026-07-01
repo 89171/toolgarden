@@ -27,8 +27,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return paths.map((path) => ({
     url: getLocalizedUrl(routing.defaultLocale, path),
     lastModified: BUILD_DATE,
-    alternates: {
-      languages: languageAlternates(path),
-    },
+    // alternates: {
+    //   languages: languageAlternates(path),
+    // },
   }));
 }
