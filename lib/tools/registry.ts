@@ -230,6 +230,15 @@ export const toolRegistry: ToolMeta[] = [
     featured: true,
   },
   {
+    id: 'image-upscale',
+    name: '图片无损放大',
+    description: '在浏览器本地将 JPG、PNG、WebP 等图片按 2x、3x、4x 或自定义尺寸放大，支持像素无损和清晰增强模式',
+    path: '/image/upscale',
+    icon: '2X',
+    category: 'convert',
+    featured: true,
+  },
+  {
     id: 'image-remove-bg',
     name: '图片去背景',
     description: '在浏览器本地使用开源模型移除图片背景，导出透明 PNG',

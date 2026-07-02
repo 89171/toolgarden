@@ -464,6 +464,8 @@
     "drop_action": "选择图片",
     "input_formats": "支持格式",
     "local_worker_note": "所有文件处理都在本地完成，文件不会上传到任何服务器，关闭页面后，数据即被清除。",
+    "related_upscale_title": "需要放大图片？",
+    "related_upscale_body": "使用图片无损放大工具按 2x、3x、4x 或自定义尺寸放大，再回来压缩输出体积。",
     "selected_count": "已选择 {count} 个文件",
     "summary_files": "文件",
     "summary_ready": "完成",
@@ -504,6 +506,69 @@
       "canvas_export": "图片导出失败，请换一个浏览器重试。",
       "unsupported_output": "当前浏览器不支持导出 {format}。",
       "general": "压缩失败，请重试。"
+    }
+  },
+  "image_upscale": {
+    "settings_title": "放大设置",
+    "result_title": "放大结果",
+    "drop_title": "点击或拖拽图片放大",
+    "drop_hint": "支持 {formats}，默认使用像素无损模式输出 PNG",
+    "drop_action": "选择图片",
+    "scale_title": "放大倍数",
+    "output_width": "宽度",
+    "output_height": "高度",
+    "mode_title": "放大算法",
+    "modes": {
+      "pixel": {
+        "label": "像素无损",
+        "hint": "关闭插值，适合图标、二维码、截图和像素图。"
+      },
+      "smooth": {
+        "label": "平滑高清",
+        "hint": "使用高质量插值，适合照片和渐变图片。"
+      },
+      "sharp": {
+        "label": "清晰增强",
+        "hint": "使用高质量重采样并轻微锐化，适合文字、截图和通用图片。"
+      }
+    },
+    "output_format": "输出格式",
+    "quality": "输出质量",
+    "quality_value": "{value}%",
+    "lossless_png": "PNG 无损输出",
+    "input_formats": "支持格式",
+    "source_size": "原始尺寸",
+    "scale_value": "当前倍数",
+    "file_size": "文件大小",
+    "algorithm": "算法",
+    "duration": "耗时",
+    "duration_value": "{value}ms",
+    "local_note": "所有图片放大都在浏览器本地完成，文件不会上传到任何服务器。清晰增强会使用高质量重采样和轻量锐化，但不会进行 AI 生成。",
+    "related_compress_title": "放大后需要压缩？",
+    "related_compress_body": "图片放大后体积通常会变大，可以继续使用图片压缩工具减小输出文件。",
+    "apply": "生成放大图片",
+    "processing": "处理中",
+    "source_image": "原图",
+    "output_image": "放大图",
+    "output_size": "输出尺寸",
+    "output_empty": "放大后的图片会显示在这里",
+    "preview_title": "放大图预览",
+    "preview_open_output": "预览放大图片",
+    "preview_close": "关闭预览",
+    "empty_title": "等待图片输入",
+    "empty_body": "上传图片后选择放大倍数、算法和输出格式，再生成放大后的图片。",
+    "unknown_type": "未知类型",
+    "errors": {
+      "empty_file": "文件为空，请选择有效图片。",
+      "unsupported_input": "暂不支持这种图片类型：{type}。",
+      "file_too_large": "文件过大，最大支持 {maxSize}。",
+      "too_many_pixels": "输出尺寸过大，最大支持 {maxPixels}。",
+      "load_failed": "图片解码失败，文件可能已损坏或当前浏览器不支持该格式。",
+      "canvas_context": "无法创建 Canvas 绘图上下文。",
+      "canvas_export": "图片导出失败，请换一个浏览器重试。",
+      "unsupported_output": "当前浏览器不支持导出 {format}。",
+      "invalid_dimensions": "请输入有效的输出宽度和高度。",
+      "general": "图片放大失败，请重试。"
     }
   },
   "image_remove_bg": {
@@ -1068,6 +1133,30 @@
         {
           "question": "图片压缩支持批量下载吗？",
           "answer": "支持。多张图片压缩完成后，可以逐个下载，也可以一次下载 ZIP 压缩包。"
+        }
+      ]
+    },
+    "image-upscale": {
+      "items": [
+        {
+          "question": "图片无损放大会上传文件吗？",
+          "answer": "不会。图片会在浏览器本地解码、放大和导出，不会上传到服务器。"
+        },
+        {
+          "question": "像素无损模式适合什么图片？",
+          "answer": "适合图标、二维码、截图、像素图和带清晰边缘的图片。它会关闭插值，按像素复制放大边缘。"
+        },
+        {
+          "question": "照片应该选择哪种放大模式？",
+          "answer": "照片、渐变和自然图片通常更适合平滑高清或清晰增强模式；清晰增强会额外做轻量锐化，边缘会更清楚。"
+        },
+        {
+          "question": "清晰增强模式会生成新的 AI 细节吗？",
+          "answer": "不会。清晰增强使用高质量重采样和轻量锐化，让已有边缘和纹理更清楚，但不会凭空生成原图没有的细节。"
+        },
+        {
+          "question": "图片放大后为什么文件变大？",
+          "answer": "放大后像素数量增加，PNG 等无损格式尤其容易变大。可以在放大后继续使用图片压缩工具减小文件体积。"
         }
       ]
     },
@@ -1664,6 +1753,10 @@
     "image-compress": {
       "name": "图片压缩",
       "description": "免费在线智能压缩 JPG、PNG、WebP 等图片，默认保持原格式，也可选择输出 WebP"
+    },
+    "image-upscale": {
+      "name": "图片无损放大",
+      "description": "免费在线将 JPG、PNG、WebP 等图片按 2x、3x、4x 或自定义尺寸放大，支持像素无损、平滑高清和清晰增强模式"
     },
     "image-remove-bg": {
       "name": "图片去背景",

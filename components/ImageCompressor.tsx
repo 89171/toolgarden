@@ -1,8 +1,9 @@
 'use client';
 
 /* eslint-disable @next/next/no-img-element -- Image previews use local blob URLs. */
+import Link from 'next/link';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
@@ -64,6 +65,7 @@ function getFormatLabel(result: ImageCompressionSuccess): string {
 }
 
 export function ImageCompressor() {
+  const locale = useLocale();
   const tc = useTranslations('common');
   const ti = useTranslations('image_compressor');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -446,6 +448,14 @@ export function ImageCompressor() {
             <p className="border-t border-border-subtle pt-2 text-xs leading-relaxed text-content-faint">
               {ti('local_worker_note')}
             </p>
+
+            <Link
+              href={`/${locale}/image/upscale`}
+              className="rounded-lg border border-border-base bg-surface-raised p-3 transition-colors hover:border-border-strong hover:bg-surface-hover"
+            >
+              <span className="block text-sm font-semibold text-content-secondary">{ti('related_upscale_title')}</span>
+              <span className="mt-1 block text-xs leading-relaxed text-content-muted">{ti('related_upscale_body')}</span>
+            </Link>
 
             </div>
 

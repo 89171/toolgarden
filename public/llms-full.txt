@@ -73,6 +73,13 @@ Canonical examples:
 - Covers browser-local Canvas rendering, JPG quality, PNG alpha preservation, output validation, and common use cases such as platform uploads and editing workflows
 - Points users to Image to JPG and Image to PNG for local format conversion
 
+### How to Keep Images Clear After Upscaling (/blog/keep-image-clear-after-upscaling)
+- Locales: English and Chinese Simplified
+- Explains why upscaled images can become blurry, including limited source pixels, high scale factors, mismatched algorithms, output compression, and source artifacts
+- Compares Pixel-perfect, Smooth HD, and Sharp enhance modes for QR codes, icons, screenshots, text-heavy images, photos, transparent PNG assets, and product images
+- Covers output format choices, file-size growth after upscaling, browser-local Canvas processing, pica resampling, and post-upscale compression workflows
+- Points users to Image Upscale, Image Compressor, and Image Resize for browser-local image workflows
+
 ### Why Can Some JSON Files Have Comments? (/blog/why-json-can-have-comments)
 - Locales: English and Chinese Simplified
 - Explains why standard JSON forbids comments, why TypeScript tsconfig.json and VS Code configuration files can contain comments, and how JSONC differs from JSON5
@@ -152,6 +159,15 @@ Canonical examples:
 - Tries conservative output candidates and keeps the smallest visually safe result based on pixel-sample comparison
 - Keeps the original file when no smaller visually safe candidate is found
 - Supports preview comparison, per-file download, and ZIP batch download
+
+### Image Upscale (/image/upscale)
+- Upscales JPG, PNG, WebP, GIF, BMP, SVG, AVIF, and common browser-decodable images locally in the browser
+- Supports 2x, 3x, 4x, and custom width or height with aspect-ratio preserving dimension sync
+- Pixel-perfect mode disables interpolation for icons, QR codes, screenshots, pixel art, and hard-edged graphics
+- Smooth HD mode uses high-quality browser interpolation for photos, gradients, and natural images
+- Sharp enhance mode uses pica high-quality resampling with light unsharp masking for clearer existing edges and textures without AI generation
+- Exports the upscaled image as PNG, JPG, or WebP; PNG is the default lossless output
+- Uses browser Canvas APIs and does not upload image data to a server
 
 ### Remove Image Background (/image/remove-bg)
 - Removes image backgrounds locally in the browser with @imgly/background-removal and onnxruntime-web

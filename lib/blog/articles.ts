@@ -2563,6 +2563,363 @@ export const blogArticles: BlogArticle[] = [
     },
   },
   {
+    slug: 'keep-image-clear-after-upscaling',
+    publishedAt: '2026-07-02',
+    updatedAt: '2026-07-02',
+    translations: {
+      zh: {
+        title: '图片放大后，如何尽量保持清晰',
+        excerpt: '图片放大变糊通常不是单一原因造成的。放大倍数、重采样算法、输出格式和原图质量都会影响最终清晰度。',
+        metaTitle: '图片放大后如何尽量保持清晰？图片无损放大和清晰增强方法',
+        metaDescription: '解释图片放大后变模糊的原因，比较像素无损、平滑高清和清晰增强模式，并给出截图、二维码、图标和照片的清晰放大建议。',
+        readingTime: '约 8 分钟阅读',
+        tags: ['图片放大', '无损放大', '清晰增强', '图片优化'],
+        relatedTools: [
+          {
+            label: '图片无损放大',
+            href: '/image/upscale',
+            description: '按 2x、3x、4x 或自定义尺寸放大图片，支持像素无损、平滑高清和清晰增强模式。',
+          },
+          {
+            label: '图片压缩',
+            href: '/image/compress',
+            description: '图片放大后体积通常会变大，可以继续压缩输出文件。',
+          },
+          {
+            label: '图片尺寸修改',
+            href: '/image/resize',
+            description: '如果只是调整到指定宽高，可以使用尺寸修改工具按比例缩放。',
+          },
+        ],
+        blocks: [
+          {
+            type: 'lead',
+            text: '图片放大后想保持清晰，关键不是单纯把宽高改大，而是根据图片内容选择合适的放大方式、输出格式和后续压缩策略。',
+          },
+          {
+            type: 'paragraph',
+            text: '很多人遇到的问题是：小图放大后文字发虚、二维码边缘糊掉、照片细节像被抹平、图标变得不干净。这些现象背后有一个共同原因：原图像素有限，放大时必须用某种算法去生成更多像素。',
+          },
+          { type: 'heading', level: 2, text: '为什么图片放大后会变模糊？' },
+          {
+            type: 'paragraph',
+            text: '一张 500 × 500 的图片放大到 1000 × 1000，像素数量从 25 万变成 100 万。多出来的 75 万像素并不存在于原图中，放大算法只能根据周围像素推算。',
+          },
+          {
+            type: 'list',
+            items: [
+              '原图分辨率太低：源图本身没有足够细节，放大后缺点会被一起放大。',
+              '放大倍数过高：2x 通常比较自然，4x 以上更容易暴露模糊、噪点和压缩痕迹。',
+              '算法不适合内容：照片需要平滑过渡，二维码和像素图需要保留硬边。',
+              '输出格式再次压缩：放大后保存为低质量 JPG，可能让边缘和文字再次变糊。',
+              '原图已经压缩过：如果源图有 JPG 噪点和色块，放大后这些瑕疵也会更明显。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '先判断图片类型，再选择放大模式' },
+          {
+            type: 'paragraph',
+            text: '没有一种放大方式适合所有图片。想尽量清晰，第一步是判断图片内容：它是照片、截图、二维码、图标，还是带文字的说明图。',
+          },
+          {
+            type: 'table',
+            headers: ['图片类型', '推荐模式', '原因'],
+            rows: [
+              ['二维码、条形码', '像素无损', '边缘必须保持硬朗，平滑会让黑白边界变灰'],
+              ['图标、像素图', '像素无损', '保留原始像素块，不引入模糊边缘'],
+              ['网页截图、文字截图', '清晰增强', '高质量重采样后轻量锐化，文字边缘更清楚'],
+              ['照片、商品图', '平滑高清或清晰增强', '自然图片需要平滑过渡，清晰增强可让边缘略利落'],
+              ['透明 PNG 素材', '像素无损或清晰增强', '根据边缘是否需要平滑决定，导出时保留 PNG 更稳'],
+            ],
+          },
+          { type: 'heading', level: 2, text: '三种放大方式有什么区别？' },
+          { type: 'heading', level: 3, text: '1. 像素无损：保留硬边，不做平滑' },
+          {
+            type: 'paragraph',
+            text: '像素无损模式会关闭浏览器的平滑插值，相当于把每个像素直接放大成更大的像素块。它不会让照片更自然，但非常适合二维码、图标、像素图和硬边截图。',
+          },
+          {
+            type: 'paragraph',
+            text: '如果你的目标是让二维码仍然容易识别、让小图标边缘不发灰、让像素风图片保持原味，优先选择像素无损。',
+          },
+          { type: 'heading', level: 3, text: '2. 平滑高清：让照片过渡更自然' },
+          {
+            type: 'paragraph',
+            text: '平滑高清模式会使用浏览器的高质量插值。它会让相邻像素之间有更柔和的过渡，适合照片、渐变、背景图和自然场景。',
+          },
+          {
+            type: 'paragraph',
+            text: '它的缺点是文字和硬边可能变软。如果你放大的是截图、表格、界面或说明图，平滑高清不一定是最清楚的选择。',
+          },
+          { type: 'heading', level: 3, text: '3. 清晰增强：重采样后轻量锐化' },
+          {
+            type: 'paragraph',
+            text: '清晰增强模式会使用更高质量的重采样算法，再加一层轻量锐化。它的目标不是凭空生成新细节，而是让已有边缘、文字轮廓和纹理看起来更利落。',
+          },
+          {
+            type: 'paragraph',
+            text: '这种模式适合网页截图、文档截图、商品图、头像和通用图片。对于已经很糊的低清照片，它能改善边缘观感，但不能恢复原图没有记录下来的真实细节。',
+          },
+          { type: 'heading', level: 2, text: '放大倍数怎么选？' },
+          {
+            type: 'paragraph',
+            text: '放大倍数越高，算法需要补出来的像素越多，失真风险也越高。通常建议从 2x 开始，如果还不够，再尝试 3x 或自定义尺寸。',
+          },
+          {
+            type: 'table',
+            headers: ['需求', '推荐倍数', '说明'],
+            rows: [
+              ['小图预览变大', '2x', '最稳，画质风险最低'],
+              ['截图用于文章配图', '2x 或 3x', '清晰增强通常比单纯平滑更适合文字'],
+              ['二维码打印或展示', '整数倍 2x/3x/4x', '使用像素无损，避免非整数缩放破坏边缘'],
+              ['头像或商品图', '2x 或目标宽度', '优先检查人脸、商品边缘和背景噪点'],
+              ['极小图标', '整数倍', '像素无损可保留形状，但不适合追求照片感'],
+            ],
+          },
+          { type: 'heading', level: 2, text: '输出格式怎么选？' },
+          {
+            type: 'list',
+            items: [
+              'PNG：适合截图、二维码、图标、透明图和需要尽量保留边缘的图片。',
+              'JPG：适合照片和商品图，但不要把质量调得太低。',
+              'WebP：适合网页使用，在体积和画质之间通常更均衡。',
+            ],
+          },
+          {
+            type: 'paragraph',
+            text: '如果你不确定，放大后的第一版建议先导出 PNG。确认清晰度后，如果文件太大，再用图片压缩工具转为 WebP 或压缩输出。',
+          },
+          { type: 'heading', level: 2, text: 'ToolGarden 的图片放大是怎么处理的？' },
+          {
+            type: 'paragraph',
+            text: 'ToolGarden 图片放大工具在浏览器本地完成处理。图片会被浏览器解码到 Canvas，再根据你选择的模式生成目标尺寸。',
+          },
+          {
+            type: 'list',
+            items: [
+              '像素无损：关闭 Canvas 平滑插值，直接按像素放大。',
+              '平滑高清：启用浏览器高质量插值，让照片和渐变过渡更自然。',
+              '清晰增强：使用 pica 高质量重采样，并加入轻量 unsharp 锐化，让已有边缘和纹理更清楚。',
+              '格式输出：支持 PNG、JPG 和 WebP；PNG 默认保持无损输出。',
+              '本地处理：图片不上传服务器，关闭页面后数据不会保留。',
+            ],
+          },
+          {
+            type: 'callout',
+            title: 'toolgarden.xyz 图片无损放大',
+            text: '上传图片后可以选择 2x、3x、4x 或自定义宽高，并在像素无损、平滑高清和清晰增强模式之间切换。适合截图、二维码、图标、照片和网页配图的本地放大处理。',
+            href: '/image/upscale',
+            linkLabel: '打开图片放大工具',
+          },
+          { type: 'heading', level: 2, text: '放大后文件变大怎么办？' },
+          {
+            type: 'paragraph',
+            text: '图片放大后像素数量增加，文件变大是正常的。尤其是 PNG，无损保存会尽量保留每个像素，体积可能明显增长。',
+          },
+          {
+            type: 'list',
+            items: [
+              '先确认清晰度，再压缩体积，不要一开始就用低质量 JPG。',
+              '照片类图片可以尝试 WebP 输出或图片压缩工具。',
+              '截图和文字图如果必须保持清晰，优先保留 PNG 或高质量 WebP。',
+              '如果只是网页展示，按实际显示宽度输出，不要过度放大。',
+            ],
+          },
+          {
+            type: 'callout',
+            title: '放大后继续压缩',
+            text: '如果放大后的 PNG 或 JPG 文件太大，可以继续使用图片压缩工具，选择保留原格式或输出 WebP，在清晰度和体积之间做最后平衡。',
+            href: '/image/compress',
+            linkLabel: '打开图片压缩工具',
+          },
+          { type: 'heading', level: 2, text: '总结' },
+          {
+            type: 'paragraph',
+            text: '图片放大想尽量清晰，重点是匹配内容：二维码和图标用像素无损，照片用平滑高清，截图和文字图片优先尝试清晰增强。',
+          },
+          {
+            type: 'paragraph',
+            text: '同时要记住：放大只能更好地利用已有像素，不能真正恢复原图没有的细节。选择合适模式、合适倍数和合适格式，才是保持清晰度的核心。',
+          },
+        ],
+      },
+      en: {
+        title: 'How to Keep Images Clear After Upscaling',
+        excerpt: 'Image upscaling can make edges soft or details look smeared. The best result depends on scale, resampling mode, output format, and source quality.',
+        metaTitle: 'How to Keep Images Clear After Upscaling',
+        metaDescription: 'Learn why images become blurry after upscaling, how pixel-perfect, Smooth HD, and Sharp enhance modes differ, and how to choose settings for screenshots, QR codes, icons, and photos.',
+        readingTime: '8 min read',
+        tags: ['image upscale', 'lossless upscale', 'sharp enhance', 'image optimization'],
+        relatedTools: [
+          {
+            label: 'Image Upscale',
+            href: '/image/upscale',
+            description: 'Upscale images at 2x, 3x, 4x, or custom dimensions with pixel-perfect, Smooth HD, and Sharp enhance modes.',
+          },
+          {
+            label: 'Image Compressor',
+            href: '/image/compress',
+            description: 'Upscaled images usually become larger, so compress the final output when needed.',
+          },
+          {
+            label: 'Image Resize',
+            href: '/image/resize',
+            description: 'Resize images proportionally when you only need a specific width or height.',
+          },
+        ],
+        blocks: [
+          {
+            type: 'lead',
+            text: 'Keeping an image clear after upscaling is not just about making the width and height larger. You need the right scaling mode, output format, and compression workflow for the kind of image you have.',
+          },
+          {
+            type: 'paragraph',
+            text: 'Common problems include soft screenshot text, blurry QR code edges, smeared photo detail, and icons that no longer look clean. All of these start from the same limitation: the source image has a fixed number of pixels, and upscaling has to create more pixels from them.',
+          },
+          { type: 'heading', level: 2, text: 'Why do images become blurry after upscaling?' },
+          {
+            type: 'paragraph',
+            text: 'When a 500 by 500 image becomes 1000 by 1000, the pixel count grows from 250,000 to 1,000,000. The extra pixels were not in the original file, so the upscaling algorithm has to estimate them from nearby pixels.',
+          },
+          {
+            type: 'list',
+            items: [
+              'The source resolution is too low, so the missing detail becomes more obvious.',
+              'The scale is too aggressive; 2x is usually safer than 4x or higher.',
+              'The algorithm does not match the content; photos and QR codes need different treatment.',
+              'The output is compressed again, especially as low-quality JPG.',
+              'The source file already has compression blocks or noise, which become larger after upscaling.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Choose the mode based on image content' },
+          {
+            type: 'paragraph',
+            text: 'There is no single best upscaling mode for every image. First decide whether the image is a photo, screenshot, QR code, icon, or text-heavy graphic.',
+          },
+          {
+            type: 'table',
+            headers: ['Image type', 'Recommended mode', 'Why'],
+            rows: [
+              ['QR codes and barcodes', 'Pixel-perfect', 'Keeps hard black-and-white edges instead of making them gray'],
+              ['Icons and pixel art', 'Pixel-perfect', 'Preserves blocky source pixels without soft edges'],
+              ['Web screenshots and text screenshots', 'Sharp enhance', 'High-quality resampling plus light sharpening keeps text clearer'],
+              ['Photos and product images', 'Smooth HD or Sharp enhance', 'Natural images need smooth transitions, while light sharpening can help edges'],
+              ['Transparent PNG assets', 'Pixel-perfect or Sharp enhance', 'Choose based on whether the edge should stay hard or become smoother'],
+            ],
+          },
+          { type: 'heading', level: 2, text: 'What do the three modes do?' },
+          { type: 'heading', level: 3, text: '1. Pixel-perfect: hard edges, no smoothing' },
+          {
+            type: 'paragraph',
+            text: 'Pixel-perfect mode disables smoothing interpolation. Each source pixel is enlarged directly, which keeps hard boundaries intact. It is not meant to make photos look natural, but it is ideal for QR codes, icons, pixel art, and hard-edged screenshots.',
+          },
+          {
+            type: 'paragraph',
+            text: 'Use this when scan reliability, icon shape, or pixel-art style matters more than photographic smoothness.',
+          },
+          { type: 'heading', level: 3, text: '2. Smooth HD: natural transitions for photos' },
+          {
+            type: 'paragraph',
+            text: 'Smooth HD uses high-quality browser interpolation. It creates softer transitions between pixels, which is usually better for photos, gradients, backgrounds, and natural scenes.',
+          },
+          {
+            type: 'paragraph',
+            text: 'The tradeoff is that text and hard edges can become softer. For screenshots, tables, interface images, and diagrams, Smooth HD may not be the clearest option.',
+          },
+          { type: 'heading', level: 3, text: '3. Sharp enhance: resampling plus light sharpening' },
+          {
+            type: 'paragraph',
+            text: 'Sharp enhance uses higher-quality resampling and then applies light sharpening. It does not create new AI detail; it makes existing edges, text contours, and textures look a little cleaner.',
+          },
+          {
+            type: 'paragraph',
+            text: 'This mode works well for web screenshots, document screenshots, product images, avatars, and general images. For an already very blurry photo, it can improve edge perception, but it cannot recover real detail that the source file never captured.',
+          },
+          { type: 'heading', level: 2, text: 'How much should you upscale?' },
+          {
+            type: 'paragraph',
+            text: 'Higher scale means the algorithm has to invent more pixels. Start with 2x when possible, then try 3x or a custom size if you still need a larger result.',
+          },
+          {
+            type: 'table',
+            headers: ['Need', 'Suggested scale', 'Note'],
+            rows: [
+              ['Make a small preview larger', '2x', 'Safest option with the least quality risk'],
+              ['Screenshot for an article', '2x or 3x', 'Sharp enhance often works better for text than simple smoothing'],
+              ['QR code display or print', 'Integer 2x/3x/4x', 'Use pixel-perfect to avoid damaged edges'],
+              ['Avatar or product image', '2x or target width', 'Check face detail, product edges, and background noise'],
+              ['Tiny icon', 'Integer scale', 'Pixel-perfect keeps shape but will not make it photographic'],
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Which output format should you choose?' },
+          {
+            type: 'list',
+            items: [
+              'PNG is best for screenshots, QR codes, icons, transparent images, and sharp edges.',
+              'JPG is fine for photos and product images, but avoid very low quality.',
+              'WebP is often a good web format when you want smaller files with good visual quality.',
+            ],
+          },
+          {
+            type: 'paragraph',
+            text: 'If you are unsure, export the first upscaled version as PNG. Check clarity first, then compress or convert to WebP if the file is too large.',
+          },
+          { type: 'heading', level: 2, text: 'How ToolGarden upscales images' },
+          {
+            type: 'paragraph',
+            text: 'ToolGarden Image Upscale runs locally in your browser. The image is decoded into Canvas and then rendered to the target dimensions based on the selected mode.',
+          },
+          {
+            type: 'list',
+            items: [
+              'Pixel-perfect disables Canvas smoothing and enlarges pixels directly.',
+              'Smooth HD enables high-quality browser interpolation for more natural transitions.',
+              'Sharp enhance uses pica high-quality resampling with light unsharp sharpening for clearer existing edges and textures.',
+              'Format output supports PNG, JPG, and WebP; PNG is the default lossless option.',
+              'Local processing means the image is not uploaded to a server.',
+            ],
+          },
+          {
+            type: 'callout',
+            title: 'toolgarden.xyz Image Upscale',
+            text: 'Upload an image, choose 2x, 3x, 4x, or custom dimensions, then switch between Pixel-perfect, Smooth HD, and Sharp enhance modes. It is useful for screenshots, QR codes, icons, photos, and web images.',
+            href: '/image/upscale',
+            linkLabel: 'Open Image Upscale',
+          },
+          { type: 'heading', level: 2, text: 'What if the upscaled file becomes too large?' },
+          {
+            type: 'paragraph',
+            text: 'Upscaling increases pixel count, so larger files are normal. This is especially true for PNG, which tries to preserve pixels losslessly.',
+          },
+          {
+            type: 'list',
+            items: [
+              'Check clarity first, then reduce file size afterward.',
+              'For photos, try WebP output or the image compressor.',
+              'For screenshots and text images, keep PNG or high-quality WebP when readability matters.',
+              'For web display, export only the dimensions you actually need.',
+            ],
+          },
+          {
+            type: 'callout',
+            title: 'Compress after upscaling',
+            text: 'If the upscaled PNG or JPG is too large, use Image Compressor afterward. You can preserve the original format or export WebP to balance clarity and file size.',
+            href: '/image/compress',
+            linkLabel: 'Open Image Compressor',
+          },
+          { type: 'heading', level: 2, text: 'Summary' },
+          {
+            type: 'paragraph',
+            text: 'To keep an upscaled image clear, match the mode to the content: pixel-perfect for QR codes and icons, Smooth HD for photos, and Sharp enhance for screenshots and text-heavy images.',
+          },
+          {
+            type: 'paragraph',
+            text: 'Upscaling can use existing pixels more carefully, but it cannot truly restore detail that is not in the source. The best results come from choosing the right mode, scale, and output format together.',
+          },
+        ],
+      },
+    },
+  },
+  {
     slug: 'why-json-can-have-comments',
     publishedAt: '2026-07-01',
     updatedAt: '2026-07-01',

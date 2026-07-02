@@ -59,6 +59,7 @@ export type ImageConversionOutcome = ImageConversionSuccess | ImageConversionErr
 
 export type ImageCompressionStrategy = 'reencoded' | 'kept-original';
 export type ImageCompressionOutputMode = 'preserve' | 'webp';
+export type ImageUpscaleMode = 'pixel' | 'smooth' | 'sharp';
 
 export interface ImageCompressionSuccess {
   ok: true;
@@ -78,6 +79,24 @@ export interface ImageCompressionSuccess {
 }
 
 export type ImageCompressionOutcome = ImageCompressionSuccess | ImageConversionError;
+
+export interface ImageUpscaleSuccess {
+  ok: true;
+  blob: Blob;
+  filename: string;
+  mimeType: BasicImageTargetConfig['mimeType'];
+  format: BasicImageTargetFormat;
+  width: number;
+  height: number;
+  sourceWidth: number;
+  sourceHeight: number;
+  originalSize: number;
+  outputSize: number;
+  durationMs: number;
+  mode: ImageUpscaleMode;
+}
+
+export type ImageUpscaleOutcome = ImageUpscaleSuccess | ImageConversionError;
 
 export type ImageBackgroundRemovalModel = 'small' | 'medium';
 
@@ -283,6 +302,11 @@ export function createCompressedImageFilename(filename: string, extension: strin
 
 export function createEditedImageFilename(filename: string, extension: string): string {
   return createImageOutputFilename(filename, extension);
+}
+
+export function createUpscaledImageFilename(filename: string, extension: string): string {
+  const base = filename.replace(/\.[^.]+$/, '') || 'image';
+  return `${base}-upscaled.${extension}`;
 }
 
 export function createBackgroundRemovedImageFilename(filename: string): string {

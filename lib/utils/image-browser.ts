@@ -5,9 +5,11 @@ import {
   createCompressedImageFilename,
   createEditedImageFilename,
   createImageOutputFilename,
+  createUpscaledImageFilename,
   createWatermarkRemovedImageFilename,
   formatFileSize,
   formatPixelLimit,
+  getBasicImageTargetConfig,
   getImageTargetConfig,
   inferImageMimeType,
   isSupportedImageInput,
@@ -25,11 +27,15 @@ import {
   type ImageCropRect,
   type ImageEditOutcome,
   type ImageInspectionOutcome,
+  type ImageUpscaleMode,
+  type ImageUpscaleOutcome,
+  type ImageUpscaleSuccess,
   type ImageTargetConfig,
   type ImageTargetFormat,
   type ImageWatermarkRemovalMethod,
   type ImageWatermarkRemovalOutcome,
   type ImageWatermarkRemovalProgress,
+  type BasicImageTargetFormat,
 } from './image';
 
 type OrtWasmModule = typeof import('onnxruntime-web/wasm');
@@ -157,6 +163,15 @@ export interface CropResizeImageOptions {
   outputWidth: number;
   outputHeight: number;
   targetFormat: ImageTargetFormat;
+  quality?: number;
+  jpegBackground?: string;
+}
+
+export interface UpscaleImageOptions {
+  outputWidth: number;
+  outputHeight: number;
+  targetFormat: BasicImageTargetFormat;
+  mode?: ImageUpscaleMode;
   quality?: number;
   jpegBackground?: string;
 }
@@ -948,6 +963,44 @@ function drawCanvasWithSteppedDownscale(sourceCanvas: HTMLCanvasElement, targetC
     targetCanvas.height
   );
   return true;
+}
+
+function createLoadedImageCanvas(image: LoadedImage): HTMLCanvasElement | null {
+  const canvas = createRasterCanvas({ width: image.width, height: image.height });
+  const context = canvas.getContext('2d');
+  if (!context) return null;
+
+  context.drawImage(image.element, 0, 0);
+  return canvas;
+}
+
+async function resizeImageWithSharpEnhancement(
+  image: LoadedImage,
+  outputSize: RasterSize
+): Promise<HTMLCanvasElement | null> {
+  const sourceCanvas = createLoadedImageCanvas(image);
+  if (!sourceCanvas) return null;
+
+  const outputCanvas = createRasterCanvas(outputSize);
+
+  try {
+    const resizer = await getSvgCanvasResizer();
+    await resizer.resize(sourceCanvas, outputCanvas, {
+      quality: 3,
+      filter: 'mks2013',
+      unsharpAmount: 70,
+      unsharpRadius: 0.6,
+      unsharpThreshold: 2,
+    });
+    return outputCanvas;
+  } catch {
+    const context = outputCanvas.getContext('2d');
+    if (!context) return null;
+
+    setHighQualitySmoothing(context);
+    context.drawImage(image.element, 0, 0, image.width, image.height, 0, 0, outputSize.width, outputSize.height);
+    return outputCanvas;
+  }
 }
 
 async function resizeSvgRenderCanvas(
@@ -2648,6 +2701,126 @@ export async function removeImageBackground(
       code: 'canvas_export',
       detail: error instanceof Error ? error.message : undefined,
     };
+  }
+}
+
+export async function upscaleImageFile(
+  file: File,
+  options: UpscaleImageOptions
+): Promise<ImageUpscaleOutcome> {
+  if (file.size === 0) return { ok: false, code: 'empty_file' };
+
+  if (file.size > MAX_IMAGE_FILE_SIZE) {
+    return {
+      ok: false,
+      code: 'file_too_large',
+      maxSize: formatFileSize(MAX_IMAGE_FILE_SIZE),
+    };
+  }
+
+  if (!isSupportedImageInput(file)) {
+    return {
+      ok: false,
+      code: 'unsupported_input',
+      detail: inferImageMimeType(file) || 'unknown',
+    };
+  }
+
+  const outputWidth = Math.max(1, Math.round(options.outputWidth));
+  const outputHeight = Math.max(1, Math.round(options.outputHeight));
+
+  if (outputWidth * outputHeight > MAX_IMAGE_PIXELS) {
+    return {
+      ok: false,
+      code: 'too_many_pixels',
+      maxPixels: formatPixelLimit(MAX_IMAGE_PIXELS),
+    };
+  }
+
+  const startedAt = performance.now();
+  const sourceType = inferImageMimeType(file);
+  const sourceFile = sourceType === file.type ? file : new File([file], file.name, { type: sourceType });
+  const target = getBasicImageTargetConfig(options.targetFormat);
+  const mode = options.mode ?? 'pixel';
+
+  try {
+    const image = await loadImage(sourceFile);
+    const pixelCount = image.width * image.height;
+
+    if (!image.width || !image.height) {
+      return { ok: false, code: 'load_failed' };
+    }
+
+    if (pixelCount > MAX_IMAGE_PIXELS) {
+      return {
+        ok: false,
+        code: 'too_many_pixels',
+        maxPixels: formatPixelLimit(MAX_IMAGE_PIXELS),
+      };
+    }
+
+    const canvas = mode === 'sharp'
+      ? await resizeImageWithSharpEnhancement(image, { width: outputWidth, height: outputHeight })
+      : createRasterCanvas({ width: outputWidth, height: outputHeight });
+    if (!canvas) return { ok: false, code: 'canvas_context' };
+
+    const context = canvas.getContext('2d');
+    if (!context) return { ok: false, code: 'canvas_context' };
+
+    if (target.mimeType === 'image/jpeg') {
+      context.fillStyle = options.jpegBackground ?? '#ffffff';
+      context.globalCompositeOperation = 'destination-over';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.globalCompositeOperation = 'source-over';
+    }
+
+    if (mode !== 'sharp') {
+      context.imageSmoothingEnabled = mode === 'smooth';
+      if (mode === 'smooth') context.imageSmoothingQuality = 'high';
+      context.drawImage(image.element, 0, 0, image.width, image.height, 0, 0, outputWidth, outputHeight);
+    }
+
+    const quality = target.supportsQuality
+      ? normalizeImageQuality(options.quality ?? target.defaultQuality)
+      : undefined;
+    const output = shouldWatermarkImageOutput()
+      ? await addWatermarkToCanvasBlob(canvas, target, quality)
+      : {
+          blob: await canvasToBlob(canvas, target.mimeType, quality),
+          mimeType: target.mimeType,
+          format: target.format,
+          extension: target.extension,
+        };
+    const blob = output.blob;
+    const outputMimeType = output.mimeType as ImageUpscaleSuccess['mimeType'];
+    const outputFormat = output.format as BasicImageTargetFormat;
+    const outputExtension = output.extension as BasicImageTargetFormat;
+
+    if (blob.type && blob.type !== outputMimeType) {
+      return {
+        ok: false,
+        code: 'unsupported_output',
+        detail: target.label,
+      };
+    }
+
+    return {
+      ok: true,
+      blob,
+      filename: createUpscaledImageFilename(file.name, outputExtension),
+      mimeType: outputMimeType,
+      format: outputFormat,
+      width: outputWidth,
+      height: outputHeight,
+      sourceWidth: image.width,
+      sourceHeight: image.height,
+      originalSize: file.size,
+      outputSize: blob.size,
+      durationMs: Math.round(performance.now() - startedAt),
+      mode,
+    };
+  } catch {
+    return { ok: false, code: 'load_failed' };
   }
 }
 

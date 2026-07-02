@@ -464,6 +464,8 @@
     "drop_action": "Choose images",
     "input_formats": "Supported formats",
     "local_worker_note": "Local Worker + OffscreenCanvas is used first. Images are not uploaded.",
+    "related_upscale_title": "Need a larger image?",
+    "related_upscale_body": "Use Image Upscale to enlarge images at 2x, 3x, 4x, or custom dimensions, then come back to compress the result.",
     "selected_count": "{count} files selected",
     "summary_files": "Files",
     "summary_ready": "Done",
@@ -504,6 +506,69 @@
       "canvas_export": "Image export failed. Try another browser.",
       "unsupported_output": "This browser cannot export {format}.",
       "general": "Compression failed. Please try again."
+    }
+  },
+  "image_upscale": {
+    "settings_title": "Upscale settings",
+    "result_title": "Upscaled image",
+    "drop_title": "Click or drag an image to upscale",
+    "drop_hint": "Supports {formats}. Pixel-perfect PNG output is used by default.",
+    "drop_action": "Choose image",
+    "scale_title": "Scale",
+    "output_width": "Width",
+    "output_height": "Height",
+    "mode_title": "Upscale algorithm",
+    "modes": {
+      "pixel": {
+        "label": "Pixel-perfect",
+        "hint": "Disables interpolation for icons, QR codes, screenshots, and pixel art."
+      },
+      "smooth": {
+        "label": "Smooth HD",
+        "hint": "Uses high-quality interpolation for photos and gradients."
+      },
+      "sharp": {
+        "label": "Sharp enhance",
+        "hint": "Uses high-quality resampling plus light sharpening for text, screenshots, and general images."
+      }
+    },
+    "output_format": "Output format",
+    "quality": "Output quality",
+    "quality_value": "{value}%",
+    "lossless_png": "Lossless PNG output",
+    "input_formats": "Supported formats",
+    "source_size": "Original size",
+    "scale_value": "Current scale",
+    "file_size": "File size",
+    "algorithm": "Algorithm",
+    "duration": "Duration",
+    "duration_value": "{value}ms",
+    "local_note": "All image upscaling happens locally in your browser. Files are not uploaded. Sharp enhance uses high-quality resampling and light sharpening, but does not generate new AI detail.",
+    "related_compress_title": "Need to compress after upscaling?",
+    "related_compress_body": "Upscaled images usually become larger, so you can continue with Image Compressor to reduce the output file size.",
+    "apply": "Generate upscaled image",
+    "processing": "Processing",
+    "source_image": "Source image",
+    "output_image": "Upscaled image",
+    "output_size": "Output size",
+    "output_empty": "The upscaled image will appear here",
+    "preview_title": "Upscaled image preview",
+    "preview_open_output": "Preview upscaled image",
+    "preview_close": "Close preview",
+    "empty_title": "Waiting for an image",
+    "empty_body": "Upload an image, choose a scale, algorithm, and output format, then generate the upscaled result.",
+    "unknown_type": "unknown type",
+    "errors": {
+      "empty_file": "The file is empty. Choose a valid image.",
+      "unsupported_input": "This image type is not supported yet: {type}.",
+      "file_too_large": "The file is too large. Maximum size is {maxSize}.",
+      "too_many_pixels": "The output dimensions are too large. Maximum size is {maxPixels}.",
+      "load_failed": "The image could not be decoded. The file may be corrupted or unsupported by this browser.",
+      "canvas_context": "Could not create a Canvas drawing context.",
+      "canvas_export": "Image export failed. Try another browser.",
+      "unsupported_output": "This browser cannot export {format}.",
+      "invalid_dimensions": "Enter a valid output width and height.",
+      "general": "Image upscaling failed. Please try again."
     }
   },
   "image_remove_bg": {
@@ -1068,6 +1133,30 @@
         {
           "question": "Can I download compressed images in bulk?",
           "answer": "Yes. After multiple images finish compressing, you can download files individually or export all results as one ZIP archive."
+        }
+      ]
+    },
+    "image-upscale": {
+      "items": [
+        {
+          "question": "Does Image Upscale upload files?",
+          "answer": "No. Images are decoded, upscaled, and exported locally in your browser, so files are not uploaded to a server."
+        },
+        {
+          "question": "What is pixel-perfect upscaling best for?",
+          "answer": "It is best for icons, QR codes, screenshots, pixel art, and hard-edged graphics. It disables interpolation and enlarges pixels directly."
+        },
+        {
+          "question": "Which mode should I use for photos?",
+          "answer": "Photos, gradients, and natural images usually work better with Smooth HD or Sharp enhance. Sharp enhance adds light sharpening so edges look clearer."
+        },
+        {
+          "question": "Does Sharp enhance generate new AI detail?",
+          "answer": "No. Sharp enhance uses high-quality resampling and light sharpening to make existing edges and textures clearer, but it does not invent details that were not in the source image."
+        },
+        {
+          "question": "Why does the file get larger after upscaling?",
+          "answer": "Upscaling increases the pixel count, and lossless formats such as PNG can become much larger. You can compress the result with Image Compressor afterward."
         }
       ]
     },
@@ -1664,6 +1753,10 @@
     "image-compress": {
       "name": "Image Compressor",
       "description": "Free online image compressor for JPG, PNG, WebP, and other images locally in your browser, preserving the original format by default with optional WebP output"
+    },
+    "image-upscale": {
+      "name": "Image Upscale",
+      "description": "Free online image upscaler for JPG, PNG, WebP, and other images at 2x, 3x, 4x, or custom dimensions with pixel-perfect, Smooth HD, and Sharp enhance modes"
     },
     "image-remove-bg": {
       "name": "Remove image background",
