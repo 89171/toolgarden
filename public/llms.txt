@@ -9,6 +9,27 @@ ToolGarden provides developers with a suite of tools for working with JSON data.
 ## Available Tools
 
 - **Developer Blog** (`/blog`): Articles about JSON, JSONC, JSON5, frontend toolchains, browser-local processing, and developer productivity.
+  - **How Does Online Image Watermark Removal Work with Local AI Inpainting?** (`/blog/remove-image-watermark-local-ai-inpainting`): Explains browser-local watermark removal, AI inpainting, selection masks, suitable watermark areas, and limitations.
+  - **How to Add Text, Image, Tiled, and Diagonal Watermarks to Images** (`/blog/add-watermark-to-image-text-tile-diagonal`): Covers text and image watermarks, nine-grid placement, tiling, diagonal layout, opacity, rotation, and output format choices.
+  - **How One-Click Background Removal Works with a Browser-Local Model** (`/blog/remove-image-background-browser-local-model`): Explains foreground segmentation, alpha masks, transparent PNG export, local model processing, and edge-quality limits.
+  - **Base64 Encoding Explained and Common Pitfalls** (`/blog/base64-encoding-explained-common-pitfalls`): Explains Base64, Data URLs, raw Base64, URL-safe Base64, size overhead, copy errors, and why Base64 is not encryption.
+  - **LRC vs SRT Subtitle Formats and Online Editing** (`/blog/lrc-vs-srt-subtitle-format-edit-online`): Compares LRC and SRT timing structures, use cases, online editing, media preview, calibration, and export.
+  - **How to Convert Excel Data to JSON Online** (`/blog/convert-excel-data-to-json-online`): Explains Excel-to-JSON conversion, headers, rows, empty cells, dates, first-sheet behavior, and data cleanup.
+  - **How Text Diff Algorithms Find Additions, Deletions, and Changes** (`/blog/text-diff-algorithm-add-delete-change`): Explains line diff, word diff, sequence alignment, common subsequence ideas, and JSON structured comparison.
+  - **What Is the Difference Between JSON, JSON5, and JSONC?** (`/blog/json-json5-jsonc-differences`): Compares strict JSON, JSONC comments, JSON5 JavaScript-like syntax, and when to convert back to standard JSON.
+  - **How to Convert Word, Excel, PowerPoint, and Images to PDF for Free** (`/blog/convert-word-excel-ppt-image-to-pdf-free`): Explains browser-local PDF conversion for Office files, images, text, Markdown, HTML, and output checks.
+  - **How to Merge Multiple PDFs While Keeping Page Order and Checking Bookmarks** (`/blog/merge-multiple-pdf-files-keep-order-bookmarks`): Covers PDF merge order, drag sorting, page checks, and bookmark/outline compatibility review.
+  - **How to Split a PDF by Pages, Ranges, or File Size** (`/blog/split-pdf-by-pages-ranges-size`): Explains splitting by every page, page ranges, and practical size-limit workflows.
+  - **How to Extract Selected Pages from a PDF** (`/blog/extract-selected-pages-from-pdf`): Covers page range syntax, selected-page export, order checks, and browser-local extraction.
+  - **Chinese vs English Text Counting** (`/blog/chinese-english-word-count-character-byte`): Explains characters, words, bytes, emoji, spaces, punctuation, and UTF-8 differences across Chinese and English text.
+  - **How to Convert JSON to a TypeScript Interface** (`/blog/convert-json-to-typescript-interface`): Explains how JSON samples become TypeScript interfaces, including nested objects, arrays, null values, and post-generation checks.
+  - **How to Fix JSON Unexpected token Errors** (`/blog/fix-json-unexpected-token-error`): Covers common JSON parser errors such as trailing commas, comments, HTML responses, single quotes, and parsing objects twice.
+  - **What Is JSON Schema and How Do You Validate API Data?** (`/blog/what-is-json-schema-api-validation`): Introduces JSON Schema, required fields, properties, items, format hints, and API validation workflows.
+  - **What Is a JWT and How Do You Safely Inspect Header and Payload?** (`/blog/what-is-jwt-header-payload`): Explains JWT Header, Payload, Signature, Base64URL decoding, HS256 verification, and safe token inspection.
+  - **How to Generate QR Codes for URLs, Wi-Fi, and Contact Cards** (`/blog/how-to-generate-qr-code-url-wifi-contact`): Explains URL QR codes, Wi-Fi QR payloads, vCard contact payloads, output size, quiet zone, and contrast.
+  - **Why Can a QR Code Fail to Decode?** (`/blog/why-qr-code-cannot-be-decoded`): Explains QR decode failures caused by blur, low resolution, missing quiet zone, weak contrast, compression, and overly dense payloads.
+  - **How to Use a Text Diff Tool** (`/blog/how-to-use-text-diff-tool`): Explains line-level and word-level text comparison for configs, copy, logs, translations, and generated output.
+  - **Word Count, Character Count, and Byte Count** (`/blog/word-count-character-byte-difference`): Explains word count, character count, line count, paragraph count, and UTF-8 byte size for writing and technical limits.
   - **Why Do Images Look Blurry After Compression?** (`/blog/why-image-compression-looks-blurry`): Explains lossy compression, repeated exports, resizing, format choice, and how to keep JPG, PNG, and WebP images clear.
   - **How to Compress an Image to a Target File Size** (`/blog/compress-image-to-target-size`): Practical workflow for reaching 200KB, 500KB, 1MB, or other limits by adjusting dimensions, format, and quality.
   - **Why Does a Favicon Look Blurry?** (`/blog/why-favicon-looks-blurry`): Explains why favicons become soft or fuzzy and how multi-size ICO generation, transparency, and clean source images keep website icons sharp.
@@ -19,6 +40,7 @@ ToolGarden provides developers with a suite of tools for working with JSON data.
   - **How to Convert Images to AVIF** (`/blog/convert-images-to-avif`): Explains AVIF conversion, browser-side encoding, quality settings, transparency, compatibility, and WebP/JPG fallbacks.
   - **PNG to JPG and JPG to PNG** (`/blog/png-to-jpg-jpg-to-png-transparency`): Explains transparency loss, file-size changes, JPG quality, PNG lossless output, and when each conversion makes sense.
   - **How to Keep Images Clear After Upscaling** (`/blog/keep-image-clear-after-upscaling`): Explains why images become blurry after upscaling and how to choose pixel-perfect, Smooth HD, or Sharp enhance modes for screenshots, QR codes, icons, and photos.
+  - **Why Can Some JSON Files Have Comments?** (`/blog/why-json-can-have-comments`): Explains standard JSON, JSONC, JSON5, tsconfig comments, and how to clean JSONC into standard JSON.
 - **JSON Formatter** (`/json-format`): Format, minify, and validate JSON with an interactive tree view. Supports loose JSON (unquoted keys, single quotes).
 - **JSON Escape** (`/json-escape`): Minify and escape JSON for embedding in strings; unescape back to readable format.
 - **JSON Repair / Clean** (`/json-repair`): Repair common JSON issues such as comments, trailing commas, single quotes, unquoted keys, smart quotes, and Python-style booleans/nulls.

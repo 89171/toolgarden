@@ -1,4 +1,6 @@
 import { routing } from '@/i18n/routing';
+import { workflowSeoBlogArticles } from './workflow-seo-articles';
+import { seoBlogArticles } from './seo-articles';
 
 export const BLOG_INDEX_PATH = '/blog';
 
@@ -143,6 +145,8 @@ const json5Snippet = `{
 }`;
 
 export const blogArticles: BlogArticle[] = [
+  ...workflowSeoBlogArticles,
+  ...seoBlogArticles,
   {
     slug: 'why-image-compression-looks-blurry',
     publishedAt: '2026-07-01',

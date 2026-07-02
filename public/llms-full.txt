@@ -19,6 +19,132 @@ Canonical examples:
 
 ## Blog Reference
 
+### How Does Online Image Watermark Removal Work with Local AI Inpainting? (/blog/remove-image-watermark-local-ai-inpainting)
+- Locales: English and Chinese Simplified
+- Explains watermark removal as browser-local inpainting: selecting a masked area, predicting plausible background pixels, blending edges, and exporting JPG, PNG, or WebP
+- Covers suitable and difficult watermark cases, including simple backgrounds, gradients, faces, text, and large translucent marks
+- Points users to Image Watermark Remover and Image Editor for local image repair workflows
+
+### How to Add Text, Image, Tiled, and Diagonal Watermarks to Images (/blog/add-watermark-to-image-text-tile-diagonal)
+- Locales: English and Chinese Simplified
+- Explains text watermarks, image/logo watermarks, nine-grid placement, drag positioning, tiling, diagonal tiling, opacity, rotation, and export format choice
+- Covers practical use cases such as author marks, brand logos, samples, review images, and anti-repost overlays
+- Points users to Image Watermark and Image Editor for browser-local watermark workflows
+
+### How One-Click Background Removal Works with a Browser-Local Model (/blog/remove-image-background-browser-local-model)
+- Locales: English and Chinese Simplified
+- Explains foreground segmentation, alpha mask generation, transparent PNG output, and browser-local model processing
+- Covers best and difficult image types such as single subjects, simple backgrounds, hair, transparent objects, shadows, and low-contrast subject edges
+- Points users to Remove Image Background and Image to PNG for transparent image workflows
+
+### Base64 Encoding Explained and Common Pitfalls (/blog/base64-encoding-explained-common-pitfalls)
+- Locales: English and Chinese Simplified
+- Explains Base64 as encoding rather than encryption, size overhead, raw Base64, Data URLs, URL-safe Base64, padding, and API payload pitfalls
+- Covers common mistakes such as exposing secrets, missing padding, mixing Data URLs with raw Base64, and embedding very large images
+- Points users to Info Encoder / Decoder, Image to Base64, and Base64 to Image
+
+### LRC vs SRT Subtitle Formats and How to Edit Them Online (/blog/lrc-vs-srt-subtitle-format-edit-online)
+- Locales: English and Chinese Simplified
+- Compares LRC line timestamps and SRT cue start/end timestamps, with examples and common use cases
+- Covers online subtitle editing workflow: upload or paste subtitles, preview with local media, calibrate timing, and export
+- Points users to Subtitle Maker for LRC and SRT editing
+
+### How to Convert Excel Data to JSON Online (/blog/convert-excel-data-to-json-online)
+- Locales: English and Chinese Simplified
+- Explains how Excel headers become JSON field names and each row becomes an object
+- Covers sheet cleanup, empty cells, duplicate headers, dates, numbers, and first-sheet behavior before conversion
+- Points users to Excel to JSON and JSON Formatter for browser-local data conversion
+
+### How Text Diff Algorithms Find Additions, Deletions, and Changes (/blog/text-diff-algorithm-add-delete-change)
+- Locales: English and Chinese Simplified
+- Explains diff algorithms as sequence comparison using line, word, character, and structured levels
+- Covers common subsequence ideas, additions, deletions, adjacent changes, and when JSON Diff is better than raw text diff
+- Points users to Text Diff and JSON Diff for browser-local comparison workflows
+
+### What Is the Difference Between JSON, JSON5, and JSONC? (/blog/json-json5-jsonc-differences)
+- Locales: English and Chinese Simplified
+- Compares strict JSON, JSONC for configuration comments, and JSON5 JavaScript-like syntax such as single quotes, trailing commas, and unquoted keys
+- Explains when to use each format and when to convert back to standard JSON for APIs, databases, and third-party systems
+- Points users to JSON Formatter and JSON Repair / Clean
+
+### How to Convert Word, Excel, PowerPoint, and Images to PDF for Free (/blog/convert-word-excel-ppt-image-to-pdf-free)
+- Locales: English and Chinese Simplified
+- Explains browser-local PDF conversion for DOCX, XLSX/XLS, PPTX, JPG, PNG, WebP, TXT, Markdown, HTML, and related file types
+- Covers conversion limitations, layout review, page count checks, image orientation, text extraction, and file-size checks
+- Points users to Convert to PDF and Merge Images
+
+### How to Merge Multiple PDFs While Keeping Page Order and Checking Bookmarks (/blog/merge-multiple-pdf-files-keep-order-bookmarks)
+- Locales: English and Chinese Simplified
+- Explains PDF merge order, naming files by reading order, drag sorting, page count checks, and chapter-boundary review
+- Clarifies that bookmarks/outlines, forms, annotations, and complex PDF structures may need separate review after export depending on merge support
+- Points users to Merge PDF and Organize PDF
+
+### How to Split a PDF by Pages, Ranges, or File Size (/blog/split-pdf-by-pages-ranges-size)
+- Locales: English and Chinese Simplified
+- Explains splitting every page, splitting by page ranges, and practical workflows for meeting upload size limits
+- Covers range syntax such as 1-3,5,8-10 and why exact size-based splitting can be hard when page complexity varies
+- Points users to Split PDF and Extract Pages
+
+### How to Extract Selected Pages from a PDF (/blog/extract-selected-pages-from-pdf)
+- Locales: English and Chinese Simplified
+- Explains extracting selected pages or ranges into one new PDF, including single pages, ranges, and mixed selections
+- Covers checking actual PDF page numbers, output order, page count, file size, and when an organize tool is more appropriate
+- Points users to Extract Pages and Organize PDF
+
+### Chinese vs English Text Counting: Characters, Words, and Bytes (/blog/chinese-english-word-count-character-byte)
+- Locales: English and Chinese Simplified
+- Explains how Chinese and English text counting differs across characters, words, UTF-8 bytes, spaces, punctuation, and emoji
+- Covers writing, SEO, forms, API fields, database limits, and why byte limits differ from visible text length
+- Points users to Word Count and Info Encoder / Decoder
+
+### How to Convert JSON to a TypeScript Interface (/blog/convert-json-to-typescript-interface)
+- Locales: English and Chinese Simplified
+- Explains how JSON samples are inferred into TypeScript interfaces, including strings, numbers, booleans, arrays, nested objects, and null values
+- Covers post-generation review points such as empty arrays, nullable fields, interface naming, and date strings
+- Points users to JSON to TypeScript and JSON Formatter for browser-local type generation workflows
+
+### How to Fix JSON Unexpected token Errors (/blog/fix-json-unexpected-token-error)
+- Locales: English and Chinese Simplified
+- Explains common causes of JSON parser errors, including trailing commas, comments, parsing objects twice, HTML responses, and Python-style None values
+- Provides a practical debugging order for confirming the response type, cleaning non-standard syntax, and formatting fixed JSON
+- Points users to JSON Repair / Clean and JSON Formatter for browser-local JSON cleanup
+
+### What Is JSON Schema and How Do You Validate API Data? (/blog/what-is-json-schema-api-validation)
+- Locales: English and Chinese Simplified
+- Introduces JSON Schema as a structural contract for JSON data, including type, properties, required, items, and format
+- Explains an API validation workflow: generate a first schema from a sample, refine constraints, validate real JSON, and inspect error paths
+- Points users to JSON Schema Generator and JSON Schema Validator for browser-local validation workflows
+
+### What Is a JWT and How Do You Safely Inspect Header and Payload? (/blog/what-is-jwt-header-payload)
+- Locales: English and Chinese Simplified
+- Explains the three JWT segments: Header, Payload, and Signature, and clarifies that Header and Payload are Base64URL encoded rather than encrypted
+- Covers safety rules for inspecting tokens, including not pasting production tokens into untrusted tools and not exposing HS256 secrets
+- Points users to JWT Parser and Info Encoder / Decoder for browser-local token and encoding inspection
+
+### How to Generate QR Codes for URLs, Wi-Fi, and Contact Cards (/blog/how-to-generate-qr-code-url-wifi-contact)
+- Locales: English and Chinese Simplified
+- Explains QR payload formats for URLs, Wi-Fi configuration text, and vCard contact cards
+- Covers output size, quiet zone, contrast, print testing, and logo/error-correction considerations
+- Points users to QR Code Generator and QR Code Decoder for browser-local QR workflows
+
+### Why Can a QR Code Fail to Decode and How Can You Improve Scan Rate? (/blog/why-qr-code-cannot-be-decoded)
+- Locales: English and Chinese Simplified
+- Explains scan failures caused by blur, low resolution, missing quiet zone, weak contrast, over-compression, and dense payloads
+- Recommends checking the original image with a decoder, using pixel-perfect upscaling, preserving the quiet zone, and shortening long payloads
+- Points users to QR Code Decoder, Image Upscale, and Image Crop for browser-local diagnosis and repair workflows
+
+### How to Use a Text Diff Tool to Find Differences Quickly (/blog/how-to-use-text-diff-tool)
+- Locales: English and Chinese Simplified
+- Explains text diff for comparing configs, product copy, logs, translations, generated output, and other plain-text content
+- Compares line-level diff, word-level diff, and structured JSON diff use cases
+- Points users to Text Diff and JSON Diff for browser-local comparison workflows
+
+### Word Count, Character Count, and Byte Count: What Is the Difference? (/blog/word-count-character-byte-difference)
+- Locales: English and Chinese Simplified
+- Explains word count, character count, byte count, line count, and paragraph count for writing, forms, APIs, and storage limits
+- Covers UTF-8 byte differences across English letters, Chinese characters, and emoji
+- Points users to Word Count and Info Encoder / Decoder for browser-local text measurement and encoding workflows
+
 ### Why Do Images Look Blurry After Compression? (/blog/why-image-compression-looks-blurry)
 - Locales: English and Chinese Simplified
 - Explains why compressed JPG, PNG, and WebP images can become blurry, including aggressive quality settings, repeated compression, resizing, and mismatched formats
