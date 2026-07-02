@@ -80,6 +80,7 @@ export default async function LocaleLayout({
   return (
     <html lang={normalizedLocale}>
       <head>
+        <meta name="baidu-site-verification" content="codeva-zyi03tAgf4" />
         {googleEnabled ? (
           <>
             <script
