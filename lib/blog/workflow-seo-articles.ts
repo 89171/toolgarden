@@ -15,6 +15,10 @@ const watermarkAiStepsEn = `1. Select the watermark area
 const lrcSnippet = `[00:12.00]First lyric line
 [00:15.50]Second lyric line`;
 
+const lrcOffsetSnippet = `[00:12.00]First lyric line
+[00:14.80]Second lyric line
+[00:18.20]Third lyric line`;
+
 const srtSnippet = `1
 00:00:12,000 --> 00:00:15,500
 First subtitle line
@@ -33,11 +37,27 @@ const excelJsonExample = `[
   }
 ]`;
 
+const excelNestedJsonExample = `[
+  {
+    "user": {
+      "name": "Alice",
+      "email": "alice@example.com"
+    },
+    "order": {
+      "id": "A-1001",
+      "total": 59.9
+    }
+  }
+]`;
+
 const jsonVariantsExample = `{
   // JSONC / JSON5 allow comments in some tools
   name: 'ToolGarden',
   tags: ['json', 'tools'],
 }`;
+
+const wordCountMixedExample = `中文 ABC 😊
+ToolGarden JSON 工具`;
 
 export const workflowSeoBlogArticles = [
   {
@@ -572,7 +592,7 @@ export const workflowSeoBlogArticles = [
         excerpt: 'LRC 常用于歌词逐行同步，SRT 常用于视频字幕。两者时间格式、结构和适用场景不同，但都可以在线解析、校准和导出。',
         metaTitle: 'LRC vs SRT 字幕格式区别，如何在线编辑字幕',
         metaDescription: '比较 LRC 和 SRT 字幕格式的时间码、结构、适用场景，介绍在线编辑、媒体预览、时间轴校准和导出流程。',
-        readingTime: '约 6 分钟阅读',
+        readingTime: '约 8 分钟阅读',
         tags: ['LRC', 'SRT', '字幕编辑', '歌词同步'],
         relatedTools: [
           {
@@ -601,6 +621,36 @@ export const workflowSeoBlogArticles = [
               ['SRT', '结构更完整', '适合控制字幕显示时长'],
             ],
           },
+          { type: 'heading', level: 2, text: '时间轴校准时看什么？' },
+          {
+            type: 'paragraph',
+            text: '字幕是否好用，不只看格式是否正确，更看时间轴是否贴合声音。LRC 通常只需要让每句歌词在唱到时高亮；SRT 则要同时关心出现时间和消失时间，避免字幕太早消失或和下一句重叠。',
+          },
+          { type: 'code', language: 'text', code: lrcOffsetSnippet },
+          {
+            type: 'list',
+            items: [
+              '如果整首歌都慢半秒，可以整体平移时间轴，而不是逐行修改。',
+              '如果只有某几句不准，优先修正段落开头和换气点。',
+              '视频字幕每条建议控制在一到两行，太长会影响阅读。',
+              '人物访谈或课程字幕要避免相邻两条时间重叠。',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'LRC 转 SRT 会遇到什么问题？' },
+          {
+            type: 'paragraph',
+            text: 'LRC 每行只有开始时间，没有明确结束时间。把 LRC 转成 SRT 时，常见做法是把下一行的开始时间当成上一行的结束时间；如果是最后一行，就需要根据音频长度或手动设置一个结束时间。',
+          },
+          {
+            type: 'table',
+            headers: ['问题', '表现', '处理方式'],
+            rows: [
+              ['时间格式混用', '小数点和逗号混在一起', 'LRC 用 00:12.00，SRT 用 00:00:12,000'],
+              ['字幕太长', '画面底部堆成多行', '拆成更短的句子，保留自然停顿'],
+              ['编码不一致', '中文显示乱码', '保存为 UTF-8 后重新导入'],
+              ['空行或编号错误', 'SRT 播放器无法识别', '检查编号、空行和时间箭头格式'],
+            ],
+          },
           { type: 'heading', level: 2, text: '在线编辑流程' },
           {
             type: 'list',
@@ -627,7 +677,7 @@ export const workflowSeoBlogArticles = [
         excerpt: 'LRC is often used for synced lyrics, while SRT is common for video subtitles. Their timing structure and editing needs are different.',
         metaTitle: 'LRC vs SRT Subtitle Formats and Online Editing Guide',
         metaDescription: 'Compare LRC and SRT subtitle timing, structure, use cases, online editing, media preview, timeline calibration, and export workflow.',
-        readingTime: '6 min read',
+        readingTime: '8 min read',
         tags: ['LRC', 'SRT', 'subtitle editor', 'lyrics sync'],
         relatedTools: [
           {
@@ -654,6 +704,36 @@ export const workflowSeoBlogArticles = [
               ['SRT', 'Each cue has start and end time', 'Video subtitles, courses, clips, interviews'],
               ['LRC', 'Lightweight structure', 'Fast line syncing'],
               ['SRT', 'More complete cue structure', 'Precise subtitle display duration'],
+            ],
+          },
+          { type: 'heading', level: 2, text: 'What to Check When Calibrating Timing' },
+          {
+            type: 'paragraph',
+            text: 'A valid subtitle file can still feel wrong if the timing is off. LRC usually needs each lyric line to highlight when it is sung. SRT needs both start and end time, so a cue should not disappear too early or overlap the next line.',
+          },
+          { type: 'code', language: 'text', code: lrcOffsetSnippet },
+          {
+            type: 'list',
+            items: [
+              'If the whole song is late by half a second, shift the timeline globally instead of editing every line.',
+              'If only a few lines are off, fix section starts and natural pauses first.',
+              'For video subtitles, keep each cue to one or two readable lines when possible.',
+              'For interviews and courses, avoid overlapping adjacent cues.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'What Happens When Converting LRC to SRT?' },
+          {
+            type: 'paragraph',
+            text: 'LRC lines usually have a start time but no explicit end time. When converting LRC to SRT, the next line start time is often used as the previous line end time. The last line needs an end time based on media duration or manual adjustment.',
+          },
+          {
+            type: 'table',
+            headers: ['Issue', 'Symptom', 'Fix'],
+            rows: [
+              ['Mixed time formats', 'Dots and commas are mixed', 'Use 00:12.00 for LRC and 00:00:12,000 for SRT'],
+              ['Long cues', 'Subtitle takes too many lines', 'Split into shorter readable phrases'],
+              ['Wrong encoding', 'Chinese text is garbled', 'Save as UTF-8 and import again'],
+              ['Bad SRT spacing', 'Player cannot read the file', 'Check cue numbers, blank lines, and the time arrow'],
             ],
           },
           { type: 'heading', level: 2, text: 'Online Editing Workflow' },
@@ -689,7 +769,7 @@ export const workflowSeoBlogArticles = [
         excerpt: 'Excel 转 JSON 通常会读取第一行作为字段名，再把后续每一行转换成对象，适合接口 mock、数据导入和配置迁移。',
         metaTitle: 'Excel 数据如何一键转成 JSON？在线转换教程',
         metaDescription: '介绍 Excel 转 JSON 的常见规则，包括表头字段、空单元格、数字和日期、第一张 Sheet、数据清洗以及在线本地转换流程。',
-        readingTime: '约 6 分钟阅读',
+        readingTime: '约 8 分钟阅读',
         tags: ['Excel 转 JSON', 'XLSX', '数据转换', 'JSON'],
         relatedTools: [
           {
@@ -720,6 +800,36 @@ export const workflowSeoBlogArticles = [
               '如果有多个 Sheet，先确认工具读取哪一张表。',
             ],
           },
+          { type: 'heading', level: 2, text: '如何表达嵌套字段？' },
+          {
+            type: 'paragraph',
+            text: '很多接口需要嵌套对象，而 Excel 天然是二维表。比较常见的做法是在表头中使用路径式字段名，例如 user.name、user.email、order.id。转换时再把这些路径还原成嵌套 JSON。',
+          },
+          { type: 'code', language: 'json', code: excelNestedJsonExample },
+          {
+            type: 'table',
+            headers: ['Excel 表头', 'JSON 结果', '适合场景'],
+            rows: [
+              ['user.name', 'user: { name: ... }', '用户资料、联系人信息'],
+              ['order.total', 'order: { total: ... }', '订单、报价、结算数据'],
+              ['tags', 'tags: ...', '简单标签列，可后续拆成数组'],
+              ['address.city', 'address: { city: ... }', '地址、地区、配送信息'],
+            ],
+          },
+          { type: 'heading', level: 2, text: '空值、日期和数字要特别小心' },
+          {
+            type: 'paragraph',
+            text: 'Excel 看起来像文本的内容，底层可能是数字、日期序列值或带格式的单元格。比如身份证号、手机号、邮编这类字段不应该当数字处理，否则前导零可能丢失；金额字段则要确认小数精度是否满足业务要求。',
+          },
+          {
+            type: 'list',
+            items: [
+              'ID、手机号、邮编建议在 Excel 中按文本保存。',
+              '金额、数量、比例字段转换后要抽查小数位。',
+              '日期最好统一成 yyyy-mm-dd 或 ISO 字符串，再交给接口处理。',
+              '空单元格要确认是保留 null、空字符串，还是直接省略字段。',
+            ],
+          },
           { type: 'heading', level: 2, text: '常见问题' },
           {
             type: 'table',
@@ -729,6 +839,18 @@ export const workflowSeoBlogArticles = [
               ['数字变成文本', 'Excel 单元格格式不统一', '转换后抽查关键字段'],
               ['空值丢失或变空字符串', '空单元格处理规则不同', '根据接口要求统一处理'],
               ['日期不符合预期', 'Excel 日期本质上可能是序列值', '提前转为文本日期'],
+            ],
+          },
+          { type: 'heading', level: 2, text: '导入接口前的检查清单' },
+          {
+            type: 'list',
+            ordered: true,
+            items: [
+              '先转换少量样本，确认字段名和嵌套结构正确。',
+              '用 JSON 格式化工具检查输出是否为合法 JSON。',
+              '随机抽查首行、中间行和最后一行，避免空行或统计行混入。',
+              '对照接口文档确认必填字段、字段类型和日期格式。',
+              '正式导入前保留原始 Excel 文件，方便回溯。',
             ],
           },
           {
@@ -745,7 +867,7 @@ export const workflowSeoBlogArticles = [
         excerpt: 'Excel to JSON usually turns the first row into field names and each following row into a JSON object for mock APIs, imports, and config migration.',
         metaTitle: 'How to Convert Excel Data to JSON Online',
         metaDescription: 'Learn Excel to JSON conversion rules, headers, empty cells, numbers, dates, first-sheet behavior, data cleanup, and browser-local conversion.',
-        readingTime: '6 min read',
+        readingTime: '8 min read',
         tags: ['Excel to JSON', 'XLSX', 'data conversion', 'JSON'],
         relatedTools: [
           {
@@ -776,6 +898,36 @@ export const workflowSeoBlogArticles = [
               'If the file has multiple sheets, confirm which sheet the tool reads.',
             ],
           },
+          { type: 'heading', level: 2, text: 'How to Represent Nested Fields' },
+          {
+            type: 'paragraph',
+            text: 'Many APIs expect nested objects, while Excel is a flat table. A common approach is to use path-like headers such as user.name, user.email, and order.id, then rebuild those paths into nested JSON.',
+          },
+          { type: 'code', language: 'json', code: excelNestedJsonExample },
+          {
+            type: 'table',
+            headers: ['Excel header', 'JSON result', 'Best for'],
+            rows: [
+              ['user.name', 'user: { name: ... }', 'Profiles and contacts'],
+              ['order.total', 'order: { total: ... }', 'Orders, quotes, and billing data'],
+              ['tags', 'tags: ...', 'Simple tag columns that can later become arrays'],
+              ['address.city', 'address: { city: ... }', 'Addresses, regions, and shipping data'],
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Handle Empty Values, Dates, and Numbers Carefully' },
+          {
+            type: 'paragraph',
+            text: 'A cell that looks like text in Excel may actually be a number, a date serial value, or a formatted cell. IDs, phone numbers, and postal codes should usually stay as text so leading zeros are not lost. Amount fields need decimal checks.',
+          },
+          {
+            type: 'list',
+            items: [
+              'Save IDs, phone numbers, and postal codes as text when needed.',
+              'Check decimal places for amounts, quantities, and ratios.',
+              'Normalize dates to yyyy-mm-dd or ISO strings before sending them to an API.',
+              'Decide whether blank cells should become null, empty strings, or omitted fields.',
+            ],
+          },
           { type: 'heading', level: 2, text: 'Common Issues' },
           {
             type: 'table',
@@ -785,6 +937,18 @@ export const workflowSeoBlogArticles = [
               ['Numbers become text', 'Cell formats are inconsistent', 'Check key fields after conversion'],
               ['Empty values change', 'Different blank-cell rules', 'Normalize according to API needs'],
               ['Dates look wrong', 'Excel dates may be serial values', 'Convert dates to text first'],
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Checklist Before Importing to an API' },
+          {
+            type: 'list',
+            ordered: true,
+            items: [
+              'Convert a small sample first and confirm field names and nested structure.',
+              'Use a JSON formatter to verify that the output is valid JSON.',
+              'Spot-check the first row, a middle row, and the last row to catch empty or summary rows.',
+              'Compare required fields, field types, and date formats with the API documentation.',
+              'Keep the original Excel file before a production import.',
             ],
           },
           {
@@ -935,7 +1099,7 @@ export const workflowSeoBlogArticles = [
         excerpt: 'JSON 是严格数据格式，JSONC 主要给配置文件增加注释，JSON5 则放宽了更多 JavaScript 风格语法。',
         metaTitle: 'JSON、JSON5、JSONC 区别：注释、尾逗号、单引号怎么选',
         metaDescription: '系统比较 JSON、JSON5、JSONC 的区别，包括注释、尾逗号、单引号、未加引号 key、配置文件场景和标准 JSON 输出建议。',
-        readingTime: '约 7 分钟阅读',
+        readingTime: '约 9 分钟阅读',
         tags: ['JSON', 'JSON5', 'JSONC', '配置文件'],
         relatedTools: [
           {
@@ -965,6 +1129,47 @@ export const workflowSeoBlogArticles = [
               ['JSON5', '不是标准 JSON', '更接近 JavaScript 对象字面量，允许单引号、尾逗号、未加引号 key 等'],
             ],
           },
+          { type: 'heading', level: 2, text: '为什么 API 通常只接受标准 JSON？' },
+          {
+            type: 'paragraph',
+            text: 'API、数据库、消息队列和第三方平台需要跨语言解析。同一份数据可能会被 JavaScript、Java、Go、Python、Rust 等不同运行时读取。标准 JSON 的好处是规则少、歧义低、解析器行为更一致。',
+          },
+          {
+            type: 'list',
+            items: [
+              '注释不是数据，发送给 API 后没有统一语义。',
+              '尾逗号、单引号、未加引号 key 在不同解析器中支持不一致。',
+              'NaN、Infinity 等值不是标准 JSON，很多后端会直接拒绝。',
+              '配置文件可以照顾人类阅读，接口数据更强调机器稳定解析。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '为什么 tsconfig.json 可以写注释？' },
+          {
+            type: 'paragraph',
+            text: '很多人第一次看到 tsconfig.json 里的注释会疑惑：文件扩展名明明是 .json，为什么还能写 // 注释？原因是 TypeScript 工具链按 JSONC 方式读取配置，它不是普通 JSON API 的解析规则。',
+          },
+          {
+            type: 'table',
+            headers: ['文件或场景', '常见格式', '能否直接发给普通 API'],
+            rows: [
+              ['tsconfig.json', 'JSONC 风格配置', '不能假设可以'],
+              ['VS Code settings.json', 'JSONC 风格配置', '不能假设可以'],
+              ['package.json', '标准 JSON', '通常可以'],
+              ['接口请求体', '标准 JSON', '应该使用标准 JSON'],
+            ],
+          },
+          { type: 'heading', level: 2, text: '把 JSONC / JSON5 转成标准 JSON 的步骤' },
+          {
+            type: 'list',
+            ordered: true,
+            items: [
+              '先解析宽松语法，确认内容能被 JSONC 或 JSON5 解析器理解。',
+              '移除注释、尾逗号，补齐未加引号的 key。',
+              '把单引号字符串转换成双引号字符串。',
+              '检查是否存在 NaN、Infinity、undefined 这类标准 JSON 不支持的值。',
+              '最后用标准 JSON 校验器再验证一遍。',
+            ],
+          },
           { type: 'heading', level: 2, text: '什么时候用哪一个？' },
           {
             type: 'list',
@@ -989,7 +1194,7 @@ export const workflowSeoBlogArticles = [
         excerpt: 'JSON is strict data interchange, JSONC adds comments mainly for config files, and JSON5 allows more JavaScript-like syntax.',
         metaTitle: 'JSON vs JSON5 vs JSONC: Comments, Trailing Commas, and Syntax',
         metaDescription: 'Compare JSON, JSON5, and JSONC by comments, trailing commas, single quotes, unquoted keys, config use cases, and standard JSON output.',
-        readingTime: '7 min read',
+        readingTime: '9 min read',
         tags: ['JSON', 'JSON5', 'JSONC', 'configuration'],
         relatedTools: [
           {
@@ -1017,6 +1222,47 @@ export const workflowSeoBlogArticles = [
               ['JSON', 'Yes', 'Strict and widely supported for APIs and data exchange'],
               ['JSONC', 'No', 'Common for config files, allows comments, stays close to JSON'],
               ['JSON5', 'No', 'More JavaScript-like, allows single quotes, trailing commas, unquoted keys, and more'],
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Why Do APIs Usually Require Standard JSON?' },
+          {
+            type: 'paragraph',
+            text: 'APIs, databases, queues, and third-party platforms need data that can be parsed consistently across languages such as JavaScript, Java, Go, Python, and Rust. Standard JSON has fewer rules and fewer ambiguous edge cases.',
+          },
+          {
+            type: 'list',
+            items: [
+              'Comments are not data and have no shared meaning in API payloads.',
+              'Trailing commas, single quotes, and unquoted keys are supported inconsistently across parsers.',
+              'NaN and Infinity are not standard JSON values and are often rejected by backends.',
+              'Config files can optimize for humans; API payloads should optimize for stable machine parsing.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Why Can tsconfig.json Contain Comments?' },
+          {
+            type: 'paragraph',
+            text: 'Many developers first notice comments in tsconfig.json and wonder why a .json file can contain //. TypeScript reads that file with JSONC-like rules, which is not the same as ordinary JSON parsing for API payloads.',
+          },
+          {
+            type: 'table',
+            headers: ['File or case', 'Common format', 'Can you send it to a normal API?'],
+            rows: [
+              ['tsconfig.json', 'JSONC-style config', 'Do not assume so'],
+              ['VS Code settings.json', 'JSONC-style config', 'Do not assume so'],
+              ['package.json', 'Standard JSON', 'Usually yes'],
+              ['API request body', 'Standard JSON', 'Should be standard JSON'],
+            ],
+          },
+          { type: 'heading', level: 2, text: 'How to Convert JSONC / JSON5 to Standard JSON' },
+          {
+            type: 'list',
+            ordered: true,
+            items: [
+              'Parse the loose syntax and confirm that a JSONC or JSON5 parser understands it.',
+              'Remove comments and trailing commas, and quote unquoted keys.',
+              'Convert single-quoted strings to double-quoted JSON strings.',
+              'Check for unsupported values such as NaN, Infinity, and undefined.',
+              'Validate the final output with a strict JSON validator.',
             ],
           },
           { type: 'heading', level: 2, text: 'Which One Should You Use?' },
@@ -1050,7 +1296,7 @@ export const workflowSeoBlogArticles = [
         excerpt: '把文档和图片转成 PDF，适合归档、提交材料和跨设备查看。浏览器本地转换适合快速处理常见格式。',
         metaTitle: '如何免费把 Word / Excel / PPT / 图片 转成 PDF',
         metaDescription: '介绍 Word、Excel、PPT、图片、TXT、Markdown、HTML 转 PDF 的常见流程、浏览器本地转换原理、格式限制和导出检查建议。',
-        readingTime: '约 7 分钟阅读',
+        readingTime: '约 9 分钟阅读',
         tags: ['转 PDF', 'Word 转 PDF', 'Excel 转 PDF', '图片转 PDF'],
         relatedTools: [
           {
@@ -1081,6 +1327,36 @@ export const workflowSeoBlogArticles = [
               ['TXT / Markdown / HTML', '文本内容归档', '先检查换行和标题层级'],
             ],
           },
+          { type: 'heading', level: 2, text: '不同格式转换 PDF 的风险不同' },
+          {
+            type: 'paragraph',
+            text: 'PDF 转换不是简单改后缀，而是把原文件重新排版成固定页面。Word 更关注字体和段落，Excel 更关注分页和表格宽度，PPT 更关注幻灯片比例，图片则更关注方向、尺寸和清晰度。',
+          },
+          {
+            type: 'table',
+            headers: ['来源', '最容易出问题的地方', '建议'],
+            rows: [
+              ['Word', '缺字体、页眉页脚、复杂表格', '导出后检查目录、页码和表格边界'],
+              ['Excel', '列太宽、分页过多、隐藏 Sheet', '先设置打印区域或只保留需要的表'],
+              ['PPT', '动画、视频、特殊字体', '把它当成静态页面归档，不依赖动画'],
+              ['图片', '方向错误、过大、压缩后模糊', '先旋转和压缩，再合成 PDF'],
+              ['HTML / Markdown', '样式差异、分页位置', '检查标题层级和代码块换行'],
+            ],
+          },
+          { type: 'heading', level: 2, text: '浏览器本地转换适合什么场景？' },
+          {
+            type: 'paragraph',
+            text: '浏览器本地转换的好处是文件不需要上传，适合临时归档、轻量文档、图片合集和内部材料。它不适合完全替代专业排版软件：如果文件包含复杂字体、宏、嵌入对象、公式或大量图表，导出后最好人工复查。',
+          },
+          {
+            type: 'list',
+            items: [
+              '隐私敏感文件：优先选择本地处理，减少上传风险。',
+              '正式提交材料：导出后用阅读器打开检查页面。',
+              '扫描件或图片合集：先统一方向和尺寸，再转 PDF。',
+              '体积过大：先压缩图片或拆分文档，再上传平台。',
+            ],
+          },
           { type: 'heading', level: 2, text: '转换后要检查什么？' },
           {
             type: 'list',
@@ -1091,6 +1367,11 @@ export const workflowSeoBlogArticles = [
               '文字是否有乱码或丢行。',
               '文件大小是否适合上传平台限制。',
             ],
+          },
+          { type: 'heading', level: 2, text: '转成 PDF 后还可以做什么？' },
+          {
+            type: 'paragraph',
+            text: 'PDF 生成后，常见后续操作包括合并、拆分、提取页面和重新排序。例如把多张图片转成一个 PDF 后，可以和 Word 导出的 PDF 合并；如果平台只需要某几页，也可以再提取页面。',
           },
           {
             type: 'callout',
@@ -1106,7 +1387,7 @@ export const workflowSeoBlogArticles = [
         excerpt: 'PDF is useful for archiving, submissions, and cross-device viewing. Browser-local conversion is convenient for common document and image formats.',
         metaTitle: 'Convert Word, Excel, PowerPoint, and Images to PDF for Free',
         metaDescription: 'Learn how Word, Excel, PowerPoint, images, TXT, Markdown, and HTML can be converted to PDF, plus format limitations and output checks.',
-        readingTime: '7 min read',
+        readingTime: '9 min read',
         tags: ['convert to PDF', 'Word to PDF', 'Excel to PDF', 'image to PDF'],
         relatedTools: [
           {
@@ -1137,6 +1418,36 @@ export const workflowSeoBlogArticles = [
               ['TXT / Markdown / HTML', 'Text archives', 'Check line breaks and headings'],
             ],
           },
+          { type: 'heading', level: 2, text: 'Different Formats Have Different PDF Risks' },
+          {
+            type: 'paragraph',
+            text: 'PDF conversion is not just changing a file extension. The source file is rendered into fixed pages. Word is sensitive to fonts and paragraphs, Excel to page breaks and sheet width, PowerPoint to slide ratio, and images to orientation, size, and clarity.',
+          },
+          {
+            type: 'table',
+            headers: ['Source', 'Common risk', 'Suggestion'],
+            rows: [
+              ['Word', 'Missing fonts, headers, footers, complex tables', 'Check table boundaries, page numbers, and headings'],
+              ['Excel', 'Wide columns, too many pages, hidden sheets', 'Set a print area or keep only needed sheets'],
+              ['PowerPoint', 'Animations, videos, special fonts', 'Treat output as a static archive'],
+              ['Images', 'Wrong orientation, huge pages, blurry compression', 'Rotate and resize before PDF export'],
+              ['HTML / Markdown', 'Style differences and page breaks', 'Check headings and code block wrapping'],
+            ],
+          },
+          { type: 'heading', level: 2, text: 'When Is Browser-Local Conversion a Good Fit?' },
+          {
+            type: 'paragraph',
+            text: 'Browser-local conversion keeps files on your device, which is useful for temporary archives, lightweight documents, image collections, and internal material. It is not a full replacement for professional layout software when a file depends on complex fonts, macros, embedded objects, formulas, or charts.',
+          },
+          {
+            type: 'list',
+            items: [
+              'For sensitive files, local processing reduces upload exposure.',
+              'For formal submissions, open the exported PDF and inspect every important page.',
+              'For scans and image sets, normalize orientation and size before conversion.',
+              'For large files, compress images or split documents before uploading to a platform.',
+            ],
+          },
           { type: 'heading', level: 2, text: 'What to Check After Conversion' },
           {
             type: 'list',
@@ -1147,6 +1458,11 @@ export const workflowSeoBlogArticles = [
               'Is any text missing or garbled?',
               'Is the file size accepted by the upload platform?',
             ],
+          },
+          { type: 'heading', level: 2, text: 'What Can You Do After Creating the PDF?' },
+          {
+            type: 'paragraph',
+            text: 'After export, common next steps include merging, splitting, extracting pages, and reordering pages. For example, you can convert several images into one PDF, merge it with a Word-exported PDF, then extract only the required pages for submission.',
           },
           {
             type: 'callout',
@@ -1169,7 +1485,7 @@ export const workflowSeoBlogArticles = [
         excerpt: '合并 PDF 时最重要的是文件顺序和页面完整性。书签、目录和表单能否保留取决于 PDF 结构和合并工具能力，需要导出后复查。',
         metaTitle: '如何合并多个 PDF？保留顺序、书签和页面完整性',
         metaDescription: '讲解多个 PDF 合并流程、拖放排序、页面顺序检查、书签目录兼容性、表单和注释注意事项，以及浏览器本地合并建议。',
-        readingTime: '约 6 分钟阅读',
+        readingTime: '约 9 分钟阅读',
         tags: ['合并 PDF', 'PDF 顺序', 'PDF 书签', 'PDF 工具'],
         relatedTools: [
           {
@@ -1200,10 +1516,52 @@ export const workflowSeoBlogArticles = [
               '如果源 PDF 有书签、表单或注释，导出后单独复查。',
             ],
           },
+          { type: 'heading', level: 2, text: '合并前如何避免顺序出错？' },
+          {
+            type: 'paragraph',
+            text: 'PDF 合并最常见的问题不是工具失败，而是文件顺序放错。尤其是合同、附件、发票和扫描件混在一起时，建议先用文件名或页码规则确认顺序，再上传到工具中调整。',
+          },
+          {
+            type: 'table',
+            headers: ['场景', '推荐排序方式', '检查点'],
+            rows: [
+              ['合同和附件', '主合同在前，附件按编号排列', '章节边界和签字页位置'],
+              ['发票和凭证', '按日期或报销单顺序排列', '金额页和说明页是否成对出现'],
+              ['扫描件', '按扫描顺序或页码排序', '是否有倒置、空白页或重复页'],
+              ['课程资料', '封面、目录、章节、练习顺序', '目录页是否指向正确内容'],
+            ],
+          },
           { type: 'heading', level: 2, text: '关于书签保留' },
           {
             type: 'paragraph',
             text: '有些 PDF 合并方式只复制页面内容，不会完整合并原文件的书签树、目录、表单动作或复杂交互。对于正式文档，建议把书签保留当成导出后必须检查的项目。',
+          },
+          {
+            type: 'paragraph',
+            text: '书签本质上是 PDF 的导航结构，和页面内容不是同一层东西。两个文件合并后，原书签的目标页码可能需要重算；如果工具没有处理这些目标，书签可能丢失、跳错页，或者只保留其中一个文件的目录。',
+          },
+          { type: 'heading', level: 2, text: '哪些 PDF 结构需要额外检查？' },
+          {
+            type: 'list',
+            items: [
+              '表单字段：同名字段合并后可能互相影响。',
+              '批注和高亮：有些工具只保留页面外观，不保留可编辑批注。',
+              '附件和嵌入文件：合并页面不一定合并附件。',
+              '加密或受保护 PDF：可能需要先解除限制或输入密码。',
+              '数字签名：合并通常会破坏原签名的完整性。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '导出后快速验收' },
+          {
+            type: 'list',
+            ordered: true,
+            items: [
+              '确认总页数等于所有源 PDF 页数之和。',
+              '检查每个文件接缝处的前后两页。',
+              '打开书签面板，确认目录能跳到正确位置。',
+              '搜索一个关键词，确认文本层仍可检索。',
+              '把最终文件另存一份，避免覆盖源文件。',
+            ],
           },
           {
             type: 'callout',
@@ -1219,7 +1577,7 @@ export const workflowSeoBlogArticles = [
         excerpt: 'When merging PDFs, page order and completeness matter most. Bookmarks and outlines depend on the PDF structure and tool support, so review them after export.',
         metaTitle: 'How to Merge PDFs and Preserve Order, Bookmarks, and Pages',
         metaDescription: 'Learn PDF merge workflow, drag sorting, page order checks, bookmark compatibility, forms, annotations, and browser-local merge tips.',
-        readingTime: '6 min read',
+        readingTime: '9 min read',
         tags: ['merge PDF', 'PDF order', 'PDF bookmarks', 'PDF tools'],
         relatedTools: [
           {
@@ -1250,10 +1608,52 @@ export const workflowSeoBlogArticles = [
               'If source PDFs have bookmarks, forms, or annotations, review them after export.',
             ],
           },
+          { type: 'heading', level: 2, text: 'How to Avoid Order Mistakes Before Merging' },
+          {
+            type: 'paragraph',
+            text: 'The most common merge problem is not a failed export; it is the wrong file order. When contracts, attachments, invoices, and scans are mixed together, define the order with filenames or page rules before uploading.',
+          },
+          {
+            type: 'table',
+            headers: ['Case', 'Recommended order', 'Check'],
+            rows: [
+              ['Contracts and attachments', 'Main contract first, attachments by number', 'Chapter boundaries and signature pages'],
+              ['Invoices and receipts', 'By date or reimbursement order', 'Amounts and explanation pages stay paired'],
+              ['Scans', 'By scan order or page number', 'Upside-down, blank, or duplicate pages'],
+              ['Course material', 'Cover, table of contents, chapters, exercises', 'Table of contents points to the right content'],
+            ],
+          },
           { type: 'heading', level: 2, text: 'About Bookmark Preservation' },
           {
             type: 'paragraph',
             text: 'Some PDF merge workflows copy page content but do not fully merge original outline trees, forms, actions, or complex interactions. For formal documents, always verify bookmarks after export.',
+          },
+          {
+            type: 'paragraph',
+            text: 'Bookmarks are a navigation structure, not the page content itself. After two files are merged, bookmark destinations may need page-number recalculation. If the tool does not update those destinations, bookmarks can disappear, jump to the wrong page, or only preserve one source outline.',
+          },
+          { type: 'heading', level: 2, text: 'PDF Structures That Need Extra Review' },
+          {
+            type: 'list',
+            items: [
+              'Forms: fields with the same name may conflict after merging.',
+              'Comments and highlights: some workflows preserve appearance but not editable annotations.',
+              'Attachments: merging pages does not always merge embedded files.',
+              'Encrypted PDFs: restrictions or passwords may need to be handled first.',
+              'Digital signatures: merging usually invalidates the original signature integrity.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Quick Validation After Export' },
+          {
+            type: 'list',
+            ordered: true,
+            items: [
+              'Confirm the total page count equals the sum of source page counts.',
+              'Check the pages around every file boundary.',
+              'Open the bookmark panel and test key destinations.',
+              'Search for a keyword to confirm the text layer is still searchable.',
+              'Save the merged file separately so source files stay untouched.',
+            ],
           },
           {
             type: 'callout',
@@ -1276,7 +1676,7 @@ export const workflowSeoBlogArticles = [
         excerpt: 'PDF 拆分可以按每页导出、按页码范围导出，也可以通过拆成多个部分来满足平台大小限制。',
         metaTitle: '如何拆分 PDF：按页数、按范围、按大小',
         metaDescription: '介绍 PDF 按页拆分、按页码范围拆分、按大小限制拆分的思路，包含页码范围写法、导出检查和浏览器本地处理建议。',
-        readingTime: '约 6 分钟阅读',
+        readingTime: '约 8 分钟阅读',
         tags: ['拆分 PDF', 'PDF 分割', '按页拆分', 'PDF 工具'],
         relatedTools: [
           {
@@ -1309,10 +1709,44 @@ export const workflowSeoBlogArticles = [
             type: 'paragraph',
             text: '严格按文件大小自动拆分通常需要先估算每页内容大小。图片页、扫描页和矢量文本页体积差异很大，所以更稳的方式是按范围拆分后检查每份大小。',
           },
+          { type: 'heading', level: 2, text: '按大小拆分为什么不精确？' },
+          {
+            type: 'paragraph',
+            text: 'PDF 每一页的体积差异可能很大：纯文字页可能只有几十 KB，扫描图片页可能有好几 MB。即使页数相同，两份拆分结果的大小也可能相差很多。因此“每份低于 10MB”通常需要拆分后再检查，必要时重新调整范围。',
+          },
+          {
+            type: 'table',
+            headers: ['页面类型', '体积特点', '拆分建议'],
+            rows: [
+              ['纯文字 PDF', '通常较小且稳定', '可以按章节范围拆分'],
+              ['扫描件 PDF', '单页可能很大', '先少量页测试大小'],
+              ['图片很多的报告', '图表页体积更大', '按图片密集章节拆开'],
+              ['混合文档', '每页差异明显', '拆分后逐份检查文件大小'],
+            ],
+          },
           { type: 'heading', level: 2, text: '页码范围怎么写？' },
           {
             type: 'paragraph',
             text: '常见写法是 1-3,5,8-10，表示提取第 1 到 3 页、第 5 页、第 8 到 10 页。正式导出前先确认 PDF 页码和阅读器显示页码是否一致。',
+          },
+          {
+            type: 'list',
+            items: [
+              '1-3 表示连续范围，包含第 1 页和第 3 页。',
+              '1,3,5 表示只选择这几页。',
+              '1-3,8-10 表示多个范围合并输出。',
+              '如果阅读器显示罗马数字目录页，实际页码可能和显示页码不同。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '拆分后的文件怎么命名？' },
+          {
+            type: 'paragraph',
+            text: '如果拆分结果要上传或发给别人，文件名要能说明内容和顺序。比如 contract-part-01.pdf、contract-part-02.pdf，比 split-1.pdf 更容易复查，也能避免上传时顺序错乱。',
+          },
+          { type: 'heading', level: 2, text: '什么时候应该用提取页面而不是拆分？' },
+          {
+            type: 'paragraph',
+            text: '如果你只需要把第 2、5、9 页组成一个新文件，提取页面更合适；如果你要把一个大 PDF 拆成多个独立文件，拆分 PDF 更合适。两者都处理页码，但目标文件数量不同。',
           },
           {
             type: 'callout',
@@ -1328,7 +1762,7 @@ export const workflowSeoBlogArticles = [
         excerpt: 'PDF splitting can export every page, split selected page ranges, or create smaller parts to satisfy upload size limits.',
         metaTitle: 'How to Split a PDF by Pages, Ranges, or Size',
         metaDescription: 'Learn PDF splitting by page, page ranges, and file-size limits, including range syntax, output checks, and browser-local processing tips.',
-        readingTime: '6 min read',
+        readingTime: '8 min read',
         tags: ['split PDF', 'PDF splitter', 'page ranges', 'PDF tools'],
         relatedTools: [
           {
@@ -1361,10 +1795,44 @@ export const workflowSeoBlogArticles = [
             type: 'paragraph',
             text: 'Exact automatic size-based splitting is hard because scanned pages, photos, and text pages vary widely. A practical workflow is to split by ranges, then check each output file size.',
           },
+          { type: 'heading', level: 2, text: 'Why Is Size-Based Splitting Not Exact?' },
+          {
+            type: 'paragraph',
+            text: 'PDF page size can vary dramatically. A text-only page may be only a few dozen KB, while a scanned image page can be several MB. Even with the same page count, output files can have very different sizes.',
+          },
+          {
+            type: 'table',
+            headers: ['Page type', 'Size behavior', 'Splitting tip'],
+            rows: [
+              ['Text-only PDF', 'Usually small and stable', 'Split by chapter ranges'],
+              ['Scanned PDF', 'One page can be large', 'Test with a small page range first'],
+              ['Image-heavy report', 'Chart pages are larger', 'Separate image-heavy sections'],
+              ['Mixed document', 'Each page can differ greatly', 'Check each output file size after splitting'],
+            ],
+          },
           { type: 'heading', level: 2, text: 'How to Write Page Ranges' },
           {
             type: 'paragraph',
             text: 'A common syntax is 1-3,5,8-10, which means pages 1 through 3, page 5, and pages 8 through 10. Check whether PDF page numbers match the reader display before exporting.',
+          },
+          {
+            type: 'list',
+            items: [
+              '1-3 means a continuous range and includes both page 1 and page 3.',
+              '1,3,5 selects only those pages.',
+              '1-3,8-10 combines multiple ranges in the output.',
+              'If the viewer shows Roman numerals for front matter, displayed page labels may not match actual PDF pages.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'How Should You Name Split Files?' },
+          {
+            type: 'paragraph',
+            text: 'If split files will be uploaded or sent to someone else, use names that preserve meaning and order. contract-part-01.pdf and contract-part-02.pdf are much safer than split-1.pdf.',
+          },
+          { type: 'heading', level: 2, text: 'When Should You Extract Pages Instead?' },
+          {
+            type: 'paragraph',
+            text: 'If you only need pages 2, 5, and 9 in one new document, extraction is a better fit. If you need one large PDF broken into multiple independent files, splitting is the right workflow.',
           },
           {
             type: 'callout',
@@ -1387,7 +1855,7 @@ export const workflowSeoBlogArticles = [
         excerpt: '从 PDF 中提取指定页面，适合只提交合同某几页、导出附件、抽取扫描页或保留文档的一部分。',
         metaTitle: '如何从 PDF 中提取指定页面？页码范围提取教程',
         metaDescription: '讲解如何从 PDF 提取指定页面或页码范围，包含页码写法、顺序保留、重复页面、导出检查和浏览器本地处理。',
-        readingTime: '约 5 分钟阅读',
+        readingTime: '约 8 分钟阅读',
         tags: ['PDF 提取页面', 'PDF 页码', 'PDF 工具'],
         relatedTools: [
           {
@@ -1406,6 +1874,21 @@ export const workflowSeoBlogArticles = [
             type: 'lead',
             text: '提取页面和拆分 PDF 的区别是：提取通常把选中的几页合成一个新 PDF，而拆分会生成多个文件。',
           },
+          { type: 'heading', level: 2, text: '哪些场景适合提取页面？' },
+          {
+            type: 'paragraph',
+            text: '提取页面适合“只需要原 PDF 的一部分”的场景。例如合同只提交签字页和关键条款，扫描件只导出身份证明页，课程资料只截取某个章节，或者从完整报告中抽出附录给同事查看。',
+          },
+          {
+            type: 'table',
+            headers: ['场景', '推荐操作', '注意事项'],
+            rows: [
+              ['合同提交', '提取指定条款页和签字页', '确认页码和签章完整'],
+              ['扫描资料', '提取需要上传的几页', '检查方向和清晰度'],
+              ['报告分享', '提取摘要、图表或附录', '避免泄露不相关页面'],
+              ['学习资料', '提取某一章或练习页', '保持页面顺序便于阅读'],
+            ],
+          },
           { type: 'heading', level: 2, text: '页码怎么写？' },
           {
             type: 'table',
@@ -1414,6 +1897,24 @@ export const workflowSeoBlogArticles = [
               ['3', '只提取第 3 页', '一个 1 页 PDF'],
               ['1-3', '提取第 1 到 3 页', '一个 3 页 PDF'],
               ['1,3,5-7', '提取第 1、3、5 到 7 页', '按输入顺序组成新 PDF'],
+            ],
+          },
+          {
+            type: 'paragraph',
+            text: '有些工具会允许重复页或调整顺序，例如 5,1,5 可能表示先放第 5 页，再放第 1 页，最后再复制一遍第 5 页。正式提交前一定要打开结果确认顺序。',
+          },
+          { type: 'heading', level: 2, text: '实际页码和显示页码为什么会不同？' },
+          {
+            type: 'paragraph',
+            text: 'PDF 阅读器可能把封面、目录页显示为 i、ii、iii，正文才从 1 开始。但工具通常按 PDF 的实际页面序号处理，也就是第一张页面就是第 1 页。遇到论文、合同册或扫描件时，这个差异尤其常见。',
+          },
+          {
+            type: 'list',
+            items: [
+              '先用预览确认目标页面在 PDF 中的实际位置。',
+              '封面和目录页也要计入实际页码。',
+              '如果目标是“显示第 10 页”，先确认它是不是实际第 12 页或第 13 页。',
+              '导出后检查第一页和最后一页是否符合预期。',
             ],
           },
           { type: 'heading', level: 2, text: '提取前后要检查什么？' },
@@ -1425,6 +1926,11 @@ export const workflowSeoBlogArticles = [
               '如果需要删除或复制页面，整理 PDF 工具更适合。',
               '导出后检查页数、文件大小和第一页内容。',
             ],
+          },
+          { type: 'heading', level: 2, text: '提取页面会改变原 PDF 吗？' },
+          {
+            type: 'paragraph',
+            text: '正常的提取流程会生成一个新 PDF，不会修改原文件。为了保险，建议把导出的文件重新命名，例如 contract-pages-3-5.pdf，并保留原始 PDF，方便之后重新提取或核对。',
           },
           {
             type: 'callout',
@@ -1440,7 +1946,7 @@ export const workflowSeoBlogArticles = [
         excerpt: 'Extracting selected PDF pages is useful when you only need a few contract pages, attachments, scans, or a section of a larger document.',
         metaTitle: 'How to Extract Selected Pages from a PDF',
         metaDescription: 'Learn how to extract selected pages and page ranges from a PDF, including range syntax, order preservation, output checks, and browser-local processing.',
-        readingTime: '5 min read',
+        readingTime: '8 min read',
         tags: ['extract PDF pages', 'PDF page range', 'PDF tools'],
         relatedTools: [
           {
@@ -1459,6 +1965,21 @@ export const workflowSeoBlogArticles = [
             type: 'lead',
             text: 'Extracting pages usually creates one new PDF from selected pages, while splitting a PDF often creates multiple files.',
           },
+          { type: 'heading', level: 2, text: 'When Should You Extract Pages?' },
+          {
+            type: 'paragraph',
+            text: 'Page extraction is useful when you only need part of the original PDF. You might submit only key contract pages, export selected scan pages, share one report appendix, or pull a chapter from a larger course handout.',
+          },
+          {
+            type: 'table',
+            headers: ['Case', 'Recommended action', 'Check'],
+            rows: [
+              ['Contract submission', 'Extract key clauses and signature pages', 'Confirm page numbers and signatures'],
+              ['Scanned documents', 'Extract only required upload pages', 'Check orientation and clarity'],
+              ['Report sharing', 'Extract summary, charts, or appendix', 'Avoid exposing unrelated pages'],
+              ['Study material', 'Extract one chapter or exercise set', 'Keep reading order intact'],
+            ],
+          },
           { type: 'heading', level: 2, text: 'Page Range Syntax' },
           {
             type: 'table',
@@ -1467,6 +1988,24 @@ export const workflowSeoBlogArticles = [
               ['3', 'Extract only page 3', 'One 1-page PDF'],
               ['1-3', 'Extract pages 1 through 3', 'One 3-page PDF'],
               ['1,3,5-7', 'Extract pages 1, 3, and 5 through 7', 'One new PDF in selected order'],
+            ],
+          },
+          {
+            type: 'paragraph',
+            text: 'Some workflows allow repeated pages or custom order. For example, 5,1,5 may place page 5 first, page 1 second, and page 5 again at the end. Always open the result before submitting it.',
+          },
+          { type: 'heading', level: 2, text: 'Why Can Actual Page Numbers Differ from Displayed Labels?' },
+          {
+            type: 'paragraph',
+            text: 'PDF viewers may label covers and tables of contents as i, ii, and iii, while the main body starts at page 1. Tools usually use actual PDF page order, where the first physical page is page 1.',
+          },
+          {
+            type: 'list',
+            items: [
+              'Preview the document to confirm the target page position.',
+              'Count covers and table-of-contents pages as actual pages.',
+              'If you need displayed page 10, confirm whether it is actual page 12 or 13.',
+              'After export, check the first and last selected pages.',
             ],
           },
           { type: 'heading', level: 2, text: 'What to Check' },
@@ -1478,6 +2017,11 @@ export const workflowSeoBlogArticles = [
               'Use an organize tool if you need to delete, duplicate, or reorder pages manually.',
               'After export, check page count, file size, and first-page content.',
             ],
+          },
+          { type: 'heading', level: 2, text: 'Does Extraction Change the Original PDF?' },
+          {
+            type: 'paragraph',
+            text: 'A normal extraction workflow creates a new PDF and leaves the original untouched. Rename the output clearly, such as contract-pages-3-5.pdf, and keep the source file for later checks.',
           },
           {
             type: 'callout',
@@ -1500,7 +2044,7 @@ export const workflowSeoBlogArticles = [
         excerpt: '中文常看字数和字符数，英文常看词数。技术系统还会看 UTF-8 字节数，尤其是接口、数据库和短信限制。',
         metaTitle: '中英文字数统计差异：字符、词、字节各是什么',
         metaDescription: '解释中文和英文字数统计差异，包括字符数、词数、字节数、Emoji、空格、标点和 UTF-8 编码在不同场景下的影响。',
-        readingTime: '约 6 分钟阅读',
+        readingTime: '约 8 分钟阅读',
         tags: ['字数统计', '中英文统计', '字符数', '字节数'],
         relatedTools: [
           {
@@ -1519,6 +2063,12 @@ export const workflowSeoBlogArticles = [
             type: 'lead',
             text: '中文和英文的“字数”不是同一套统计逻辑。写作平台、SEO 工具、数据库和接口限制也可能看不同指标。',
           },
+          { type: 'heading', level: 2, text: '先看一个混合文本例子' },
+          { type: 'code', language: 'text', code: wordCountMixedExample },
+          {
+            type: 'paragraph',
+            text: '这段文本同时包含中文、英文、空格、换行和 Emoji。不同工具可能分别统计“字符数”“词数”“字数”“不含空格字符数”“UTF-8 字节数”，结果自然不会完全一样。',
+          },
           { type: 'heading', level: 2, text: '三个指标先分清' },
           {
             type: 'table',
@@ -1529,6 +2079,35 @@ export const workflowSeoBlogArticles = [
               ['字节数', 'UTF-8 下常见汉字通常 3 字节', '英文字母通常 1 字节'],
             ],
           },
+          { type: 'heading', level: 2, text: '字符数、字数、词数不是一回事' },
+          {
+            type: 'paragraph',
+            text: '中文内容里，一个汉字常被用户理解为一个“字”，但字符数还会把标点、数字、英文字母、空格和换行都算进去。英文内容里，写作平台更常看 word count，也就是按空格、标点和分隔符拆出来的词。',
+          },
+          {
+            type: 'table',
+            headers: ['文本', '常见字符理解', '常见词数理解'],
+            rows: [
+              ['你好世界', '4 个汉字字符', '可能被当作 1 个中文片段，也可能分词为多个词'],
+              ['Hello world', '包含 10 个字母和 1 个空格', '2 个英文单词'],
+              ['JSON 工具', '中文、英文和空格混合', '取决于中文分词和英文拆词规则'],
+              ['😊', '看起来 1 个图标', '底层可能包含多个 Unicode 码点'],
+            ],
+          },
+          { type: 'heading', level: 2, text: '为什么字节数对接口和数据库很重要？' },
+          {
+            type: 'paragraph',
+            text: '很多系统限制的不是“看起来多少字”，而是存储或传输需要多少字节。UTF-8 下英文字母通常 1 字节，常见中文汉字通常 3 字节，Emoji 可能 4 字节或更多。一个 100 字的中文字段，字节数可能远高于 100。',
+          },
+          {
+            type: 'list',
+            items: [
+              '数据库字段限制可能写的是 varchar(255)，但不同数据库对字符和字节的理解不同。',
+              '短信、推送、URL 参数和接口 payload 经常会受到字节大小限制。',
+              'Emoji、组合字符和特殊符号可能让“肉眼字符数”和技术字符数不一致。',
+              '做国际化产品时，最好同时检查字符数和字节数。',
+            ],
+          },
           { type: 'heading', level: 2, text: '为什么同一段文字数字不同？' },
           {
             type: 'list',
@@ -1537,6 +2116,18 @@ export const workflowSeoBlogArticles = [
               'Emoji 可能由多个 Unicode 码点组成，不能只按肉眼看到的图标数。',
               '中文没有天然空格，词数统计依赖分词规则。',
               '接口和数据库经常限制字节数，而不是字数。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '不同场景应该看哪个指标？' },
+          {
+            type: 'table',
+            headers: ['场景', '优先指标', '原因'],
+            rows: [
+              ['中文 SEO 标题', '字符数和可读长度', '搜索结果展示空间有限'],
+              ['英文文章', '词数', '阅读时间和内容长度更常按词估算'],
+              ['表单输入限制', '字符数或字节数', '取决于前后端限制方式'],
+              ['数据库字段', '字节数和字符数都要看', '避免多语言内容超出存储限制'],
+              ['接口传输', '字节数', 'payload 大小影响请求和响应'],
             ],
           },
           {
@@ -1553,7 +2144,7 @@ export const workflowSeoBlogArticles = [
         excerpt: 'Chinese text often focuses on characters, English text often focuses on words, and technical systems often care about UTF-8 bytes.',
         metaTitle: 'Chinese vs English Text Counting: Characters, Words, Bytes',
         metaDescription: 'Understand character count, word count, byte count, emoji, spaces, punctuation, and UTF-8 differences across Chinese and English text.',
-        readingTime: '6 min read',
+        readingTime: '8 min read',
         tags: ['word count', 'Chinese text', 'character count', 'byte count'],
         relatedTools: [
           {
@@ -1572,6 +2163,12 @@ export const workflowSeoBlogArticles = [
             type: 'lead',
             text: 'Chinese and English text length are not counted the same way. Writing tools, SEO tools, databases, and APIs may all care about different metrics.',
           },
+          { type: 'heading', level: 2, text: 'Start with a Mixed Text Example' },
+          { type: 'code', language: 'text', code: wordCountMixedExample },
+          {
+            type: 'paragraph',
+            text: 'This sample contains Chinese, English, spaces, a line break, and an emoji. A tool may report characters, words, characters without spaces, lines, and UTF-8 bytes, so the numbers will not be identical.',
+          },
           { type: 'heading', level: 2, text: 'Three Metrics to Separate' },
           {
             type: 'table',
@@ -1582,6 +2179,35 @@ export const workflowSeoBlogArticles = [
               ['Bytes', 'Many common Han characters use 3 UTF-8 bytes', 'English letters usually use 1 byte'],
             ],
           },
+          { type: 'heading', level: 2, text: 'Characters, Chinese Characters, and Words Are Different' },
+          {
+            type: 'paragraph',
+            text: 'In Chinese, users often think of each Han character as one unit, but a character counter may also include punctuation, digits, Latin letters, spaces, and line breaks. In English, writing tools usually focus on word count split by spaces and punctuation.',
+          },
+          {
+            type: 'table',
+            headers: ['Text', 'Common character view', 'Common word-count view'],
+            rows: [
+              ['你好世界', '4 Han characters', 'May be treated as one Chinese segment or segmented into multiple words'],
+              ['Hello world', '10 letters plus 1 space', '2 English words'],
+              ['JSON 工具', 'Mixed Chinese, English, and a space', 'Depends on Chinese segmentation and English tokenization'],
+              ['😊', 'Looks like one symbol', 'May contain multiple Unicode code points internally'],
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Why Byte Count Matters for APIs and Databases' },
+          {
+            type: 'paragraph',
+            text: 'Many systems limit storage or transfer size, not visual length. In UTF-8, English letters are usually 1 byte, common Chinese characters are often 3 bytes, and emoji can be 4 bytes or more. A 100-character Chinese field can be much larger than 100 bytes.',
+          },
+          {
+            type: 'list',
+            items: [
+              'A database field such as varchar(255) may behave differently depending on database and encoding settings.',
+              'SMS, push messages, URL parameters, and API payloads often have byte-size limits.',
+              'Emoji, combining characters, and special symbols can make visual length differ from technical length.',
+              'For international products, check both character count and byte count.',
+            ],
+          },
           { type: 'heading', level: 2, text: 'Why Results Differ' },
           {
             type: 'list',
@@ -1590,6 +2216,18 @@ export const workflowSeoBlogArticles = [
               'Emoji may contain multiple Unicode code points.',
               'Chinese word count depends on segmentation rules.',
               'APIs and databases often limit bytes, not visible characters.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Which Metric Should You Use?' },
+          {
+            type: 'table',
+            headers: ['Use case', 'Primary metric', 'Why'],
+            rows: [
+              ['Chinese SEO title', 'Characters and readable length', 'Search result display space is limited'],
+              ['English article', 'Words', 'Reading time and content length are usually estimated by words'],
+              ['Form input limit', 'Characters or bytes', 'Depends on frontend and backend validation'],
+              ['Database field', 'Both bytes and characters', 'Multilingual content may exceed storage limits'],
+              ['API transfer', 'Bytes', 'Payload size affects requests and responses'],
             ],
           },
           {
