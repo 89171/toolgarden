@@ -200,6 +200,28 @@ function pruneDefaultLocaleRedirectExports() {
   return { redirects: routePaths.length, removedFiles };
 }
 
+function pruneBlogSegmentPrefetchFiles() {
+  let removedFiles = 0;
+
+  for (const locale of localeSegments) {
+    const blogDir = path.join(outDir, locale, 'blog');
+    if (!fs.existsSync(blogDir)) continue;
+
+    for (const file of walkFiles(blogDir)) {
+      if (path.basename(file).startsWith('__next') && file.endsWith('.txt')) {
+        fs.rmSync(file);
+        removedFiles += 1;
+      }
+    }
+  }
+
+  return removedFiles;
+}
+
+function getExportFileCount() {
+  return walkFiles(outDir).length;
+}
+
 if (!fs.existsSync(outDir)) {
   throw new Error(`Static export directory not found: ${outDir}`);
 }
@@ -209,6 +231,7 @@ const removedMaps = removeSourceMaps(filesBeforeCleanup);
 const updatedReferences = removeSourceMapComments(walkFiles(outDir));
 writeStaticHeaders();
 const prunedRedirectExports = pruneDefaultLocaleRedirectExports();
+const prunedBlogPrefetchFiles = pruneBlogSegmentPrefetchFiles();
 const copiedPublicHtmlFiles = copyPublicRootHtmlFiles();
 
 const remainingMaps = walkFiles(outDir).filter((file) => file.endsWith('.map'));
@@ -216,6 +239,8 @@ if (remainingMaps.length > 0) {
   throw new Error(`Source maps remain in static export:\n${remainingMaps.join('\n')}`);
 }
 
+const exportFileCount = getExportFileCount();
+
 console.log(
-  `Hardened static export: removed ${removedMaps} source map file(s), stripped ${updatedReferences} source map reference(s), wrote out/_headers, wrote ${prunedRedirectExports.redirects} redirect(s), pruned ${prunedRedirectExports.removedFiles} redirect export file(s), copied ${copiedPublicHtmlFiles} root public HTML file(s).`
+  `Hardened static export: removed ${removedMaps} source map file(s), stripped ${updatedReferences} source map reference(s), wrote out/_headers, wrote ${prunedRedirectExports.redirects} redirect(s), pruned ${prunedRedirectExports.removedFiles} redirect export file(s), pruned ${prunedBlogPrefetchFiles} blog segment prefetch file(s), copied ${copiedPublicHtmlFiles} root public HTML file(s), final file count ${exportFileCount}.`
 );
