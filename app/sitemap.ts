@@ -5,7 +5,7 @@ import type { MetadataRoute } from 'next';
 import { routing } from '@/i18n/routing';
 import { BLOG_INDEX_PATH, blogArticles } from '@/lib/blog/articles';
 import { toolRegistry } from '@/lib/tools/registry';
-import { getLocalizedUrl } from '@/lib/tools/seo';
+import { BASE_URL, getLanguageAlternates, getLocalizedUrl } from '@/lib/tools/seo';
 
 export const dynamic = 'force-static';
 
@@ -107,8 +107,18 @@ function getLastModified(routePath: string): string {
 export default function sitemap(): MetadataRoute.Sitemap {
   const paths = ['', ...hubPaths, ...blogPaths, ...toolRegistry.map((tool) => tool.path)];
 
-  return paths.map((path) => ({
-    url: getLocalizedUrl(routing.defaultLocale, path),
-    lastModified: getLastModified(path),
-  }));
+  return routing.locales.flatMap((locale) =>
+    paths.map((path) => ({
+      url: getLocalizedUrl(locale, path),
+      lastModified: getLastModified(path),
+      alternates: {
+        languages: Object.fromEntries(
+          Object.entries(getLanguageAlternates(path)).map(([language, localizedPath]) => [
+            language,
+            `${BASE_URL}${localizedPath}`,
+          ])
+        ),
+      },
+    }))
+  );
 }
