@@ -78,7 +78,7 @@ export const seoBlogArticles = [
   {
     slug: 'convert-json-to-typescript-interface',
     publishedAt: '2026-07-02',
-    updatedAt: '2026-07-02',
+    updatedAt: '2026-07-03',
     translations: {
       zh: {
         title: '如何把 JSON 转成 TypeScript Interface？',
@@ -97,6 +97,11 @@ export const seoBlogArticles = [
             label: 'JSON 格式化',
             href: '/json-format',
             description: '先格式化和校验 JSON，再生成更稳定的类型定义。',
+          },
+          {
+            label: "正则表达式测试",
+            href: "/regex",
+            description: "生成 interface 时用正则批量整理字段名（驼峰化、去前缀）。",
           },
         ],
         blocks: [
@@ -151,6 +156,28 @@ export const seoBlogArticles = [
             text: '自动生成 interface 适合做第一版类型草稿。真正用于项目时，建议再根据接口文档和业务规则检查可选字段、null、枚举值和命名。',
           },
         ],
+        faq: [
+          {
+            question: "JSON 转 TypeScript 时，遇到数组里对象结构不一致怎么办？",
+            answer: "很多接口返回的数组元素并不完全相同，比如 items 里既有普通商品也有促销商品。工具默认会取第一个元素作为样本，因此建议先在真实数据中筛出一个覆盖所有字段的对象再粘贴，或者手工把生成的 interface 拆成联合类型（例如 Product | Promotion）。也可以把可选字段标记为可选属性（field?），再在业务代码里根据 type 字段进行 narrowing。这样既避免了 any，也不至于漏掉某些运行时才出现的字段。",
+          },
+          {
+            question: "为什么生成的 interface 里出现了 null 类型，应该保留还是改成可选？",
+            answer: "工具从样本推断类型，如果字段值是 null，就只能给出 null 类型。真实业务里通常有两种情况：一是字段一定存在但值可能为 null，此时应改为 string | null 之类的联合类型；二是字段可能整个缺失，此时应加上问号，写成 city?: string | null。建议在粘贴前先跑几个真实样本，把偶发的 null 归纳成 nullable，把偶发的缺字段归纳成可选，两者含义不同不能互相替代。",
+          },
+          {
+            question: "JSON 转 TS 和 quicktype 这类命令行工具相比有什么区别？",
+            answer: "命令行工具功能强，能合并多个样本、生成 class、支持多语言输出，但需要安装依赖并写脚本，适合大型项目的构建流程。在线工具的优势是零安装、粘贴即出结果，适合排查 bug、快速对接后端、写文档时抄一份类型。日常前端开发中，先用在线工具生成基础 interface，再用手工调整可选字段、联合类型和命名，是一种性价比很高的组合。真正需要自动化时再引入 quicktype 或 openapi-typescript。",
+          },
+          {
+            question: "生成的 interface 命名一直是 Root，怎么改成有业务含义的名字？",
+            answer: "工具默认使用 Root 作为顶层接口名，是为了保证在没有上下文时不会误导阅读。落库前请统一改成资源名，比如 User、Order、PaymentIntent。二级 interface 也建议按业务命名，比如 profile 对应 UserProfile 而不是 Profile1。命名一致后配合 IDE 的重命名功能，可以让整个前端项目的类型体系更容易维护。另外建议把生成的 interface 集中放在 types 目录，避免每个页面自己复制一份，出现同名但字段不同的类型。",
+          },
+          {
+            question: "接口偶尔返回数字字符串（如 \"123\"），推断为 string 还是 number？",
+            answer: "JSON 类型系统里 \"123\" 是字符串，工具只能推断为 string，不能自动帮你转成 number。这类问题应该在业务层显式转换，比如使用 Number(id) 或 parseInt。更好的做法是和后端约定字段类型：金额、超长 ID、精度敏感的场景保留字符串；普通计数、状态码可以用数字。生成 interface 后可以再写一个 Dto 到 Model 的映射函数，在这一层完成转换和校验，避免在页面里到处出现类型断言。",
+          },
+        ],
       },
       en: {
         title: 'How to Convert JSON to a TypeScript Interface',
@@ -169,6 +196,11 @@ export const seoBlogArticles = [
             label: 'JSON Formatter',
             href: '/json-format',
             description: 'Format and validate JSON before generating cleaner type definitions.',
+          },
+          {
+            label: "Regex Tester",
+            href: "/regex",
+            description: "Use a regex to normalize field names (camelCase, prefix removal) before generating interfaces.",
           },
         ],
         blocks: [
@@ -223,13 +255,35 @@ export const seoBlogArticles = [
             text: 'Generated interfaces are an excellent first draft. Before using them in production code, review optional fields, nullable values, enum-like strings, and naming.',
           },
         ],
+        faq: [
+          {
+            question: "What if the JSON array contains objects with different shapes?",
+            answer: "The tool samples the first element of an array, so mixed shapes get flattened into one interface and later break at runtime. The safest workflow is to inspect the real data first, identify each variant (for example Product vs Promotion), then paste one representative sample per variant. Merge them into a union type such as Item = Product | Promotion and use a discriminator field like type for narrowing. If a field only appears sometimes, mark it as optional with a question mark rather than pretending it is always present.",
+          },
+          {
+            question: "The generated interface has a null type. Should I keep it or make the field optional?",
+            answer: "A null type means the sample explicitly had null, not that the key was missing. Two cases you should separate: fields that always exist but can be null should become a union like string | null, while fields that can be absent should become optional with a question mark, for example city?: string | null. Feed the generator two or three real samples to catch both patterns, and never treat optional and nullable as interchangeable, because consumers handle them very differently.",
+          },
+          {
+            question: "How does an online JSON to TypeScript tool compare to quicktype?",
+            answer: "quicktype is powerful for build pipelines: it merges multiple samples, generates classes, supports many target languages, and can be scripted. An online tool has zero setup, is faster for one-off debugging, and pairs well with reading API docs. For everyday frontend work, paste a sample online, hand-tune optional and nullable fields, then commit. When your team needs guarantees across dozens of endpoints, wire quicktype or openapi-typescript into CI so types are regenerated from the source of truth automatically.",
+          },
+          {
+            question: "How do I rename the generated Root interface to something meaningful?",
+            answer: "Root is a safe default that avoids misleading names, but you should rename it before committing. Use the resource name your backend uses, such as User, Order, or PaymentIntent, and keep nested interfaces aligned, so profile becomes UserProfile rather than Profile1. Place the generated types in a shared types directory instead of copying them into each page. That way when the API evolves you rename in one place, and IDE refactors propagate everywhere. Consistent naming also makes code reviews and search across the frontend much easier.",
+          },
+          {
+            question: "The API sometimes returns numeric strings like \"123\". Should the field be string or number?",
+            answer: "In JSON, \"123\" is a string, so the generator can only produce string. It cannot know your intent. Fix this at the boundary rather than by editing the interface: agree with backend engineers that money, precision-sensitive amounts and very large IDs stay as strings, while counters and status codes stay as numbers. Then write a small mapper that turns the raw DTO into a domain Model, converting fields with Number() or parseInt where needed. Your UI code stays free of ad hoc type assertions.",
+          },
+        ],
       },
     },
   },
   {
     slug: 'fix-json-unexpected-token-error',
     publishedAt: '2026-07-02',
-    updatedAt: '2026-07-02',
+    updatedAt: '2026-07-03',
     translations: {
       zh: {
         title: 'JSON 报错 Unexpected token 怎么修复？常见 JSON 错误排查',
@@ -248,6 +302,11 @@ export const seoBlogArticles = [
             label: 'JSON 格式化',
             href: '/json-format',
             description: '格式化并验证 JSON，快速定位语法问题。',
+          },
+          {
+            label: "正则表达式测试",
+            href: "/regex",
+            description: "手动排查坏字符时，用正则快速定位控制字符、BOM、全角标点等。",
           },
         ],
         blocks: [
@@ -303,6 +362,28 @@ export const seoBlogArticles = [
             text: 'Unexpected token 不是一个具体错误，而是一类语法错误的入口提示。先看 token 字符，再结合数据来源排查，通常很快就能定位问题。',
           },
         ],
+        faq: [
+          {
+            question: "为什么本地跑 JSON.parse 没问题，部署到线上就报 Unexpected token？",
+            answer: "线上和本地拿到的字符串往往不一样。常见原因有：CDN 或反向代理在响应里插入了 HTML 错误页，导致解析器看到 < 就报错；接口返回带 BOM 的 UTF-8，本地编辑器隐藏了 BOM 而运行时没有；或者服务端拼接 JSON 时把 undefined 写了进去。定位方法是先打印 typeof 和 length，再用 charCodeAt(0) 查是否为 0xFEFF，最后确认返回状态码是 200 且 Content-Type 是 application/json，不要盲目改代码。",
+          },
+          {
+            question: "JSON 里能用单引号吗？为什么复制到工具里就报错？",
+            answer: "标准 JSON 只允许双引号，单引号会立即触发 Unexpected token。它常出现在从 Python dict、JavaScript 对象字面量、日志、YAML 里直接复制过来的场景。修复方式有两种：如果只是零星几处，手工把 ' 替换为 \"；如果是大段代码，可以用 JSON5 或宽松解析器先解析再输出为严格 JSON。长期来说建议在源头约定统一格式：接口和配置文件必须是严格 JSON，示例代码里再用编程语言原生语法，避免混用。",
+          },
+          {
+            question: "报错说位置是 position 42，怎么快速定位到具体哪一行？",
+            answer: "position 指的是从字符串开头算起的第 42 个字符，不是行号。可以把 JSON 字符串放进能显示光标位置的编辑器（VS Code 状态栏、在线工具都可），跳到该偏移量即可。如果 JSON 已经压缩成一行，先用格式化工具展开再定位。经验上，报错位置往往指向的是错误的下一位，比如提示 position 42 报 Unexpected token }，真正问题通常是 41 位的多余逗号或缺失引号，务必往前看一两个字符。",
+          },
+          {
+            question: "把 JSON 修好后能自动帮我修复所有错误吗？",
+            answer: "自动修复工具擅长处理常见小错：尾随逗号、注释、单引号、未加引号的 key。但遇到语义型错误时，比如字符串中间缺了一个结束引号导致后面的字段都被当成同一个字符串，或者数组和对象嵌套错位，机器就无法猜测原始意图，可能修出来的仍然不是你要的结构。建议先跑一次自动修复解决语法层面的问题，再用格式化工具展开，肉眼扫一遍关键字段，最后配合 JSON Schema 校验业务字段是否齐全。",
+          },
+          {
+            question: "报 Unexpected end of JSON input 和 Unexpected token 有什么区别？",
+            answer: "Unexpected token 表示解析器看到了一个不该出现的字符，比如多余的逗号、丢引号；Unexpected end of JSON input 则表示解析器还没读到期望的结束符就走到了字符串末尾，通常意味着 JSON 被截断了。前者多因手写错误或拼接问题；后者常见于网络请求被中断、后端流式输出没结束、大文件读取只读了一半。排查时前者关注错误位置附近的字符，后者关注整体长度和最后一个字符是否为 } 或 ]。",
+          },
+        ],
       },
       en: {
         title: 'How to Fix JSON Unexpected token Errors',
@@ -321,6 +402,11 @@ export const seoBlogArticles = [
             label: 'JSON Formatter',
             href: '/json-format',
             description: 'Format and validate JSON to locate syntax problems quickly.',
+          },
+          {
+            label: "Regex Tester",
+            href: "/regex",
+            description: "When hand-fixing broken JSON, use a regex to locate control characters, BOMs, or fullwidth punctuation.",
           },
         ],
         blocks: [
@@ -376,13 +462,35 @@ export const seoBlogArticles = [
             text: 'Unexpected token is not one single bug. It is a parser signal. Start with the reported character, then verify the source data and syntax rules.',
           },
         ],
+        faq: [
+          {
+            question: "Why does JSON.parse work locally but throw Unexpected token in production?",
+            answer: "The string you receive in production is often not the string you tested. A CDN or reverse proxy may inject an HTML error page, so the parser hits < and fails. UTF-8 with a BOM is another classic: your editor hides the invisible 0xFEFF while the runtime does not. Server code may also stringify undefined into the output. Before changing parser logic, log typeof and length, check charCodeAt(0), and confirm the response is really 200 with Content-Type application/json. Fix the pipeline, not the parser.",
+          },
+          {
+            question: "Can JSON use single quotes? Why does pasting fail immediately?",
+            answer: "Strict JSON only allows double quotes, so single quotes trigger Unexpected token right away. This usually happens when you copy from a Python dict, a JavaScript object literal, a log line, or a YAML snippet. For small fixes replace ' with \" manually. For larger blobs, parse with a lenient library such as JSON5 and re-serialize as strict JSON. Long term, agree on one contract: APIs and config files stay strict JSON, while examples use each language's native syntax. Mixing the two is what causes recurring incidents.",
+          },
+          {
+            question: "The error says position 42. How do I map that to a line and column?",
+            answer: "Position 42 is the 42nd character from the start of the string, not the 42nd line. Paste the JSON into an editor that shows the caret offset, such as VS Code, then jump to that offset. If the JSON is minified into a single line, format it first. Also remember that the error location usually points to the character just after the real mistake, so when position 42 says Unexpected token }, the real culprit is often a stray comma or missing quote one or two characters earlier.",
+          },
+          {
+            question: "Can auto-repair fix every JSON error for me?",
+            answer: "Auto-repair reliably fixes shallow issues like trailing commas, comments, single quotes and unquoted keys. It struggles with semantic problems, for example a missing closing quote that swallows the next few fields into one giant string, or a bracket that closes the wrong container. In those cases the tool has to guess and may produce something that parses but is not what you meant. Run repair, format the result, eyeball the structure, and validate business fields with a JSON Schema before trusting the output.",
+          },
+          {
+            question: "What is the difference between Unexpected end of JSON input and Unexpected token?",
+            answer: "Unexpected token means the parser saw a character where it did not belong, such as a stray comma or an unterminated string. Unexpected end of JSON input means the parser ran out of characters before the structure was complete, so the payload was truncated. The first is usually a hand-editing or concatenation bug near the reported offset. The second is typically a network abort, a streaming response that was cut off, or a file read that stopped early. Check the offending character for the first, and the total length and final character for the second.",
+          },
+        ],
       },
     },
   },
   {
     slug: 'what-is-json-schema-api-validation',
     publishedAt: '2026-07-02',
-    updatedAt: '2026-07-02',
+    updatedAt: '2026-07-03',
     translations: {
       zh: {
         title: 'JSON Schema 是什么？如何用它校验接口数据',
@@ -401,6 +509,11 @@ export const seoBlogArticles = [
             label: 'JSON Schema 校验',
             href: '/json-schema-validate',
             description: '用 Schema 校验 JSON 数据，查看错误路径和原因。',
+          },
+          {
+            label: "正则表达式测试",
+            href: "/regex",
+            description: "写 `pattern` 关键字时，先用正则测试器确认表达式匹配范围。",
           },
         ],
         blocks: [
@@ -455,6 +568,28 @@ export const seoBlogArticles = [
             text: 'JSON Schema 的价值不只是说明数据长什么样，更重要的是把结构约束变成可执行校验，减少接口和数据流里的隐性错误。',
           },
         ],
+        faq: [
+          {
+            question: "JSON Schema 和 TypeScript interface 有什么本质区别？",
+            answer: "TypeScript interface 只在编译期存在，运行时无法阻止一个不合法的 JSON 进入系统；JSON Schema 是运行时契约，可以在接收接口、写入数据库前真正执行校验。前者服务于开发体验，后者服务于系统健壮性。实际项目里两者结合使用效果最好：用 JSON Schema 作为唯一事实源，通过 json-schema-to-typescript 生成 interface，同时用 ajv 在运行时校验。这样类型提示、运行时保护、文档、mock 数据都能从同一份定义派生，避免多头维护。",
+          },
+          {
+            question: "什么时候不适合用 JSON Schema，而是应该写自定义校验函数？",
+            answer: "JSON Schema 擅长结构性规则：字段是否存在、类型是否正确、字符串长度、数字范围、枚举、正则等。但它不擅长跨字段的业务规则，比如结束日期必须晚于开始日期、优惠券金额不能超过订单金额、下单人和收货人身份证一致等。这些应该在业务层写显式函数，或者用支持自定义关键字的库来扩展 Schema。经验做法是：Schema 负责挡住格式错误，业务函数负责挡住业务错误，两层过滤后再进入核心逻辑。",
+          },
+          {
+            question: "JSON Schema 版本这么多（draft-04、07、2019-09、2020-12），选哪个？",
+            answer: "如果没有历史包袱，直接选 draft 2020-12，它是目前最新的标准，也是 OpenAPI 3.1 采用的版本。draft-07 应用最广，几乎所有语言库都支持，是最保险的默认值。draft-04 只在维护老系统时才考虑。切换版本时注意 items 和 additionalItems 的语义有过调整，$ref 和 $id 的行为也变化过。建议在项目里显式声明 $schema，让工具链和校验器都能知道用哪套规则解析。",
+          },
+          {
+            question: "怎么把 JSON Schema 用在前端表单校验上？",
+            answer: "常见做法是使用 react-jsonschema-form、Formily、AJV 加自研渲染层。Schema 描述字段类型和约束，UI Schema 描述控件类型和布局，两者分离让业务规则可以复用到前后端。前端提交前跑一次 ajv 校验，把 errorMessage 关键字里的中文提示直接呈现给用户；后端收到时再校验一次，防止绕过前端。这样前后端共享同一份规则，避免出现前端过但后端拒的情况，也让新增字段只需改 Schema。",
+          },
+          {
+            question: "JSON Schema 校验失败时错误信息太长，怎么给用户友好提示？",
+            answer: "ajv 默认返回的错误路径像 /profile/0/email，普通用户看不懂。改进方法有几种：在 Schema 里加 errorMessage 关键字（需要 ajv-errors 插件）覆盖默认文案；写一个 formatError 函数把路径映射成业务字段名，比如把 /orderItems/0/qty 转成第 1 件商品的数量；聚合同一字段的多个错误，只展示最关键的一条；对国际化用户使用不同语言的 messages 文件。原始错误可以打到日志用于排查，展示给用户的版本必须简短明确。",
+          },
+        ],
       },
       en: {
         title: 'What Is JSON Schema and How Do You Validate API Data?',
@@ -473,6 +608,11 @@ export const seoBlogArticles = [
             label: 'JSON Schema Validator',
             href: '/json-schema-validate',
             description: 'Validate JSON data against a Schema and inspect error paths.',
+          },
+          {
+            label: "Regex Tester",
+            href: "/regex",
+            description: "Validate your `pattern` regex against sample values before shipping the schema.",
           },
         ],
         blocks: [
@@ -527,13 +667,35 @@ export const seoBlogArticles = [
             text: 'JSON Schema turns a data shape into executable validation rules. That makes API and data pipeline errors easier to catch and explain.',
           },
         ],
+        faq: [
+          {
+            question: "How is JSON Schema fundamentally different from a TypeScript interface?",
+            answer: "A TypeScript interface exists only at compile time. At runtime nothing stops an invalid payload from entering your system. JSON Schema is a runtime contract, so you can validate every request before it reaches your database. Interfaces improve developer experience, schemas improve resilience. The two work best together: treat the schema as the source of truth, generate a TypeScript interface with json-schema-to-typescript, and validate at runtime with ajv. Docs, mocks, code generation and validation all derive from one file, so you never keep two definitions in sync by hand.",
+          },
+          {
+            question: "When is JSON Schema the wrong tool, and you should write a custom validator instead?",
+            answer: "JSON Schema is great at structural rules: field presence, primitive types, string length, numeric range, enum, pattern. It struggles with cross-field business rules such as end date must be after start date, coupon amount must not exceed order total, or the payer and recipient must share an ID. Encode those as explicit business functions, or extend the schema with custom keywords. A clean layering is: schema blocks malformed data, business functions block invalid business states, and only after both checks does the request reach core logic.",
+          },
+          {
+            question: "There are many JSON Schema drafts (04, 07, 2019-09, 2020-12). Which one should I pick?",
+            answer: "For a green-field project pick draft 2020-12, the current standard and the one OpenAPI 3.1 uses. draft-07 is still the safest default because virtually every language has a mature library for it. draft-04 is only worth using when maintaining an old system. When you upgrade, watch out for changes to items and additionalItems, and to how $ref and $id resolve. Always declare $schema at the top of your document so validators and tools know exactly which ruleset applies.",
+          },
+          {
+            question: "How do I use JSON Schema for frontend form validation?",
+            answer: "Popular options are react-jsonschema-form, Formily, or a custom renderer on top of ajv. The schema describes constraints, a UI schema describes widgets and layout, and separating the two lets business rules travel from frontend to backend unchanged. Validate on submit with ajv, surface friendly messages via the errorMessage keyword, then validate again on the server so no one can bypass the UI. Sharing one schema removes the common failure mode where the client accepts input the server later rejects.",
+          },
+          {
+            question: "Ajv error messages are too verbose. How do I show something friendly to users?",
+            answer: "By default ajv returns paths like /profile/0/email that end users cannot parse. Fix it in layers: add errorMessage in the schema (with ajv-errors) to override default text; write a formatError helper that maps JSON pointer paths to human field labels, so /orderItems/0/qty becomes quantity of item 1; collapse multiple errors on the same field into the single most important one; and load locale-specific message bundles for internationalized apps. Keep the raw payload in logs for debugging, but only show a short, actionable message in the UI.",
+          },
+        ],
       },
     },
   },
   {
     slug: 'what-is-jwt-header-payload',
     publishedAt: '2026-07-02',
-    updatedAt: '2026-07-02',
+    updatedAt: '2026-07-03',
     translations: {
       zh: {
         title: 'JWT 是什么？如何安全查看 Header 和 Payload',
@@ -552,6 +714,16 @@ export const seoBlogArticles = [
             label: '信息编码转换',
             href: '/info-codec',
             description: '处理 Base64、URL、Unicode、哈希等常见编码和解码。',
+          },
+          {
+            label: "时间戳转换",
+            href: "/timestamp",
+            description: "把 JWT 里的 `iat` / `exp` 数字翻译成人类可读时间，快速判断是否过期。",
+          },
+          {
+            label: "UUID 生成",
+            href: "/uuid",
+            description: "为 JWT 的 `jti` claim 生成唯一 ID，避免 token 被重放。",
           },
         ],
         blocks: [
@@ -610,6 +782,28 @@ export const seoBlogArticles = [
             text: 'JWT 的 Header 和 Payload 便于调试，但不应被当作保密空间。安全使用 JWT 的关键是控制签名密钥、过期时间和敏感字段。',
           },
         ],
+        faq: [
+          {
+            question: "JWT 里的 payload 是加密的吗？可以放密码吗？",
+            answer: "不是加密，只是 Base64Url 编码。任何人拿到 JWT 都可以在浏览器控制台里 atob 出来看到 payload 全部内容。因此绝对不能放密码、身份证号、支付密码、完整银行卡号这类敏感数据。适合放在 payload 的是用户 ID、角色、租户 ID、过期时间等标识信息。如果确实需要传输敏感数据，可以使用 JWE（JSON Web Encryption），它对 payload 做真正的加密；或者把敏感数据留在服务端，JWT 只承担身份识别的职责。",
+          },
+          {
+            question: "JWT 过期了怎么办？前端要不要自己续签？",
+            answer: "常见方案是 access token + refresh token 双令牌：access token 短期（15 分钟到 2 小时）用来访问接口，refresh token 长期（几天到几周）只用来换新的 access token。前端在收到 401 且 refresh token 未过期时，静默调用刷新接口，拿到新 token 后重放原始请求。切忌只用一个长期 JWT，否则一旦泄露就长期有效。也不要在前端定时轮询刷新，容易造成时间窗错乱，出错时用户会突然掉登录。",
+          },
+          {
+            question: "JWT 和 session cookie 相比，什么时候该选哪个？",
+            answer: "Session cookie 依赖服务端存储，登出时清一下 session 即可，安全模型成熟；缺点是难以水平扩展和跨域使用。JWT 是无状态的，天然支持微服务和多端共享，但撤销困难，一般要配合黑名单或短过期时间。经验取舍：单体后端、同域网页首选 session cookie；多个服务、多个客户端、需要跨域或移动端共用后端用 JWT。也可以混合使用，用 JWT 做外部访问、内部服务之间用短期签名令牌。",
+          },
+          {
+            question: "为什么有人说 JWT 不安全，是危言耸听吗？",
+            answer: "并非危言耸听，但也不能一概而论。真正的问题多半来自误用：把敏感数据塞进 payload、用了 alg: none、密钥太短或写在前端、把 JWT 放在 localStorage 被 XSS 偷走、忘了做 exp 校验等。规范使用下 JWT 是安全的：选择强算法（HS256 或 RS256）、密钥足够长、只放非敏感标识、走 HttpOnly Cookie 或短时 access token、服务端记得校验签名和过期。评估安全性时应该看落地方式，而不是抽象地判断技术本身。",
+          },
+          {
+            question: "解码 JWT 只需要 Base64 就够了，为什么还需要专门的工具？",
+            answer: "解出 payload 只是第一步，专业工具通常还会：把时间戳字段（iat、exp、nbf）转成本地时间；标出 payload 是否过期、还有多久过期；识别签名算法；校验签名是否正确（需要提供密钥或公钥）；对常见 claim 名做解释。手工 Base64 解码只能看内容，不能告诉你这个 token 是否还有效、签名是否被篡改。日常开发排查登录问题、复现线上 bug 时，专业工具能显著缩短定位时间。",
+          },
+        ],
       },
       en: {
         title: 'What Is a JWT and How Do You Safely Inspect Header and Payload?',
@@ -628,6 +822,16 @@ export const seoBlogArticles = [
             label: 'Info Encoder / Decoder',
             href: '/info-codec',
             description: 'Work with Base64, URL encoding, Unicode, hashes, and other text encodings.',
+          },
+          {
+            label: "Timestamp Converter",
+            href: "/timestamp",
+            description: "Turn JWT `iat` / `exp` numbers into readable dates to check if a token expired.",
+          },
+          {
+            label: "UUID Generator",
+            href: "/uuid",
+            description: "Generate a unique `jti` claim to protect JWTs from replay attacks.",
           },
         ],
         blocks: [
@@ -686,13 +890,35 @@ export const seoBlogArticles = [
             text: 'JWT Header and Payload are convenient for debugging, but they are not private. Safe JWT usage depends on signature keys, expiration, and careful claim design.',
           },
         ],
+        faq: [
+          {
+            question: "Is the JWT payload encrypted? Can I store a password in it?",
+            answer: "The payload is Base64Url encoded, not encrypted. Anyone with the token can paste it into a browser console, decode it and read everything. Never put passwords, national ID numbers, payment PINs or full card numbers there. Payloads should hold identifiers such as user ID, role, tenant ID and expiry timestamps. If you truly need to transport sensitive data, use JWE (JSON Web Encryption) which actually encrypts the payload, or keep the sensitive fields on the server and let the JWT carry only an opaque identity reference.",
+          },
+          {
+            question: "What should the frontend do when a JWT expires? Should it refresh on its own?",
+            answer: "Use an access token plus refresh token pair. The access token is short-lived (15 minutes to a couple of hours) and calls your APIs. The refresh token is longer-lived and only used to obtain new access tokens. When a request returns 401 and the refresh token is still valid, silently call the refresh endpoint and replay the original request. Do not rely on a single long-lived token, because a leak grants indefinite access. Avoid frontend polling to refresh eagerly, as clock drift can silently log users out.",
+          },
+          {
+            question: "When should I choose JWT over a session cookie?",
+            answer: "Session cookies rely on server storage. Logout is simple, security is well understood, but horizontal scaling and cross-origin usage are painful. JWTs are stateless, natural for microservices and multiple clients, but revocation is hard and usually requires a short expiry or a blocklist. Rule of thumb: for a single backend serving one web app on one origin, prefer session cookies. For multiple services, mobile plus web, or cross-origin flows, prefer JWT. A hybrid also works, where JWTs face external clients and short-lived signed tokens run inside the mesh.",
+          },
+          {
+            question: "People say JWT is insecure. Are they exaggerating?",
+            answer: "Not exaggeration, but not the whole story either. The real problems are almost always misuse: putting sensitive data in the payload, accepting alg: none, using a short or leaked secret, embedding the secret in the frontend, storing the token in localStorage where XSS can steal it, or forgetting to check exp. Used properly, JWT is safe: choose a strong algorithm (HS256 or RS256), keep the key long, carry only non-sensitive identifiers, ship it via HttpOnly cookie or a short-lived access token, and always verify the signature and expiry.",
+          },
+          {
+            question: "If Base64 decoding is enough, why do I need a dedicated JWT tool?",
+            answer: "Decoding the payload is only step one. A good tool converts iat, exp and nbf into local time; shows how long until the token expires; highlights the signing algorithm; verifies the signature when you paste a secret or public key; and labels common claims. Raw Base64 tells you what is inside but not whether the token is still valid or has been tampered with. When investigating login bugs or reproducing production issues, a dedicated inspector saves significant time compared to a generic decoder.",
+          },
+        ],
       },
     },
   },
   {
     slug: 'how-to-generate-qr-code-url-wifi-contact',
     publishedAt: '2026-07-02',
-    updatedAt: '2026-07-02',
+    updatedAt: '2026-07-03',
     translations: {
       zh: {
         title: '如何生成二维码？网址、Wi-Fi、联系方式二维码格式怎么写',
@@ -711,6 +937,11 @@ export const seoBlogArticles = [
             label: '二维码解码',
             href: '/qr-code/decode',
             description: '上传二维码图片，在浏览器本地识别二维码内容。',
+          },
+          {
+            label: "URL / Query String 构造器",
+            href: "/url-builder",
+            description: "生成二维码前先把 UTM 参数和 tracker 加到 URL 上，扫码即可带上跟踪信息。",
           },
         ],
         blocks: [
@@ -760,6 +991,28 @@ export const seoBlogArticles = [
             text: '二维码只是把文本编码成图形。只要内容格式正确、尺寸足够、对比清晰，大多数手机都可以稳定识别。',
           },
         ],
+        faq: [
+          {
+            question: "生成的 WiFi 二维码手机扫不出怎么办？",
+            answer: "先检查协议字段是否完全匹配：T 大写、加密类型必须是 WPA/WEP/nopass 之一、SSID 和密码里的分号或反斜杠要转义；再确认结尾有两个分号。iOS 原生相机只支持标准 WiFi 二维码语法，而某些扫码 App 只识别 URL，所以最好在多个手机上测试。SSID 里带中文时部分老手机识别失败，可以改成隐藏 SSID+手动连接或者提供辅助 URL。密码含 & : ; , 等符号务必转义，否则解析器会截断。",
+          },
+          {
+            question: "vCard 二维码扫出来通讯录里字段错乱，是什么原因？",
+            answer: "vCard 对换行和字段顺序敏感。换行必须是 CRLF（\\r\\n），有些编辑器保存时会变成 LF；BEGIN:VCARD 和 VERSION 必须是前两行；FN 是必填字段。字段错乱多半是编辑时把 N: 和 FN: 弄混了，或者中文名字里出现英文分号。建议先在纯文本编辑器里检查一遍，或者直接用工具的表单模式填字段，让它生成规范的 vCard 文本，再打包成二维码。iOS 与 Android 对多值字段（TEL、EMAIL）的展示方式略有差异，跨平台测试可以更早发现问题。",
+          },
+          {
+            question: "二维码里放长 URL 会有什么问题，需要短链吗？",
+            answer: "URL 越长，二维码就越密，图形容错率下降，打印时更容易识别失败，尤其在小尺寸或反光背景下。带 UTM 参数的营销链接常常几百字符，建议先用短链服务（bit.ly、自建 302 服务）压缩，再生成二维码。短链的另一个好处是可换目标，即使二维码印在物料上，也可以随时改跳转，不需要重印。反之，如果二维码要长期保存、离线可读，建议直接放最终 URL 并选择较高纠错级别。",
+          },
+          {
+            question: "二维码上加了 Logo，为什么有的能扫有的不能？",
+            answer: "Logo 会占用二维码的一部分数据模块。二维码本身有纠错能力，级别越高（L/M/Q/H）能容忍的遮挡越多。加 Logo 时通常需要将纠错级别提升到 Q 或 H，Logo 面积控制在总面积的 20% 以内，颜色反差要足够，避免 Logo 挡住三个定位点（角上的方块）。此外要注意留白（quiet zone）不能被裁掉。同一张图有的手机能扫、有的扫不出，多半是弱光或纠错级别不够，先在打印前用低端手机测试一下。",
+          },
+          {
+            question: "二维码印刷时应该用什么颜色和最小尺寸？",
+            answer: "颜色遵循两条原则：前景足够深、背景足够浅、两者反差大。经典的黑白最保险，深蓝或深紫也可以，但反色（浅色前景+深色背景）识别率低，尽量避免。尺寸方面，扫码距离与二维码边长的比例大约是 10:1，桌面物料 2.5cm 即可，海报 5cm 以上，户外广告牌需要 30cm 以上。周围要留够静默区（约 4 个模块宽度），紧贴其他图案会导致扫描仪找不到边界。",
+          },
+        ],
       },
       en: {
         title: 'How to Generate QR Codes for URLs, Wi-Fi, and Contact Cards',
@@ -778,6 +1031,11 @@ export const seoBlogArticles = [
             label: 'QR Code Decoder',
             href: '/qr-code/decode',
             description: 'Upload a QR image and decode its content locally in the browser.',
+          },
+          {
+            label: "URL / Query String Builder",
+            href: "/url-builder",
+            description: "Attach UTM parameters or trackers to the URL before generating the QR code.",
           },
         ],
         blocks: [
@@ -827,13 +1085,35 @@ export const seoBlogArticles = [
             text: 'A QR code is text encoded as an image. Correct payload format, enough size, clear contrast, and a quiet zone make scanning reliable.',
           },
         ],
+        faq: [
+          {
+            question: "My phone cannot scan the WiFi QR code I generated. What went wrong?",
+            answer: "Check the syntax closely: T must be uppercase, the encryption type must be WPA, WEP or nopass, and any semicolons or backslashes inside the SSID or password must be escaped. The string must end with two semicolons. Native iOS camera only reads the standard WiFi syntax, while some third-party scanners only recognise URLs, so test on multiple devices. SSIDs with Chinese or emoji characters fail on some older phones. If the password contains & : ; , escape them, otherwise the parser truncates the value.",
+          },
+          {
+            question: "Why do vCard fields land in the wrong place after scanning?",
+            answer: "vCard is picky about line endings and field order. Lines must end with CRLF, but many editors silently save as LF. BEGIN:VCARD and VERSION must be the first two lines, and FN is required. Scrambled fields usually come from confusing N: with FN:, or from an unescaped semicolon in a Chinese name. Use a plain text editor to inspect the output, or better, use a form-based tool that writes the vCard for you. Multi-value fields such as TEL and EMAIL render slightly differently on iOS and Android, so test on both.",
+          },
+          {
+            question: "Are there downsides to encoding a long URL directly, or should I shorten it first?",
+            answer: "Longer URLs mean denser QR codes with smaller modules, which hurts recognition on small prints, glossy surfaces or dim light. Marketing links with UTM parameters can easily hit several hundred characters. Shorten them through bit.ly or an in-house 302 service before encoding. Short links also let you change the destination without reprinting. However, if the QR must work offline forever, keep the final URL inside and raise the error correction level, so it survives even after the shortener service is retired.",
+          },
+          {
+            question: "Why does a QR code with a logo scan on some phones but not others?",
+            answer: "The logo covers part of the encoding modules. QR codes have four error correction levels (L, M, Q, H), and higher levels tolerate more occlusion. When adding a logo, raise the level to Q or H, keep the logo below 20 percent of the total area, ensure high contrast, and never place it over the three finder squares in the corners. Also preserve the quiet zone around the code. Mixed results across phones usually mean the level is too low or the ambient light is weak.",
+          },
+          {
+            question: "What colours and minimum size should I use when printing a QR code?",
+            answer: "Two rules for colour: foreground dark, background light, high contrast between them. Classic black on white is safest; dark blue or dark purple also work. Inverted schemes with a light foreground on a dark background scan poorly and should be avoided. For size, plan for a 10:1 ratio of scanning distance to code width. Table tents can be 2.5 cm, posters need 5 cm or more, and outdoor billboards need 30 cm and up. Always keep a quiet zone about four modules wide around the code.",
+          },
+        ],
       },
     },
   },
   {
     slug: 'why-qr-code-cannot-be-decoded',
     publishedAt: '2026-07-02',
-    updatedAt: '2026-07-02',
+    updatedAt: '2026-07-03',
     translations: {
       zh: {
         title: '二维码识别不出来是什么原因？如何提高识别率',
@@ -857,6 +1137,11 @@ export const seoBlogArticles = [
             label: '图片裁剪',
             href: '/image/crop',
             description: '裁掉无关区域，保留完整二维码和白边。',
+          },
+          {
+            label: "颜色转换器",
+            href: "/color-converter",
+            description: "为二维码前景 / 背景检查对比度，避免相近颜色导致识别失败。",
           },
         ],
         blocks: [
@@ -907,6 +1192,28 @@ export const seoBlogArticles = [
             text: '二维码要能识别，关键是清晰边界、足够尺寸、完整白边和高对比度。修复时先保留结构，再考虑美化。',
           },
         ],
+        faq: [
+          {
+            question: "二维码看着清晰，但扫描器就是识别不出来，可能是什么原因？",
+            answer: "常见有几种：一是被压缩或截图后失去边缘锐利度，模块之间的黑白边界模糊；二是缺少 quiet zone，紧挨着图片其他元素；三是分辨率过低，每个模块占不到 3 像素；四是拍照时相机没对焦或有反光；五是纠错级别设定过低，一点点污渍就失效。可以先用同一图片喂给两个不同引擎（比如 ZXing 和 zbar）交叉验证，如果都失败，就说明是图像本身的问题而不是扫描器兼容性。",
+          },
+          {
+            question: "拍照识别失败，直接读原始文件却能识别，为什么？",
+            answer: "原始文件保留了完整的分辨率和无损像素；拍照会引入几种损失：镜头畸变、白平衡偏色、JPEG 压缩、屏幕摩尔纹、手抖导致的模糊。当二维码印在屏幕上再拍时，屏幕像素和相机像素的干涉还会产生波纹，让识别引擎误判模块。解决办法：用截图代替拍照、把二维码放大再拍、开启相机的宏模式或对焦锁定、避免反光的塑料膜、拍摄时手机与二维码保持平行。",
+          },
+          {
+            question: "同一张二维码，iPhone 能扫、Android 扫不出，正常吗？",
+            answer: "常见且可以修复。iOS 从系统层集成了苹果自研的识别算法，容错高；Android 各厂商用不同引擎，从相机到微信、支付宝，识别能力差异很大。若目标用户使用 Android 的比例高，应把二维码做得更保守：更高纠错级别、更大尺寸、更清晰的对比度、避免复杂 Logo。发布前用三到四台低端安卓机、两三种扫码 App 交叉测试，能覆盖绝大多数兼容性问题。",
+          },
+          {
+            question: "二维码被水印、透明遮罩盖住还能救回来吗？",
+            answer: "取决于遮挡范围。二维码本身有纠错能力，最高级别 H 可以恢复约 30% 的数据丢失，但如果遮罩正好挡住了三个定位点、时序图案或对齐图案，识别就会彻底失败。可以尝试用图像处理提高对比度、拉伸校正透视、把水印区域用邻域填补；如果原图仍在，重新生成一份是最快的办法。日常制作素材时，尽量把水印放在二维码之外，或者预留品牌区域，不要把 Logo 放在角上。",
+          },
+          {
+            question: "为什么同一段 URL 生成的二维码，每次图案都不太一样？",
+            answer: "在数据一致的前提下，QR 编码器可以选择不同的 mask pattern（掩码图案），目的是让 0 和 1 的分布更均衡，识别更稳定。不同库、不同版本、甚至同一库不同参数都会挑不同的掩码，因此外观略有差异。这属于正常现象，只要能被正确解码即可。想固定图案时，可以在生成参数里指定 mask 或 version，也可以让整个流水线使用同一个库和版本，保证素材可复现。",
+          },
+        ],
       },
       en: {
         title: 'Why Can a QR Code Fail to Decode and How Can You Improve Scan Rate?',
@@ -930,6 +1237,11 @@ export const seoBlogArticles = [
             label: 'Image Crop',
             href: '/image/crop',
             description: 'Crop irrelevant areas while preserving the full QR code and quiet zone.',
+          },
+          {
+            label: "Color Converter",
+            href: "/color-converter",
+            description: "Check foreground/background contrast so low-contrast colors do not break scanning.",
           },
         ],
         blocks: [
@@ -980,13 +1292,35 @@ export const seoBlogArticles = [
             text: 'Reliable QR scanning depends on sharp edges, enough size, a complete quiet zone, and strong contrast. Preserve structure first; style second.',
           },
         ],
+        faq: [
+          {
+            question: "The QR code looks sharp, but scanners still fail. What could be wrong?",
+            answer: "A few suspects: screenshots or aggressive compression that soften the black-white edges; a missing quiet zone that touches other graphics; a resolution so low that each module is under three pixels; a photo with poor focus or heavy glare; or an error correction level so low that a small smudge destroys the payload. Feed the image into two different decoders such as ZXing and zbar. If both fail, the problem is in the image itself, not scanner compatibility, and you should regenerate the code.",
+          },
+          {
+            question: "Why does the raw file decode fine while a photo of the same code fails?",
+            answer: "The raw file keeps original pixels and lossless edges. A photo introduces lens distortion, white balance drift, JPEG compression, motion blur and, when photographing a screen, moiré interference between the display grid and the camera sensor. The decoder then misreads modules. Prefer screenshots over photos, enlarge the code before shooting, use macro mode or lock focus, remove glossy plastic covers and hold the phone parallel to the code. These simple habits recover most failed scans.",
+          },
+          {
+            question: "The same QR code scans on iPhone but not on Android. Is that expected?",
+            answer: "Common and fixable. iOS uses Apple's built-in engine with high tolerance, while Android vendors ship different engines, and apps like WeChat, Alipay or Google Lens each add their own preprocessing. If your audience is Android-heavy, harden the code: increase the error correction level, print larger, boost contrast and avoid heavy logos. Before release, test on three or four low-end Android phones with two or three scanner apps. That coverage catches the vast majority of compatibility issues.",
+          },
+          {
+            question: "Can a QR code covered by a watermark or overlay still be recovered?",
+            answer: "It depends on where the overlay lands. QR codes carry error correction, and the highest level H can restore about 30 percent of lost data. But if the overlay hides the three finder patterns, the timing pattern or the alignment pattern, recovery becomes impossible. Try boosting contrast, correcting perspective, or inpainting the watermarked area. If you still have the source data, regenerating is the fastest fix. When designing materials, keep watermarks away from the code and reserve a clean brand area beside it.",
+          },
+          {
+            question: "Why does the same URL produce slightly different QR images each time?",
+            answer: "Even with identical input, encoders may pick different mask patterns to balance the distribution of black and white modules for better readability. Different libraries, versions or parameters choose different masks, so the visual look varies while the payload is identical. This is normal. If you need a stable image, pin the mask and the version, and standardise the library across your pipeline, so print materials and asset stores always render the same fingerprint.",
+          },
+        ],
       },
     },
   },
   {
     slug: 'how-to-use-text-diff-tool',
     publishedAt: '2026-07-02',
-    updatedAt: '2026-07-02',
+    updatedAt: '2026-07-03',
     translations: {
       zh: {
         title: '文本对比工具怎么用？如何快速找出两段内容差异',
@@ -1005,6 +1339,11 @@ export const seoBlogArticles = [
             label: 'JSON 对比',
             href: '/json-diff',
             description: '如果内容是 JSON，可以按路径更精确地比较结构差异。',
+          },
+          {
+            label: "正则表达式测试",
+            href: "/regex",
+            description: "对比前先用正则把时间戳、随机 ID 等噪声抹掉，diff 结果会更清晰。",
           },
         ],
         blocks: [
@@ -1053,6 +1392,28 @@ export const seoBlogArticles = [
             text: '文本越长，肉眼越不可靠。把对比交给 Diff 工具，可以减少漏看、误判和重复检查。',
           },
         ],
+        faq: [
+          {
+            question: "文本 diff 工具能对比 Word 或 PDF 文档吗？",
+            answer: "大多数通用 diff 工具只处理纯文本，直接把 Word/PDF 粘进去会带着大量格式字符，导致 diff 结果里充满噪声。正确做法是先把两份文档另存为 txt 或用 pandoc、pdftotext 转成纯文本，再比对。如果只关心结构性变化，可以先转成 Markdown。想要保留格式的可视化比对，需要专门的 Word Compare 或 PDF diff 工具，这些工具会解析文档 XML 结构，展示批注、样式的变化，而不是逐字比对。",
+          },
+          {
+            question: "diff 出现大量 whitespace 差异，怎么忽略？",
+            answer: "常见有三类空白：行尾空格、多余空行、Tab 与空格混用。多数在线 diff 工具提供 ignore whitespace 选项，勾选后可以按逻辑差异对齐。命令行 git diff 使用 -w 或 --ignore-all-space，代码编辑器（VS Code、IntelliJ）也有对应开关。长期看，最好在项目里加 .editorconfig 与 lint 规则统一缩进和换行，同时开启保存时去除行尾空格，比每次比对手动忽略更彻底。",
+          },
+          {
+            question: "两份合同看起来内容一样，diff 却说完全不同，哪里出错了？",
+            answer: "先检查换行符：Windows 是 CRLF、Mac/Linux 是 LF，一份文件从 Windows 拷贝、另一份从邮件网页复制，会导致每一行都被视为不同。其次检查是否有 BOM 或不可见字符，比如全角空格、零宽空格。最后确认字符编码：一份 UTF-8 一份 GBK 也会让 diff 引擎按字节比较后全红。修复：先用记事本或工具转为 UTF-8 无 BOM、统一换行符，再做比对。",
+          },
+          {
+            question: "怎么只对比两段代码的逻辑变化，忽略变量名和注释？",
+            answer: "普通行级 diff 无法理解语义，需要工具级支持。可以先跑一次 Prettier 或语言格式化工具让代码风格一致，再 diff；或者使用 AST diff 工具（如 difftastic、semantic diff），它们在语法树层面比对，能识别 rename、参数顺序调整等重构。对注释可以先用正则批量去掉再比对。如果目标是评审 PR，直接看 GitHub 的 diff 并配合忽略空白选项，通常已经足够，不必额外工具。",
+          },
+          {
+            question: "diff 工具能标出移动过的段落，还是只能标增删？",
+            answer: "标准 unified diff 只有增删两种标记，如果一段代码从文件顶部移动到底部，会显示成上方大段删除、下方大段新增，容易误判为大改。要识别 move，需要更智能的算法，比如 patience diff、histogram diff，或 semantic diff 工具。GitHub 从 2022 年起对某些语言支持 move detection。日常代码评审如果发现 diff 里出现大段一红一绿又长得几乎一样，先切换算法看看，很可能只是搬家。",
+          },
+        ],
       },
       en: {
         title: 'How to Use a Text Diff Tool to Find Differences Quickly',
@@ -1071,6 +1432,11 @@ export const seoBlogArticles = [
             label: 'JSON Diff',
             href: '/json-diff',
             description: 'Compare JSON documents by path when the content is structured data.',
+          },
+          {
+            label: "Regex Tester",
+            href: "/regex",
+            description: "Strip timestamps or random IDs with a regex before diffing so the output stays clean.",
           },
         ],
         blocks: [
@@ -1119,13 +1485,35 @@ export const seoBlogArticles = [
             text: 'The longer the text, the less reliable manual checking becomes. Diff tools reduce missed changes and repeated review work.',
           },
         ],
+        faq: [
+          {
+            question: "Can a text diff tool compare Word or PDF documents?",
+            answer: "Most generic diff tools only work with plain text. Pasting Word or PDF content copies formatting characters that turn the diff into noise. First export both files to txt, or convert them with pandoc or pdftotext. If only structural changes matter, convert to Markdown first. For visual comparison that preserves formatting, use a dedicated Word Compare or PDF diff tool. Those parse the underlying XML, surface style and comment changes and align paragraphs, rather than diffing character by character.",
+          },
+          {
+            question: "How can I ignore whitespace noise in a diff?",
+            answer: "There are three common flavours: trailing spaces, extra blank lines and mixed tabs versus spaces. Most online diff tools have an ignore whitespace toggle. Command-line git diff supports -w and --ignore-all-space, and editors like VS Code and IntelliJ have equivalent options. As a longer-term fix, add an .editorconfig and lint rules to enforce indentation and line endings across the project, and enable trim-trailing-whitespace on save. That prevents the noise from being introduced in the first place.",
+          },
+          {
+            question: "Two contracts look identical, but the diff says they differ entirely. Why?",
+            answer: "Start with line endings: Windows uses CRLF, macOS and Linux use LF. If one copy came from Windows and another from a web mail preview, every line becomes different. Next, look for invisible characters such as BOM, full-width spaces or zero-width spaces. Finally, check encoding: comparing a UTF-8 file with a GBK file byte by byte turns the whole diff red. Fix by normalising both files to UTF-8 without BOM and unifying line endings before comparing again.",
+          },
+          {
+            question: "How do I diff only the logic of two code snippets while ignoring variable names and comments?",
+            answer: "A plain line-level diff has no semantic understanding, so use tool-level help. Run Prettier or the language formatter first to unify style, then diff. Alternatively use an AST diff such as difftastic or a semantic diff tool that compares syntax trees and recognises renames or reordered arguments. Strip comments with a regex if they are noisy. For pull request reviews, GitHub's diff with the ignore-whitespace toggle is usually enough and does not require extra tooling.",
+          },
+          {
+            question: "Can a diff tool detect moved paragraphs, or only additions and deletions?",
+            answer: "The standard unified diff only marks add and delete, so a block that moves from the top to the bottom of a file appears as a huge deletion above and a huge addition below, which looks like a rewrite. Detecting moves needs smarter algorithms such as patience diff, histogram diff, or semantic diff tools. GitHub has supported move detection for some languages since 2022. When you see a diff with symmetrical red and green blocks, try switching algorithms before assuming a rewrite.",
+          },
+        ],
       },
     },
   },
   {
     slug: 'word-count-character-byte-difference',
     publishedAt: '2026-07-02',
-    updatedAt: '2026-07-02',
+    updatedAt: '2026-07-03',
     translations: {
       zh: {
         title: '字数、词数、字符数、字节数有什么区别？',
@@ -1144,6 +1532,11 @@ export const seoBlogArticles = [
             label: '信息编码转换',
             href: '/info-codec',
             description: '查看编码、Base64、URL、Unicode 和字节相关转换。',
+          },
+          {
+            label: "UUID 生成",
+            href: "/uuid",
+            description: "需要固定长度随机字符串（22 位 NanoID / 32 位 UUID）时的直接来源。",
           },
         ],
         blocks: [
@@ -1197,6 +1590,28 @@ export const seoBlogArticles = [
             text: '写作场景多看字数和词数，产品输入限制多看字符数，技术接口和存储限制一定要看字节数。',
           },
         ],
+        faq: [
+          {
+            question: "为什么 Word 和在线计数工具算出来的字数不一样？",
+            answer: "Word 默认按 CJK 字符 + 英文单词的混合规则统计，一个汉字算 1 个字，一段英文按空格切成若干单词；而在线工具可能只统计 Unicode 字符总数，也可能把英文按字符算。差异还来自：是否计入空格、是否计入标点、连字符是否折算、Emoji 是否算 1 个字符（在 UTF-16 里 Emoji 可能占两个 code unit）。写作业或论文时，以老师指定的工具为准；写广告文案时按平台规则（微博、Twitter、公众号）预留缓冲。",
+          },
+          {
+            question: "一个中文字在 UTF-8 里到底占几个字节，怎么算表单最大长度？",
+            answer: "绝大多数常用汉字在 UTF-8 下占 3 字节，少量生僻字或 Emoji 占 4 字节；ASCII 字符仍是 1 字节。数据库里用 VARCHAR(N) 时，MySQL 5.7 之前 N 表示字节数，之后 N 表示字符数，行为不一致。表单校验建议同时告诉用户两个数：字符数和字节数，或者直接用 characters 校验；后端存储要按最大字节数留足空间，比如允许 100 字符时，UTF-8 空间至少留 400 字节。",
+          },
+          {
+            question: "Emoji 和组合字符（比如带肤色的表情）算几个字符？",
+            answer: "从视觉上是一个字符，从 Unicode 层可能是多个 code point，从 UTF-16 层可能是多个 code unit。比如 👨‍👩‍👧 由 5 个 code point 拼成，JavaScript 的 str.length 会返回 8，但用户会觉得是 1 个字符。要按用户直觉计数，应使用 Intl.Segmenter 或 grapheme-splitter 之类的库按 grapheme cluster 分割。表单限制也建议按 grapheme 计数，避免用户输入一个表情就报超长。",
+          },
+          {
+            question: "微博、Twitter、公众号的字数规则各不相同，怎么统一处理？",
+            answer: "各平台规则确实不同：Twitter 早期把中文算 2 字符、英文 1 字符，2018 年后统一按 weighted characters 计算；微博按字符数，一个汉字 1 字，英文 2 个算 1 字；公众号推送有字数上限但含空格标点。做多平台发布工具时，最稳妥的方式是为每个平台实现一个专属计数函数，并展示各平台的剩余额度，而不是用一个通用算法。发布前预留 5%-10% 缓冲，防止链接展开或 UTM 追加后超长。",
+          },
+          {
+            question: "统计字数时要不要计入空格和换行？行业惯例是什么？",
+            answer: "翻译行业按源语种字数计费，通常不计入空格但计入标点；出版社按印刷版面估算，会计入空格。学术论文一般按含空格字数统计以贴近排版长度。程序化场景里，短信按含空格算字节数（GSM-7 编码里空格也占位）；SEO 内容长度按含空格字符更准确。判断标准：如果目的是排版或播报，计入空格；如果目的是版权、翻译计费，按行业约定。工具最好同时展示两个数值，让用户自选。",
+          },
+        ],
       },
       en: {
         title: 'Word Count, Character Count, and Byte Count: What Is the Difference?',
@@ -1215,6 +1630,11 @@ export const seoBlogArticles = [
             label: 'Info Encoder / Decoder',
             href: '/info-codec',
             description: 'Work with encodings, Base64, URL encoding, Unicode, and byte-related conversions.',
+          },
+          {
+            label: "UUID Generator",
+            href: "/uuid",
+            description: "Grab fixed-length random strings (22-char NanoID or 32-char UUID) when you need them.",
           },
         ],
         blocks: [
@@ -1266,6 +1686,28 @@ export const seoBlogArticles = [
           {
             type: 'paragraph',
             text: 'Writing usually cares about words and characters. Product input limits care about characters. APIs and storage limits often care about bytes.',
+          },
+        ],
+        faq: [
+          {
+            question: "Why do Word and online counters produce different word counts?",
+            answer: "Word applies a mixed rule for CJK plus English: one Chinese character counts as one word, English is split by spaces. Online tools may just count total Unicode characters, or count English letter by letter. Other divergences: whether spaces and punctuation count, how hyphenated words are treated, and whether an emoji counts as one character even though it may span multiple UTF-16 code units. Use the tool your professor or platform mandates. For marketing copy, add a safety margin because Weibo, Twitter and WeChat all count differently.",
+          },
+          {
+            question: "How many bytes does one Chinese character take in UTF-8, and how do I size a form field?",
+            answer: "Common Chinese characters take three bytes in UTF-8, rare characters and emoji take four, ASCII stays at one. In MySQL, VARCHAR(N) meant N bytes before 5.7 and N characters after, which trips up many teams. In forms, show both character count and byte count, or validate by characters and let the backend reserve enough bytes. For a 100-character limit, reserve at least 400 bytes in UTF-8 so users never hit an obscure database error.",
+          },
+          {
+            question: "How do emoji and combining characters (like skin-tone emojis) affect the count?",
+            answer: "Visually one character. In Unicode it can be multiple code points, and in UTF-16 multiple code units. For example 👨‍👩‍👧 uses five code points, so JavaScript's str.length returns 8, but a user considers it one character. To count by user intuition, split with Intl.Segmenter or a grapheme-splitter library. Form limits should also count grapheme clusters, otherwise a single emoji can trigger a spurious over-limit error. Backend storage should still budget by bytes.",
+          },
+          {
+            question: "Twitter, Weibo and WeChat all count characters differently. How do I handle this in a cross-platform tool?",
+            answer: "The rules really do differ. Twitter used to count Chinese as 2 characters and English as 1, but since 2018 it uses weighted characters. Weibo counts one Chinese character as 1 and two English characters as 1. WeChat has length limits including spaces and punctuation. In a cross-poster, implement one counter per platform and surface remaining budget for each, rather than a single universal function. Reserve 5 to 10 percent of headroom before publishing, in case a link expander or appended UTM parameters push you over.",
+          },
+          {
+            question: "Should spaces and line breaks be counted? What is the industry convention?",
+            answer: "Translation agencies typically charge by source words excluding spaces but including punctuation. Publishers estimate by typeset length and include spaces. Academic writing usually includes spaces to reflect page length. SMS billing counts bytes including spaces because GSM-7 space still uses a slot. For SEO the with-spaces count is more meaningful. Rule of thumb: for typesetting or broadcast, include spaces; for translation billing, follow the industry contract. Ideally the tool shows both numbers so the user can pick the one that matches their pipeline.",
           },
         ],
       },

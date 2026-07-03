@@ -5,9 +5,10 @@ import { BlogArticleRenderer } from '@/components/BlogArticleRenderer';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { routing } from '@/i18n/routing';
-import { getBlogSlugs, getLocalizedBlogArticle } from '@/lib/blog/articles';
+import { getBlogSlugs, getLocalizedBlogArticle, getRelatedBlogArticles } from '@/lib/blog/articles';
 import {
   createBlogArticleBreadcrumbJsonLd,
+  createBlogArticleFaqJsonLd,
   createBlogArticleJsonLd,
   createBlogArticleMetadata,
   createBlogIndexMetadata,
@@ -52,6 +53,8 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
   if (!article) notFound();
 
   const m = getLocaleMessages(normalizedLocale);
+  const relatedArticles = getRelatedBlogArticles(slug, normalizedLocale);
+  const faqJsonLd = createBlogArticleFaqJsonLd(slug, normalizedLocale);
 
   return (
     <div className="flex min-h-[100dvh] flex-col bg-background text-foreground">
@@ -63,6 +66,12 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: toJsonLd(createBlogArticleBreadcrumbJsonLd(slug, normalizedLocale)) }}
       />
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: toJsonLd(faqJsonLd) }}
+        />
+      )}
       <div className="flex w-full flex-grow flex-col px-3 py-3 sm:px-6 sm:py-4 lg:px-10 xl:px-14 2xl:px-20">
         <Header compact />
 
@@ -102,6 +111,30 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
             <div className="py-8 sm:py-10">
               <BlogArticleRenderer blocks={article.blocks} locale={normalizedLocale} />
             </div>
+
+            {article.faq && article.faq.length > 0 && (
+              <section className="border-t border-border-subtle py-8" aria-labelledby="faq-title">
+                <h2 id="faq-title" className="text-2xl font-bold text-content sm:text-3xl">
+                  {m.blog.faq_title}
+                </h2>
+                <div className="mt-6 flex flex-col gap-4">
+                  {article.faq.map((item, index) => (
+                    <details
+                      key={index}
+                      className="group rounded-lg border border-border-subtle bg-surface p-4 open:border-border-strong"
+                    >
+                      <summary className="cursor-pointer list-none text-base font-semibold text-content marker:hidden">
+                        <span className="mr-2 text-content-faint">Q.</span>
+                        {item.question}
+                      </summary>
+                      <p className="mt-3 whitespace-pre-line text-sm leading-7 text-content-secondary">
+                        {item.answer}
+                      </p>
+                    </details>
+                  ))}
+                </div>
+              </section>
+            )}
           </article>
 
           <section className="border-t border-border-subtle py-8" aria-labelledby="related-tools-title">
@@ -121,6 +154,29 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
               ))}
             </div>
           </section>
+
+          {relatedArticles.length > 0 && (
+            <section className="border-t border-border-subtle py-8" aria-labelledby="related-articles-title">
+              <h2
+                id="related-articles-title"
+                className="text-xs font-semibold uppercase tracking-normal text-content-faint"
+              >
+                {m.blog.related_articles}
+              </h2>
+              <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {relatedArticles.map((related) => (
+                  <Link
+                    key={related.slug}
+                    href={getLocalizedPath(normalizedLocale, related.path)}
+                    className="rounded-lg border border-border-base bg-surface p-4 transition-colors hover:border-border-strong hover:bg-surface-hover"
+                  >
+                    <span className="block font-semibold text-content">{related.title}</span>
+                    <span className="mt-1 block text-sm leading-6 text-content-muted">{related.excerpt}</span>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
         </main>
       </div>
       <Footer />

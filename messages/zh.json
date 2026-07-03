@@ -1578,7 +1578,10 @@
     "read_more": "阅读文章",
     "published_label": "发布于",
     "updated_label": "更新于",
-    "related_tools": "相关工具"
+    "related_tools": "相关工具",
+    "related_articles": "相关文章",
+    "faq_title": "常见问题",
+    "toc_title": "目录"
   },
   "home": {
     "title": "JSON 工具包",

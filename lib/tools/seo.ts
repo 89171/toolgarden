@@ -529,6 +529,26 @@ export function createToolJsonLd(toolId: string, locale: string) {
   };
 }
 
+export function createBlogArticleFaqJsonLd(slug: string, locale: string) {
+  const normalizedLocale = normalizeLocale(locale);
+  const article = getLocalizedBlogArticle(slug, normalizedLocale);
+
+  if (!article?.faq?.length) return null;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: article.faq.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
+  };
+}
+
 export function createBlogArticleJsonLd(slug: string, locale: string) {
   const normalizedLocale = normalizeLocale(locale);
   const m = getLocaleMessages(normalizedLocale);

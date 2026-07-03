@@ -16,6 +16,11 @@ export type BlogBlock =
   | { type: 'table'; headers: string[]; rows: string[][] }
   | { type: 'callout'; title: string; text: string; href?: string; linkLabel?: string };
 
+export interface BlogFaqItem {
+  question: string;
+  answer: string;
+}
+
 export interface BlogArticleTranslation {
   title: string;
   excerpt: string;
@@ -29,6 +34,7 @@ export interface BlogArticleTranslation {
     description: string;
   }>;
   blocks: BlogBlock[];
+  faq?: BlogFaqItem[];
 }
 
 export interface BlogArticle {
@@ -150,7 +156,7 @@ export const blogArticles: BlogArticle[] = [
   {
     slug: 'why-image-compression-looks-blurry',
     publishedAt: '2026-07-01',
-    updatedAt: '2026-07-01',
+    updatedAt: '2026-07-03',
     translations: {
       zh: {
         title: '为什么图片压缩后会变模糊？如何尽量保持清晰度',
@@ -312,6 +318,28 @@ export const blogArticles: BlogArticle[] = [
             text: '真正好的压缩，不是把文件压到越小越好，而是在目标体积内，让肉眼看到的损失尽可能少。',
           },
         ],
+        faq: [
+          {
+            question: "为什么把图片压缩后再放大查看会特别糊？",
+            answer: "压缩本身通常只损失一部分细节，但如果你同时缩小了图片尺寸，或者以 100% 以上的比例查看，视觉上会明显放大压缩瑕疵。屏幕上每一个物理像素只能显示一个图像像素，缩小过的图被拉大时，浏览器只能通过插值算法猜测中间的像素，边缘、文字和渐变就会出现发虚、锯齿、色块。想避免这个问题，尽量按原始压缩尺寸使用图片，不要事后放大；如果需要更高清版本，回到原图重新压缩，而不是拿已经压缩过的小图放大。",
+          },
+          {
+            question: "同一张图片压缩两次，会比压缩一次糊多少？",
+            answer: "如果是 JPG、WebP 等有损格式，第二次压缩会在已经损失过的数据基础上再丢一部分细节。损失并不是线性叠加，但每一次导出都会额外引入压缩块、色带和边缘噪点，重复三四次之后画质通常明显下降。截图、文字类图片最容易发生二次压缩变糊。建议始终保留原图作为唯一压缩来源，需要调整参数时从原图重新导出，而不是把上次的输出继续压。",
+          },
+          {
+            question: "手机拍的照片压缩后色彩变淡是正常的吗？",
+            answer: "手机原图通常带有较宽的色域（如 Display P3）和 EXIF 中的色彩配置。很多在线压缩工具在导出时会丢弃或转换配置文件，把颜色映射回 sRGB，观感上就像饱和度降低了。如果颜色偏移让你困扰，检查压缩工具是否保留 ICC 配置，或在导出前手动把图片转为 sRGB，再进行压缩，可以避免不同软件之间的显示差异。这种色彩变化不代表画质下降，只是色彩空间的转换。",
+          },
+          {
+            question: "为什么截图压缩后文字比照片压缩得更明显糊？",
+            answer: "截图是硬边内容，每个字符的边缘都是纯色到纯色的高频跳变，正是 JPG、WebP 等有损压缩最不擅长处理的场景。为了减小体积，算法会在边缘周围引入平滑过渡，人眼一眼就能识别成“糊”。相比之下，照片有大量渐变纹理，压缩造成的少量损失不容易被察觉。截图建议保留 PNG，或者使用较高质量（90 以上）的 WebP，避免使用 JPG。",
+          },
+          {
+            question: "压缩后图片看着清楚，但打印出来变模糊，怎么回事？",
+            answer: "屏幕显示分辨率通常是 96–150 DPI，而打印一般需要 300 DPI。压缩本身不改变 DPI，但如果压缩时顺便缩小了像素尺寸，比如从 3000px 压到 1200px，打印时每英寸能分配的像素就变少，成品自然变糊。想同时兼顾体积和打印质量，可以保留一份未压缩的高分辨率原图用于打印，另导出一份压缩版用于网页。",
+          },
+        ],
       },
       en: {
         title: 'Why Do Images Look Blurry After Compression? How to Keep Them Sharp',
@@ -453,13 +481,35 @@ export const blogArticles: BlogArticle[] = [
             text: 'Good compression is not about making the file as tiny as possible. It is about reaching the size you need with the least visible quality loss.',
           },
         ],
+        faq: [
+          {
+            question: "Why does a compressed image look worse when I zoom in on it?",
+            answer: "Compression removes detail the algorithm judges to be perceptually redundant, but zooming exposes those approximations. When you view at 200% or more, every artifact — soft edges, color banding, block boundaries — is enlarged along with the image. If you also resized the image smaller during compression, upscaling later forces the browser to invent pixels through interpolation, which compounds the blur. Always use images at or near the pixel dimensions you compressed them at, and re-export from the original when a larger version is needed.",
+          },
+          {
+            question: "How much quality do I lose by compressing the same JPG twice?",
+            answer: "Each JPG save discards data based on the current pixels, so a second pass compresses an already-lossy result. Loss is not exactly cumulative, but each round introduces fresh block artifacts, edge halos, and color drift on top of the previous ones. After three or four saves, most people can spot the difference. To avoid stacking damage, keep the original file as the single source of truth and always re-export from it — never edit and re-save a previously compressed JPG when a different quality target is needed.",
+          },
+          {
+            question: "Why do the colors look washed out after I compress a phone photo?",
+            answer: "Modern phones capture in wide-gamut color spaces like Display P3 and embed an ICC profile. Many browser-based compressors strip or convert the profile during export, mapping everything back to sRGB. The pixels themselves are fine, but colors that lived outside sRGB get clipped, so the image looks flatter. If this bothers you, either compress in a tool that preserves ICC data, or convert the source to sRGB deliberately before compressing so you see the final look in every viewer.",
+          },
+          {
+            question: "Why does compressing a screenshot blur text more than compressing a photo does?",
+            answer: "Screenshots contain hard edges — sharp transitions from one flat color to another. Lossy codecs like JPG and WebP are tuned for natural images and smooth those transitions to save bytes, which reads to the eye as fuzzy text. Photos hide compression better because random noise and gradients absorb the loss. For screenshots, stick with PNG, or use WebP at quality 90 or higher. Do not use JPG for anything with UI, code, or small type.",
+          },
+          {
+            question: "The compressed image looks fine on screen but prints blurry. Why?",
+            answer: "Screens are around 96–150 DPI while print usually needs 300 DPI. Compression by itself does not change DPI, but many pipelines also downscale pixel dimensions during the compression step. A photo shrunk from 3000px to 1200px has plenty of pixels for a phone screen and far too few for an A4 print. Keep an uncompressed, full-resolution master for print output and produce a separate compressed copy for the web.",
+          },
+        ],
       },
     },
   },
   {
     slug: 'compress-image-to-target-size',
     publishedAt: '2026-07-01',
-    updatedAt: '2026-07-01',
+    updatedAt: '2026-07-03',
     translations: {
       zh: {
         title: '如何把图片压缩到指定大小？',
@@ -612,6 +662,28 @@ export const blogArticles: BlogArticle[] = [
           {
             type: 'paragraph',
             text: '最理想的结果，是刚好满足文件大小限制，同时让图片在实际使用场景中仍然清晰。',
+          },
+        ],
+        faq: [
+          {
+            question: "为什么我把质量拉到最低，图片还是压不到 200KB？",
+            answer: "质量参数只是影响文件大小的其中一个因素。当图片像素数量很大、内容复杂、或者格式选择不对时，即使质量拉到 30 也可能压不下去。例如一张 4000x3000 的照片，即使 JPG 质量 30，仍然可能超过 500KB。更有效的做法是先把尺寸缩到实际需要的宽度，再选一个更适合网页的格式（WebP 通常比 JPG 更小），最后再微调质量。多个维度一起降，比单一维度硬压效果更好。",
+          },
+          {
+            question: "压缩到 100KB 以下会不会让照片变得不能用？",
+            answer: "取决于图片尺寸和用途。一张 800px 宽的头像压到 100KB 通常还很清晰；但一张 3000px 宽的风景照被硬压到 100KB，会出现明显色块和边缘噪点。想在极小体积下保住画质，先把尺寸缩到目标使用场景需要的最小宽度（比如网页头像 300–500px），再用 WebP 或 AVIF，同时质量控制在 60–75。极端情况下也可以考虑分辨率更低但保留细节的方案，而不是保留大尺寸但降低质量。",
+          },
+          {
+            question: "透明背景的 PNG 压缩到指定大小，应该转成 JPG 吗？",
+            answer: "如果透明背景对最终展示是必需的（例如放在有色背景上的 logo），不要转 JPG，因为 JPG 会把透明区域填成白色。更合理的做法是转成 WebP 或 AVIF，二者都保留 Alpha 通道并支持较高压缩率。如果目标平台不支持这些格式，可以保留 PNG 并优化：先用工具减少调色板颜色数量（PNG-8），再检查是否可以缩小尺寸。硬转 JPG 通常意味着牺牲透明背景，只有在背景色确定不变时才可考虑。",
+          },
+          {
+            question: "为什么我把两张一样大的图压到同一质量，结果文件差好几倍？",
+            answer: "两张图的像素尺寸相同，不代表它们的“信息量”相同。压缩算法根据画面复杂度决定占用多少字节：纯色背景、平滑渐变、简单几何图形非常好压；而茂密树叶、细密纹理、噪点强的照片则很难压小。所以同样质量 80，一张风景照可能 400KB，另一张人像特写却只有 120KB。想强行让两张图都压到同一目标，需要允许工具对复杂图片降更多质量，或额外缩小它们的像素尺寸。",
+          },
+          {
+            question: "上传时限制是 2MB，我压到 1.9MB 就够了吗？",
+            answer: "技术上够了，但不是最佳做法。许多上传平台在服务器端还会再做一次处理，比如生成缩略图或重新压缩，如果你贴着上限提交，最终显示效果可能受二次压缩影响。建议留出 20% 缓冲，把目标定在 1.5–1.6MB 左右；同时优先降低尺寸，而不是硬压质量。这样即使平台再处理一次，成品也不会明显变糊。此外，接近上限的文件如果网络波动，还可能上传失败或超时。",
           },
         ],
       },
@@ -768,13 +840,35 @@ export const blogArticles: BlogArticle[] = [
             text: 'The best result is not the smallest image possible. It is an image that fits the limit and still looks clear in its real use case.',
           },
         ],
+        faq: [
+          {
+            question: "Why can't I hit 200KB even at the lowest quality setting?",
+            answer: "Quality is only one lever. When pixel count is high or the image is visually complex, low quality alone will not get you under a specific size. A 4000x3000 photo can still exceed 500KB at JPG quality 30. Do it in stages: first resize to the largest dimension you actually need, then pick a modern codec (WebP or AVIF usually beat JPG by 30–50%), and finally tune quality. Combining smaller dimensions, a better codec, and moderate quality reduction beats slamming quality to the floor.",
+          },
+          {
+            question: "Will compressing to under 100KB make my photo unusable?",
+            answer: "It depends on the pixel size and how the image will be viewed. An 800px avatar at 100KB usually still looks crisp. A 3000px landscape photo forced to 100KB will show obvious blocks and edge noise. To stay usable at very small sizes, resize first — a 500px web avatar needs far fewer bytes than a 3000px hero image — then use WebP or AVIF at quality 60–75. Preferring smaller dimensions over collapsed quality almost always looks better at the same file size.",
+          },
+          {
+            question: "Should I convert a transparent PNG to JPG to hit the size target?",
+            answer: "Not if transparency matters — JPG has no alpha channel, so the transparent area becomes solid white. Convert to WebP or AVIF instead: both preserve transparency and compress much better than PNG. If your destination only accepts PNG, try reducing the palette (PNG-8) or lowering pixel dimensions rather than dropping the format. Forcing PNG to JPG to shrink a file is only safe when the background color is known and permanent, like a logo that always sits on white.",
+          },
+          {
+            question: "Why do two same-size photos end up with very different file sizes at the same quality?",
+            answer: "Pixel dimensions and information content are not the same thing. Compressors spend bytes proportionally to visual complexity. Smooth gradients, flat backgrounds, and simple shapes compress tightly. Dense foliage, textured fabric, and noisy phone photos do not. At quality 80 a portrait against a plain wall might land at 120KB while a landscape at the same resolution and quality lands at 400KB. To force both to a shared target, you need to either lower quality further on the complex one or shrink its dimensions more aggressively.",
+          },
+          {
+            question: "If the upload limit is 2MB, is compressing to 1.9MB good enough?",
+            answer: "It works, but leave headroom. Many platforms re-compress or generate derivatives server-side, and a file that lands right at the limit is more likely to fail on flaky networks or get further degraded. Aim for around 1.5–1.6MB, and get most of the savings by resizing rather than crushing quality. That way, even if the server re-encodes your upload, the result still looks acceptable and the transfer is more reliable.",
+          },
+        ],
       },
     },
   },
   {
     slug: 'why-favicon-looks-blurry',
     publishedAt: '2026-07-01',
-    updatedAt: '2026-07-01',
+    updatedAt: '2026-07-03',
     translations: {
       zh: {
         title: '为什么 favicon 看起来模糊？如何制作清晰的网站图标',
@@ -793,6 +887,16 @@ export const blogArticles: BlogArticle[] = [
             label: '图片尺寸修改',
             href: '/image/resize',
             description: '在制作图标前，把大图缩放到更适合的尺寸。',
+          },
+          {
+            label: "颜色转换器",
+            href: "/color-converter",
+            description: "在 HEX/RGB/HSL 之间互转，为 favicon 选出更契合品牌的主色。",
+          },
+          {
+            label: "图片取色器",
+            href: "/image/color-picker",
+            description: "从 Logo 中吸取一个高对比度的主色，让缩到 16px 的 favicon 仍能辨认。",
           },
         ],
         blocks: [
@@ -889,6 +993,28 @@ export const blogArticles: BlogArticle[] = [
             text: '好的 favicon 不是只在 256px 预览里好看，而是在 16px 的浏览器标签页里也能被一眼认出来。',
           },
         ],
+        faq: [
+          {
+            question: "我的 favicon 在 Chrome 里清晰，但在 Safari 里糊，为什么？",
+            answer: "不同浏览器对 favicon 的加载策略不一样。Safari 和 macOS 更倾向于使用 apple-touch-icon 或高分辨率 PNG，而不是老式的 favicon.ico；如果你只提供了一个 16x16 或 32x32 的 ICO，Safari 会把它拉大显示，看起来就发糊。同时 Retina 屏的物理像素密度是普通屏的两倍，需要两倍分辨率的图标才够清晰。解决方法是在 HTML 中同时声明多个 rel=icon 和 apple-touch-icon 链接，并提供 180x180、192x192、512x512 等大尺寸 PNG。",
+          },
+          {
+            question: "为什么 SVG favicon 有时反而看着模糊？",
+            answer: "SVG 是矢量格式，理论上任意缩放都清晰，但浏览器在 16px 或 32px 场景下把复杂 SVG 渲染成位图时会启用抗锯齿，细线条和小文字反而容易被平滑成灰色边缘。如果你的 logo 有 1px 的描边、极细的字母，或者非常密集的形状，在小尺寸下 SVG 反而不如手工优化过的 PNG 清晰。建议提供 SVG 作为主图标，但仍然附上 16x16 和 32x32 的 PNG 或 ICO 备用，让浏览器在小尺寸下选择位图。",
+          },
+          {
+            question: "改了 favicon 之后浏览器还显示旧的，是缓存问题吗？",
+            answer: "多半是。浏览器和操作系统会强缓存 favicon，通常几天甚至几周不刷新。清缓存并不能保证解决，因为 favicon 缓存独立于普通页面缓存。可以在 HTML 里给 favicon 加上版本号查询串（例如 favicon.ico?v=2），强制浏览器重新拉取；也可以在开发者工具里用硬刷新（Cmd+Shift+R），或者直接在地址栏访问 favicon.ico 的路径查看新版是否已到达服务器。上线后普通用户通常需要等待几天缓存自然过期。",
+          },
+          {
+            question: "16x16 的 favicon 太小，画上 logo 是不是应该简化？",
+            answer: "是的。设计初衷是让 logo 在极小尺寸下仍然可识别，而不是把桌面 logo 直接缩小。16px 场景大约只有 256 个像素点，容不下细文字、细线、复杂渐变或小装饰。常见做法是提取 logo 的主视觉元素——比如一个字母、一个符号或一个色块——并做视觉重心居中。可以用桌面版 logo 作为品牌延伸，但 favicon 单独设计一版，或至少准备一个简化版本。",
+          },
+          {
+            question: "把 PNG 改后缀成 .ico 直接用作 favicon 可以吗？",
+            answer: "浏览器现在的确会尝试解析后缀为 .ico 的 PNG，但这不是标准做法，也可能在某些工具、旧浏览器或系统里出问题。真正的 ICO 是一个容器格式，可以在一个文件里包含 16、32、48 等多个尺寸，让浏览器和系统按场景选择最合适的。直接改后缀只塞进一个尺寸，不同显示场景仍然靠浏览器缩放。建议使用真正的 ICO 编码工具，或者直接在 HTML 中同时声明多个 PNG 和 ICO 图标。",
+          },
+        ],
       },
       en: {
         title: 'Why Does a Favicon Look Blurry? How to Make a Sharp Website Icon',
@@ -907,6 +1033,16 @@ export const blogArticles: BlogArticle[] = [
             label: 'Image Resize',
             href: '/image/resize',
             description: 'Resize images before icon generation when the source dimensions are larger than needed.',
+          },
+          {
+            label: "Color Converter",
+            href: "/color-converter",
+            description: "Convert HEX/RGB/HSL to pick a favicon accent that matches your brand.",
+          },
+          {
+            label: "Image Color Picker",
+            href: "/image/color-picker",
+            description: "Sample a high-contrast color from your logo so the favicon still reads at 16px.",
           },
         ],
         blocks: [
@@ -1003,13 +1139,35 @@ export const blogArticles: BlogArticle[] = [
             text: 'A good favicon is not just clean at 256px. It should still be recognizable in a 16px browser tab.',
           },
         ],
+        faq: [
+          {
+            question: "Why does my favicon look sharp in Chrome but blurry in Safari?",
+            answer: "Different browsers pick different icon files. Safari and iOS lean on apple-touch-icon and higher-resolution PNGs before falling back to favicon.ico. If you only ship a 16x16 or 32x32 ICO, Safari upscales it and it looks fuzzy. Retina displays make it worse — they need roughly double the resolution to look crisp. Fix it by declaring multiple <link rel=\"icon\"> entries plus apple-touch-icon in your HTML, and providing sizes like 180x180, 192x192, and 512x512 PNGs alongside the ICO.",
+          },
+          {
+            question: "Why does my SVG favicon sometimes look blurry?",
+            answer: "SVG is vector, but browsers still rasterize it to a bitmap at display time. At 16px or 32px, hairline strokes, small letterforms, or dense shapes get anti-aliased into gray edges, which reads as blur. Complex SVGs often look worse than a hand-tuned PNG at tiny sizes. Keep SVG for its scalability but also ship 16x16 and 32x32 PNG or ICO fallbacks so the browser can use a pixel-perfect bitmap in small contexts.",
+          },
+          {
+            question: "I updated the favicon but browsers still show the old one — is it a cache issue?",
+            answer: "Almost always. Favicons are aggressively cached, sometimes for weeks, and favicon cache is often separate from regular page cache — clearing history may not help. Append a version query string like favicon.ico?v=2 to force a refetch, or hard-reload with Cmd+Shift+R and visit the favicon URL directly to confirm the server is returning the new file. Real users typically have to wait for the cache to expire naturally over several days.",
+          },
+          {
+            question: "Should I simplify the logo for a 16x16 favicon?",
+            answer: "Yes. A 16x16 favicon has only 256 pixels — nowhere near enough for fine text, thin strokes, or subtle gradients. Do not just shrink your desktop logo. Extract one recognizable element — a letter, a monogram, a signature shape — and center it visually. Many brands treat the favicon as a separate design that echoes the master logo rather than a literal reduction of it. Simplification is what preserves recognition at tiny sizes.",
+          },
+          {
+            question: "Can I just rename a PNG to .ico and use it as a favicon?",
+            answer: "Modern browsers often do accept PNGs with an .ico extension, but it is non-standard and can break in older browsers or icon-processing tools. A real ICO is a container that can hold 16, 32, 48, and larger sizes in one file so the browser or OS can pick the best match. Renaming a single PNG still leaves the browser to rescale for every other size. Use a proper ICO encoder, or declare multiple PNG icons in your HTML instead.",
+          },
+        ],
       },
     },
   },
   {
     slug: 'convert-image-to-ico',
     publishedAt: '2026-07-01',
-    updatedAt: '2026-07-01',
+    updatedAt: '2026-07-03',
     translations: {
       zh: {
         title: '如何把图片转换成 ICO 图标？PNG/JPG/WebP 转 ICO 完整教程',
@@ -1028,6 +1186,11 @@ export const blogArticles: BlogArticle[] = [
             label: '图片去背景',
             href: '/image/remove-bg',
             description: '生成透明背景图片，适合在制作图标前清理背景。',
+          },
+          {
+            label: "图片取色器",
+            href: "/image/color-picker",
+            description: "为 ICO 选出更醒目的主色，避免多尺寸缩小后失去辨识度。",
           },
         ],
         blocks: [
@@ -1144,6 +1307,28 @@ export const blogArticles: BlogArticle[] = [
             text: '如果你只是临时做一个网站 favicon，用 toolgarden.xyz 这类浏览器本地工具会更方便：上传、预览、生成多尺寸 ICO，一步到位。',
           },
         ],
+        faq: [
+          {
+            question: "为什么我用 Photoshop 存的 .ico 在浏览器里显示不对？",
+            answer: "Photoshop 需要额外插件才能真正导出 ICO；很多人只是保存了 PNG 然后改名成 .ico，或者用插件生成的 ICO 只包含一个尺寸。浏览器读到只有 32x32 的 ICO，在需要 16x16 或 48x48 的场景就得拉大或缩小，效果不理想。正确的 ICO 应包含 16、32、48 等多个尺寸，可以用专门的在线工具或命令行工具（例如 ImageMagick 的 convert）生成真正的多尺寸 ICO。",
+          },
+          {
+            question: "透明背景的 logo 转成 ICO 后周围出现白边，怎么办？",
+            answer: "白边通常来源于源图边缘的半透明像素被错误处理。ICO 支持 Alpha 通道，但一些转换工具在缩放时会把半透明像素与白色混合，形成明显白边。解决方法有几种：一是提供更大尺寸的源图，让缩放算法有更多像素可用；二是在导出前先给 logo 加一层背景色相同的“扩展”（背景色如果不确定，用透明并确认工具支持保留 Alpha）；三是使用支持完整 Alpha 通道的工具，检查是否生成的是 32 位 BGRA 位图。",
+          },
+          {
+            question: "ICO 一定要正方形吗？非正方形 logo 怎么办？",
+            answer: "严格来说 ICO 允许非正方形，但绝大多数浏览器和操作系统都按正方形显示图标。如果你直接把长方形 logo 塞进 ICO，最终会被系统裁切、拉伸或加边距，效果不受控。更好的做法是先在正方形画布里居中放置 logo，让上下或左右留白，保证在圆形、圆角矩形等系统裁切下主体依然完整。生成图标前先把源图裁切或扩展成 1:1 是最稳定的方案。",
+          },
+          {
+            question: "多尺寸 ICO 应该包含哪几个尺寸？",
+            answer: "常见的最小配置是 16、32、48，用于浏览器标签页、任务栏和桌面快捷方式。想要覆盖更多场景，可以增加 64、128、256，其中 256 通常以 PNG 数据存储在 ICO 容器内。Windows 高分屏和大图标视图会使用 128 或 256，如果不提供，就只能靠系统放大较小尺寸，效果发糊。对于品牌网站，推荐至少包含 16、32、48、64、128、256 六个尺寸。",
+          },
+          {
+            question: "ICO 文件的体积会不会因为多尺寸变得很大？",
+            answer: "会大一些，但通常仍在几十 KB 内。ICO 中每个尺寸都是独立编码的位图数据，16x16 只有几百字节，256x256 如果用 PNG 存储也就 20–40KB。一个包含 6 个尺寸的 ICO，总体积通常在 40–80KB 之间，对页面加载几乎没有影响。浏览器只会解析并显示一次 favicon，之后就会缓存。为了图标质量，多提供几个尺寸完全值得。",
+          },
+        ],
       },
       en: {
         title: 'How to Convert an Image to ICO: Complete PNG, JPG, and WebP to ICO Guide',
@@ -1162,6 +1347,11 @@ export const blogArticles: BlogArticle[] = [
             label: 'Remove Image Background',
             href: '/image/remove-bg',
             description: 'Create a transparent image before turning a logo or photo into an icon.',
+          },
+          {
+            label: "Image Color Picker",
+            href: "/image/color-picker",
+            description: "Sample a punchy color to keep ICOs recognizable at 16px and 32px sizes.",
           },
         ],
         blocks: [
@@ -1270,13 +1460,35 @@ export const blogArticles: BlogArticle[] = [
             text: 'For a quick favicon or desktop icon, a browser-local tool like toolgarden.xyz is convenient: upload, preview, generate a multi-size ICO, and download.',
           },
         ],
+        faq: [
+          {
+            question: "Why does my Photoshop-exported .ico look wrong in browsers?",
+            answer: "Photoshop needs a plugin to actually write ICO, and many people just save a PNG and rename it. Even with the plugin, the output often has a single size. Browsers then upscale or downscale for every other slot — favicon, bookmark, shortcut — and the result looks fuzzy. A proper ICO packs multiple sizes (16, 32, 48, and larger) into one file. Use a dedicated ICO tool or ImageMagick (`convert source.png -define icon:auto-resize=256,128,64,48,32,16 favicon.ico`) to get a real multi-size ICO.",
+          },
+          {
+            question: "My transparent logo has a white halo after converting to ICO. How do I fix it?",
+            answer: "The halo usually comes from semi-transparent edge pixels being blended against white during resizing. ICO does support alpha, but some encoders mishandle it. Try three things: use a larger source image so the downscaler has more pixels to work with; use a converter that emits 32-bit BGRA bitmaps rather than 24-bit RGB; and if the destination background is known, pre-composite the logo against that color instead of relying on transparency.",
+          },
+          {
+            question: "Does an ICO have to be square? What about a rectangular logo?",
+            answer: "The ICO format technically allows non-square entries, but browsers and operating systems display favicons as squares. A rectangular logo will be cropped, stretched, or padded unpredictably. Instead, place the logo on a square canvas with intentional padding so the composition survives circular masks, rounded corners, and edge cropping across platforms. Pre-squaring the source is the only reliable way to control the final look.",
+          },
+          {
+            question: "Which sizes should a multi-size ICO contain?",
+            answer: "A minimum useful set is 16, 32, and 48 for browser tabs, taskbars, and shortcuts. For broader coverage, add 64, 128, and 256. The 256 entry is normally stored as embedded PNG data rather than a raw bitmap. Windows high-DPI and large-icon views use 128 or 256, and if you skip those, the OS scales up smaller entries and the icon looks soft. A production favicon.ico typically ships all six: 16, 32, 48, 64, 128, 256.",
+          },
+          {
+            question: "Does packing multiple sizes make the ICO file huge?",
+            answer: "Not really. Each size is stored independently — 16x16 is a few hundred bytes, and a 256x256 PNG-encoded entry is 20–40KB. A six-size ICO usually lands between 40 and 80KB total, which is negligible for a file the browser fetches once and caches. Compared to a single hero image on your page, the icon cost is invisible. Ship the extra sizes for the quality gain.",
+          },
+        ],
       },
     },
   },
   {
     slug: 'ico-vs-icns-vs-png-icons',
     publishedAt: '2026-07-01',
-    updatedAt: '2026-07-01',
+    updatedAt: '2026-07-03',
     translations: {
       zh: {
         title: 'ICO、ICNS、PNG 图标有什么区别？网站、Windows 和 macOS 图标怎么选',
@@ -1295,6 +1507,11 @@ export const blogArticles: BlogArticle[] = [
             label: '图片转 PNG',
             href: '/image/to-png',
             description: '把其他图片转换成 PNG，适合准备透明图标源文件。',
+          },
+          {
+            label: "颜色转换器",
+            href: "/color-converter",
+            description: "为图标在 Windows、macOS 和 Web 之间统一色号（HEX / sRGB）。",
           },
         ],
         blocks: [
@@ -1417,6 +1634,28 @@ export const blogArticles: BlogArticle[] = [
             text: '最省心的做法是从一张高质量源图出发，一次生成多种图标格式。这样网站、Windows、macOS 和 PWA 都能拿到合适的图标资源。',
           },
         ],
+        faq: [
+          {
+            question: "为什么 Electron 应用要同时准备 ICO、ICNS 和 PNG 三种图标？",
+            answer: "因为 Electron 打包出的应用在不同系统上使用不同的图标格式：Windows 使用 ICO（.exe 内嵌或安装包图标），macOS 使用 ICNS（.app/Contents/Resources），Linux 常用 PNG。打包工具（electron-builder、electron-forge）会根据构建目标读取不同格式的资源。如果只提供一种，其它平台要么使用默认灰色图标，要么被打包工具低质量转换。为每个平台准备各自的原生格式，并放入相应目录，是保证跨平台图标质量的标准做法。",
+          },
+          {
+            question: "PWA 是不是不需要 ICO 和 ICNS，只用 PNG 就行？",
+            answer: "对，PWA 图标基本只需要 PNG。manifest.webmanifest 里的 icons 字段引用一组不同尺寸的 PNG（常见 192x192 和 512x512），系统在安装到桌面或主屏幕时会挑选合适的尺寸。ICO 和 ICNS 是桌面原生应用的格式，PWA 走的是浏览器安装流程，不需要这些容器格式。不过你的网站本身仍然需要 favicon.ico 用于浏览器标签页，以及 apple-touch-icon PNG 用于 iOS 主屏快捷方式。",
+          },
+          {
+            question: "ICNS 里的 1024x1024 图标真的有必要吗？",
+            answer: "对 macOS 应用来说非常必要。Finder 的图标视图和 Launchpad 可以放大到 512x512 甚至更大，Retina 屏进一步翻倍到 1024x1024。如果 ICNS 里最大尺寸只有 256，那么在这些场景下会被拉大，出现明显模糊。Apple 的应用图标模板本身就是 1024x1024 起步。使用 iconutil 或 png2icns 之类工具生成 ICNS 时，建议至少包含 16、32、64、128、256、512、1024 七套，以及各自的 @2x 版本。",
+          },
+          {
+            question: "为什么有的网站 HTML 里同时有 rel=icon 和 rel=shortcut icon？",
+            answer: "rel=\"shortcut icon\" 是早期 IE 的历史遗留写法，标准 HTML 定义的是 rel=\"icon\"。现代浏览器两种都认，但只使用 rel=\"icon\" 就足够了。同时保留是为了兼容极旧的 IE 版本。除非你的用户还大量使用 IE9 或更早浏览器，否则可以只写 rel=\"icon\"，并搭配 sizes、type 属性。关键是提供 apple-touch-icon（Safari 和 iOS 主屏）以及 manifest icons（PWA），这两个反而更容易被开发者忽略。",
+          },
+          {
+            question: "如果只做纯静态网站，最少要准备哪些图标文件？",
+            answer: "最低配置是三个文件：favicon.ico（16/32/48 多尺寸，用于浏览器标签页和历史兼容），apple-touch-icon.png（180x180，用于 iOS 主屏），以及一到两张 manifest 使用的 PNG（192x192 和 512x512，用于 PWA 和 Android 主屏）。这套组合可以覆盖 99% 的浏览器与设备。如果网站需要打包成桌面应用，再额外补 ICO 大尺寸和 ICNS；否则不需要 ICNS。",
+          },
+        ],
       },
       en: {
         title: 'ICO vs ICNS vs PNG Icons: Which Format Should You Use for Web, Windows, and macOS?',
@@ -1435,6 +1674,11 @@ export const blogArticles: BlogArticle[] = [
             label: 'Image to PNG',
             href: '/image/to-png',
             description: 'Convert images to PNG when you need a transparent source file for icon generation.',
+          },
+          {
+            label: "Color Converter",
+            href: "/color-converter",
+            description: "Align icon colors across Windows, macOS, and web with a single HEX/sRGB reference.",
           },
         ],
         blocks: [
@@ -1557,13 +1801,35 @@ export const blogArticles: BlogArticle[] = [
             text: 'The easiest workflow is to start from one high-quality source image and generate multiple icon formats at once. That gives websites, Windows, macOS, and PWA surfaces the assets they expect.',
           },
         ],
+        faq: [
+          {
+            question: "Why do Electron apps ship ICO, ICNS, and PNG icons together?",
+            answer: "Electron builds land on three platforms with three native icon formats. Windows expects ICO (embedded in the .exe or installer), macOS wants ICNS inside the .app bundle, and Linux typically reads PNG. Packagers like electron-builder pick the right file per target based on your build config. Shipping only one format means the other platforms either fall back to a default gray icon or get a low-quality on-the-fly conversion. Prepare each format from the same master artwork to keep quality consistent across OSes.",
+          },
+          {
+            question: "Does a PWA need ICO and ICNS, or just PNG?",
+            answer: "PWAs use PNG only. The manifest.webmanifest references a set of PNG sizes (typically 192x192 and 512x512), and the OS picks the closest match when installing to the home screen or desktop. ICO and ICNS are for native desktop apps and are not used by the PWA install flow. Your site still needs a favicon.ico for browser tabs and an apple-touch-icon PNG for iOS home-screen shortcuts, but no ICNS is required.",
+          },
+          {
+            question: "Do I really need a 1024x1024 entry in my ICNS?",
+            answer: "For a macOS app, yes. Finder's icon view and Launchpad can render icons up to 512x512, and Retina displays double that requirement to 1024x1024. If your ICNS tops out at 256, those large views scale it up and look soft. Apple's app icon template starts at 1024x1024 for a reason. When building with iconutil or png2icns, ship 16, 32, 64, 128, 256, 512, and 1024 plus their @2x variants for a complete set.",
+          },
+          {
+            question: "Why do some sites declare both rel=\"icon\" and rel=\"shortcut icon\"?",
+            answer: "rel=\"shortcut icon\" is a legacy Internet Explorer convention. The HTML standard defines only rel=\"icon\", and every modern browser accepts it. Sites keep both for compatibility with very old IE versions. Unless you have to support IE9 or earlier, rel=\"icon\" alone is enough. What actually matters more is declaring apple-touch-icon for Safari/iOS and manifest icons for PWAs — those two are more commonly forgotten than the redundant shortcut icon.",
+          },
+          {
+            question: "What is the minimum icon set for a plain static website?",
+            answer: "Three files cover 99% of browsers and devices: a multi-size favicon.ico (16/32/48) for browser tabs and legacy compatibility, one apple-touch-icon.png at 180x180 for iOS home screens, and one or two PWA manifest PNGs (192x192 and 512x512) for Android and installable web apps. If you later package the site as a desktop app, add larger ICO sizes and a full ICNS; a pure website never needs ICNS.",
+          },
+        ],
       },
     },
   },
   {
     slug: 'jpg-png-webp-avif-differences',
     publishedAt: '2026-07-01',
-    updatedAt: '2026-07-01',
+    updatedAt: '2026-07-03',
     translations: {
       zh: {
         title: 'JPG、PNG、WebP、AVIF 有什么区别？网页图片格式怎么选',
@@ -1592,6 +1858,11 @@ export const blogArticles: BlogArticle[] = [
             label: '图片转 PNG',
             href: '/image/to-png',
             description: '把 JPG、WebP、SVG、AVIF 等图片转换为 PNG，适合透明图和截图。',
+          },
+          {
+            label: "图片 EXIF 查看 / 清除",
+            href: "/image/exif",
+            description: "在换格式前查看原文件的元信息，或一键清除 GPS 等隐私字段。",
           },
         ],
         blocks: [
@@ -1713,6 +1984,28 @@ export const blogArticles: BlogArticle[] = [
             text: '如果不确定，先把图片转成 WebP 做对比，再根据透明背景、兼容性和体积要求决定是否保留 PNG/JPG 或进一步尝试 AVIF。',
           },
         ],
+        faq: [
+          {
+            question: "既然 AVIF 压缩率最高，为什么大网站还在用 JPG？",
+            answer: "兼容性和成本。JPG 从 1992 年就存在，任何浏览器、系统和图片处理管线都能读，服务器端 CDN、缩略图服务、CMS、邮件客户端也都支持。AVIF 编码非常慢，服务器实时生成缩略图会消耗大量 CPU，历史图片全量重新编码工程量巨大。很多大站的做法是用 <picture> 标签同时提供 AVIF、WebP 和 JPG，让新浏览器用 AVIF，老环境自动 fallback。完全放弃 JPG 目前还不现实。",
+          },
+          {
+            question: "为什么截图存成 JPG 会比存成 PNG 大？",
+            answer: "截图通常是大面积纯色加少量高对比边缘，PNG 的无损压缩能很好利用这种重复性——同一颜色的相邻像素可以用极少字节表示。JPG 的算法是为渐变照片设计的，把纯色区域拆成 8x8 块单独编码，反而引入了更多冗余数据。结果就是同一张截图，PNG 可能只有 200KB，JPG 反而 500KB 且文字发糊。截图、UI、图表、代码块永远优先 PNG。",
+          },
+          {
+            question: "WebP 有损和无损模式怎么选？",
+            answer: "取决于内容和后续处理需求。有损 WebP（lossy）适合照片、网页大图、社交分享图，通常比同质量 JPG 小 25–35%。无损 WebP（lossless）适合截图、图标、需要精确像素还原的图，通常比 PNG 小 20–30%，但依然比有损模式大。工具里如果没有明确开关，通常质量 100 会走无损，其它质量走有损。批量转换网站图片时，让工具根据源图类型自动选（照片用有损，截图用无损）通常效果最好。",
+          },
+          {
+            question: "AVIF 支持动画吗？可以替代 GIF 吗？",
+            answer: "支持。AVIF 基于 AV1 视频编码，天然支持动画帧序列，压缩率比 GIF 高非常多，同一动画 AVIF 可能只有 GIF 的 1/10 甚至更小。但兼容性还在推进中，一些老浏览器和聊天工具不认识 AVIF 动画。目前的最佳实践是用 <video autoplay muted loop playsinline> 或 <picture> 组合替代 GIF，AVIF、WebP 动画和 MP4 都是选项，具体看目标平台。纯静态图场景 AVIF 已经很成熟。",
+          },
+          {
+            question: "为什么 SVG 没出现在这个对比里？SVG 和这四种有什么区别？",
+            answer: "因为 SVG 是矢量格式，本文对比的都是位图。位图存储的是像素网格，放大会糊；SVG 存储的是几何指令（路径、多边形、曲线），任意尺寸都清晰。SVG 适合图标、logo、简单插图、图表；照片和自然场景不适合 SVG，因为像素级细节没法用少量路径表示。实际项目中，图标用 SVG，照片用 WebP/AVIF/JPG，透明位图用 PNG——四类需求各有对应格式。",
+          },
+        ],
       },
       en: {
         title: 'JPG, PNG, WebP, and AVIF: Which Image Format Should You Use for the Web?',
@@ -1741,6 +2034,11 @@ export const blogArticles: BlogArticle[] = [
             label: 'Image to PNG',
             href: '/image/to-png',
             description: 'Convert JPG, WebP, SVG, AVIF, and other images to PNG for transparency and sharp edges.',
+          },
+          {
+            label: "Image EXIF Viewer & Cleaner",
+            href: "/image/exif",
+            description: "Inspect metadata before converting, or strip GPS and camera info in one click.",
           },
         ],
         blocks: [
@@ -1862,13 +2160,35 @@ export const blogArticles: BlogArticle[] = [
             text: 'When unsure, convert to WebP first and compare the result. Then decide whether to keep JPG/PNG for compatibility or try AVIF for extra compression.',
           },
         ],
+        faq: [
+          {
+            question: "If AVIF compresses best, why do big websites still use JPG?",
+            answer: "Compatibility and processing cost. JPG has been around since 1992 and every browser, CMS, thumbnail service, email client, and CDN handles it. AVIF encoding is CPU-expensive — generating thumbnails on demand at scale is far more costly than JPG, and re-encoding a huge back catalog is an enormous project. Most large sites use <picture> to serve AVIF, then WebP, then JPG as a fallback. Modern browsers get the best format while older clients still work. Abandoning JPG outright is not yet realistic.",
+          },
+          {
+            question: "Why is a screenshot bigger as a JPG than as a PNG?",
+            answer: "Screenshots are mostly flat colors with sharp text — exactly what PNG's lossless compression exploits. Long runs of the same color are stored in a handful of bytes. JPG's algorithm assumes photographic gradients, splits the image into 8x8 blocks, and encodes each independently, which actually adds overhead on flat regions. A screenshot might be 200KB as PNG and 500KB as JPG with visibly worse text. Always use PNG (or lossless WebP) for screenshots, UI captures, and diagrams.",
+          },
+          {
+            question: "When should I pick lossy WebP versus lossless WebP?",
+            answer: "Lossy WebP wins for photos, hero images, and social sharing — usually 25–35% smaller than a JPG of comparable quality. Lossless WebP wins for screenshots, icons, and content where exact pixel fidelity matters — typically 20–30% smaller than PNG. In most tools, quality 100 triggers lossless mode and any other value triggers lossy. If you are converting a mixed batch, let the tool auto-select based on content type: photos to lossy, screenshots to lossless.",
+          },
+          {
+            question: "Does AVIF support animation? Can it replace GIF?",
+            answer: "Yes. AVIF is based on AV1 video and handles animated frames natively, often at one-tenth the size of the equivalent GIF or less. Compatibility is still catching up — some older browsers and messaging apps do not accept animated AVIF. The pragmatic replacement for GIF today is a <video autoplay muted loop playsinline> element with MP4 or WebM, optionally with AVIF and animated WebP as alternates via <picture>. For static images AVIF is already production-ready.",
+          },
+          {
+            question: "Why isn't SVG in this comparison? How is it different from the other four?",
+            answer: "SVG is a vector format; JPG, PNG, WebP, and AVIF are raster. Raster formats store a pixel grid and lose quality when scaled up. SVG stores geometric instructions — paths, polygons, curves — that render crisply at any size. SVG excels at icons, logos, simple illustrations, and charts. It is a bad fit for photos, since real-world detail cannot be expressed as a few paths. In practice: SVG for icons, WebP/AVIF/JPG for photos, PNG for transparent raster art.",
+          },
+        ],
       },
     },
   },
   {
     slug: 'convert-images-to-webp',
     publishedAt: '2026-07-01',
-    updatedAt: '2026-07-01',
+    updatedAt: '2026-07-03',
     translations: {
       zh: {
         title: '如何把图片转换成 WebP？JPG、PNG、GIF 转 WebP 完整教程',
@@ -1887,6 +2207,11 @@ export const blogArticles: BlogArticle[] = [
             label: '图片压缩',
             href: '/image/compress',
             description: '智能压缩 JPG、PNG、WebP 等图片，支持预览对比和批量下载。',
+          },
+          {
+            label: "图片 EXIF 查看 / 清除",
+            href: "/image/exif",
+            description: "转换成 WebP 前先清掉 EXIF、GPS 等敏感信息。",
           },
         ],
         blocks: [
@@ -1981,6 +2306,28 @@ export const blogArticles: BlogArticle[] = [
             text: '如果你想快速优化网页图片，可以先用 toolgarden.xyz 批量转 WebP，再对比原图和输出体积，保留视觉效果最稳定的版本。',
           },
         ],
+        faq: [
+          {
+            question: "转 WebP 后不但没变小，反而变大了，怎么办？",
+            answer: "这种情况多发生在原图本身已经是高压缩率的小 JPG，或者你选择了无损 WebP 模式。极小的 JPG 缩略图（如 20KB 的头像）已经压得非常紧，再转 WebP 边界收益很小甚至为负。无损模式（质量 100）保留全部像素，对复杂照片体积可能反而增加。解决方法：小图直接跳过转换；照片用有损 WebP，质量 75–85 通常显著变小；PNG 转 WebP 如果需要保留细节，可对比无损和有损模式的输出，取较小者。",
+          },
+          {
+            question: "把动画 GIF 转成 WebP，动画会保留吗？",
+            answer: "WebP 格式本身支持动画，但大多数浏览器 Canvas.toBlob('image/webp') 只导出单帧静态 WebP，动画会丢失。想保留动画，需要专门的动画 WebP 编码器（如 libwebp 的 gif2webp），把每一帧独立编码并合成为动画 WebP。ToolGarden 这类浏览器端工具通常只处理第一帧或截取当前帧。如果动画重要，考虑保留原 GIF，或用命令行工具转为 MP4/AVIF 动画等更高效的现代方案。",
+          },
+          {
+            question: "WebP 的质量 80 对应 JPG 的质量多少？",
+            answer: "两者的质量数值不是线性对应的，因为编码算法完全不同。经验上，WebP 质量 80 视觉上大致等于 JPG 质量 85–90，但文件体积通常小 25–35%。你可以把 WebP 质量 75 作为“视觉几乎无损”的起点，60 作为“可接受的明显压缩”，40 以下才开始出现明显块状伪影。要在两种格式间准确对比，最好用同一张图分别导出多组参数，肉眼判断，不要死盯数字。",
+          },
+          {
+            question: "iOS Safari 现在支持 WebP 吗？还需要 JPG 备用吗？",
+            answer: "iOS 14 及以上的 Safari 已完整支持 WebP（包括系统级 QuickLook 和邮件预览）。如果你的用户几乎都在最近三年更新过设备，可以放心使用 WebP。但如果需要覆盖 iOS 13 及更早、老 Android 或某些国产内嵌浏览器，仍然建议用 <picture> 标签同时提供 JPG。CDN 或图片服务通常可以自动生成多格式，让 Accept 头决定发送哪个版本。纯用 WebP 而不留 fallback，只在受控 B 端场景比较安全。",
+          },
+          {
+            question: "把 PNG 转 WebP 后透明背景变成了黑色，是 bug 吗？",
+            answer: "不是 bug，通常是导出时选择了不支持 Alpha 的模式，或者中间 Canvas 没有正确初始化。Canvas 默认是黑色背景，如果你在绘制前没有 clearRect 或者导出参数漏掉 alpha，透明像素会被填成黑色。正确的流程是：创建 Canvas 后先 clearRect 保证透明，然后 drawImage 绘制源图，最后用 toBlob('image/webp', quality) 导出，浏览器会保留 Alpha 通道。工具端如果仍然错误，尝试换个转换器，或先确保源 PNG 确实有 Alpha 通道。",
+          },
+        ],
       },
       en: {
         title: 'How to Convert Images to WebP: JPG, PNG, and GIF to WebP Guide',
@@ -1999,6 +2346,11 @@ export const blogArticles: BlogArticle[] = [
             label: 'Image Compressor',
             href: '/image/compress',
             description: 'Compress JPG, PNG, WebP, and other images with preview comparison and batch download.',
+          },
+          {
+            label: "Image EXIF Viewer & Cleaner",
+            href: "/image/exif",
+            description: "Strip EXIF and GPS metadata before converting to WebP.",
           },
         ],
         blocks: [
@@ -2093,13 +2445,35 @@ export const blogArticles: BlogArticle[] = [
             text: 'A practical workflow is to batch convert images to WebP with toolgarden.xyz, compare size and visual quality, then keep the output that remains visually stable.',
           },
         ],
+        faq: [
+          {
+            question: "My file got bigger after converting to WebP. What went wrong?",
+            answer: "This usually happens with tiny, already-tight JPGs or when you picked lossless WebP mode. A 20KB avatar has almost no fat left to trim, so re-encoding overhead can push it up. Lossless mode (quality 100) preserves every pixel and often exceeds the original for complex photos. Fixes: skip conversion for very small files, use lossy WebP at quality 75–85 for photos, and when converting PNGs test both lossy and lossless modes and keep whichever is smaller.",
+          },
+          {
+            question: "Will animation survive when I convert an animated GIF to WebP?",
+            answer: "WebP supports animation, but the browser's Canvas.toBlob('image/webp') only emits a single static frame — the animation is lost. Preserving animation requires a dedicated encoder like libwebp's gif2webp, which encodes each frame and packages them as animated WebP. Browser-based converters usually keep only the first frame or the frame currently displayed. If the animation matters, either keep the GIF or use a CLI tool to convert to animated WebP, AVIF, or MP4 — modern formats give far smaller files.",
+          },
+          {
+            question: "What JPG quality does WebP quality 80 correspond to?",
+            answer: "There is no direct mapping — the algorithms are different. Empirically, WebP quality 80 looks close to JPG quality 85–90 while being 25–35% smaller. Useful anchors: WebP 75 is the practical visually-lossless floor, 60 is noticeable but acceptable compression, and below 40 you start seeing blocks. For accurate comparisons, export the same source at several qualities in both formats and evaluate visually rather than trusting the numbers.",
+          },
+          {
+            question: "Does iOS Safari support WebP now? Do I still need a JPG fallback?",
+            answer: "Yes — iOS 14 and later Safari fully supports WebP, including system QuickLook and mail preview. If your audience is mostly on devices updated in the last three years, WebP alone is fine. If you must reach iOS 13 or older, ancient Android, or certain in-app WebViews, keep a JPG fallback via the <picture> element. A CDN with content negotiation can serve WebP or JPG based on the Accept header. Only skip the fallback in tightly controlled internal or B2B contexts.",
+          },
+          {
+            question: "Why did the transparent background turn black after I converted PNG to WebP?",
+            answer: "It is not a WebP bug. Canvas defaults to a black background, so if the converter forgot to clearRect before drawImage — or exported without preserving alpha — transparent pixels become black. The correct sequence is: create the canvas, clearRect to make it transparent, drawImage the source, then toBlob('image/webp', quality). Alpha is preserved automatically. If your tool still gets it wrong, try a different converter and confirm the source PNG actually has an alpha channel.",
+          },
+        ],
       },
     },
   },
   {
     slug: 'convert-images-to-avif',
     publishedAt: '2026-07-01',
-    updatedAt: '2026-07-01',
+    updatedAt: '2026-07-03',
     translations: {
       zh: {
         title: '如何把图片转换成 AVIF？什么时候应该使用 AVIF',
@@ -2118,6 +2492,11 @@ export const blogArticles: BlogArticle[] = [
             label: '图片转 WebP',
             href: '/image/to-webp',
             description: '在需要更稳兼容性时，把图片转换成 WebP 作为 AVIF 的备用格式。',
+          },
+          {
+            label: "图片 EXIF 查看 / 清除",
+            href: "/image/exif",
+            description: "发布 AVIF 前先清除 EXIF 元信息，避免泄露拍摄位置和设备。",
           },
         ],
         blocks: [
@@ -2213,6 +2592,28 @@ export const blogArticles: BlogArticle[] = [
             text: '实际项目里，可以用 toolgarden.xyz 先把几张关键图片转成 AVIF，与 WebP/JPG 对比后再决定是否批量使用。',
           },
         ],
+        faq: [
+          {
+            question: "为什么 AVIF 编码这么慢？可以只在关键图片上使用吗？",
+            answer: "AVIF 基于 AV1 视频编码，压缩率高但计算量大——编码器需要评估多种块划分方式、变换和帧内预测模式，才能找到接近最优的表示。同一张图 AVIF 编码可能比 JPG 慢 10–50 倍。因此完全没必要给每张图都转 AVIF。合理策略是：首屏大图、封面图、Hero image 转 AVIF（价值最大）；缩略图、UI 装饰图用 WebP；小图标继续 PNG/SVG。构建工具可以在打包阶段异步生成 AVIF，运行时用 <picture> 提供多格式。",
+          },
+          {
+            question: "AVIF 和 HEIC 是什么关系？苹果拍的 HEIC 可以直接当 AVIF 用吗？",
+            answer: "都是基于视频编码的图片格式，但底层不同：AVIF 基于 AV1（开源、免版税），HEIC 基于 HEVC（有专利授权）。苹果设备默认拍 HEIC，Windows 和大多数浏览器不原生支持 HEIC，直接把 .heic 传到网页通常无法显示。要在网页使用，需要先转成 AVIF、WebP 或 JPG。ToolGarden 或 macOS 预览、iOS 相册导出都可以完成转换。二者不能互换后缀使用。",
+          },
+          {
+            question: "AVIF 支持 HDR 和宽色域吗？和 JPG 相比呢？",
+            answer: "支持，这是 AVIF 相对 JPG 的重要优势之一。AVIF 支持 10-bit 甚至 12-bit 色深、Rec.2020 广色域和 HDR 元数据（PQ、HLG），可以准确保存现代手机和相机拍摄的 HDR 照片。JPG 只支持 8-bit sRGB，广色域和 HDR 内容转成 JPG 会被压缩到较窄色域，损失色彩细节。如果你的目标是保留 iPhone 或专业相机的原始 HDR 效果，AVIF 是消费级格式里最合适的选择之一。",
+          },
+          {
+            question: "AVIF 文件的解码速度会不会成为网页加载瓶颈？",
+            answer: "AVIF 解码比 JPG、WebP 慢，但现代 CPU（尤其是 2020 年后的移动设备）已经能在几十毫秒内解码一张 1080p AVIF，通常不会成为可感知瓶颈。真正的瓶颈往往是下载时间——AVIF 体积小 30–50%，下载省下的时间远超解码增加的时间，尤其在移动网络下。低端设备或大批量图片同时解码可能出现短暂卡顿，可以配合懒加载（loading=\"lazy\"）和 Intersection Observer 缓解。",
+          },
+          {
+            question: "为什么某些 AVIF 图片在 Firefox 打不开，Chrome 却可以？",
+            answer: "Firefox 和 Chrome 对 AVIF 的支持进度和实现细节不同。Firefox 从 93 版开始默认启用 AVIF，但对某些高级特性（10-bit 色深、HDR、动画 AVIF）的支持晚于 Chrome。如果 AVIF 在 Chrome 显示、Firefox 打不开，通常是文件用了 Firefox 版本尚未支持的 profile 或 tile 参数。解决方法：编码时用更保守的设置（8-bit、无 HDR、单 tile），或者用 <picture> 提供 WebP 备用，让 Firefox 自动 fallback。",
+          },
+        ],
       },
       en: {
         title: 'How to Convert Images to AVIF and When You Should Use AVIF',
@@ -2231,6 +2632,11 @@ export const blogArticles: BlogArticle[] = [
             label: 'Image to WebP',
             href: '/image/to-webp',
             description: 'Convert images to WebP when you need a more widely compatible fallback for AVIF.',
+          },
+          {
+            label: "Image EXIF Viewer & Cleaner",
+            href: "/image/exif",
+            description: "Strip EXIF before publishing AVIFs to avoid leaking location and device data.",
           },
         ],
         blocks: [
@@ -2326,13 +2732,35 @@ export const blogArticles: BlogArticle[] = [
             text: 'A good workflow is to convert a few key images to AVIF with toolgarden.xyz, compare them with WebP and JPG, then decide whether AVIF is worth using broadly.',
           },
         ],
+        faq: [
+          {
+            question: "Why is AVIF encoding so slow? Can I use it only on key images?",
+            answer: "AVIF is built on AV1 video coding, which trades encode time for compression quality by evaluating many block partitions and intra-prediction modes. Expect AVIF to be 10–50x slower than JPG. You do not need it everywhere. A sensible strategy: use AVIF for hero images, article covers, and above-the-fold content where the bandwidth savings matter most; use WebP for thumbnails and decorative images; and keep PNG or SVG for small icons. Generate AVIF asynchronously in the build step and serve it via <picture> at runtime.",
+          },
+          {
+            question: "How is AVIF related to HEIC? Can I use iPhone HEIC files as AVIF?",
+            answer: "Both are still-image wrappers around video codecs, but they use different codecs. AVIF is based on AV1 (open, royalty-free); HEIC is based on HEVC (patent-encumbered). iPhones shoot HEIC by default, but Windows and most browsers cannot decode HEIC natively — dropping a .heic into a web page usually shows nothing. To use HEIC content on the web you must convert it to AVIF, WebP, or JPG. The extensions are not interchangeable.",
+          },
+          {
+            question: "Does AVIF support HDR and wide-gamut color? How does it compare to JPG here?",
+            answer: "Yes — this is one of AVIF's biggest advantages over JPG. AVIF supports 10-bit and 12-bit color depth, the Rec.2020 wide gamut, and HDR metadata like PQ and HLG. It can faithfully store the HDR photos modern phones and cameras produce. JPG is stuck at 8-bit sRGB, so converting HDR content to JPG clips the gamut and loses tonal range. For preserving iPhone or professional HDR captures for consumer delivery, AVIF is the strongest mainstream option.",
+          },
+          {
+            question: "Will AVIF decoding become a page-load bottleneck?",
+            answer: "AVIF decode is slower than JPG or WebP, but modern CPUs (especially 2020+ mobile chips) decode a 1080p AVIF in tens of milliseconds and it rarely dominates perceived load time. The real bottleneck is usually download — because AVIF is 30–50% smaller, the bandwidth savings typically outweigh the decode cost, especially on cellular networks. On low-end devices with many images on screen you can hit brief jank; mitigate with loading=\"lazy\" and Intersection Observer so decoding is deferred until scroll.",
+          },
+          {
+            question: "Why do some AVIF files fail in Firefox but work in Chrome?",
+            answer: "Firefox and Chrome shipped AVIF support at different times with different feature coverage. Firefox 93+ decodes basic AVIF, but advanced features — 10-bit depth, HDR metadata, animated AVIF — arrived later than in Chrome. Files that only work in Chrome are usually encoded with a profile or tiling configuration Firefox does not yet handle. Encode with conservative settings (8-bit, no HDR, single tile) or serve a WebP fallback via <picture> so Firefox picks a format it understands.",
+          },
+        ],
       },
     },
   },
   {
     slug: 'png-to-jpg-jpg-to-png-transparency',
     publishedAt: '2026-07-01',
-    updatedAt: '2026-07-01',
+    updatedAt: '2026-07-03',
     translations: {
       zh: {
         title: 'PNG 转 JPG、JPG 转 PNG 会发生什么？透明背景和画质怎么处理',
@@ -2351,6 +2779,11 @@ export const blogArticles: BlogArticle[] = [
             label: '图片转 PNG',
             href: '/image/to-png',
             description: '把 JPG、WebP、SVG、AVIF 等图片转换为 PNG，适合透明图和截图。',
+          },
+          {
+            label: "图片 EXIF 查看 / 清除",
+            href: "/image/exif",
+            description: "在 PNG ↔ JPG 转换前查看或清除原文件的元数据。",
           },
         ],
         blocks: [
@@ -2448,6 +2881,28 @@ export const blogArticles: BlogArticle[] = [
             text: '转换前先判断图片内容：照片用 JPG/WebP，截图和透明素材用 PNG/WebP。格式选对，才不会在体积和清晰度之间反复踩坑。',
           },
         ],
+        faq: [
+          {
+            question: "PNG 转 JPG 时可以指定填充颜色不是白色吗？",
+            answer: "可以，但需要工具支持自定义 matte 颜色。默认多数在线工具会用白色填充透明区域，因为白色是最常见的网页背景。如果你的图片最终会放在深色背景（如 GitHub 深色主题、深色文档），用白色 matte 会出现明显的白边。想避免，选择支持自定义背景色的工具，或者在转 JPG 前先把透明区域手动填充为目标背景色（Photoshop、Figma、命令行 ImageMagick 都可以做）。ToolGarden 等浏览器工具通常提供背景色选项。",
+          },
+          {
+            question: "已经压过一次的 JPG 转 PNG 后再转 JPG，画质会恢复吗？",
+            answer: "不会。JPG 转 PNG 只是把当前的（已损失细节的）像素无损打包为 PNG，PNG 里没有魔法能还原已经丢失的信息。再从这张 PNG 转回 JPG，等于再经历一次有损压缩，画质只会更差不会更好。想避免累积损失，始终从原始未压缩文件（RAW、TIFF 或原始 PNG）作为唯一编辑源，需要 JPG 就直接从源导出。避免 A→B→A→B 反复往返。",
+          },
+          {
+            question: "把手机相册的 HEIC 照片转 PNG 会比转 JPG 更清晰吗？",
+            answer: "对，因为 PNG 是无损的，转换过程不会引入压缩伪影。HEIC 本身也是有损压缩，转 PNG 得到的是当前 HEIC 解码后的像素的完整无损副本；转 JPG 会在此基础上再次有损编码。但代价是文件大小：一张 5MB 的 HEIC 转 PNG 通常变成 20–40MB，转 JPG 可能只有 3–4MB。如果目的是编辑或存档，选 PNG；如果是网页展示或分享，选 JPG 或 WebP 更合理。",
+          },
+          {
+            question: "为什么 PNG 转 JPG 后文字周围出现红色或蓝色的边？",
+            answer: "那是 JPG 的色度子采样（chroma subsampling）造成的。JPG 默认使用 4:2:0 采样，即把颜色信息（尤其是红蓝分量）以原来 1/4 的分辨率保存，而亮度保留全分辨率。文字的锐利边缘正好是高对比区域，色度信息在缩减时会“漏”到旁边像素，形成红蓝色晕。解决方法：使用支持 4:4:4 采样的 JPG 编码器（体积更大但无此问题），或者干脆保留 PNG——文字图片本来就不适合 JPG。",
+          },
+          {
+            question: "有没有办法把 JPG 里的白色背景自动变成 PNG 的透明背景？",
+            answer: "严格意义上没有“自动完全准确”的方法，因为 JPG 已经把白色边缘和背景压成有损数据，主体和背景的边界不再干净。可以用抠图工具（remove.bg、Photoshop 的选择工具、Figma 的删除背景插件）做半自动分离，但边缘细节（毛发、烟雾、玻璃）通常需要手工修补。如果目标是 logo、简单形状，效果会好；如果是复杂人像或半透明物体，很难恢复干净透明背景。最好的做法是保留原始设计文件（PSD、AI、SVG）作为透明素材来源。",
+          },
+        ],
       },
       en: {
         title: 'What Happens When You Convert PNG to JPG or JPG to PNG?',
@@ -2466,6 +2921,11 @@ export const blogArticles: BlogArticle[] = [
             label: 'Image to PNG',
             href: '/image/to-png',
             description: 'Convert JPG, WebP, SVG, AVIF, and other images to PNG for transparency and sharp edges.',
+          },
+          {
+            label: "Image EXIF Viewer & Cleaner",
+            href: "/image/exif",
+            description: "Check or strip metadata before converting between PNG and JPG.",
           },
         ],
         blocks: [
@@ -2563,13 +3023,35 @@ export const blogArticles: BlogArticle[] = [
             text: 'Choose based on content: JPG or WebP for photos, PNG or WebP for screenshots and transparent assets. The right format prevents repeated quality and file-size surprises.',
           },
         ],
+        faq: [
+          {
+            question: "Can I choose a fill color other than white when converting PNG to JPG?",
+            answer: "Yes, if the tool exposes a matte color option. Most converters default to white because it matches typical web backgrounds. If your target is a dark theme like GitHub dark mode, a white matte produces a visible halo. Pick a converter that lets you specify the background color, or pre-composite the transparent PNG onto your target background in Photoshop, Figma, or ImageMagick (`convert in.png -background \"#000000\" -flatten out.jpg`) before converting. Most modern browser tools include a color picker for this.",
+          },
+          {
+            question: "If I convert a JPG to PNG and back to JPG, does quality come back?",
+            answer: "No. Converting JPG to PNG just packages the already-lossy pixels losslessly — PNG cannot invent detail that JPG discarded. Going back to JPG applies another round of lossy compression on top of the first, so quality only gets worse. To avoid cumulative damage, keep the original uncompressed source (RAW, TIFF, or original PNG) as your single edit master and export a fresh JPG whenever you need one. Never edit-and-resave a JPG in a round-trip loop.",
+          },
+          {
+            question: "Is converting an iPhone HEIC to PNG sharper than converting to JPG?",
+            answer: "Yes, because PNG is lossless — the conversion introduces no new artifacts. HEIC is already lossy, so PNG captures the decoded HEIC pixels exactly; JPG re-encodes them lossily on top. The tradeoff is file size: a 5MB HEIC often becomes 20–40MB as PNG versus 3–4MB as JPG. Choose PNG for editing or archival, JPG or WebP for sharing and the web where the size penalty of PNG rarely justifies the quality difference.",
+          },
+          {
+            question: "Why does text get red or blue fringes after PNG to JPG conversion?",
+            answer: "That is chroma subsampling. JPG defaults to 4:2:0, storing color (especially red and blue) at a quarter resolution while keeping luminance full-res. Sharp text edges are high-contrast transitions where color information bleeds into neighboring pixels, producing colored halos. Encode with 4:4:4 subsampling (larger files but no color fringing), or just keep the image as PNG — text-heavy images are a bad fit for JPG regardless of quality setting.",
+          },
+          {
+            question: "Can I automatically turn a JPG's white background into a transparent PNG background?",
+            answer: "Not perfectly. JPG already blended the edges of your subject with the white background lossily, so the boundary is no longer clean. Background-removal tools (remove.bg, Photoshop's selection tools, Figma plugins) can do a semi-automatic separation, but detailed edges like hair, smoke, or glass usually need manual retouching. Simple logos and geometric shapes work well; complex portraits or semi-transparent objects rarely produce a clean cutout. The reliable fix is keeping the original design file (PSD, AI, SVG) as the transparent source.",
+          },
+        ],
       },
     },
   },
   {
     slug: 'keep-image-clear-after-upscaling',
     publishedAt: '2026-07-02',
-    updatedAt: '2026-07-02',
+    updatedAt: '2026-07-03',
     translations: {
       zh: {
         title: '图片放大后，如何尽量保持清晰',
@@ -2593,6 +3075,16 @@ export const blogArticles: BlogArticle[] = [
             label: '图片尺寸修改',
             href: '/image/resize',
             description: '如果只是调整到指定宽高，可以使用尺寸修改工具按比例缩放。',
+          },
+          {
+            label: "图片旋转 / 翻转",
+            href: "/image/rotate",
+            description: "放大后如果需要摆正或翻转，可以直接在浏览器本地处理。",
+          },
+          {
+            label: "图片裁剪",
+            href: "/image/crop",
+            description: "放大后再裁掉边缘噪声，得到干净可用的最终图。",
           },
         ],
         blocks: [
@@ -2745,6 +3237,28 @@ export const blogArticles: BlogArticle[] = [
             text: '同时要记住：放大只能更好地利用已有像素，不能真正恢复原图没有的细节。选择合适模式、合适倍数和合适格式，才是保持清晰度的核心。',
           },
         ],
+        faq: [
+          {
+            question: "AI 放大和传统算法放大有什么本质区别？",
+            answer: "传统算法（双线性、双三次、Lanczos）根据周围像素做数学插值，本质上是“平均”出中间像素，永远不会生成原图不存在的细节，放大倍数越高越糊。AI 放大（Real-ESRGAN、waifu2x、Topaz Gigapixel 等）基于神经网络，模型见过大量高低分辨率对，能“预测”高分辨率图应该长什么样，能补出看似合理的边缘、纹理和文字。代价是可能引入不真实的细节（AI 幻觉），有时把不清楚的车牌“补”成错误号码，用于司法或档案存证需谨慎。",
+          },
+          {
+            question: "为什么二维码放大后有时反而扫不出来了？",
+            answer: "二维码依赖黑白像素的硬边缘和精确的模块比例。用平滑算法放大时，纯黑与纯白之间会出现灰色过渡带，扫描器可能把灰色误判为黑或白，破坏定位图案和数据模块的识别。放大二维码必须使用像素无损（nearest-neighbor）模式，让每个原始像素变成完整的像素块，边界依然清晰锐利。放大倍数最好是整数（2x、3x、4x），非整数倍会导致像素块大小不均，同样影响识别。",
+          },
+          {
+            question: "小尺寸截图放大到 4K 显示会好看吗？",
+            answer: "取决于原截图内容和放大幅度。1080p 截图放大到 4K（约 2x）用清晰增强算法通常还可接受，文字保持可读。但 720p 或更小的截图放到 4K（3x 以上），文字边缘、图标、表格线都会明显发虚，即使 AI 放大也很难完全恢复。更稳妥的做法是从源头重截：如果是网页，把浏览器窗口放大到 200% 再截图，直接得到 2x 像素；如果是应用，切换到 Retina 显示或者用系统截图工具的高分辨率选项。",
+          },
+          {
+            question: "放大后再压缩，和压缩后再放大，哪个损失小？",
+            answer: "放大后再压缩损失更小。放大是从像素较少的图生成像素较多的图，放大操作本身不引入不可恢复的信息损失；再压缩时，算法有更多像素可用来评估细节，选择性丢弃更精准。反过来，压缩后再放大是双重损失：先由压缩丢弃细节，再由放大算法基于已损失的数据推测更多像素，边缘和文字更容易糊。工作流应该是：原图 → 放大到目标尺寸 → 适度压缩输出，而不是先压缩再放大。",
+          },
+          {
+            question: "为什么放大后的图片文件体积增长得比像素数还快？",
+            answer: "文件体积不仅取决于像素数量，还取决于内容的“复杂度”和压缩效率。放大过程中，特别是使用清晰增强或 AI 模式，算法会在边缘引入新的过渡像素和轻微纹理，让画面看起来更清楚，但从压缩角度看，这些新加的细节增加了熵，压缩算法要用更多字节存储。所以 2x 放大后，像素数是原来 4 倍，文件可能变成 5–8 倍。缓解方法是放大后适度降低 JPG/WebP 质量，或选择更高效的 AVIF 格式。",
+          },
+        ],
       },
       en: {
         title: 'How to Keep Images Clear After Upscaling',
@@ -2768,6 +3282,16 @@ export const blogArticles: BlogArticle[] = [
             label: 'Image Resize',
             href: '/image/resize',
             description: 'Resize images proportionally when you only need a specific width or height.',
+          },
+          {
+            label: "Image Rotate / Flip",
+            href: "/image/rotate",
+            description: "Rotate or flip an upscaled image without leaving the browser.",
+          },
+          {
+            label: "Image Crop",
+            href: "/image/crop",
+            description: "Trim edge noise after upscaling to produce a clean final image.",
           },
         ],
         blocks: [
@@ -2920,13 +3444,35 @@ export const blogArticles: BlogArticle[] = [
             text: 'Upscaling can use existing pixels more carefully, but it cannot truly restore detail that is not in the source. The best results come from choosing the right mode, scale, and output format together.',
           },
         ],
+        faq: [
+          {
+            question: "What is the fundamental difference between AI upscaling and traditional algorithms?",
+            answer: "Traditional algorithms — bilinear, bicubic, Lanczos — mathematically average nearby pixels to invent intermediate ones. They never add detail that was not there and get blurrier as the scale factor grows. AI upscalers (Real-ESRGAN, waifu2x, Topaz Gigapixel) use neural networks trained on huge low/high-resolution pairs, so they can hallucinate plausible edges, textures, and letters. The tradeoff is exactly that: they are hallucinating. AI upscalers can invent wrong details — famously turning unreadable license plates into confidently-wrong numbers — so avoid them for forensic or archival use.",
+          },
+          {
+            question: "Why does a QR code sometimes stop scanning after I upscale it?",
+            answer: "QR codes rely on hard black-and-white edges and precise module ratios. Smooth upscaling introduces gray transition pixels between black and white, and scanners can misread those grays, corrupting the finder patterns and data modules. Always upscale QR codes with nearest-neighbor (pixel-perfect) interpolation so each source pixel becomes a solid larger block with clean edges. Use integer scale factors (2x, 3x, 4x) — non-integer factors produce uneven block sizes that also break recognition.",
+          },
+          {
+            question: "Will a small screenshot look decent when upscaled to 4K?",
+            answer: "It depends on the source and scale factor. A 1080p screenshot upscaled to 4K (about 2x) with a sharpening algorithm usually stays readable. A 720p or smaller source at 3x or more will show blurred text edges, muddy icons, and soft table lines that even AI upscaling cannot fully rescue. The better solution is to recapture at higher resolution: zoom the browser to 200% before screenshotting, use a Retina display, or engage your OS's high-resolution capture mode.",
+          },
+          {
+            question: "Which is better — upscale then compress, or compress then upscale?",
+            answer: "Upscale first, then compress. Upscaling itself does not introduce recoverable loss — it generates more pixels from fewer. Compressing afterward has more pixels to work with and can drop detail more selectively. The reverse order is doubly lossy: compression discards detail first, then upscaling amplifies whatever remains, exaggerating artifacts along edges and text. The correct pipeline is original → upscale to target size → moderate compression, not compress-then-upscale.",
+          },
+          {
+            question: "Why does the upscaled file grow faster than the pixel count suggests?",
+            answer: "File size depends on visual complexity, not just pixel count. Sharpening and AI modes introduce new edge pixels and subtle texture that make the image look crisper but raise the entropy the encoder has to represent. Compression then spends more bytes per pixel. A 2x upscale multiplies pixels by 4 but file size can grow 5–8x. Compensate by lowering JPG or WebP quality after upscaling, or switching to a more efficient codec like AVIF for the final export.",
+          },
+        ],
       },
     },
   },
   {
     slug: 'why-json-can-have-comments',
     publishedAt: '2026-07-01',
-    updatedAt: '2026-07-01',
+    updatedAt: '2026-07-03',
     translations: {
       zh: {
         title: '为什么有的 JSON 可以带注释？',
@@ -3117,6 +3663,28 @@ export const blogArticles: BlogArticle[] = [
           {
             type: 'paragraph',
             text: '下次再看到 tsconfig.json 里的注释，就不用疑惑了。它其实不是严格意义上的 JSON，而是 JSONC。',
+          },
+        ],
+        faq: [
+          {
+            question: "既然 JSONC 已经能写注释，为什么还要单独有 JSON5？",
+            answer: "JSONC 只在标准 JSON 基础上加了注释和尾随逗号，其它语法规则不变。JSON5 走得更远：允许单引号字符串、无引号的对象键（像 JavaScript 一样）、多行字符串、十六进制数字、正负无穷、NaN 等，几乎就是一个静态的 JavaScript 对象字面量。JSONC 目标是让配置文件更好维护，JSON5 目标是让手写数据更友好。二者应用场景不同：VS Code、TypeScript 用 JSONC，某些数据交换、脚本引擎默认使用 JSON5。",
+          },
+          {
+            question: "在代码里用 JSON.parse 读 tsconfig.json 会失败吗？",
+            answer: "会。JSON.parse 严格按 RFC 8259 解析，遇到注释和尾随逗号会抛 SyntaxError。tsconfig.json 内部使用的是 JSONC，需要 TypeScript 自带的解析器（ts.parseConfigFileTextToJson 或 jsonc-parser 库）。想在 Node.js 里读带注释的配置，可以先用 strip-json-comments 或 jsonc-parser 清理注释和尾随逗号，再交给 JSON.parse。或者直接用 JSON5 库，兼容更多写法。",
+          },
+          {
+            question: "package.json 可以写注释吗？为什么和 tsconfig.json 不一样？",
+            answer: "不可以。package.json 由 npm、yarn、pnpm 等大量工具解析，它们都用严格的 JSON 解析器，遇到 // 或 /* */ 会直接报错，整个项目可能无法安装依赖。tsconfig.json 是 TypeScript 独家读取的，可以指定用 JSONC 解析器；而 package.json 是生态标准，不能强制所有工具改。想给 package.json 加说明，可以用扩展字段（如 \"comment\": \"...\"）或在旁边放一个 README。",
+          },
+          {
+            question: "把 JSONC 转成标准 JSON 会丢失什么？",
+            answer: "只会丢失注释和格式（缩进、空行、尾随逗号）。数据结构和值完全保留。转换后的标准 JSON 可以被任意 JSON.parse 读取，也能作为数据交换传给第三方 API。缺点是如果转换是单向的，原本用注释说明的意图会消失；下次修改配置的人只能靠猜。生产环境建议保留 JSONC 源文件（供人阅读），构建时自动生成 JSON 版本供严格解析器使用。",
+          },
+          {
+            question: "为什么 API 返回的 JSON 不能带注释？",
+            answer: "因为 API 需要跨语言、跨平台通用。服务端可能用 Go，客户端用 iOS Swift 或 Android Kotlin，中间还有 Nginx、CDN、API 网关。它们都依赖严格 RFC 8259 兼容的 JSON 解析器，注释会让整条链路报错。此外，注释暴露内部字段含义和历史，可能带来安全和维护风险。配置文件是给人看的，可以宽松；API 载荷是给机器读的，必须严格。如果 API 需要说明字段，写在文档而不是 payload 里。",
           },
         ],
       },
@@ -3311,6 +3879,28 @@ export const blogArticles: BlogArticle[] = [
             text: 'The next time you see a comment inside tsconfig.json, you do not need to wonder why. It is not strict JSON. It is JSONC.',
           },
         ],
+        faq: [
+          {
+            question: "If JSONC already allows comments, why does JSON5 exist separately?",
+            answer: "JSONC only adds comments and trailing commas to standard JSON — everything else stays strict. JSON5 goes much further: single-quoted strings, unquoted object keys (like JavaScript), multi-line strings, hex numbers, +/-Infinity, and NaN. It is essentially a static JavaScript object literal. JSONC targets maintainable config files; JSON5 targets hand-authored data. Different tools pick different variants: VS Code and TypeScript use JSONC, some scripting engines and data pipelines default to JSON5.",
+          },
+          {
+            question: "Will JSON.parse fail on tsconfig.json?",
+            answer: "Yes, in most cases. JSON.parse strictly implements RFC 8259 and throws SyntaxError the moment it sees a comment or trailing comma. tsconfig.json is JSONC internally, which requires TypeScript's own parser (ts.parseConfigFileTextToJson) or the jsonc-parser library. To read commented configs from your own Node.js code, either strip comments first with strip-json-comments or jsonc-parser and then call JSON.parse, or use a JSON5 library that handles a superset of these relaxations directly in one step.",
+          },
+          {
+            question: "Can package.json have comments? Why is it different from tsconfig.json?",
+            answer: "No. package.json is parsed by npm, yarn, pnpm, and countless other tools, all using strict JSON parsers. A single // or /* */ can break `npm install` for the entire project. tsconfig.json is read exclusively by TypeScript, which chose to use a JSONC parser. package.json is an ecosystem standard — you cannot force every tool to relax its parser. Add explanations via extra fields like \"description\" or a sibling README, not inline comments.",
+          },
+          {
+            question: "What do I lose when converting JSONC to standard JSON?",
+            answer: "Only comments and formatting details (indentation, blank lines, trailing commas). All data structures and values are preserved exactly. The resulting JSON is portable to any RFC 8259 parser and safe to send over the wire. The downside is one-way: intent captured in comments disappears, leaving future maintainers to guess. Best practice is to keep the JSONC file as the human source of truth and generate a clean JSON build artifact for strict consumers.",
+          },
+          {
+            question: "Why can't API responses use JSON with comments?",
+            answer: "APIs cross language and platform boundaries. A Go server, an iOS Swift client, an Android Kotlin client, and Nginx or an API gateway in between all rely on strict RFC 8259 parsers — comments would break the entire chain. Comments also leak internal reasoning and history, which is a maintenance and sometimes security concern. Config files are for humans and can be relaxed; API payloads are for machines and must be strict. Document API fields in your docs, not in the payload.",
+          },
+        ],
       },
     },
   },
@@ -3349,4 +3939,36 @@ export function getLocalizedBlogArticle(slug: string, locale: string): Localized
   if (!article) return null;
 
   return toLocalizedArticle(article, normalizeBlogLocale(locale));
+}
+
+/**
+ * 根据 tag 重叠数和 relatedTools 交集为一篇文章挑选相关文章。
+ * - 优先按 tag 重叠数排序
+ * - 次要按 relatedTools href 交集数排序
+ * - 排除自身
+ */
+export function getRelatedBlogArticles(
+  slug: string,
+  locale: string,
+  limit = 4
+): LocalizedBlogArticle[] {
+  const normalizedLocale = normalizeBlogLocale(locale);
+  const target = blogArticles.find((item) => item.slug === slug);
+  if (!target) return [];
+  const targetTranslation = target.translations[normalizedLocale];
+  const targetTags = new Set(targetTranslation.tags);
+  const targetTools = new Set(targetTranslation.relatedTools.map((tool) => tool.href));
+
+  const scored = blogArticles
+    .filter((item) => item.slug !== slug)
+    .map((item) => {
+      const t = item.translations[normalizedLocale];
+      const tagOverlap = t.tags.filter((tag) => targetTags.has(tag)).length;
+      const toolOverlap = t.relatedTools.filter((tool) => targetTools.has(tool.href)).length;
+      return { article: item, score: tagOverlap * 10 + toolOverlap };
+    })
+    .filter((entry) => entry.score > 0)
+    .sort((a, b) => b.score - a.score);
+
+  return scored.slice(0, limit).map((entry) => toLocalizedArticle(entry.article, normalizedLocale));
 }

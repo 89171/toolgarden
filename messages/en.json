@@ -1578,7 +1578,10 @@
     "read_more": "Read article",
     "published_label": "Published",
     "updated_label": "Updated",
-    "related_tools": "Related tools"
+    "related_tools": "Related tools",
+    "related_articles": "Related articles",
+    "faq_title": "Frequently asked questions",
+    "toc_title": "Table of contents"
   },
   "home": {
     "title": "JSON Toolkit",
