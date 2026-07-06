@@ -302,6 +302,14 @@ Canonical examples:
 - Shows source and output preview comparison with a checkerboard background for transparency
 - Image files are not uploaded to a server
 
+### ID Photo Maker (/image/id-photo)
+- Creates standard ID photos from everyday photos or existing ID photos locally in the browser
+- Includes China 1 inch, China 2 inch, China visa, 2 x 2 inch, EU / Schengen, Japan passport, and custom millimeter-based canvas sizes
+- Uses browser-local AI background removal, browser face detection when available, and foreground alpha bounds as a fallback for automatic framing
+- Places the head near the 50% to 70% reference range, then lets users drag and zoom the cut-out subject manually
+- Supports white, blue, red, neutral gray, and custom background colors
+- Exports JPG or PNG output at 300 DPI-equivalent pixel dimensions without uploading image data to a server
+
 ### Image Watermark Remover (/image/remove-watermark)
 - Inpaints selected watermark areas locally in the browser with a MI-GAN 512 ONNX Pipeline high-quality model by default, with a LaMa ONNX fallback and fast pixel repair as additional options
 - Users drag or resize a rectangular selection over the area to repair

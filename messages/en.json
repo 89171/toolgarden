@@ -628,6 +628,79 @@
       "general": "Background removal failed. Please try again."
     }
   },
+  "image_id_photo": {
+    "settings_title": "ID photo settings",
+    "drop_title": "Click or drop a photo",
+    "drop_hint": "Supports {formats}. Casual photos and existing ID photos both work.",
+    "local_note": "Photos are processed locally in your browser. The AI model downloads assets on first use, and files are not uploaded to a server.",
+    "source_size": "Source size",
+    "file_size": "File size",
+    "preset_title": "Photo size",
+    "preset_cn_one_inch": "China 1 inch",
+    "preset_cn_two_inch": "China 2 inch",
+    "preset_cn_visa": "China visa",
+    "preset_us_passport": "2 x 2 inch",
+    "preset_eu_passport": "EU / Schengen",
+    "preset_jp_passport": "Japan passport",
+    "preset_custom": "Custom size",
+    "custom_width": "Width mm",
+    "custom_height": "Height mm",
+    "background_title": "Background color",
+    "background_white": "White",
+    "background_blue": "Blue",
+    "background_red": "Red",
+    "background_gray": "Light gray",
+    "background_custom": "Custom",
+    "model_choice": "AI model",
+    "model_quality": "High quality",
+    "model_fast": "Fast",
+    "output_format": "Export format",
+    "process_action": "Remove background and frame",
+    "processing": "Processing",
+    "auto_fit": "Auto frame",
+    "replace": "Replace photo",
+    "progress_prepare": "Preparing local model",
+    "progress_model": "Loading model assets {value}%",
+    "progress_compute": "Detecting person and background {value}%",
+    "editor_title": "ID photo editor",
+    "editor_aria": "ID photo preview canvas. Drag the person to adjust position.",
+    "face_status_waiting": "Waiting for face detection",
+    "face_status_detected": "Face area detected",
+    "face_status_fallback": "Using subject bounds",
+    "face_status_unsupported": "Face detection unavailable",
+    "ready_title": "Photo loaded",
+    "ready_body": "Remove the background and frame the photo. The tool will detect the face area and place the head at a suitable ratio.",
+    "empty_title": "Upload a photo to start",
+    "empty_body": "Use a casual portrait or an existing ID photo. After generation, drag, zoom, change the background, and export a standard-size photo.",
+    "zoom": "Person zoom",
+    "center_reset": "Reset framing",
+    "output_title": "Export result",
+    "exporting": "Exporting",
+    "download": "Download ID photo",
+    "output_dimensions": "Export pixels",
+    "output_size": "Output size",
+    "duration": "Duration",
+    "duration_value": "{value}ms",
+    "output_empty_title": "Waiting to export",
+    "output_empty_body": "After AI framing and manual adjustment, download a JPG or PNG ID photo.",
+    "composition_title": "Composition reference",
+    "canvas_size": "Canvas size",
+    "pixel_size": "Pixel size",
+    "head_ratio": "Head height",
+    "unknown_type": "Unknown type",
+    "errors": {
+      "empty_file": "The file is empty. Choose a valid image.",
+      "unsupported_input": "This image type is not supported yet: {type}.",
+      "file_too_large": "The file is too large. Maximum size is {maxSize}.",
+      "too_many_pixels": "The image dimensions are too large. Maximum size is {maxPixels}.",
+      "load_failed": "The image could not be decoded. The file may be damaged or unsupported by this browser.",
+      "canvas_context": "Could not create a Canvas drawing context.",
+      "canvas_export": "ID photo generation failed. Model assets may have failed to load, or this browser may not support the required capabilities.",
+      "unsupported_output": "This browser cannot export {format}.",
+      "invalid_dimensions": "Enter a valid ID photo size.",
+      "general": "ID photo generation failed. Please try again."
+    }
+  },
   "image_remove_watermark": {
     "settings_title": "Watermark removal",
     "editor_title": "AI selection repair",
@@ -1177,6 +1250,22 @@
         {
           "question": "Can it remove every complex background perfectly?",
           "answer": "The tool automatically detects the foreground and creates a transparent background, but hair, translucent materials, low-contrast edges, or similar foreground and background colors may still need manual retouching."
+        }
+      ]
+    },
+    "image-id-photo": {
+      "items": [
+        {
+          "question": "Does ID photo generation upload my photo?",
+          "answer": "No. Image decoding, AI background removal, framing, and export all run locally in your browser. Files are not uploaded to a server. The browser may download open-source model assets on first use."
+        },
+        {
+          "question": "Which ID photo sizes are supported?",
+          "answer": "Built-in presets include China 1 inch, China 2 inch, China visa, 2 x 2 inch, EU / Schengen, Japan passport, and a custom millimeter-based canvas size."
+        },
+        {
+          "question": "What if the automatic face framing is not exact?",
+          "answer": "The tool tries to detect the face and place the head near the 50% to 70% reference range. If face detection is unavailable, it falls back to the foreground subject bounds, and you can still drag and zoom manually."
         }
       ]
     },
@@ -1764,6 +1853,10 @@
     "image-remove-bg": {
       "name": "Remove image background",
       "description": "Free online background remover that processes images locally in your browser with an open-source model and exports a transparent PNG"
+    },
+    "image-id-photo": {
+      "name": "ID Photo Maker",
+      "description": "Free online ID photo maker with China 1 inch, 2 inch, China visa, 2 x 2 inch, and custom sizes, with AI background removal, face framing, background colors, drag, and zoom"
     },
     "image-remove-watermark": {
       "name": "Image watermark remover",

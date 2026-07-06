@@ -56,6 +56,7 @@ ToolGarden provides developers with a suite of tools for working with JSON data.
 - **Image Compressor** (`/image/compress`): Compress JPG, PNG, WebP, and other images locally in the browser, preserving the original format by default with an optional WebP output mode.
 - **Image Upscale** (`/image/upscale`): Upscale JPG, PNG, WebP, and other images locally in the browser at 2x, 3x, 4x, or custom dimensions with pixel-perfect, smooth interpolation, and sharp-enhanced resampling modes.
 - **Remove Image Background** (`/image/remove-bg`): Remove image backgrounds locally in the browser with an open-source model and export a transparent PNG.
+- **ID Photo Maker** (`/image/id-photo`): Make ID photos locally from everyday photos or existing ID photos with AI background removal, face framing, China 1 inch, China 2 inch, China visa, 2 x 2 inch, and custom millimeter sizes.
 - **Image Watermark Remover** (`/image/remove-watermark`): Select a watermark area, inpaint it with the default browser-local MI-GAN high-quality AI model, LaMa fallback, or fast pixel repair, and export JPG, PNG, or WebP.
 - **Image Editor** (`/image/edit`): Edit images directly on a Fabric.js canvas with shapes, polylines, brush strokes, marker strokes, text, mosaic, blur, object erasing, undo, and redo locally in the browser.
 - **Image to Icon** (`/image/to-icon`): Convert PNG, SVG, JPG, WebP, BMP, AVIF, and other images to ICO, ICNS, or multi-size PNG ZIP icons locally in the browser with drag scaling, corner radius, background removal, and browser previews.
@@ -108,7 +109,7 @@ ToolGarden provides developers with a suite of tools for working with JSON data.
 - Excel support via SheetJS (xlsx library)
 - YAML support via the `yaml` npm package
 - XML support via fast-xml-parser
-- Image tools support editing, compression, upscaling, background removal, AI watermark selection repair, conversion, Base64 image encode/decode, crop, resize, JPG, PNG, WebP, GIF, BMP, SVG, AVIF, drag-and-drop, clipboard paste, preview comparison, and ZIP batch download
+- Image tools support editing, compression, upscaling, ID photo making, background removal, AI watermark selection repair, conversion, Base64 image encode/decode, crop, resize, JPG, PNG, WebP, GIF, BMP, SVG, AVIF, drag-and-drop, clipboard paste, preview comparison, and ZIP batch download
 - PDF tools use pdf-lib for PDF generation and page-level PDF operations, pdfjs-dist for PDF text extraction, fflate for Office OpenXML/EPUB/DOCX packaging, SheetJS for spreadsheets, a PalmDOC text extractor for legacy MOBI, and browser Canvas for Unicode text rendering
 - Subtitle Maker supports LRC and SRT parsing, editing, timing calibration against local audio/video, and export without uploading files
 - Info Encoder / Decoder supports Unicode, URL, UTF16-style hex escapes, Base64, MD5, SHA1, hex, JWT decoding, Cookie formatting, Gzip decompression, HTML entity decoding, URL parameter parsing, and string escaping locally in the browser

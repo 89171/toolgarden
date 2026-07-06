@@ -628,6 +628,79 @@
       "general": "背景移除失败，请重试。"
     }
   },
+  "image_id_photo": {
+    "settings_title": "证件照设置",
+    "drop_title": "点击或拖拽上传照片",
+    "drop_hint": "支持 {formats}，生活照或已有证件照都可以",
+    "local_note": "照片在浏览器本地处理，AI 模型首次使用会下载资源，文件不会上传到服务器。",
+    "source_size": "原图尺寸",
+    "file_size": "文件大小",
+    "preset_title": "证件照尺寸",
+    "preset_cn_one_inch": "中国 1 寸",
+    "preset_cn_two_inch": "中国 2 寸",
+    "preset_cn_visa": "中国签证",
+    "preset_us_passport": "2 x 2 inch",
+    "preset_eu_passport": "欧盟 / 申根",
+    "preset_jp_passport": "日本护照",
+    "preset_custom": "自定义尺寸",
+    "custom_width": "宽度 mm",
+    "custom_height": "高度 mm",
+    "background_title": "背景底色",
+    "background_white": "白色",
+    "background_blue": "蓝色",
+    "background_red": "红色",
+    "background_gray": "浅灰",
+    "background_custom": "自定义",
+    "model_choice": "AI 模型",
+    "model_quality": "高质量",
+    "model_fast": "快速",
+    "output_format": "导出格式",
+    "process_action": "AI 去背景并构图",
+    "processing": "AI 处理中",
+    "auto_fit": "自动构图",
+    "replace": "更换照片",
+    "progress_prepare": "准备本地模型",
+    "progress_model": "加载模型资源 {value}%",
+    "progress_compute": "识别人物和背景 {value}%",
+    "editor_title": "证件照编辑",
+    "editor_aria": "证件照预览画布，拖动人物可以调整位置",
+    "face_status_waiting": "等待识别人脸",
+    "face_status_detected": "已识别人脸区域",
+    "face_status_fallback": "使用主体边界构图",
+    "face_status_unsupported": "浏览器未开放人脸识别",
+    "ready_title": "照片已读取",
+    "ready_body": "点击 AI 去背景并构图，工具会移除背景、识别人脸区域，并把头部放到合适比例。",
+    "empty_title": "上传照片开始制作",
+    "empty_body": "支持生活照或证件照。生成后可以拖动人物、缩放大小、切换底色，再导出标准尺寸图片。",
+    "zoom": "人物缩放",
+    "center_reset": "重置构图",
+    "output_title": "导出结果",
+    "exporting": "导出中",
+    "download": "下载证件照",
+    "output_dimensions": "导出像素",
+    "output_size": "输出大小",
+    "duration": "耗时",
+    "duration_value": "{value}ms",
+    "output_empty_title": "等待导出",
+    "output_empty_body": "完成 AI 构图并调整位置后，点击下载生成 JPG 或 PNG 证件照。",
+    "composition_title": "构图参考",
+    "canvas_size": "画布尺寸",
+    "pixel_size": "像素尺寸",
+    "head_ratio": "头部高度",
+    "unknown_type": "未知类型",
+    "errors": {
+      "empty_file": "文件为空，请选择有效图片。",
+      "unsupported_input": "暂不支持这种图片类型：{type}。",
+      "file_too_large": "文件过大，最大支持 {maxSize}。",
+      "too_many_pixels": "图片尺寸过大，最大支持 {maxPixels}。",
+      "load_failed": "图片解码失败，文件可能已损坏或当前浏览器不支持该格式。",
+      "canvas_context": "无法创建 Canvas 绘图上下文。",
+      "canvas_export": "证件照生成失败，模型资源可能加载失败或当前浏览器不支持所需能力。",
+      "unsupported_output": "当前浏览器不支持导出 {format}。",
+      "invalid_dimensions": "请输入有效的证件照尺寸。",
+      "general": "证件照生成失败，请重试。"
+    }
+  },
   "image_remove_watermark": {
     "settings_title": "去水印设置",
     "editor_title": "AI 选区修复",
@@ -1177,6 +1250,22 @@
         {
           "question": "复杂背景能完全移除吗？",
           "answer": "工具会自动识别主体并生成透明背景，但发丝、半透明材质、低对比边缘或主体与背景过于相近时，可能需要后续手动修饰。"
+        }
+      ]
+    },
+    "image-id-photo": {
+      "items": [
+        {
+          "question": "证件照制作会上传我的照片吗？",
+          "answer": "不会。照片解码、AI 去背景、构图和导出都在浏览器本地完成，文件不会上传到服务器。首次使用时浏览器可能会下载开源模型资源。"
+        },
+        {
+          "question": "支持哪些证件照尺寸？",
+          "answer": "内置中国 1 寸、中国 2 寸、中国签证、2 x 2 inch、欧盟 / 申根、日本护照等常见尺寸，也可以按毫米输入自定义宽高。"
+        },
+        {
+          "question": "人脸构图不准时怎么办？",
+          "answer": "工具会优先识别人脸区域并让头部高度接近 50% 到 70% 的参考范围。如果浏览器不支持人脸识别，会按去背景主体边界兜底，用户仍可手动拖动和缩放调整。"
         }
       ]
     },
@@ -1764,6 +1853,10 @@
     "image-remove-bg": {
       "name": "图片去背景",
       "description": "免费在线使用开源模型移除图片背景，在浏览器本地导出透明 PNG"
+    },
+    "image-id-photo": {
+      "name": "证件照制作",
+      "description": "免费在线制作证件照，支持中国 1 寸、2 寸、中国签证、2 x 2 inch 等尺寸，AI 去背景、人脸构图、底色切换和拖动缩放调整"
     },
     "image-remove-watermark": {
       "name": "图片去水印",

@@ -248,6 +248,15 @@ export const toolRegistry: ToolMeta[] = [
     featured: true,
   },
   {
+    id: 'image-id-photo',
+    name: '证件照制作',
+    description: '在浏览器本地去除照片背景，按常见证件照尺寸自动构图，并支持底色、拖动和缩放调整',
+    path: '/image/id-photo',
+    icon: 'ID',
+    category: 'convert',
+    featured: true,
+  },
+  {
     id: 'image-remove-watermark',
     name: '图片去水印',
     description: '在浏览器本地使用 AI 模型补全水印选区，导出 JPG、PNG 或 WebP',
