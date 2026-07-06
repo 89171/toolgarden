@@ -1,49 +1,69 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
+import { Panel } from '@/components/ui/Panel';
+import {
+  OCR_RECOGNITION_MODES,
+  type OcrErrorCode,
+  type OcrLanguage,
+  type OcrMode,
+  type OcrProgress,
+} from '@/lib/utils/ocr';
+import { getOcrModeLabelKey, recognizeImageOcr } from '@/lib/utils/ocr-browser';
 
-type Language = 'eng' | 'chi_sim' | 'chi_tra' | 'jpn';
+const OCR_LANGUAGE_OPTIONS: OcrLanguage[] = ['eng', 'chi_sim', 'chi_tra', 'jpn'];
 
 export default function ImageOcrPage() {
   const t = useTranslations('tools.image-ocr');
   const tc = useTranslations('common');
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>('');
-  const [language, setLanguage] = useState<Language>('eng');
+  const [language, setLanguage] = useState<OcrLanguage>('eng');
+  const [mode, setMode] = useState<OcrMode>('fast');
   const [result, setResult] = useState('');
-  const [progress, setProgress] = useState(0);
-  const [status, setStatus] = useState<'idle' | 'loading' | 'recognizing'>('idle');
+  const [error, setError] = useState('');
+  const [progress, setProgress] = useState<OcrProgress | null>(null);
+  const [status, setStatus] = useState<'idle' | 'recognizing'>('idle');
 
   const handleFile = (f: File) => {
     setFile(f);
     setResult('');
+    setError('');
+    setProgress(null);
     if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl(URL.createObjectURL(f));
   };
 
+  useEffect(() => () => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+  }, [previewUrl]);
+
+  const getErrorMessage = (code: OcrErrorCode, detail?: string) =>
+    t(`errors.${code}`, { detail: detail || '' });
+
   const handleRecognize = async () => {
     if (!file) return;
-    setStatus('loading');
-    setProgress(0);
+    setStatus('recognizing');
+    setProgress({ stage: 'model', percent: 0 });
     setResult('');
-    try {
-      const { createWorker } = await import('tesseract.js');
-      const worker = await createWorker(language, undefined, {
-        logger: (m: { status?: string; progress?: number }) => {
-          if (m.status === 'recognizing text') setStatus('recognizing');
-          if (typeof m.progress === 'number') setProgress(Math.round(m.progress * 100));
-        },
-      });
-      const { data } = await worker.recognize(file);
-      setResult(data.text || '');
-      await worker.terminate();
-    } catch (error) {
-      setResult(`Error: ${(error as Error).message}`);
+    setError('');
+
+    const outcome = await recognizeImageOcr(file, {
+      mode,
+      language,
+      onProgress: setProgress,
+    });
+
+    if (outcome.ok) {
+      setResult(outcome.text);
+    } else {
+      setError(getErrorMessage(outcome.code, outcome.detail));
     }
+
     setStatus('idle');
-    setProgress(0);
+    setProgress(null);
   };
 
   const copy = () => {
@@ -55,8 +75,7 @@ export default function ImageOcrPage() {
   return (
     <ToolLayout toolId="image-ocr">
       <div className="grid gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-        <section className="flex flex-col gap-3 rounded-lg border border-border-base bg-surface p-4 shadow">
-          <h2 className="text-lg font-semibold text-content">{t('upload_title')}</h2>
+        <Panel title={t('upload_title')} className="min-h-[28rem]">
           <label className="flex cursor-pointer flex-col items-center gap-2 rounded border border-dashed border-border-input bg-surface-raised p-6 text-center hover:border-border-strong">
             <span className="text-sm text-content-secondary">{t('drop_title')}</span>
             <span className="text-xs text-content-faint">{t('drop_hint')}</span>
@@ -73,48 +92,90 @@ export default function ImageOcrPage() {
 
           {previewUrl && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={previewUrl} alt="preview" className="max-h-64 max-w-full self-center rounded border border-border-subtle" />
+            <img
+              src={previewUrl}
+              alt={t('preview_alt')}
+              className="mt-3 max-h-64 max-w-full self-center rounded border border-border-subtle"
+            />
           )}
 
-          <h2 className="mt-2 text-lg font-semibold text-content">{t('settings_title')}</h2>
-          <div>
+          <div className="mt-4">
+            <h3 className="text-sm font-semibold text-content">{t('model_label')}</h3>
+            <div className="mt-2 grid gap-2 sm:grid-cols-2" role="radiogroup" aria-label={t('model_label')}>
+              {OCR_RECOGNITION_MODES.map((option) => {
+                const active = mode === option;
+                return (
+                  <button
+                    key={option}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    onClick={() => setMode(option)}
+                    className={`rounded border p-3 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong ${
+                      active
+                        ? 'border-border-strong bg-surface-hover ring-2 ring-action/25'
+                        : 'border-border-base bg-surface-raised hover:border-border-strong hover:bg-surface-hover'
+                    }`}
+                  >
+                    <span className="block text-sm font-medium text-content">{t(getOcrModeLabelKey(option))}</span>
+                    <span className="mt-1 block text-xs leading-5 text-content-muted">
+                      {t(option === 'accurate' ? 'mode_accurate_scene' : 'mode_fast_scene')}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="mt-4">
+            <h3 className="text-sm font-semibold text-content">{t('settings_title')}</h3>
             <label className="text-xs uppercase tracking-normal text-content-faint">{t('language_label')}</label>
             <select
               value={language}
-              onChange={(e) => setLanguage(e.target.value as Language)}
-              className="mt-1 w-full rounded border border-border-input bg-surface-raised px-3 py-2 text-sm"
+              onChange={(e) => setLanguage(e.target.value as OcrLanguage)}
+              className="mt-1 w-full rounded border border-border-input bg-surface-raised px-3 py-2 text-sm text-content"
             >
-              <option value="eng">{t('language_eng')}</option>
-              <option value="chi_sim">{t('language_chi_sim')}</option>
-              <option value="chi_tra">{t('language_chi_tra')}</option>
-              <option value="jpn">{t('language_jpn')}</option>
+              {OCR_LANGUAGE_OPTIONS.map((option) => (
+                <option key={option} value={option}>{t(`language_${option}`)}</option>
+              ))}
             </select>
           </div>
 
-          <Button onClick={handleRecognize} disabled={!file || status !== 'idle'}>
-            {status === 'loading'
-              ? t('loading_model')
-              : status === 'recognizing'
-                ? t('recognizing', { progress })
+          <div className="mt-4 flex flex-col gap-2">
+            <Button onClick={handleRecognize} disabled={!file || status !== 'idle'}>
+              {status === 'recognizing' && progress
+                ? t('progress_label', { stage: t(`stages.${progress.stage}`), progress: progress.percent })
                 : t('recognize')}
-          </Button>
-        </section>
-
-        <section className="flex min-h-64 flex-col gap-3 rounded-lg border border-border-base bg-surface p-4 shadow">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-content">{t('result_title')}</h2>
-            {result && <Button variant="secondary" onClick={copy}>{tc('copy')}</Button>}
+            </Button>
+            <p className="text-xs leading-5 text-content-muted">
+              {mode === 'accurate' ? t('accurate_note') : t('fast_note')}
+            </p>
           </div>
-          {result ? (
-            <textarea
-              value={result}
-              onChange={(e) => setResult(e.target.value)}
-              className="min-h-64 flex-1 resize-none rounded border border-border-input bg-surface-raised p-3 font-mono text-sm text-content-secondary focus:outline-none focus:ring-2 focus:ring-action"
-            />
-          ) : (
-            <p className="text-sm text-content-faint">{t('empty_result')}</p>
-          )}
-        </section>
+        </Panel>
+
+        <Panel
+          title={t('result_title')}
+          actions={result ? <Button variant="secondary" onClick={copy}>{tc('copy')}</Button> : undefined}
+          className="min-h-[28rem]"
+        >
+          <div className="flex min-h-0 flex-grow flex-col">
+            {error ? (
+              <p className="rounded border border-border-base bg-surface-raised p-3 text-sm text-syntax-null">
+                {error}
+              </p>
+            ) : result ? (
+              <textarea
+                value={result}
+                onChange={(event) => setResult(event.target.value)}
+                className="min-h-64 flex-1 resize-none rounded border border-border-input bg-surface-raised p-3 font-mono text-sm text-content-secondary focus:outline-none focus:ring-2 focus:ring-action"
+              />
+            ) : (
+              <p className="flex flex-grow items-center justify-center rounded border border-border-base bg-surface-raised p-3 text-sm text-content-faint">
+                {t('empty_result')}
+              </p>
+            )}
+          </div>
+        </Panel>
       </div>
     </ToolLayout>
   );

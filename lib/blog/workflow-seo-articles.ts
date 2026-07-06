@@ -59,6 +59,21 @@ const jsonVariantsExample = `{
 const wordCountMixedExample = `中文 ABC 😊
 ToolGarden JSON 工具`;
 
+const removeBgImplementationSnippet = `const modelMap = {
+  medium: 'isnet_fp16',
+  small: 'isnet_quint8',
+} as const;
+
+const modelInput = await normalizeLoadedImageToPng(image);
+const blob = await removeBackground(modelInput, {
+  publicPath: BACKGROUND_REMOVAL_PUBLIC_PATH,
+  model: modelMap[options.model ?? 'medium'],
+  output: { format: 'image/png', quality: 1 },
+  progress: (label, current, total) => {
+    options.onProgress?.(createBackgroundRemovalProgress(label, current, total));
+  },
+});`;
+
 export const workflowSeoBlogArticles = [
   {
     slug: 'make-id-photo-online-size-background-guide',
@@ -800,14 +815,14 @@ export const workflowSeoBlogArticles = [
   {
     slug: 'remove-image-background-browser-local-model',
     publishedAt: '2026-07-02',
-    updatedAt: '2026-07-03',
+    updatedAt: '2026-07-07',
     translations: {
       zh: {
         title: '如何一键去除图片背景？在浏览器本地跑模型的原理',
         excerpt: '图片去背景通常会先识别前景主体，再生成透明 alpha mask。浏览器本地模型可以在不上传图片的情况下导出透明 PNG。',
         metaTitle: '如何一键去除图片背景？浏览器本地模型原理',
-        metaDescription: '解释图片去背景的基本原理，包括前景分割、alpha mask、透明 PNG、浏览器本地模型、适合图片和常见边缘问题。',
-        readingTime: '约 7 分钟阅读',
+        metaDescription: '解释图片去背景的基本原理和 ToolGarden 当前实现，包括 @imgly/background-removal、ISNet 模型、输入校验、PNG 规范化、透明 PNG 导出和常见边缘问题。',
+        readingTime: '约 9 分钟阅读',
         tags: ['图片去背景', '透明 PNG', '本地 AI', '前景分割'],
         relatedTools: [
           {
@@ -846,6 +861,32 @@ export const workflowSeoBlogArticles = [
               '把背景像素设为透明，保留主体。',
               '导出透明 PNG，方便继续设计或排版。',
             ],
+          },
+          { type: 'heading', level: 2, text: '当前 /image/remove-bg 的实现细节' },
+          {
+            type: 'paragraph',
+            text: 'ToolGarden 目前的图片去背景页面是一个浏览器端单图工具：页面组件负责文件选择、模型档位、进度条、预览和下载；真正的去背景逻辑集中在 lib/utils/image-browser.ts 的 removeImageBackground()，页面不会把图片文件传到业务服务器处理。',
+          },
+          {
+            type: 'table',
+            headers: ['环节', '当前实现', '为什么这样做'],
+            rows: [
+              ['页面入口', 'components/ImageBackgroundRemover.tsx 只取上传列表中的第一张图片，先 inspectImageFile() 读取尺寸和类型，再允许用户点击移除背景。', '避免一次性把大量图片送入浏览器模型，降低内存压力，也让结果预览和下载更明确。'],
+              ['输入保护', '支持 JPG、PNG、WebP、GIF、BMP、SVG、AVIF；文件最大 50MB，解码后的像素数最大 40MP。空文件、不支持格式、解码失败和超大图片都会返回结构化错误。', '模型推理前先挡住浏览器难以稳定处理的输入，避免标签页卡死或 Canvas 失败。'],
+              ['预处理', 'removeImageBackground() 用 object URL 加载图片，读取 naturalWidth / naturalHeight，再绘制到 Canvas，并通过 normalizeLoadedImageToPng() 转成 PNG Blob 作为模型输入。', '统一输入格式，避免不同图片编码、透明通道或浏览器解码差异直接影响模型调用。'],
+              ['模型选择', '运行时动态 import @imgly/background-removal。默认 high quality 对应 isnet_fp16，快速档对应 isnet_quint8。页面文案标注为 medium 约 80MB、small 约 40MB。', '高质量模型边缘更稳，快速模型下载和推理更轻；用户可以按网络和设备性能选择。'],
+              ['模型资源', 'publicPath 指向 staticimgly.com/@imgly/background-removal-data/${PACKAGE_VERSION}/dist/。首次运行会下载模型资源，之后通常由浏览器缓存。', '把图片处理留在本机，只把模型资产作为静态文件下载；首次慢、二次快是正常现象。'],
+              ['进度与导出', '库回调的 label/current/total 会被转换成 model 或 compute 阶段进度；输出固定为 image/png、quality 1，返回 Blob、原尺寸、原始大小、输出大小和耗时。前端再创建 object URL 用于预览和下载。', '透明背景需要 alpha 通道，PNG 是最稳定的默认输出；统计信息可直接展示给用户。'],
+            ],
+          },
+          {
+            type: 'code',
+            language: 'ts',
+            code: removeBgImplementationSnippet,
+          },
+          {
+            type: 'paragraph',
+            text: '因此，这个工具的“本地”含义是：用户图片在浏览器内解码、Canvas 规范化、模型推理和 PNG 导出，图片 Blob 不上传到服务器；但首次使用时浏览器仍需要从模型 CDN 请求开源模型资源。如果断网且模型没有缓存，去背景无法启动。',
           },
           { type: 'heading', level: 2, text: '哪些图片效果更好？' },
           {
@@ -893,8 +934,8 @@ export const workflowSeoBlogArticles = [
         title: 'How One-Click Background Removal Works with a Browser-Local Model',
         excerpt: 'Background removal detects the foreground subject and creates an alpha mask. A browser-local model can export transparent PNGs without uploading images.',
         metaTitle: 'How One-Click Image Background Removal Works Locally',
-        metaDescription: 'Learn foreground segmentation, alpha masks, transparent PNG export, browser-local models, best image types, and common edge issues.',
-        readingTime: '7 min read',
+        metaDescription: 'Learn foreground segmentation and ToolGarden implementation details: @imgly/background-removal, ISNet models, input guards, PNG normalization, transparent export, and edge limits.',
+        readingTime: '9 min read',
         tags: ['background removal', 'transparent PNG', 'local AI', 'segmentation'],
         relatedTools: [
           {
@@ -933,6 +974,32 @@ export const workflowSeoBlogArticles = [
               'Background pixels are made transparent.',
               'The result is exported as a transparent PNG.',
             ],
+          },
+          { type: 'heading', level: 2, text: 'How /image/remove-bg Is Implemented Today' },
+          {
+            type: 'paragraph',
+            text: 'ToolGarden currently implements background removal as a browser-side single-image workflow: the React component handles file selection, model choice, progress, preview, and download, while the actual removal logic lives in removeImageBackground() inside lib/utils/image-browser.ts. The image file is not sent to an application server for processing.',
+          },
+          {
+            type: 'table',
+            headers: ['Step', 'Current implementation', 'Reason'],
+            rows: [
+              ['Page entry', 'components/ImageBackgroundRemover.tsx uses the first file from the upload list, calls inspectImageFile() for dimensions and type, then enables the remove action.', 'This avoids pushing large batches through a browser model at once and keeps preview and download state clear.'],
+              ['Input guards', 'Supported inputs are JPG, PNG, WebP, GIF, BMP, SVG, and AVIF. Files are capped at 50MB, and decoded images are capped at 40MP. Empty files, unsupported formats, decode failures, and oversized images return structured errors.', 'The tool rejects inputs that are likely to freeze the tab or fail Canvas/model processing.'],
+              ['Pre-processing', 'removeImageBackground() loads the image through an object URL, reads naturalWidth / naturalHeight, draws it to Canvas, and uses normalizeLoadedImageToPng() to create a PNG Blob for the model.', 'A normalized PNG input reduces browser and codec differences before the model runs.'],
+              ['Model choice', 'The code dynamically imports @imgly/background-removal. The high-quality option maps to isnet_fp16, and the fast option maps to isnet_quint8. The UI describes them as medium about 80MB and small about 40MB.', 'The high-quality model gives steadier edges, while the fast model downloads and runs lighter on weaker devices.'],
+              ['Model assets', 'publicPath points to staticimgly.com/@imgly/background-removal-data/${PACKAGE_VERSION}/dist/. The first run downloads model assets, and later runs are usually served from the browser cache.', 'The image stays local, while the model is fetched as static assets. A slow first run and faster later runs are expected.'],
+              ['Progress and export', 'The library progress callback is mapped into model or compute stages. Output is fixed to image/png with quality 1, and the result returns the Blob, dimensions, source size, output size, and duration. The UI creates an object URL for preview and download.', 'PNG preserves the alpha channel needed for transparency, and the returned stats can be shown directly in the result panel.'],
+            ],
+          },
+          {
+            type: 'code',
+            language: 'ts',
+            code: removeBgImplementationSnippet,
+          },
+          {
+            type: 'paragraph',
+            text: 'So “local” means the user image is decoded, normalized, segmented, and exported inside the browser. The image Blob is not uploaded to a server, but the browser may still download open-source model assets from the model CDN on first use. If the device is offline and the model is not cached, background removal cannot start.',
           },
           { type: 'heading', level: 2, text: 'Which Images Work Best?' },
           {

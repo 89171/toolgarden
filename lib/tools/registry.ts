@@ -395,7 +395,7 @@ export const toolRegistry: ToolMeta[] = [
   {
     id: 'image-ocr',
     name: '图片 OCR 文字识别',
-    description: '在浏览器本地使用 Tesseract 从图片中提取文字，支持中英日多语言',
+    description: '在浏览器本地从图片中提取文字，支持快速识别和高精度识别',
     path: '/image/ocr',
     icon: 'OCR',
     category: 'convert',
