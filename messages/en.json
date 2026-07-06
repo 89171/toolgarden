@@ -1181,11 +1181,15 @@
       "items": [
         {
           "question": "Does QR decoding upload my image?",
-          "answer": "No. Images are read and decoded locally in your browser and are not uploaded to a server."
+          "answer": "No. Uploaded images and camera frames are read and decoded locally in your browser and are not uploaded to a server."
         },
         {
           "question": "Which image formats can be decoded?",
           "answer": "PNG, JPG, WebP, GIF, and BMP files are supported when your browser can read them. Clear, upright, high-contrast QR codes decode best."
+        },
+        {
+          "question": "What permission does live camera scanning need?",
+          "answer": "After you click Start camera, the browser asks for camera permission. Once allowed, the page scans the video locally and updates the result automatically when a QR code is found."
         }
       ]
     },
@@ -2179,10 +2183,20 @@
     },
     "qr-code-decoder": {
       "name": "QR Code Decoder",
-      "description": "Free online QR code decoder that reads uploaded QR images locally in your browser",
-      "decode_title": "Upload QR image",
+      "description": "Free online QR code decoder that reads uploaded images or scans your camera locally in your browser",
+      "decode_title": "Upload image or scan camera",
       "result_title": "Decoded result",
       "choose_image": "Choose image",
+      "camera_title": "Live camera scanning",
+      "start_camera": "Start camera",
+      "stop_camera": "Stop camera",
+      "camera_hint": "Start the camera to scan QR codes locally in real time.",
+      "camera_starting": "Requesting camera permission...",
+      "camera_scanning": "Scanning for QR codes...",
+      "camera_detected": "QR code detected. The result has been updated.",
+      "camera_off": "Off",
+      "camera_live": "Scanning live",
+      "camera_source": "Camera frame",
       "drop_title": "Click or drop a QR image here",
       "drop_hint": "Supports PNG / JPG / WebP / GIF / BMP",
       "decoding": "Decoding...",
@@ -2195,7 +2209,10 @@
         "image_load_failed": "The image could not be read. The file may be damaged or unsupported by this browser.",
         "canvas_context": "Could not create a Canvas drawing context.",
         "too_many_pixels": "The image dimensions are too large. Maximum size is {maxPixels}.",
-        "decode_failed": "No QR code was detected. Try a clearer image."
+        "decode_failed": "No QR code was detected. Try a clearer image.",
+        "camera_unsupported": "This browser does not support camera access.",
+        "camera_denied": "Camera permission was denied. Allow camera access in the browser address bar and try again.",
+        "camera_failed": "Could not start the camera. Check that the device is available and use HTTPS or localhost."
       }
     },
     "timestamp": {

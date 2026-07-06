@@ -53,6 +53,7 @@ export interface DecodedQrCode {
   height: number;
   filename: string;
   fileSize: number;
+  sourceLabel?: string;
 }
 
 export type QrCodeDecodeOutcome =

@@ -1181,11 +1181,15 @@
       "items": [
         {
           "question": "二维码解码会上传我的图片吗？",
-          "answer": "不会。图片会在浏览器本地读取和识别，不会上传到服务器。"
+          "answer": "不会。上传图片和摄像头画面都会在浏览器本地读取和识别，不会上传到服务器。"
         },
         {
           "question": "二维码解码支持哪些图片？",
           "answer": "支持 PNG、JPG、WebP、GIF 和 BMP 等浏览器可读取的图片格式。清晰、正向、对比度高的二维码更容易识别。"
+        },
+        {
+          "question": "摄像头实时识别需要什么权限？",
+          "answer": "点击开启摄像头后，浏览器会请求摄像头权限。允许后会实时扫描画面中的二维码，识别到内容会自动显示在结果区域。"
         }
       ]
     },
@@ -2179,10 +2183,20 @@
     },
     "qr-code-decoder": {
       "name": "二维码解码",
-      "description": "免费在线上传二维码图片，在浏览器本地识别并复制二维码内容",
-      "decode_title": "上传二维码图片",
+      "description": "免费在线上传二维码图片或开启摄像头实时识别，在浏览器本地解码并复制二维码内容",
+      "decode_title": "上传图片或摄像头识别",
       "result_title": "识别结果",
       "choose_image": "选择图片",
+      "camera_title": "摄像头实时识别",
+      "start_camera": "开启摄像头",
+      "stop_camera": "关闭摄像头",
+      "camera_hint": "开启后会在本地实时识别画面中的二维码。",
+      "camera_starting": "正在请求摄像头权限...",
+      "camera_scanning": "正在实时识别二维码...",
+      "camera_detected": "已识别二维码，结果已更新。",
+      "camera_off": "未开启",
+      "camera_live": "实时识别中",
+      "camera_source": "摄像头画面",
       "drop_title": "点击或拖拽二维码图片到这里",
       "drop_hint": "支持 PNG / JPG / WebP / GIF / BMP",
       "decoding": "识别中...",
@@ -2195,7 +2209,10 @@
         "image_load_failed": "图片读取失败，文件可能已损坏或当前浏览器不支持该格式。",
         "canvas_context": "无法创建 Canvas 绘图上下文。",
         "too_many_pixels": "图片尺寸过大，最大支持 {maxPixels}。",
-        "decode_failed": "没有识别到二维码，请换一张更清晰的图片。"
+        "decode_failed": "没有识别到二维码，请换一张更清晰的图片。",
+        "camera_unsupported": "当前浏览器不支持摄像头访问。",
+        "camera_denied": "摄像头权限被拒绝，请在浏览器地址栏允许访问后重试。",
+        "camera_failed": "无法开启摄像头，请确认设备可用并使用 HTTPS 或 localhost。"
       }
     },
     "timestamp": {

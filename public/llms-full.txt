@@ -496,8 +496,9 @@ Canonical examples:
 
 ### QR Code Decoder (/qr-code/decode)
 - Decodes uploaded PNG, JPG, WebP, GIF, and BMP images locally in the browser
+- Supports live camera scanning with browser permission and local frame decoding
 - Uses Canvas image data and jsQR@^1.4 with inverted-code attempts enabled
-- Uploaded images are not uploaded to a server
+- Uploaded images and camera frames are not uploaded to a server
 - Links to QR Code Generator for the reverse workflow
 
 ### JWT Parser (/jwt)

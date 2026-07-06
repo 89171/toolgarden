@@ -561,7 +561,7 @@ export const toolRegistry: ToolMeta[] = [
   {
     id: 'qr-code-decoder',
     name: '二维码解码',
-    description: '上传二维码图片，在浏览器本地识别并复制二维码内容',
+    description: '上传二维码图片或开启摄像头，在浏览器本地实时识别并复制二维码内容',
     path: '/qr-code/decode',
     icon: 'QR?',
     category: 'encode',

@@ -26,6 +26,12 @@ interface LoadedImage {
   cleanup: () => void;
 }
 
+interface DecodeImageDataOptions {
+  filename?: string;
+  fileSize?: number;
+  sourceLabel?: string;
+}
+
 export async function generateQrCodeDataUrl(
   text: string,
   options: QrCodeOptions = {},
@@ -175,22 +181,10 @@ export async function decodeQrCodeFile(file: File): Promise<QrCodeDecodeOutcome>
 
     context.drawImage(image.element, 0, 0, width, height);
     const imageData = context.getImageData(0, 0, width, height);
-    const qr = jsQR(imageData.data, width, height, { inversionAttempts: 'attemptBoth' });
-
-    if (!qr?.data) return { ok: false, code: 'decode_failed' };
-
-    return {
-      ok: true,
-      decoded: {
-        text: qr.data,
-        version: qr.version,
-        binaryBytes: qr.binaryData.length,
-        width,
-        height,
-        filename: file.name,
-        fileSize: file.size,
-      },
-    };
+    return decodeQrCodeImageData(imageData, width, height, {
+      filename: file.name,
+      fileSize: file.size,
+    });
   } catch (error) {
     return {
       ok: false,
@@ -200,6 +194,31 @@ export async function decodeQrCodeFile(file: File): Promise<QrCodeDecodeOutcome>
   } finally {
     image?.cleanup();
   }
+}
+
+export function decodeQrCodeImageData(
+  imageData: ImageData,
+  width: number,
+  height: number,
+  options: DecodeImageDataOptions = {}
+): QrCodeDecodeOutcome {
+  const qr = jsQR(imageData.data, width, height, { inversionAttempts: 'attemptBoth' });
+
+  if (!qr?.data) return { ok: false, code: 'decode_failed' };
+
+  return {
+    ok: true,
+    decoded: {
+      text: qr.data,
+      version: qr.version,
+      binaryBytes: qr.binaryData.length,
+      width,
+      height,
+      filename: options.filename || 'qr-code-frame',
+      fileSize: options.fileSize || 0,
+      sourceLabel: options.sourceLabel,
+    },
+  };
 }
 
 function isSupportedQrDecodeFile(file: File): boolean {

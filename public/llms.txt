@@ -83,7 +83,7 @@ ToolGarden provides developers with a suite of tools for working with JSON data.
 - **JSON Stats** (`/json-stats`): Analyze JSON structure: nesting depth, key counts, type distribution, and size comparison.
 - **Info Encoder / Decoder** (`/info-codec`): Encode, decode, hash, and parse text with Unicode, URL, UTF16, Base64, MD5, SHA1, hex, JWT, Cookie, Gzip, HTML entity, and string escape operations.
 - **QR Code Generator** (`/qr-code/generate`): Generate QR code PNG files from URLs, text, contact data, or Wi-Fi configuration text.
-- **QR Code Decoder** (`/qr-code/decode`): Decode uploaded QR images locally in the browser and copy the decoded text.
+- **QR Code Decoder** (`/qr-code/decode`): Decode uploaded QR images or scan QR codes from the camera locally in the browser and copy the decoded text.
 - **JWT Parser** (`/jwt`): Decode JWT tokens to inspect Header and Payload; verify HS256 signatures using the Web Crypto API.
 
 ## Languages
