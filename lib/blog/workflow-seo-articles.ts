@@ -61,6 +61,385 @@ ToolGarden JSON 工具`;
 
 export const workflowSeoBlogArticles = [
   {
+    slug: 'make-id-photo-online-size-background-guide',
+    publishedAt: '2026-07-06',
+    updatedAt: '2026-07-06',
+    translations: {
+      zh: {
+        title: '证件照尺寸和底色怎么选？一寸、二寸、中国护照、美国护照在线制作指南',
+        excerpt: '制作电子版证件照前，先确认用途、尺寸、底色、头部比例和是否允许数字处理。不同证件的要求并不完全相同。',
+        metaTitle: '证件照尺寸和底色怎么选？一寸二寸中国护照美国护照指南',
+        metaDescription: '整理一寸、二寸、中国护照/旅行证、美国护照 2x2 inch 等证件照尺寸和底色要求，说明如何在线制作电子版证件照、换底色、裁剪构图和避免审核风险。',
+        readingTime: '约 8 分钟阅读',
+        tags: ['证件照制作', '一寸照', '二寸照', '护照照片', '换底色'],
+        relatedTools: [
+          {
+            label: '证件照制作',
+            href: '/image/id-photo',
+            description: '上传生活照或证件照，自动去背景、按尺寸构图、切换底色并下载 JPG/PNG。',
+          },
+          {
+            label: '图片去背景',
+            href: '/image/remove-bg',
+            description: '需要单独得到透明背景人像时，可以先用本地模型去除背景。',
+          },
+          {
+            label: '图片压缩',
+            href: '/image/compress',
+            description: '报名系统限制文件大小时，可在下载后压缩到目标体积。',
+          },
+        ],
+        blocks: [
+          {
+            type: 'lead',
+            text: '证件照看起来只是“正脸照片加纯色背景”，但真正容易出错的地方通常是尺寸、底色、头部比例、是否拉伸变形，以及办理机构是否允许数字处理。',
+          },
+          {
+            type: 'paragraph',
+            text: '如果只是简历、工牌、考试报名、社保卡上传或内部系统头像，在线制作电子版证件照通常很方便：上传一张清晰正脸照，去掉背景，选择一寸、二寸或自定义尺寸，再换成白底、蓝底或红底即可。但如果是护照、签证等正式证件，一定要先看办理机构的最新要求。',
+          },
+          {
+            type: 'quote',
+            text: '结论先说：先按用途选尺寸，再按办理机构选底色；不要拉伸照片，不要过度美化，也不要把不允许数字处理的官方照片做成合成图。',
+          },
+          { type: 'heading', level: 2, text: '常见证件照尺寸怎么选？' },
+          {
+            type: 'paragraph',
+            text: '下面是日常最常见的几类尺寸。不同国家、地区、考试或平台可能有自己的像素、文件大小和背景要求，表格适合做初步选择，不应替代官方说明。',
+          },
+          {
+            type: 'table',
+            headers: ['用途', '常见尺寸', '常见底色', '使用建议'],
+            rows: [
+              ['中国一寸照', '25 x 35 mm', '白底、蓝底、红底都常见', '适合简历、报名、证书、内部系统等非统一官方场景，提交前看平台说明。'],
+              ['中国二寸照', '35 x 49 mm', '白底、蓝底、红底都常见', '适合部分证书、档案、报名材料。和中国护照 33 x 48 mm 不是同一尺寸。'],
+              ['中国护照/旅行证', '33 x 48 mm', '白色背景', '中国驻美使馆页面列出白底、头部宽高和边距要求，正式办理应以最新官方说明为准。'],
+              ['美国护照', '2 x 2 inch / 51 x 51 mm', '白色或近白色背景', '美国国务院要求头肩居中、头部约 25-35 mm，并提交未经过滤镜或数字改动的原始照片。'],
+              ['自定义尺寸', '按平台填写 mm', '按平台要求', '适合考试报名、企业系统、学校系统等只给出宽高和文件大小的场景。'],
+            ],
+          },
+          { type: 'heading', level: 2, text: '本文使用的官方标准来源' },
+          {
+            type: 'paragraph',
+            text: '正式证件照要求会随机构和办理类型变化。本文只摘取两个公开官方页面中的核心尺寸和质量要求，作为制作时的检查参考。',
+          },
+          {
+            type: 'table',
+            headers: ['来源', '本文引用的重点', '网址'],
+            rows: [
+              ['美国国务院护照照片要求', '2 x 2 inch / 51 x 51 mm；头部从下巴到头顶约 25-35 mm；白色或近白背景；提交原始未编辑照片。', 'https://travel.state.gov/en/passports/apply/help/photos.html'],
+              ['中国驻美使馆护照人像照片规格', '宽 33mm、高 48mm；白色背景；头部宽 15-22mm、高 28-33mm；头顶距上边 3-5mm。', 'https://us.china-embassy.gov.cn/lsfw/zj/hzlxz/201903/t20190309_5098803.htm'],
+            ],
+          },
+          {
+            type: 'callout',
+            title: '美国国务院护照照片要求',
+            text: '美国国务院 Passport Photos 页面说明了美国护照照片的尺寸、背景、头部位置、清晰度、表情和数字处理限制。准备美国护照照片时，请以该页面最新内容为准。',
+            href: 'https://travel.state.gov/en/passports/apply/help/photos.html',
+            linkLabel: '查看 travel.state.gov 原文',
+          },
+          {
+            type: 'callout',
+            title: '中国驻美使馆护照人像照片规格',
+            text: '中国驻美使馆页面列出护照/旅行证照片的总体要求、面部要求、背景要求、尺寸和头部位置范围。准备中国护照或旅行证照片时，请以所属使领馆和当前业务要求为准。',
+            href: 'https://us.china-embassy.gov.cn/lsfw/zj/hzlxz/201903/t20190309_5098803.htm',
+            linkLabel: '查看中国驻美使馆原文',
+          },
+          { type: 'heading', level: 2, text: '底色怎么选：白底、蓝底、红底有什么区别？' },
+          {
+            type: 'paragraph',
+            text: '底色没有一个全球通用规则。白底最常见于护照、签证和国际证件；蓝底和红底在中国的简历、考试、证书、单位系统里也很常见。真正决定底色的不是照片工具，而是接收照片的机构。',
+          },
+          {
+            type: 'list',
+            items: [
+              '白底：护照、签证、国际证件和很多线上审核系统更常见，背景应干净、无阴影、无图案。',
+              '蓝底：常见于国内部分证件、考试报名、企业资料和简历场景，但不是所有平台都接受。',
+              '红底：常见于一些证书、档案或单位材料，正式提交前仍要确认要求。',
+              '自定义底色：适合企业内部系统、学校系统或平台明确给出颜色值的场景。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '生活照能不能做成证件照？' },
+          {
+            type: 'paragraph',
+            text: '技术上可以，但不是每张生活照都适合。合格的源照片最好是正面、清晰、无夸张表情、无遮挡、光线均匀，并且脸和头发边缘足够清楚。照片如果本身模糊、低光、强滤镜、侧脸、头发遮眼，后期工具很难把它变成可靠的证件照。',
+          },
+          {
+            type: 'table',
+            headers: ['源照片情况', '适合程度', '建议'],
+            rows: [
+              ['正脸、清晰、自然表情、浅色墙面背景', '适合', '可以上传后自动去背景和构图，再按用途调整底色。'],
+              ['背景复杂但人物边缘清楚', '中等', 'AI 去背景通常可用，下载前重点检查头发、肩膀和耳朵边缘。'],
+              ['自拍大头、广角畸变明显', '不建议', '脸部比例容易变形，最好让他人用后置摄像头重新拍。'],
+              ['滤镜、美颜、修脸、夸张表情', '不适合正式证件', '很多官方场景要求原始自然照片，不要改变自然面貌。'],
+              ['模糊、强阴影、低分辨率', '不适合', '重新拍比后期修补更可靠。'],
+            ],
+          },
+          { type: 'heading', level: 2, text: '如何用在线工具制作电子版证件照？' },
+          {
+            type: 'list',
+            ordered: true,
+            items: [
+              '打开证件照制作工具，上传一张清晰正脸照片。',
+              '等待浏览器本地 AI 去背景，并自动识别人脸区域进行初步构图。',
+              '选择尺寸：一寸、二寸、中国护照/签证、美国 2 x 2 inch，或输入自定义 mm 宽高。',
+              '选择底色：白色、蓝色、红色、灰色或自定义颜色。',
+              '用画布拖动人物位置，用缩放控制或双指缩放微调大小，保持人物等比缩放，不要拉伸。',
+              '检查头顶、下巴、肩膀、耳朵、背景边缘和整体清晰度。',
+              '按平台要求下载 JPG 或 PNG；如果报名系统限制体积，再用图片压缩工具压到目标大小。',
+            ],
+          },
+          {
+            type: 'callout',
+            title: 'ToolGarden 证件照制作',
+            text: '工具内置中国一寸、二寸、中国签证、美国 2 x 2 inch 等尺寸，支持自定义毫米画布、自动去背景、人脸构图、拖动缩放、底色切换和 JPG/PNG 下载。图片在浏览器本地处理。',
+            href: '/image/id-photo',
+            linkLabel: '打开证件照制作',
+          },
+          { type: 'heading', level: 2, text: '哪些情况不要依赖在线换底色？' },
+          {
+            type: 'paragraph',
+            text: '美国国务院页面明确提醒提交原始未编辑照片，不要使用滤镜或数字改动；中国驻美使馆页面也写明不得修改照片、不得使用合成照片。因此，如果办理机构明确不接受数字处理，正确做法是重新拍一张符合背景和光线要求的照片，而不是用 AI 换底色硬改。',
+          },
+          {
+            type: 'list',
+            items: [
+              '正式护照、旅行证、签证申请：优先重新拍摄符合要求的原始照片。',
+              '考试报名、企业系统、简历头像：通常更适合用在线工具制作电子版。',
+              '平台明确要求不得修图或不得合成：不要用 AI 换背景替代重新拍摄。',
+              '平台只要求尺寸、底色和文件大小：可以用工具生成后再人工检查。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '最常见的证件照错误' },
+          {
+            type: 'list',
+            items: [
+              '把照片横向或纵向拉伸，导致脸变窄或变宽。',
+              '头部太大，头发或下巴被裁掉；或者头部太小，人物离镜头太远。',
+              '背景不是纯色，有墙角、阴影、纹理或其他物体。',
+              '人脸有强阴影、反光、红眼、过度曝光或明显偏色。',
+              '用美颜、滤镜、修脸、换装改变自然面貌。',
+              '尺寸选成二寸，但平台实际要求 33 x 48 mm 或 2 x 2 inch。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '总结' },
+          {
+            type: 'paragraph',
+            text: '证件照制作的关键不是把照片“修得好看”，而是让尺寸、底色、头部位置、清晰度和用途匹配。对简历、报名和企业系统，在线工具可以大幅节省时间；对护照、签证等正式证件，请先看官方要求，必要时重新拍摄，不要用不被接受的数字处理冒险。',
+          },
+        ],
+        faq: [
+          {
+            question: '一寸照和二寸照可以直接互相裁剪吗？',
+            answer: '不建议简单互裁。一寸照常见尺寸是 25 x 35 mm，二寸照常见尺寸是 35 x 49 mm，比例接近但并不意味着同一张图随便裁一下就合格。不同用途还会限制头部大小、背景色、文件体积和像素尺寸。更稳的做法是回到原始照片，选择目标尺寸重新构图导出，避免二次裁剪导致头顶、下巴或肩膀位置不合适。',
+          },
+          {
+            question: '证件照一定要白底吗？',
+            answer: '不一定。护照、签证和很多国际证件常见白底或近白底，但国内一些考试、证书、简历或单位材料可能要求蓝底或红底。不要按习惯猜，应该看报名系统或办理机构的说明。如果页面只写“证件照”但没有写底色，优先查看示例图或咨询客服，避免提交后因为背景色被退回。',
+          },
+          {
+            question: '用 AI 去背景做证件照会不会影响正式审核？',
+            answer: '要看用途。简历、企业系统、考试报名等电子版场景通常只关心尺寸、底色和清晰度，AI 去背景很实用。但美国国务院护照照片要求强调提交原始未编辑照片，中国驻美使馆也要求不得修改或使用合成照片。遇到这类正式证件，最好重新拍摄符合背景要求的原始照片，而不是依赖 AI 换底色。',
+          },
+          {
+            question: '为什么不能拉伸照片来适配尺寸？',
+            answer: '拉伸会改变脸部和头部比例，是证件照里非常明显的错误。美国国务院照片说明也提醒不要拉伸或压缩图像来改变大小。正确方式是等比缩放人物，再移动位置，让头部和肩膀落在合适区域；画布尺寸不够时应该裁剪边缘，而不是把人物宽高分别拉大或压小。',
+          },
+          {
+            question: '电子版证件照应该下载 JPG 还是 PNG？',
+            answer: '大多数报名系统接受 JPG，因为体积小、兼容性好。PNG 更适合需要保留锐利边缘或透明背景的中间文件，但正式证件照通常最终是纯色背景，不一定需要 PNG。如果系统限制文件大小，例如 200KB、500KB 或 1MB，可以先导出 JPG，再用图片压缩工具控制体积，同时确认照片仍然清晰。',
+          },
+        ],
+      },
+      en: {
+        title: 'How to Choose ID Photo Size and Background: 1-Inch, 2-Inch, China Passport, and U.S. Passport Guide',
+        excerpt: 'Before making a digital ID photo, confirm the use case, size, background color, head position, and whether digital edits are allowed.',
+        metaTitle: 'ID Photo Size and Background Guide: China and U.S. Passport Photos',
+        metaDescription: 'Learn common ID photo sizes, background colors, China passport photo dimensions, U.S. passport 2x2 inch requirements, and how to make a digital ID photo online without stretching the image.',
+        readingTime: '8 min read',
+        tags: ['ID photo', 'passport photo', 'background color', 'photo size', 'online photo maker'],
+        relatedTools: [
+          {
+            label: 'ID Photo Maker',
+            href: '/image/id-photo',
+            description: 'Upload a portrait, remove the background, choose an ID photo size, adjust framing, and download JPG or PNG.',
+          },
+          {
+            label: 'Remove Image Background',
+            href: '/image/remove-bg',
+            description: 'Remove a portrait background locally when you need a transparent cutout first.',
+          },
+          {
+            label: 'Image Compressor',
+            href: '/image/compress',
+            description: 'Compress the exported photo when an upload form has a strict file-size limit.',
+          },
+        ],
+        blocks: [
+          {
+            type: 'lead',
+            text: 'An ID photo is not just a face on a solid background. The details that cause rejection are usually size, background color, head position, stretching, image quality, and whether the target authority allows digital edits.',
+          },
+          {
+            type: 'paragraph',
+            text: 'For resumes, badges, exam registration, internal systems, or profile uploads, an online ID photo maker can save a lot of time. For passports, visas, and other official documents, always check the current requirements from the accepting authority before editing or submitting a photo.',
+          },
+          {
+            type: 'quote',
+            text: 'Choose the size by use case, choose the background by the receiving authority, keep the person proportional, and avoid edits that change natural appearance.',
+          },
+          { type: 'heading', level: 2, text: 'Common ID Photo Sizes' },
+          {
+            type: 'paragraph',
+            text: 'The table below is a practical starting point. Exact requirements may vary by country, agency, exam board, or upload form, so use it as a guide rather than a substitute for official instructions.',
+          },
+          {
+            type: 'table',
+            headers: ['Use case', 'Common size', 'Common background', 'Notes'],
+            rows: [
+              ['China 1-inch photo', '25 x 35 mm', 'White, blue, or red are common', 'Often used for resumes, registrations, certificates, and internal systems. Check the receiving platform.'],
+              ['China 2-inch photo', '35 x 49 mm', 'White, blue, or red are common', 'Used by some certificates and records. It is not the same as the 33 x 48 mm China passport photo size.'],
+              ['China passport / travel document', '33 x 48 mm', 'White background', 'The Chinese Embassy page lists white background, head size, and margin requirements. Use the latest official instructions.'],
+              ['U.S. passport', '2 x 2 inch / 51 x 51 mm', 'White or off-white background', 'The U.S. Department of State requires centered head and shoulders, about 25-35 mm head size, and an original unedited photo.'],
+              ['Custom upload forms', 'Enter the required mm size', 'Follow the form requirement', 'Useful for exam, school, company, or local platform uploads with custom dimensions.'],
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Official Sources Used in This Guide' },
+          {
+            type: 'paragraph',
+            text: 'Official photo requirements can change and can differ by application type. This article summarizes the practical points from two public official pages and links to the originals.',
+          },
+          {
+            type: 'table',
+            headers: ['Source', 'Key points used here', 'URL'],
+            rows: [
+              ['U.S. Department of State passport photo requirements', '2 x 2 inch / 51 x 51 mm; head about 25-35 mm from chin to top; white or off-white background; original unedited photo.', 'https://travel.state.gov/en/passports/apply/help/photos.html'],
+              ['Chinese Embassy in the United States passport photo specifications', '33 x 48 mm; white background; head width 15-22 mm; head height 28-33 mm; top margin 3-5 mm.', 'https://us.china-embassy.gov.cn/lsfw/zj/hzlxz/201903/t20190309_5098803.htm'],
+            ],
+          },
+          {
+            type: 'callout',
+            title: 'U.S. Department of State Passport Photos',
+            text: 'The official Passport Photos page explains U.S. passport photo size, background, head position, image quality, expression, and restrictions on digital changes.',
+            href: 'https://travel.state.gov/en/passports/apply/help/photos.html',
+            linkLabel: 'Open travel.state.gov',
+          },
+          {
+            type: 'callout',
+            title: 'Chinese Embassy Passport Photo Specifications',
+            text: 'The Chinese Embassy page lists passport and travel document photo requirements, including white background, face visibility, 33 x 48 mm size, head size, and margins.',
+            href: 'https://us.china-embassy.gov.cn/lsfw/zj/hzlxz/201903/t20190309_5098803.htm',
+            linkLabel: 'Open china-embassy.gov.cn',
+          },
+          { type: 'heading', level: 2, text: 'How to Choose Background Color' },
+          {
+            type: 'paragraph',
+            text: 'There is no universal background color for every ID photo. White is common for passports, visas, and international documents. Blue and red backgrounds are common in some Chinese resumes, certificates, exam registrations, and organization systems. The receiving authority decides the correct color.',
+          },
+          {
+            type: 'list',
+            items: [
+              'White or off-white: common for passports, visas, and official international documents. Keep it plain, shadow-free, and texture-free.',
+              'Blue: common for some domestic Chinese registration, resume, and company scenarios, but not always accepted.',
+              'Red: used by some certificates or organizational records. Confirm the requirement before submitting.',
+              'Custom color: useful when a company, school, or platform provides a specific color value.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Can You Turn a Casual Portrait into an ID Photo?' },
+          {
+            type: 'paragraph',
+            text: 'Technically yes, but not every casual photo is suitable. The best source photo is front-facing, sharp, evenly lit, natural in expression, unobstructed, and detailed around hair and shoulders. If the source is blurry, filtered, side-facing, low-light, or heavily distorted, the result will not be reliable.',
+          },
+          {
+            type: 'table',
+            headers: ['Source photo', 'Fit', 'Suggestion'],
+            rows: [
+              ['Front-facing, sharp, natural expression, simple background', 'Good', 'Use automatic background removal and framing, then adjust the background color.'],
+              ['Complex background but clear subject edges', 'Medium', 'Check hair, shoulders, and ears carefully after background removal.'],
+              ['Close selfie with wide-angle distortion', 'Poor', 'Retake with the rear camera and another person holding the phone.'],
+              ['Filters, beauty edits, face reshaping, exaggerated expression', 'Poor for official documents', 'Official uses often require natural, unedited appearance.'],
+              ['Blurry, shadowed, low-resolution photo', 'Poor', 'Retaking is more reliable than trying to repair it later.'],
+            ],
+          },
+          { type: 'heading', level: 2, text: 'How to Make a Digital ID Photo Online' },
+          {
+            type: 'list',
+            ordered: true,
+            items: [
+              'Open the ID Photo Maker and upload a clear front-facing portrait.',
+              'Let the browser remove the background locally and frame the face automatically.',
+              'Choose a size such as 1-inch, 2-inch, China passport/visa, U.S. 2 x 2 inch, or a custom mm size.',
+              'Choose the required background color: white, blue, red, gray, or custom.',
+              'Drag the subject and zoom proportionally. Do not stretch the person horizontally or vertically.',
+              'Check top margin, chin, shoulders, ears, background edges, and overall sharpness.',
+              'Download JPG or PNG. If the upload form limits file size, compress the exported image afterward.',
+            ],
+          },
+          {
+            type: 'callout',
+            title: 'ToolGarden ID Photo Maker',
+            text: 'The tool includes China 1-inch, China 2-inch, China visa, U.S. 2 x 2 inch, custom mm sizes, background removal, face-based framing, background color switching, proportional zoom, and JPG/PNG export. Processing runs locally in the browser.',
+            href: '/image/id-photo',
+            linkLabel: 'Open ID Photo Maker',
+          },
+          { type: 'heading', level: 2, text: 'When Not to Rely on Online Background Editing' },
+          {
+            type: 'paragraph',
+            text: 'The U.S. Department of State asks for an original, unedited photo without filters or digital changes. The Chinese Embassy page also says the photo should not be modified or synthetic. If an authority explicitly forbids digital edits, retake the photo against the correct background instead of using AI background replacement.',
+          },
+          {
+            type: 'list',
+            items: [
+              'Passports, travel documents, and visa applications: retake a compliant original photo whenever the authority requires it.',
+              'Resumes, badges, exam forms, and internal systems: online ID photo tools are usually a good fit.',
+              'Forms that forbid edits or synthetic photos: do not use AI background replacement as a shortcut.',
+              'Forms that only specify size, background, and file size: generate the photo, then inspect it manually before upload.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Common ID Photo Mistakes' },
+          {
+            type: 'list',
+            items: [
+              'Stretching the person to fit the canvas, making the face too narrow or too wide.',
+              'Head too large or too small, with hair, chin, or shoulders incorrectly cropped.',
+              'Background has shadows, wall texture, corners, or other objects.',
+              'Strong face shadows, glare, red eye, overexposure, or color cast.',
+              'Filters, beauty edits, face reshaping, or clothing changes that alter natural appearance.',
+              'Using a 2-inch preset when the form actually requires 33 x 48 mm or 2 x 2 inch.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Summary' },
+          {
+            type: 'paragraph',
+            text: 'A good ID photo is not about making the portrait prettier. It is about matching the required size, background, head position, clarity, and submission rules. Online tools are helpful for resumes, registration forms, and internal systems. For passports and visas, always check official requirements first and retake the photo if digital edits are not allowed.',
+          },
+        ],
+        faq: [
+          {
+            question: 'Can I crop a 1-inch photo into a 2-inch photo?',
+            answer: 'It is better to go back to the original portrait and frame it again. A common China 1-inch photo is 25 x 35 mm, while a common 2-inch photo is 35 x 49 mm. Even when the aspect ratio looks close, the target form may also care about head size, background color, pixel dimensions, and file size. Re-exporting from the original avoids cutting off hair, chin, or shoulders.',
+          },
+          {
+            question: 'Does every ID photo need a white background?',
+            answer: 'No. Passports, visas, and many international documents commonly require white or off-white backgrounds, but some domestic Chinese forms, resumes, certificates, and company systems may ask for blue or red. Always follow the receiving authority or upload form. If the form does not specify a color, check its example image or support instructions before submitting.',
+          },
+          {
+            question: 'Will AI background removal affect official review?',
+            answer: 'It depends on the use case. For resumes, company systems, badges, or some exam uploads, background removal can be practical. For official passports and travel documents, be careful: the U.S. Department of State asks for an original unedited photo, and the Chinese Embassy page says not to use modified or synthetic photos. If the authority forbids digital edits, retake the photo instead.',
+          },
+          {
+            question: 'Why should I never stretch an ID photo?',
+            answer: 'Stretching changes the natural proportions of the face and head, which is easy to notice. The U.S. passport photo guidance also warns against stretching or compressing the image to resize it. The correct workflow is proportional zoom plus repositioning, then cropping the canvas if needed. Do not scale width and height separately.',
+          },
+          {
+            question: 'Should I download JPG or PNG for a digital ID photo?',
+            answer: 'Most upload forms accept JPG because it is small and compatible. PNG can be useful as an intermediate format or when you need sharper edges, but official ID photos usually end with a solid background, so PNG is not always necessary. If the form has a file-size limit such as 200KB, 500KB, or 1MB, export JPG first and then compress it while checking that the photo remains sharp.',
+          },
+        ],
+      },
+    },
+  },
+  {
     slug: 'remove-image-watermark-local-ai-inpainting',
     publishedAt: '2026-07-02',
     updatedAt: '2026-07-03',

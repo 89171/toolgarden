@@ -19,6 +19,12 @@ Canonical examples:
 
 ## Blog Reference
 
+### How to Choose ID Photo Size and Background: 1-Inch, 2-Inch, China Passport, and U.S. Passport Guide (/blog/make-id-photo-online-size-background-guide)
+- Locales: English and Chinese Simplified
+- Explains how to choose ID photo sizes and background colors for China 1-inch, China 2-inch, China passport/travel document, U.S. passport 2 x 2 inch, and custom upload forms
+- Includes official reference sources from the U.S. Department of State and the Chinese Embassy in the United States, with cautions about original unedited photos and synthetic/digital changes for formal documents
+- Points users to ID Photo Maker, Remove Image Background, and Image Compressor for browser-local ID photo workflows
+
 ### How Does Online Image Watermark Removal Work with Local AI Inpainting? (/blog/remove-image-watermark-local-ai-inpainting)
 - Locales: English and Chinese Simplified
 - Explains watermark removal as browser-local inpainting: selecting a masked area, predicting plausible background pixels, blending edges, and exporting JPG, PNG, or WebP
