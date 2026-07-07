@@ -1,6 +1,6 @@
 # JSON Toolkit — Full Reference for AI Systems
 
-> Complete technical reference for toolgarden.xyz
+> Complete technical reference for toolgarden.xyz. ToolGarden emphasizes browser-local, no-upload workflows that reduce exposure for privacy-sensitive JSON, text, image, and PDF work.
 
 ## Site Structure
 

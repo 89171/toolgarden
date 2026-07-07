@@ -67,6 +67,9 @@ export default async function BlogIndexPage({ params }: BlogIndexPageProps) {
             <p className="mt-4 max-w-3xl text-base leading-relaxed text-content-muted sm:text-lg">
               {m.blog.description}
             </p>
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-content-faint">
+              {m.blog.privacy_note}
+            </p>
           </header>
 
           <section className="py-8 sm:py-10" aria-labelledby="blog-articles-title">

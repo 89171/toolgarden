@@ -76,18 +76,46 @@ function createToolSeoTitle(toolName: string, description: string, locale: Local
   return `${toolName} - ${phrase}`;
 }
 
+function appendSeoSentence(description: string, sentence: string, locale: Locale): string {
+  const normalizedDescription = description.trim();
+  const separator = /[。.!?]$/u.test(normalizedDescription)
+    ? (locale === 'zh' ? '' : ' ')
+    : (locale === 'zh' ? '。' : '. ');
+
+  return `${normalizedDescription}${separator}${sentence}`;
+}
+
+function hasLocalProcessingSignal(description: string, locale: Locale): boolean {
+  return locale === 'zh'
+    ? /浏览器|本地|无需上传|不上传/u.test(description)
+    : /browser|locally|local|no upload|not uploaded/i.test(description);
+}
+
+function hasPrivacySignal(description: string, locale: Locale): boolean {
+  return locale === 'zh'
+    ? /隐私|敏感|无需上传|不上传/u.test(description)
+    : /privacy|private|sensitive|no upload|not uploaded/i.test(description);
+}
+
+function createPrivacySeoDescription(description: string, locale: Locale): string {
+  if (hasPrivacySignal(description, locale)) return description.trim();
+
+  const suffix = locale === 'zh'
+    ? (hasLocalProcessingSignal(description, locale) ? '更安心保护隐私。' : '优先在浏览器本地处理，减少上传，更安心保护隐私。')
+    : (hasLocalProcessingSignal(description, locale) ? 'Built for privacy-friendly local workflows.' : 'Browser-local workflows reduce uploads and help protect privacy.');
+
+  return appendSeoSentence(description, suffix, locale);
+}
+
 function createToolSeoDescription(description: string, locale: Locale): string {
   const hasLocalSignal = locale === 'zh'
     ? /浏览器|本地/u.test(description)
     : /browser|locally|local/i.test(description);
   const suffix = locale === 'zh'
-    ? (hasLocalSignal ? '无需上传，无需登录。' : '所有处理在浏览器本地完成，无需上传，无需登录。')
-    : (hasLocalSignal ? 'No upload or sign-in required.' : 'Runs locally in your browser with no upload or sign-in required.');
-  const separator = /[。.!?]$/u.test(description)
-    ? (locale === 'zh' ? '' : ' ')
-    : (locale === 'zh' ? '。' : '. ');
+    ? (hasLocalSignal ? '无需上传，无需登录，更安心保护隐私。' : '所有处理在浏览器本地完成，无需上传，无需登录，更安心保护隐私。')
+    : (hasLocalSignal ? 'No upload or sign-in required, helping keep sensitive data private.' : 'Runs locally in your browser with no upload or sign-in required, helping keep sensitive data private.');
 
-  return `${description}${separator}${suffix}`;
+  return appendSeoSentence(description, suffix, locale);
 }
 
 export function normalizeLocale(locale: string): Locale {
@@ -118,13 +146,14 @@ export function getLanguageAlternates(path = ''): Record<string, string> {
 export function createLocaleMetadata(locale: string): Metadata {
   const normalizedLocale = normalizeLocale(locale);
   const m = getLocaleMessages(normalizedLocale);
+  const seoDescription = createPrivacySeoDescription(m.home.subtitle, normalizedLocale);
 
   return {
     title: {
       default: m.home.meta_title,
       template: `%s | ${m.home.title}`,
     },
-    description: m.home.subtitle,
+    description: seoDescription,
     metadataBase: new URL(BASE_URL),
     alternates: {
       canonical: getLocalizedPath(normalizedLocale),
@@ -132,7 +161,7 @@ export function createLocaleMetadata(locale: string): Metadata {
     },
     openGraph: {
       title: m.home.meta_title,
-      description: m.home.subtitle,
+      description: seoDescription,
       type: 'website',
       locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
       siteName: m.home.title,
@@ -145,17 +174,18 @@ export function createImageHubMetadata(locale: string): Metadata {
   const normalizedLocale = normalizeLocale(locale);
   const m = getLocaleMessages(normalizedLocale);
   const path = '/image';
+  const seoDescription = createPrivacySeoDescription(m.image_hub.description, normalizedLocale);
 
   return {
     title: m.image_hub.meta_title,
-    description: m.image_hub.description,
+    description: seoDescription,
     alternates: {
       canonical: getLocalizedPath(normalizedLocale, path),
       languages: getLanguageAlternates(path),
     },
     openGraph: {
       title: `${m.image_hub.title} | ${m.home.title}`,
-      description: m.image_hub.description,
+      description: seoDescription,
       type: 'website',
       locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
       siteName: m.home.title,
@@ -168,17 +198,18 @@ export function createPdfHubMetadata(locale: string): Metadata {
   const normalizedLocale = normalizeLocale(locale);
   const m = getLocaleMessages(normalizedLocale);
   const path = '/pdf';
+  const seoDescription = createPrivacySeoDescription(m.pdf_hub.description, normalizedLocale);
 
   return {
     title: m.pdf_hub.meta_title,
-    description: m.pdf_hub.description,
+    description: seoDescription,
     alternates: {
       canonical: getLocalizedPath(normalizedLocale, path),
       languages: getLanguageAlternates(path),
     },
     openGraph: {
       title: `${m.pdf_hub.title} | ${m.home.title}`,
-      description: m.pdf_hub.description,
+      description: seoDescription,
       type: 'website',
       locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
       siteName: m.home.title,
@@ -191,17 +222,18 @@ export function createFileMergeHubMetadata(locale: string): Metadata {
   const normalizedLocale = normalizeLocale(locale);
   const m = getLocaleMessages(normalizedLocale);
   const path = '/file-merge';
+  const seoDescription = createPrivacySeoDescription(m.file_merge_hub.description, normalizedLocale);
 
   return {
     title: m.file_merge_hub.meta_title,
-    description: m.file_merge_hub.description,
+    description: seoDescription,
     alternates: {
       canonical: getLocalizedPath(normalizedLocale, path),
       languages: getLanguageAlternates(path),
     },
     openGraph: {
       title: `${m.file_merge_hub.title} | ${m.home.title}`,
-      description: m.file_merge_hub.description,
+      description: seoDescription,
       type: 'website',
       locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
       siteName: m.home.title,
@@ -214,17 +246,18 @@ export function createTextHubMetadata(locale: string): Metadata {
   const normalizedLocale = normalizeLocale(locale);
   const m = getLocaleMessages(normalizedLocale);
   const path = '/text';
+  const seoDescription = createPrivacySeoDescription(m.text_hub.description, normalizedLocale);
 
   return {
     title: m.text_hub.meta_title,
-    description: m.text_hub.description,
+    description: seoDescription,
     alternates: {
       canonical: getLocalizedPath(normalizedLocale, path),
       languages: getLanguageAlternates(path),
     },
     openGraph: {
       title: `${m.text_hub.title} | ${m.home.title}`,
-      description: m.text_hub.description,
+      description: seoDescription,
       type: 'website',
       locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
       siteName: m.home.title,
@@ -236,17 +269,18 @@ export function createTextHubMetadata(locale: string): Metadata {
 export function createBlogIndexMetadata(locale: string): Metadata {
   const normalizedLocale = normalizeLocale(locale);
   const m = getLocaleMessages(normalizedLocale);
+  const seoDescription = createPrivacySeoDescription(m.blog.description, normalizedLocale);
 
   return {
     title: m.blog.meta_title,
-    description: m.blog.description,
+    description: seoDescription,
     alternates: {
       canonical: getLocalizedPath(normalizedLocale, BLOG_INDEX_PATH),
       languages: getLanguageAlternates(BLOG_INDEX_PATH),
     },
     openGraph: {
       title: `${m.blog.title} | ${m.home.title}`,
-      description: m.blog.description,
+      description: seoDescription,
       type: 'website',
       locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
       siteName: m.home.title,
@@ -262,16 +296,18 @@ export function createBlogArticleMetadata(slug: string, locale: string): Metadat
 
   if (!article) return null;
 
+  const seoDescription = createPrivacySeoDescription(article.metaDescription, normalizedLocale);
+
   return {
     title: article.metaTitle,
-    description: article.metaDescription,
+    description: seoDescription,
     alternates: {
       canonical: getLocalizedPath(normalizedLocale, article.path),
       languages: getLanguageAlternates(article.path),
     },
     openGraph: {
       title: `${article.metaTitle} | ${m.home.title}`,
-      description: article.metaDescription,
+      description: seoDescription,
       type: 'article',
       publishedTime: article.publishedAt,
       modifiedTime: article.updatedAt,
@@ -317,7 +353,7 @@ export function createSiteJsonLd(locale: string) {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
     name: m.home.title,
-    description: m.home.subtitle,
+    description: createPrivacySeoDescription(m.home.subtitle, normalizedLocale),
     url: getLocalizedUrl(normalizedLocale),
     applicationCategory: 'DeveloperApplication',
     operatingSystem: 'Any',
@@ -344,7 +380,7 @@ export function createToolItemListJsonLd(locale: string) {
         position: index + 1,
         url: getLocalizedUrl(normalizedLocale, tool.path),
         name: localizedTool.name,
-        description: localizedTool.description,
+        description: createToolSeoDescription(localizedTool.description, normalizedLocale),
       };
     }),
   };
@@ -358,7 +394,7 @@ export function createImageToolItemListJsonLd(locale: string) {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: m.image_hub.title,
-    description: m.image_hub.description,
+    description: createPrivacySeoDescription(m.image_hub.description, normalizedLocale),
     itemListElement: getImageTools().map((tool, index) => {
       const localizedTool = m.tools[tool.id as ToolMessageId];
       return {
@@ -366,7 +402,7 @@ export function createImageToolItemListJsonLd(locale: string) {
         position: index + 1,
         url: getLocalizedUrl(normalizedLocale, tool.path),
         name: localizedTool.name,
-        description: localizedTool.description,
+        description: createToolSeoDescription(localizedTool.description, normalizedLocale),
       };
     }),
   };
@@ -380,7 +416,7 @@ export function createPdfToolItemListJsonLd(locale: string) {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: m.pdf_hub.title,
-    description: m.pdf_hub.description,
+    description: createPrivacySeoDescription(m.pdf_hub.description, normalizedLocale),
     itemListElement: getPdfTools().map((tool, index) => {
       const localizedTool = m.tools[tool.id as ToolMessageId];
       return {
@@ -388,7 +424,7 @@ export function createPdfToolItemListJsonLd(locale: string) {
         position: index + 1,
         url: getLocalizedUrl(normalizedLocale, tool.path),
         name: localizedTool.name,
-        description: localizedTool.description,
+        description: createToolSeoDescription(localizedTool.description, normalizedLocale),
       };
     }),
   };
@@ -402,7 +438,7 @@ export function createFileMergeToolItemListJsonLd(locale: string) {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: m.file_merge_hub.title,
-    description: m.file_merge_hub.description,
+    description: createPrivacySeoDescription(m.file_merge_hub.description, normalizedLocale),
     itemListElement: getFileMergeTools().map((tool, index) => {
       const localizedTool = m.tools[tool.id as ToolMessageId];
       return {
@@ -410,7 +446,7 @@ export function createFileMergeToolItemListJsonLd(locale: string) {
         position: index + 1,
         url: getLocalizedUrl(normalizedLocale, tool.path),
         name: localizedTool.name,
-        description: localizedTool.description,
+        description: createToolSeoDescription(localizedTool.description, normalizedLocale),
       };
     }),
   };
@@ -424,7 +460,7 @@ export function createTextToolItemListJsonLd(locale: string) {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: m.text_hub.title,
-    description: m.text_hub.description,
+    description: createPrivacySeoDescription(m.text_hub.description, normalizedLocale),
     itemListElement: getTextTools().map((tool, index) => {
       const localizedTool = m.tools[tool.id as ToolMessageId];
       return {
@@ -432,7 +468,7 @@ export function createTextToolItemListJsonLd(locale: string) {
         position: index + 1,
         url: getLocalizedUrl(normalizedLocale, tool.path),
         name: localizedTool.name,
-        description: localizedTool.description,
+        description: createToolSeoDescription(localizedTool.description, normalizedLocale),
       };
     }),
   };
@@ -447,13 +483,13 @@ export function createBlogItemListJsonLd(locale: string) {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: m.blog.title,
-    description: m.blog.description,
+    description: createPrivacySeoDescription(m.blog.description, normalizedLocale),
     itemListElement: articles.map((article, index) => ({
       '@type': 'ListItem',
       position: index + 1,
       url: getLocalizedUrl(normalizedLocale, article.path),
       name: article.title,
-      description: article.excerpt,
+      description: createPrivacySeoDescription(article.excerpt, normalizedLocale),
     })),
   };
 }
@@ -514,7 +550,7 @@ export function createToolJsonLd(toolId: string, locale: string) {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
     name: localizedTool.name,
-    description: localizedTool.description,
+    description: createToolSeoDescription(localizedTool.description, normalizedLocale),
     url: getLocalizedUrl(normalizedLocale, tool.path),
     applicationCategory: 'DeveloperApplication',
     operatingSystem: 'Any',
@@ -560,7 +596,7 @@ export function createBlogArticleJsonLd(slug: string, locale: string) {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: article.title,
-    description: article.metaDescription,
+    description: createPrivacySeoDescription(article.metaDescription, normalizedLocale),
     datePublished: article.publishedAt,
     dateModified: article.updatedAt,
     inLanguage: normalizedLocale === 'zh' ? 'zh-CN' : 'en',

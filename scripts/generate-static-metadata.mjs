@@ -32,7 +32,7 @@ function generateManifest() {
     {
       name: 'JSON Toolkit',
       short_name: 'JSON Toolkit',
-      description: 'Free online JSON tools to format, convert, validate and decode JSON in the browser, no uploads.',
+      description: 'Free online JSON tools to format, convert, validate, and decode JSON locally in the browser with no uploads for better privacy.',
       start_url: `/${defaultLocale}`,
       scope: '/',
       display: 'standalone',

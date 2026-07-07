@@ -103,6 +103,9 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
               <p className="mt-4 max-w-3xl text-base leading-relaxed text-content-muted sm:text-lg">
                 {article.excerpt}
               </p>
+              <p className="mt-3 max-w-3xl text-sm leading-6 text-content-faint">
+                {m.blog.privacy_note}
+              </p>
               <p className="mt-4 text-sm text-content-faint">
                 {m.blog.published_label} {formatDate(article.publishedAt, normalizedLocale)} · {article.readingTime}
               </p>

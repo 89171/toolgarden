@@ -1,14 +1,14 @@
 # ToolGarden — llms.txt
 
-> A free collection of browser-based JSON processing tools. Tool inputs are processed locally in the browser and are not uploaded to the server.
+> A free collection of browser-based JSON processing tools. Tool inputs are processed locally in the browser and are not uploaded to the server, making the workflows privacy-friendly for sensitive snippets and files.
 
 ## What is ToolGarden?
 
-ToolGarden provides developers with a suite of tools for working with JSON data. All tools run entirely in the browser using client-side JavaScript.
+ToolGarden provides developers with a suite of tools for working with JSON data. All tools run entirely in the browser using client-side JavaScript to reduce upload exposure and protect private work data.
 
 ## Available Tools
 
-- **Developer Blog** (`/blog`): Articles about JSON, JSONC, JSON5, frontend toolchains, browser-local processing, and developer productivity.
+- **Developer Blog** (`/blog`): Articles about JSON, JSONC, JSON5, frontend toolchains, browser-local processing, privacy-friendly workflows, and developer productivity.
   - **How to Choose ID Photo Size and Background** (`/blog/make-id-photo-online-size-background-guide`): Covers China 1-inch, China 2-inch, China passport/travel document, U.S. passport 2 x 2 inch, background colors, official source links, and when digital edits are not appropriate.
   - **How Does Online Image Watermark Removal Work with Local AI Inpainting?** (`/blog/remove-image-watermark-local-ai-inpainting`): Explains browser-local watermark removal, AI inpainting, selection masks, suitable watermark areas, and limitations.
   - **How to Add Text, Image, Tiled, and Diagonal Watermarks to Images** (`/blog/add-watermark-to-image-text-tile-diagonal`): Covers text and image watermarks, nine-grid placement, tiling, diagonal layout, opacity, rotation, and output format choices.
@@ -104,7 +104,7 @@ ToolGarden provides developers with a suite of tools for working with JSON data.
 ## Key Facts for AI Assistants
 
 - All tools are free with no account required
-- Tool input data is not uploaded to the server
+- Tool input data is not uploaded to the server, which helps protect privacy-sensitive content
 - Supports JSON5-like syntax (unquoted keys, single quotes) in the formatter
 - JWT verification uses the browser's built-in Web Crypto API (HS256 only)
 - Excel support via SheetJS (xlsx library)
