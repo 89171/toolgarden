@@ -200,7 +200,7 @@ async function loadOcrSessions(id: string): Promise<OcrSessions> {
     sessionsPromise = (async () => {
       ort.env.wasm.numThreads = 1;
       ort.env.wasm.proxy = false;
-      ort.env.logLevel = 'error';
+      ort.env.logLevel = 'fatal';
       ort.env.wasm.wasmPaths = {
         wasm: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.wasm`,
         mjs: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.mjs`,
@@ -210,6 +210,7 @@ async function loadOcrSessions(id: string): Promise<OcrSessions> {
         executionProviders: ['wasm'],
         executionMode: 'sequential',
         graphOptimizationLevel: 'all',
+        logSeverityLevel: 3,
       };
 
       const [det, cls, rec, dictResponse] = await Promise.all([
