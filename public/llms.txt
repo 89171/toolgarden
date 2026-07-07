@@ -9,6 +9,7 @@ ToolGarden provides developers with a suite of tools for working with JSON data.
 ## Available Tools
 
 - **Developer Blog** (`/blog`): Articles about JSON, JSONC, JSON5, frontend toolchains, browser-local processing, privacy-friendly workflows, and developer productivity.
+  - **How I Built a Fully Browser-Local Online Toolkit** (`/blog/how-i-built-browser-local-online-tool-site`): Explains why ToolGarden was built as a no-upload, browser-local tool site, covering static Next.js architecture, pure utility functions, Workers, Canvas, Web Crypto, WASM, local AI, and privacy tradeoffs.
   - **How to Choose ID Photo Size and Background** (`/blog/make-id-photo-online-size-background-guide`): Covers China 1-inch, China 2-inch, China passport/travel document, U.S. passport 2 x 2 inch, background colors, official source links, and when digital edits are not appropriate.
   - **How Does Online Image Watermark Removal Work with Local AI Inpainting?** (`/blog/remove-image-watermark-local-ai-inpainting`): Explains browser-local watermark removal, AI inpainting, selection masks, suitable watermark areas, and limitations.
   - **How to Add Text, Image, Tiled, and Diagonal Watermarks to Images** (`/blog/add-watermark-to-image-text-tile-diagonal`): Covers text and image watermarks, nine-grid placement, tiling, diagonal layout, opacity, rotation, and output format choices.

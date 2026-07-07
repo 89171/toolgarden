@@ -19,6 +19,13 @@ Canonical examples:
 
 ## Blog Reference
 
+### How I Built a Fully Browser-Local Online Toolkit (/blog/how-i-built-browser-local-online-tool-site)
+- Locales: English and Chinese Simplified
+- Explains why ToolGarden was created as a privacy-first, no-upload online tool site for JSON, images, PDFs, JWTs, text, and documents
+- Covers the technical implementation: static Next.js pages, thin React tool pages, lib/utils pure functions, Web Workers, Canvas, Web Crypto, WASM, browser-local file processing, and local AI model workflows
+- Discusses tradeoffs such as browser memory, first-run model downloads, complex Office layout limits, unsupported legacy formats, and when a desktop tool or controlled backend is more appropriate
+- Points users to JSON Formatter, Image Tools, PDF Tools, and Text Tools for browser-local workflows
+
 ### How to Choose ID Photo Size and Background: 1-Inch, 2-Inch, China Passport, and U.S. Passport Guide (/blog/make-id-photo-online-size-background-guide)
 - Locales: English and Chinese Simplified
 - Explains how to choose ID photo sizes and background colors for China 1-inch, China 2-inch, China passport/travel document, U.S. passport 2 x 2 inch, and custom upload forms

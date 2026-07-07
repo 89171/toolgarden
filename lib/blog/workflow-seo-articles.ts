@@ -74,7 +74,354 @@ const blob = await removeBackground(modelInput, {
   },
 });`;
 
+const browserLocalArchitectureSnippet = `Tool page
+  -> React state and user controls
+  -> lib/utils pure functions
+  -> Browser APIs, Web Workers, Canvas, Web Crypto, WASM, or local model inference
+  -> Blob, download, preview, copy
+
+No API route receives the pasted text or uploaded file.`;
+
 export const workflowSeoBlogArticles = [
+  {
+    slug: 'how-i-built-browser-local-online-tool-site',
+    publishedAt: '2026-07-07',
+    updatedAt: '2026-07-07',
+    translations: {
+      zh: {
+        title: '我是如何建立了一个全部本地处理的在线工具站',
+        excerpt: '为了避免把 JSON、图片、PDF、Token 和内部文档上传到陌生服务器，我把 ToolGarden 做成了一个优先在浏览器本地运行的在线工具站。',
+        metaTitle: '我是如何建立了一个全部本地处理的在线工具站',
+        metaDescription: '记录 ToolGarden 的本地优先技术实现：Next.js 静态站、纯函数工具层、Web Worker、Canvas、Web Crypto、WASM、浏览器本地文件处理和隐私安全设计。',
+        readingTime: '约 10 分钟阅读',
+        tags: ['本地处理', '隐私安全', '浏览器工具', 'Next.js', '工程架构'],
+        relatedTools: [
+          {
+            label: 'JSON 格式化',
+            href: '/json-format',
+            description: '在浏览器本地格式化、压缩和校验 JSON，输入内容不会上传到服务器。',
+          },
+          {
+            label: '图片工具',
+            href: '/image',
+            description: '图片编辑、压缩、去背景、格式转换和 Base64 工具都优先在浏览器本地处理。',
+          },
+          {
+            label: 'PDF 工具',
+            href: '/pdf',
+            description: '合并、拆分、提取页面、转 Word 和转 PDF 等常见 PDF 流程尽量在本地完成。',
+          },
+          {
+            label: '文本工具',
+            href: '/text',
+            description: '字数统计和文本对比直接在浏览器里运行，适合处理临时文案和内部片段。',
+          },
+        ],
+        blocks: [
+          {
+            type: 'lead',
+            text: '我做 ToolGarden 的起点很简单：很多日常小工具确实方便，但我不想为了格式化一段 JSON、压缩一张证件照、查看一个 JWT，或者合并一份 PDF，就把内容交给一个不知道怎么存储和转发数据的服务器。',
+          },
+          {
+            type: 'paragraph',
+            text: '开发时经常会遇到这种场景：接口返回里有用户信息，日志里有订单号，JWT 里有租户 ID，截图里有内部系统页面，PDF 里有合同或报名材料。它们未必都是最高等级的机密，但也不应该随手上传到第三方在线工具。于是我决定做一个在线工具站，但核心约束是：工具输入尽量只在用户自己的浏览器里处理。',
+          },
+          {
+            type: 'quote',
+            text: '这个网站不是把本地处理当成一句口号，而是把“不要把用户输入交给服务器”作为架构约束。',
+          },
+          { type: 'heading', level: 2, text: '为什么一定要本地处理？' },
+          {
+            type: 'paragraph',
+            text: '很多在线工具的风险不在于功能本身，而在于你很难知道数据上传之后发生了什么：有没有写入日志、有没有被临时缓存、有没有经过第三方队列、有没有被用于调试或训练。对开发者来说，一段 JSON 样本可能包含真实用户 ID；对设计和运营同学来说，一张图片可能包含尚未公开的活动素材；对普通用户来说，一个 PDF 可能就是证件、合同或报名表。',
+          },
+          {
+            type: 'paragraph',
+            text: '本地处理不能解决所有安全问题，但它能先消掉一个很大的暴露面：文件和文本不必离开设备。只要能力允许，我宁愿让浏览器多做一点工作，也不把处理过程搬到服务器上。',
+          },
+          { type: 'heading', level: 2, text: '整体架构：静态站点加浏览器运行时' },
+          {
+            type: 'paragraph',
+            text: 'ToolGarden 用 Next.js App Router、TypeScript 和 Tailwind CSS 做界面，但部署形态尽量保持静态化。页面、脚本、模型资产和 WASM 文件可以被浏览器下载，真正的输入处理发生在客户端：解析、转换、渲染、压缩、合并、导出，都由浏览器里的 JavaScript、Web API、Worker 或模型推理完成。',
+          },
+          { type: 'code', language: 'text', code: browserLocalArchitectureSnippet },
+          {
+            type: 'paragraph',
+            text: '这个结构有一个直接好处：服务端不需要接收用户粘贴的 JSON、不需要接收上传的图片、不需要接收 PDF 原文。服务器提供的是应用代码和静态资源，用户的数据留在浏览器进程里。',
+          },
+          { type: 'heading', level: 2, text: '页面保持很薄，复杂逻辑放进纯函数' },
+          {
+            type: 'paragraph',
+            text: '为了让“本地处理”不变成页面里到处散落的临时代码，我把工具页面压得很薄。页面主要负责 useState、输入框、按钮、预览和错误展示；真正的解析、转换、校验、压缩逻辑放在 lib/utils 里，按纯函数方式返回结果。',
+          },
+          {
+            type: 'code',
+            language: 'typescript',
+            code: `type Outcome =
+  | { ok: true; output: string; parsed?: unknown }
+  | { ok: false; message: string };`,
+          },
+          {
+            type: 'paragraph',
+            text: '这样做有两个目的。第一，工具逻辑可以独立理解和测试，不需要依赖 React 状态。第二，页面不会直接写 JSON.parse、文件解析、diff 算法或图片导出细节，避免每新增一个工具就复制一份隐性风险。',
+          },
+          { type: 'heading', level: 2, text: '不同类型的数据如何留在浏览器里' },
+          {
+            type: 'table',
+            headers: ['类型', '浏览器本地实现', '隐私收益'],
+            rows: [
+              ['JSON / YAML / XML / CSV', '使用本地解析库和纯函数完成格式化、转换、修复和校验。', '接口样本、配置片段和日志不需要上传。'],
+              ['JWT / 编码解码', 'Base64URL、URL、Unicode、Gzip、Hash 和 HS256 校验使用浏览器能力与 Web Crypto。', 'Token 排查可以在本地查看 Header 和 Payload。'],
+              ['图片', 'File、Blob、ImageBitmap、Canvas、OffscreenCanvas、Worker、WASM 和本地模型完成压缩、转换、编辑和导出。', '截图、证件照、产品图和内部素材不离开设备。'],
+              ['PDF / Office / 文档', 'pdf-lib、pdfjs-dist、fflate、SheetJS 等在浏览器里读取、生成、拆分、合并或导出。', '合同、报名材料和内部文档减少上传暴露。'],
+              ['文本和字幕', 'diff、字数统计、LRC/SRT 解析和媒体预览都在前端完成。', '临时文案、日志和字幕文件不必经过服务器。'],
+            ],
+          },
+          { type: 'heading', level: 2, text: 'AI 功能也尽量本地化' },
+          {
+            type: 'paragraph',
+            text: '图片去背景、证件照抠图、图片去水印这类功能听起来天然像“要传到云端 AI 服务”。但在这个站里，我优先选择能在浏览器中运行的开源模型或本地算法。第一次使用时，浏览器可能需要下载模型资产；模型加载完成后，用户图片会在本地解码、归一化、推理、合成和导出。',
+          },
+          {
+            type: 'paragraph',
+            text: '这并不意味着本地模型永远比商业云服务更强。它的边缘处理、复杂背景鲁棒性和大批量稳定性都有边界。但对日常证件照、商品图、简单背景、截图修补来说，本地模型已经足够有用，而且换来了一个重要优势：图片不用上传。',
+          },
+          { type: 'heading', level: 2, text: '发现入口也要诚实表达隐私定位' },
+          {
+            type: 'paragraph',
+            text: '做工具站时，SEO、sitemap、JSON-LD、llms.txt、Open Graph 很容易变成“写给搜索引擎看的另一套文案”。我不想让这些入口和实际能力脱节，所以把 SEO 描述统一从 registry 和 messages 派生，再在生成层补充本地处理、无需上传和隐私友好的说明。',
+          },
+          {
+            type: 'paragraph',
+            text: '这件事看起来只是营销文案，实际上是工程约束的外显：如果一个工具没有接入 registry、没有对应页面、没有本地处理说明、没有进入 sitemap 和 AI 发现文件，它就不应该被当作正式能力发布。',
+          },
+          { type: 'heading', level: 2, text: '本地处理不是没有代价' },
+          {
+            type: 'list',
+            items: [
+              '浏览器内存有限，大批量图片、超大 PDF 或几百个文件同时处理，可能会变慢甚至让标签页崩溃。',
+              '复杂 Office 文档的排版引擎和桌面软件不同，导出 PDF 后仍需要人工复查。',
+              'AI 模型首次运行需要下载模型资产，弱网或离线状态下可能无法启动。',
+              '某些旧格式或加密格式并不适合浏览器内直接解析，需要明确标注限制，而不是假装支持。',
+              '本地处理减少上传风险，但用户仍然需要在可信网络、可信浏览器和 HTTPS 页面中使用工具。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '我最后得到的原则' },
+          {
+            type: 'list',
+            ordered: true,
+            items: [
+              '能在浏览器完成的，就不要传到服务器。',
+              '页面只负责交互，工具逻辑进入纯函数和 Worker。',
+              '文件处理要告诉用户边界，不夸大兼容性。',
+              'SEO 和博客文案必须如实反映技术实现。',
+              '隐私不是最后加的一句标语，而是从架构开始就要守住的约束。',
+            ],
+          },
+          {
+            type: 'callout',
+            title: '试试本地处理工具',
+            text: '如果你只是想格式化 JSON、压缩图片、处理 PDF 或对比文本，可以直接打开对应工具。绝大多数输入会在浏览器本地完成处理，不需要上传。',
+            href: '/json-format',
+            linkLabel: '打开 JSON 格式化',
+          },
+          { type: 'heading', level: 2, text: '总结' },
+          {
+            type: 'paragraph',
+            text: '我建立这个站，不是因为本地处理听起来更酷，而是因为它让我在使用在线工具时少一点不安。一个好用的工具站应该让人放心地粘贴一段数据、拖入一个文件、下载结果，然后关掉页面，而不是让用户反复猜测这些内容去了哪里。',
+          },
+          {
+            type: 'paragraph',
+            text: 'ToolGarden 还会继续扩展工具数量，但我希望它一直保持这个方向：把复杂处理尽量放到浏览器里，把工具逻辑做清楚，把限制说清楚，让隐私安全成为默认体验的一部分。',
+          },
+        ],
+        faq: [
+          {
+            question: 'ToolGarden 真的完全不上传用户输入吗？',
+            answer: '工具输入的文本和上传文件不会被发送到服务器处理。站点会像普通网页一样加载 JavaScript、CSS、WASM、模型资产和页面资源，也可能有页面级访问统计；但格式化 JSON、处理图片、拆分 PDF、文本对比这类工具输入，设计上都在浏览器本地运行。个别能力如果未来需要服务端支持，应该在界面和文档里单独说明，而不是默认混在本地工具里。',
+          },
+          {
+            question: '本地处理就一定安全吗？',
+            answer: '本地处理减少的是“把数据上传给第三方服务器”这个暴露面，但它不是万能安全承诺。用户仍然要确认访问的是正确域名、页面通过 HTTPS 加载、浏览器和系统可信，处理极高敏感等级的材料时也要遵守组织安全规范。我的目标是让日常开发和办公中的普通敏感数据少走一跳网络，而不是替代企业级安全审计。',
+          },
+          {
+            question: '为什么不直接做一个后端，兼容性不是更好吗？',
+            answer: '后端当然能处理更多格式，也更容易跑重型模型和复杂排版引擎。但一旦文件上传，隐私模型就变了：要考虑存储、日志、队列、清理策略、访问控制和合规。ToolGarden 的优先级是日常轻量工具和隐私友好，所以能本地完成的先本地完成；只有当浏览器能力明显不够时，才考虑把服务端作为明确标注的独立能力。',
+          },
+          {
+            question: '浏览器本地处理适合哪些场景？',
+            answer: '它很适合 JSON 格式化、配置清洗、JWT 查看、图片压缩转换、简单 PDF 拆分合并、文本对比、字幕编辑、Base64 编解码这类临时任务。它不太适合几 GB 文件、上千张图片、复杂 Office 排版保真、严格法律归档或需要多人协作审批的流程。遇到这些场景，桌面软件、命令行工具或受控后端系统会更稳。',
+          },
+        ],
+      },
+      en: {
+        title: 'How I Built a Fully Browser-Local Online Toolkit',
+        excerpt: 'I built ToolGarden because I wanted useful online tools without uploading JSON, images, PDFs, tokens, and internal documents to an unknown server.',
+        metaTitle: 'How I Built a Fully Browser-Local Online Toolkit',
+        metaDescription: 'A behind-the-scenes look at ToolGarden: static Next.js pages, pure utility functions, Web Workers, Canvas, Web Crypto, WASM, browser-local file processing, and privacy-first design.',
+        readingTime: '10 min read',
+        tags: ['Local processing', 'Privacy', 'Browser tools', 'Next.js', 'Architecture'],
+        relatedTools: [
+          {
+            label: 'JSON Formatter',
+            href: '/json-format',
+            description: 'Format, minify, and validate JSON locally in the browser without uploading input.',
+          },
+          {
+            label: 'Image Tools',
+            href: '/image',
+            description: 'Edit, compress, remove backgrounds, convert formats, and handle Base64 images locally in the browser.',
+          },
+          {
+            label: 'PDF Tools',
+            href: '/pdf',
+            description: 'Merge, split, extract pages, convert to Word, and create PDFs with browser-local workflows where possible.',
+          },
+          {
+            label: 'Text Tools',
+            href: '/text',
+            description: 'Count words and compare text directly in the browser for temporary copy, logs, and internal snippets.',
+          },
+        ],
+        blocks: [
+          {
+            type: 'lead',
+            text: 'The reason I built ToolGarden was simple: online tools are convenient, but I did not want to upload a JSON payload, an ID photo, a JWT, or a PDF just to format, inspect, compress, or merge it.',
+          },
+          {
+            type: 'paragraph',
+            text: 'In daily development work, sensitive details appear in ordinary places. API samples contain user IDs. Logs contain order numbers. JWTs contain tenant claims. Screenshots show internal systems. PDFs may be contracts, forms, or application material. None of these should be casually pasted into a tool whose server-side behavior is unknown.',
+          },
+          {
+            type: 'quote',
+            text: 'ToolGarden treats local processing as an architectural constraint: do not send user input to the server when the browser can do the work.',
+          },
+          { type: 'heading', level: 2, text: 'Why Local Processing Matters' },
+          {
+            type: 'paragraph',
+            text: 'The risk with many online tools is not the feature itself. The risk is that you do not know what happens after upload. Is the file logged? Cached? Sent through a queue? Used for debugging? Routed through another provider? For most everyday tasks, the safest upload is the one that never happens.',
+          },
+          {
+            type: 'paragraph',
+            text: 'Browser-local processing does not solve every security problem, but it removes a major exposure path. Files and text can stay on the device, while the website provides the interface and the code needed to process them.',
+          },
+          { type: 'heading', level: 2, text: 'The Architecture: Static Site, Browser Runtime' },
+          {
+            type: 'paragraph',
+            text: 'ToolGarden uses Next.js App Router, TypeScript, and Tailwind CSS for the interface, but the processing model is intentionally client-side. The browser downloads pages, scripts, model assets, and WASM files. The actual work happens through JavaScript, Web APIs, Workers, Canvas, Web Crypto, and local inference where possible.',
+          },
+          { type: 'code', language: 'text', code: browserLocalArchitectureSnippet },
+          {
+            type: 'paragraph',
+            text: 'That boundary matters. The server does not need to receive pasted JSON, uploaded images, PDF content, or token strings. It serves the app; the browser handles the input.',
+          },
+          { type: 'heading', level: 2, text: 'Thin Pages, Pure Utility Functions' },
+          {
+            type: 'paragraph',
+            text: 'To keep local processing maintainable, the tool pages stay thin. They handle state, controls, previews, and errors. Parsing, conversion, validation, compression, and export logic lives under lib/utils as pure functions or browser helpers.',
+          },
+          {
+            type: 'code',
+            language: 'typescript',
+            code: `type Outcome =
+  | { ok: true; output: string; parsed?: unknown }
+  | { ok: false; message: string };`,
+          },
+          {
+            type: 'paragraph',
+            text: 'This keeps React components from becoming piles of one-off parsing code. It also makes failures explicit: a utility returns an ok or error branch instead of throwing raw exceptions into the page.',
+          },
+          { type: 'heading', level: 2, text: 'How Different Data Types Stay Local' },
+          {
+            type: 'table',
+            headers: ['Data type', 'Browser-local implementation', 'Privacy value'],
+            rows: [
+              ['JSON / YAML / XML / CSV', 'Local parsers and pure utility functions handle formatting, conversion, repair, and validation.', 'API samples, config snippets, and logs do not need to be uploaded.'],
+              ['JWT / Encoding', 'Base64URL, URL, Unicode, Gzip, hashing, and HS256 verification use browser code and Web Crypto.', 'Tokens can be inspected locally while debugging.'],
+              ['Images', 'File, Blob, ImageBitmap, Canvas, OffscreenCanvas, Workers, WASM, and local models handle compression, conversion, editing, and export.', 'Screenshots, ID photos, product images, and internal assets stay on the device.'],
+              ['PDF / Office / Documents', 'pdf-lib, pdfjs-dist, fflate, SheetJS, and browser rendering handle many read, generate, split, merge, and export flows.', 'Contracts, forms, and internal documents reduce upload exposure.'],
+              ['Text and subtitles', 'Diffing, word counting, LRC/SRT parsing, and local media previews run in the frontend.', 'Temporary copy, logs, and subtitle files avoid server processing.'],
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Local AI Where It Makes Sense' },
+          {
+            type: 'paragraph',
+            text: 'Background removal, ID photo cleanup, and watermark repair sound like features that require a cloud AI service. For ToolGarden, I prefer open-source models and local algorithms that can run in the browser. On first use, the browser may download model assets. After that, the user image is decoded, normalized, inferred, composited, and exported locally.',
+          },
+          {
+            type: 'paragraph',
+            text: 'This is not a claim that local models always beat commercial cloud services. Edge quality, hard backgrounds, memory pressure, and batch stability all have limits. But for everyday ID photos, product shots, screenshots, and simple background edits, local inference is often good enough, and the image does not need to be uploaded.',
+          },
+          { type: 'heading', level: 2, text: 'Privacy Messaging Must Match the Implementation' },
+          {
+            type: 'paragraph',
+            text: 'SEO, sitemap entries, JSON-LD, llms.txt, Open Graph, and blog copy can easily become a separate marketing layer. I wanted the opposite: discovery metadata should describe how the site actually works. Tool descriptions come from the registry and message files, and the SEO layer adds the local-processing and no-upload positioning consistently.',
+          },
+          {
+            type: 'paragraph',
+            text: 'That is not just wording. It is a product contract. If a tool is not registered, discoverable, documented, and honest about its processing boundary, it should not be treated as a finished ToolGarden feature.',
+          },
+          { type: 'heading', level: 2, text: 'The Tradeoffs' },
+          {
+            type: 'list',
+            items: [
+              'Browser memory is limited, so huge PDFs, very large images, or hundreds of files can slow down or crash a tab.',
+              'Complex Office layouts may not match desktop export engines perfectly and should be reviewed after conversion.',
+              'Local AI models need model assets, so the first run can require a download and offline use depends on browser cache.',
+              'Some legacy or encrypted formats are not suitable for direct browser parsing and must be clearly marked as unsupported.',
+              'Local processing reduces upload exposure, but users still need a trusted browser, correct domain, HTTPS, and sensible handling of highly sensitive material.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'The Principles I Kept' },
+          {
+            type: 'list',
+            ordered: true,
+            items: [
+              'If the browser can do the job, do not send the input to a server.',
+              'Keep pages focused on interaction and move tool logic into utilities and Workers.',
+              'State file-format limits clearly instead of pretending everything works.',
+              'Make SEO and blog copy reflect the real technical boundary.',
+              'Treat privacy as an architecture decision, not a sentence added at the end.',
+            ],
+          },
+          {
+            type: 'callout',
+            title: 'Try a browser-local tool',
+            text: 'If you want to format JSON, compress images, process PDFs, or compare text, open one of the tools and run it directly in your browser.',
+            href: '/json-format',
+            linkLabel: 'Open JSON Formatter',
+          },
+          { type: 'heading', level: 2, text: 'Summary' },
+          {
+            type: 'paragraph',
+            text: 'I did not build ToolGarden this way because browser-local processing sounds fashionable. I built it this way because it makes online tools feel calmer to use. You can paste data, drag in a file, download the result, and close the page without wondering where the input went.',
+          },
+          {
+            type: 'paragraph',
+            text: 'The site will keep growing, but I want the direction to stay clear: push as much useful work as possible into the browser, keep the implementation understandable, state the limitations honestly, and make privacy part of the default experience.',
+          },
+        ],
+        faq: [
+          {
+            question: 'Does ToolGarden really avoid uploading user input?',
+            answer: 'Tool input text and uploaded files are not sent to a server for processing. Like any website, ToolGarden loads JavaScript, CSS, WASM, model assets, and page resources, and page-level analytics may exist. But formatting JSON, processing images, splitting PDFs, and comparing text are designed to run in the browser. If a future feature requires server-side processing, it should be clearly labeled instead of being mixed into the local tools silently.',
+          },
+          {
+            question: 'Does local processing automatically make everything secure?',
+            answer: 'No. Local processing mainly reduces the exposure created by uploading data to a third-party server. Users still need to check that they are on the correct domain, that the page is loaded over HTTPS, and that their browser and device are trusted. For highly regulated material, follow your organization security policy. The goal is to make everyday sensitive work safer by default, not to replace formal security review.',
+          },
+          {
+            question: 'Why not build a backend for better compatibility?',
+            answer: 'A backend can handle heavier formats, larger models, and complex layout engines. But the privacy model changes as soon as files are uploaded: storage, logs, queues, cleanup, access control, and compliance all become part of the system. ToolGarden prioritizes lightweight everyday tools and privacy-friendly workflows, so browser-local processing comes first. Server-side support should only appear as a clearly marked separate capability when the browser cannot do the job well.',
+          },
+          {
+            question: 'Which tasks are best suited for browser-local tools?',
+            answer: 'Browser-local tools work well for JSON formatting, config cleanup, JWT inspection, image compression and conversion, simple PDF merge or split workflows, text diff, subtitle editing, and Base64 encoding. They are less suitable for multi-gigabyte files, thousands of images, perfect Office layout fidelity, legal archival workflows, or multi-user approval processes. For those cases, desktop software, command-line tools, or controlled backend systems are usually more stable.',
+          },
+        ],
+      },
+    },
+  },
   {
     slug: 'make-id-photo-online-size-background-guide',
     publishedAt: '2026-07-06',
