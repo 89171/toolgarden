@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "clean": "node scripts/generate-static-metadata.mjs",
-    "harden": "node scripts/harden-static-export.mjs"
+    "harden": "node scripts/harden-static-export.mjs",
+    "submit:baidu": "node scripts/submit-baidu-pages.mjs"
   },
   "dependencies": {
     "@cantoo/pdf-lib": "^2.7.1",
