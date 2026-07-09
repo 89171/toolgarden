@@ -1661,6 +1661,29 @@
     "breadcrumb": "Text tools",
     "privacy_note": "Text is processed locally in your browser and is not uploaded to a server."
   },
+  "json_hub": {
+    "title": "JSON Toolkit",
+    "meta_title": "Free Online JSON Toolkit - Local, Private Format and Convert Tools",
+    "description": "Free online tools to format, minify, diff, convert, validate, and inspect JSON in your browser. Includes JSON/YAML/XML/CSV/Excel/TypeScript conversion, JSON Schema, JSONPath, and JWT tools. All processing runs locally in your browser with no upload required.",
+    "featured": "Popular JSON tools",
+    "all_tools": "All JSON tools",
+    "search_placeholder": "Search JSON tools, formats, or tasks...",
+    "search_results": "Search results",
+    "no_results": "No matching tools",
+    "privacy_note": "All processing runs locally in your browser. Input data is not uploaded to a server, which helps with sensitive data.",
+    "breadcrumb": "JSON tools",
+    "faq_title": "FAQ",
+    "faq": {
+      "privacy_q": "Does JSON Toolkit upload my data?",
+      "privacy_a": "No. Formatting, conversion, analysis, JWT parsing, and file processing run locally in your browser. The server does not receive your input.",
+      "formats_q": "Which JSON-related formats are supported?",
+      "formats_a": "JSON, YAML, XML, CSV, Excel, TypeScript interfaces, JSON Schema, JSONPath, and JWT are supported. Image compression, background removal, and format conversion are available from the top image toolbar.",
+      "free_q": "Are these tools free to use?",
+      "free_a": "Yes. All tools are free to use online, require no account, and run directly in your browser.",
+      "loose_q": "Does the JSON formatter support loose syntax?",
+      "loose_a": "Yes. It accepts common loose input such as unquoted object keys and single-quoted strings for faster debugging."
+    }
+  },
   "blog": {
     "title": "ToolGarden Blog",
     "meta_title": "ToolGarden Blog - JSON, Browser-Local Tools, and Privacy",
@@ -1678,27 +1701,19 @@
     "toc_title": "Table of contents"
   },
   "home": {
-    "title": "JSON Toolkit",
+    "title": "ToolGarden Toolkit",
     "breadcrumb": "Home",
-    "meta_title": "Free Online JSON Toolkit - Local, Private Format and Convert Tools",
-    "subtitle": "Free online tools to format, minify, diff, convert, validate, and inspect JSON in your browser. Includes JSON/YAML/XML/CSV/Excel/TypeScript conversion, JSON Schema, JSONPath, and JWT tools. Image tools now live in the top image toolbar, and your data stays local for more privacy.",
-    "featured": "Popular JSON tools",
-    "all_tools": "All JSON tools",
-    "search_placeholder": "Search JSON tools, formats, or tasks...",
+    "meta_title": "ToolGarden Toolkit - Free Online JSON, Image, PDF, Text and QR Tools",
+    "subtitle": "Free online tools that run locally in your browser — JSON, images, PDFs, text, QR codes, and subtitles. No upload, no sign-in.",
+    "featured": "Popular tools",
+    "all_tools": "All tools",
+    "search_placeholder": "Search tools, formats, or tasks...",
     "search_results": "Search results",
     "no_results": "No matching tools",
     "privacy_note": "All processing runs locally in your browser. Input data is not uploaded to a server, which helps with sensitive data.",
-    "faq_title": "FAQ",
-    "faq": {
-      "privacy_q": "Does JSON Toolkit upload my data?",
-      "privacy_a": "No. Formatting, conversion, analysis, JWT parsing, and file processing run locally in your browser. The server does not receive your input.",
-      "formats_q": "Which JSON-related formats are supported?",
-      "formats_a": "JSON, YAML, XML, CSV, Excel, TypeScript interfaces, JSON Schema, JSONPath, and JWT are supported. Image compression, background removal, and format conversion are available from the top image toolbar.",
-      "free_q": "Are these tools free to use?",
-      "free_a": "Yes. All tools are free to use online, require no account, and run directly in your browser.",
-      "loose_q": "Does the JSON formatter support loose syntax?",
-      "loose_a": "Yes. It accepts common loose input such as unquoted object keys and single-quoted strings for faster debugging."
-    }
+    "expand_more": "Show more",
+    "show_less": "Show less",
+    "view_all_in": "View all {section}"
   },
   "not_found": {
     "title": "Page not found",

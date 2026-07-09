@@ -12,7 +12,7 @@ export const dynamic = 'force-static';
 const BUILD_DATE = new Date().toISOString().slice(0, 10);
 const PROJECT_ROOT = process.cwd();
 
-const hubPaths = ['/image', '/pdf', '/file-merge', '/text'] as const;
+const hubPaths = ['/json-tools', '/image', '/pdf', '/file-merge', '/text'] as const;
 const blogPaths = [
   BLOG_INDEX_PATH,
   ...blogArticles.map((article) => `${BLOG_INDEX_PATH}/${article.slug}`),
@@ -82,7 +82,19 @@ function getSourceLastModified(sourcePaths: string[]): string {
 
 function getRouteSourcePaths(routePath: string): string[] {
   if (routePath === '') {
-    return ['app/[locale]/page.tsx', 'components/HomePageContent.tsx'];
+    return [
+      'app/[locale]/page.tsx',
+      'components/HomePageContent.tsx',
+      'components/AllToolsDirectory.tsx',
+    ];
+  }
+
+  if (routePath === '/json-tools') {
+    return [
+      'app/[locale]/json-tools/page.tsx',
+      'components/JsonToolsHubContent.tsx',
+      'components/ToolDirectory.tsx',
+    ];
   }
 
   if (routePath === BLOG_INDEX_PATH) {

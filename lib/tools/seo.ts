@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { routing } from '@/i18n/routing';
 import zhMessages from '@/messages/zh.json';
 import enMessages from '@/messages/en.json';
 import {
@@ -7,10 +6,26 @@ import {
   getLocalizedBlogArticle,
   getLocalizedBlogArticles,
 } from '@/lib/blog/articles';
-import { stringifyJSONValue } from '@/lib/utils/json';
+import {
+  BASE_URL,
+  buildBreadcrumbJsonLd,
+  buildToolFaqJsonLd,
+  buildToolJsonLd,
+  createPrivacySeoDescription,
+  createToolSeoDescription,
+  createToolSeoTitle,
+  getLanguageAlternates,
+  getLocalizedPath,
+  getLocalizedUrl,
+  normalizeLocale,
+  toJsonLd,
+  type JsonLdMessages,
+  type Locale,
+} from './jsonld';
 import {
   getFileMergeTools,
   getImageTools,
+  getJsonTools,
   getLocalizedToolPath,
   getPdfTools,
   getTextTools,
@@ -18,129 +33,24 @@ import {
   toolRegistry,
 } from './registry';
 
-const DEFAULT_BASE_URL = 'https://toolgarden.xyz';
-
-export const BASE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? DEFAULT_BASE_URL).replace(/\/+$/, '');
+export {
+  BASE_URL,
+  getLanguageAlternates,
+  getLocalizedPath,
+  getLocalizedUrl,
+  normalizeLocale,
+  toJsonLd,
+};
+export type { Locale };
 export const REPOSITORY_URL = 'https://github.com/89171/json-toolkit';
 const EXPOSE_SOURCE_METADATA = process.env.NEXT_PUBLIC_EXPOSE_SOURCE === 'true';
 
 const messages = { zh: zhMessages, en: enMessages } as const;
 
-export type Locale = (typeof routing.locales)[number];
 type ToolMessageId = keyof typeof zhMessages.tools;
-type ToolFaqMessageId = keyof typeof zhMessages.tool_faq;
-
-const TOOL_TITLE_PHRASE_LIMIT: Record<Locale, number> = {
-  zh: 34,
-  en: 62,
-};
-
-function trimTrailingPunctuation(value: string): string {
-  return value.replace(/[\s,.，。;；:：、]+$/u, '');
-}
-
-function truncateSeoPhrase(value: string, locale: Locale): string {
-  const limit = TOOL_TITLE_PHRASE_LIMIT[locale];
-  const normalizedValue = value.replace(/\s+/g, ' ').trim();
-
-  if (normalizedValue.length <= limit) return trimTrailingPunctuation(normalizedValue);
-
-  const truncated = normalizedValue.slice(0, limit);
-  const separatorIndex = Math.max(
-    truncated.lastIndexOf('，'),
-    truncated.lastIndexOf('、'),
-    truncated.lastIndexOf(','),
-    truncated.lastIndexOf(';'),
-    truncated.lastIndexOf('；')
-  );
-  const phrase = separatorIndex >= Math.floor(limit * 0.55)
-    ? truncated.slice(0, separatorIndex)
-    : truncated;
-
-  return `${trimTrailingPunctuation(phrase)}...`;
-}
-
-function getToolSeoPhrase(description: string, locale: Locale): string {
-  const phrase = locale === 'zh'
-    ? description.replace(/^免费在线/u, '')
-    : description
-        .replace(/^Free online\s+/iu, '')
-        .replace(/^tool to\s+/iu, '')
-        .replace(/^tool for\s+/iu, '');
-
-  return truncateSeoPhrase(phrase, locale);
-}
-
-function createToolSeoTitle(toolName: string, description: string, locale: Locale): string {
-  const phrase = getToolSeoPhrase(description, locale);
-  return `${toolName} - ${phrase}`;
-}
-
-function appendSeoSentence(description: string, sentence: string, locale: Locale): string {
-  const normalizedDescription = description.trim();
-  const separator = /[。.!?]$/u.test(normalizedDescription)
-    ? (locale === 'zh' ? '' : ' ')
-    : (locale === 'zh' ? '。' : '. ');
-
-  return `${normalizedDescription}${separator}${sentence}`;
-}
-
-function hasLocalProcessingSignal(description: string, locale: Locale): boolean {
-  return locale === 'zh'
-    ? /浏览器|本地|无需上传|不上传/u.test(description)
-    : /browser|locally|local|no upload|not uploaded/i.test(description);
-}
-
-function hasPrivacySignal(description: string, locale: Locale): boolean {
-  return locale === 'zh'
-    ? /隐私|敏感|无需上传|不上传/u.test(description)
-    : /privacy|private|sensitive|no upload|not uploaded/i.test(description);
-}
-
-function createPrivacySeoDescription(description: string, locale: Locale): string {
-  if (hasPrivacySignal(description, locale)) return description.trim();
-
-  const suffix = locale === 'zh'
-    ? (hasLocalProcessingSignal(description, locale) ? '更安心保护隐私。' : '优先在浏览器本地处理，减少上传，更安心保护隐私。')
-    : (hasLocalProcessingSignal(description, locale) ? 'Built for privacy-friendly local workflows.' : 'Browser-local workflows reduce uploads and help protect privacy.');
-
-  return appendSeoSentence(description, suffix, locale);
-}
-
-function createToolSeoDescription(description: string, locale: Locale): string {
-  const hasLocalSignal = locale === 'zh'
-    ? /浏览器|本地/u.test(description)
-    : /browser|locally|local/i.test(description);
-  const suffix = locale === 'zh'
-    ? (hasLocalSignal ? '无需上传，无需登录，更安心保护隐私。' : '所有处理在浏览器本地完成，无需上传，无需登录，更安心保护隐私。')
-    : (hasLocalSignal ? 'No upload or sign-in required, helping keep sensitive data private.' : 'Runs locally in your browser with no upload or sign-in required, helping keep sensitive data private.');
-
-  return appendSeoSentence(description, suffix, locale);
-}
-
-export function normalizeLocale(locale: string): Locale {
-  return routing.locales.includes(locale as Locale) ? (locale as Locale) : routing.defaultLocale;
-}
 
 export function getLocaleMessages(locale: string) {
   return messages[normalizeLocale(locale)];
-}
-
-export function getLocalizedUrl(locale: string, path = ''): string {
-  return `${BASE_URL}/${normalizeLocale(locale)}${path}`;
-}
-
-export function getLocalizedPath(locale: string, path = ''): string {
-  return `/${normalizeLocale(locale)}${path}`;
-}
-
-export function getLanguageAlternates(path = ''): Record<string, string> {
-  return {
-    ...Object.fromEntries(
-      routing.locales.map((locale) => [locale, getLocalizedPath(locale, path)])
-    ),
-    'x-default': getLocalizedPath(routing.defaultLocale, path),
-  };
 }
 
 export function createLocaleMetadata(locale: string): Metadata {
@@ -233,6 +143,30 @@ export function createFileMergeHubMetadata(locale: string): Metadata {
     },
     openGraph: {
       title: `${m.file_merge_hub.title} | ${m.home.title}`,
+      description: seoDescription,
+      type: 'website',
+      locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
+      siteName: m.home.title,
+      url: getLocalizedPath(normalizedLocale, path),
+    },
+  };
+}
+
+export function createJsonToolsHubMetadata(locale: string): Metadata {
+  const normalizedLocale = normalizeLocale(locale);
+  const m = getLocaleMessages(normalizedLocale);
+  const path = '/json-tools';
+  const seoDescription = createPrivacySeoDescription(m.json_hub.description, normalizedLocale);
+
+  return {
+    title: m.json_hub.meta_title,
+    description: seoDescription,
+    alternates: {
+      canonical: getLocalizedPath(normalizedLocale, path),
+      languages: getLanguageAlternates(path),
+    },
+    openGraph: {
+      title: `${m.json_hub.title} | ${m.home.title}`,
       description: seoDescription,
       type: 'website',
       locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
@@ -386,6 +320,28 @@ export function createToolItemListJsonLd(locale: string) {
   };
 }
 
+export function createJsonToolItemListJsonLd(locale: string) {
+  const normalizedLocale = normalizeLocale(locale);
+  const m = getLocaleMessages(normalizedLocale);
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: m.json_hub.title,
+    description: createPrivacySeoDescription(m.json_hub.description, normalizedLocale),
+    itemListElement: getJsonTools().map((tool, index) => {
+      const localizedTool = m.tools[tool.id as ToolMessageId];
+      return {
+        '@type': 'ListItem',
+        position: index + 1,
+        url: getLocalizedUrl(normalizedLocale, tool.path),
+        name: localizedTool.name,
+        description: createToolSeoDescription(localizedTool.description, normalizedLocale),
+      };
+    }),
+  };
+}
+
 export function createImageToolItemListJsonLd(locale: string) {
   const normalizedLocale = normalizeLocale(locale);
   const m = getLocaleMessages(normalizedLocale);
@@ -496,7 +452,7 @@ export function createBlogItemListJsonLd(locale: string) {
 
 export function createFaqJsonLd(locale: string) {
   const m = getLocaleMessages(locale);
-  const faq = m.home.faq;
+  const faq = m.json_hub.faq;
 
   return {
     '@context': 'https://schema.org',
@@ -518,51 +474,11 @@ export function createFaqJsonLd(locale: string) {
 }
 
 export function createToolFaqJsonLd(toolId: string, locale: string) {
-  const normalizedLocale = normalizeLocale(locale);
-  const m = getLocaleMessages(normalizedLocale);
-  const faq = toolId in m.tool_faq ? m.tool_faq[toolId as ToolFaqMessageId] : null;
-
-  if (!faq?.items?.length) return null;
-
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faq.items.map((item) => ({
-      '@type': 'Question',
-      name: item.question,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: item.answer,
-      },
-    })),
-  };
+  return buildToolFaqJsonLd(toolId, getLocaleMessages(locale) as JsonLdMessages);
 }
 
 export function createToolJsonLd(toolId: string, locale: string) {
-  const normalizedLocale = normalizeLocale(locale);
-  const m = getLocaleMessages(normalizedLocale);
-  const tool = getToolById(toolId);
-  const localizedTool = m.tools[toolId as ToolMessageId];
-
-  if (!tool || !localizedTool) return null;
-
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    name: localizedTool.name,
-    description: createToolSeoDescription(localizedTool.description, normalizedLocale),
-    url: getLocalizedUrl(normalizedLocale, tool.path),
-    applicationCategory: 'DeveloperApplication',
-    operatingSystem: 'Any',
-    isAccessibleForFree: true,
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-    inLanguage: normalizedLocale === 'zh' ? 'zh-CN' : 'en',
-    isPartOf: {
-      '@type': 'WebSite',
-      name: m.home.title,
-      url: getLocalizedUrl(normalizedLocale),
-    },
-  };
+  return buildToolJsonLd(toolId, locale, getLocaleMessages(locale) as JsonLdMessages);
 }
 
 export function createBlogArticleFaqJsonLd(slug: string, locale: string) {
@@ -624,121 +540,7 @@ export function createBlogArticleJsonLd(slug: string, locale: string) {
 }
 
 export function createBreadcrumbJsonLd(toolId: string, locale: string) {
-  const normalizedLocale = normalizeLocale(locale);
-  const m = getLocaleMessages(normalizedLocale);
-  const tool = getToolById(toolId);
-  const localizedTool = m.tools[toolId as ToolMessageId];
-
-  if (!tool || !localizedTool) return null;
-
-  const homeListItem = {
-    '@type': 'ListItem',
-    position: 1,
-    name: m.home.breadcrumb,
-    item: getLocalizedUrl(normalizedLocale),
-  };
-
-  if (tool.path.startsWith('/image/')) {
-    return {
-      '@context': 'https://schema.org',
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        homeListItem,
-        {
-          '@type': 'ListItem',
-          position: 2,
-          name: m.image_hub.breadcrumb,
-          item: getLocalizedUrl(normalizedLocale, '/image'),
-        },
-        {
-          '@type': 'ListItem',
-          position: 3,
-          name: localizedTool.name,
-          item: getLocalizedUrl(normalizedLocale, tool.path),
-        },
-      ],
-    };
-  }
-
-  if (tool.path.startsWith('/pdf/')) {
-    return {
-      '@context': 'https://schema.org',
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        homeListItem,
-        {
-          '@type': 'ListItem',
-          position: 2,
-          name: m.pdf_hub.breadcrumb,
-          item: getLocalizedUrl(normalizedLocale, '/pdf'),
-        },
-        {
-          '@type': 'ListItem',
-          position: 3,
-          name: localizedTool.name,
-          item: getLocalizedUrl(normalizedLocale, tool.path),
-        },
-      ],
-    };
-  }
-
-  if (tool.path.startsWith('/file-merge/')) {
-    return {
-      '@context': 'https://schema.org',
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        homeListItem,
-        {
-          '@type': 'ListItem',
-          position: 2,
-          name: m.file_merge_hub.breadcrumb,
-          item: getLocalizedUrl(normalizedLocale, '/file-merge'),
-        },
-        {
-          '@type': 'ListItem',
-          position: 3,
-          name: localizedTool.name,
-          item: getLocalizedUrl(normalizedLocale, tool.path),
-        },
-      ],
-    };
-  }
-
-  if (tool.path.startsWith('/text/')) {
-    return {
-      '@context': 'https://schema.org',
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        homeListItem,
-        {
-          '@type': 'ListItem',
-          position: 2,
-          name: m.text_hub.breadcrumb,
-          item: getLocalizedUrl(normalizedLocale, '/text'),
-        },
-        {
-          '@type': 'ListItem',
-          position: 3,
-          name: localizedTool.name,
-          item: getLocalizedUrl(normalizedLocale, tool.path),
-        },
-      ],
-    };
-  }
-
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      homeListItem,
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: localizedTool.name,
-        item: getLocalizedUrl(normalizedLocale, tool.path),
-      },
-    ],
-  };
+  return buildBreadcrumbJsonLd(toolId, locale, getLocaleMessages(locale) as JsonLdMessages);
 }
 
 export function createBlogArticleBreadcrumbJsonLd(slug: string, locale: string) {
@@ -772,10 +574,6 @@ export function createBlogArticleBreadcrumbJsonLd(slug: string, locale: string) 
       },
     ],
   };
-}
-
-export function toJsonLd(data: unknown): string {
-  return stringifyJSONValue(data);
 }
 
 export function getFeaturedTools() {

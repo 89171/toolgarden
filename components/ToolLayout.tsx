@@ -1,14 +1,15 @@
 'use client';
 import React from 'react';
 import Link from 'next/link';
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations, useLocale, useMessages } from 'next-intl';
 import { getToolById } from '@/lib/tools/registry';
 import {
-  createBreadcrumbJsonLd,
-  createToolFaqJsonLd,
-  createToolJsonLd,
+  buildBreadcrumbJsonLd,
+  buildToolFaqJsonLd,
+  buildToolJsonLd,
   toJsonLd,
-} from '@/lib/tools/seo';
+  type JsonLdMessages,
+} from '@/lib/tools/jsonld';
 import Footer from './Footer';
 import Header from './Header';
 
@@ -20,6 +21,7 @@ interface ToolLayoutProps {
 export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
   const t = useTranslations();
   const locale = useLocale();
+  const messages = useMessages() as unknown as JsonLdMessages;
   const tool = getToolById(toolId);
 
   const toolName  = tool ? t(`tools.${toolId}.name`)        : toolId;
@@ -32,9 +34,9 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
   const imageHubLabel = t('image_hub.breadcrumb');
   const pdfHubLabel = t('pdf_hub.breadcrumb');
   const fileMergeHubLabel = t('file_merge_hub.breadcrumb');
-  const toolJsonLd = tool ? createToolJsonLd(toolId, locale) : null;
-  const breadcrumbJsonLd = tool ? createBreadcrumbJsonLd(toolId, locale) : null;
-  const faqJsonLd = tool ? createToolFaqJsonLd(toolId, locale) : null;
+  const toolJsonLd = tool ? buildToolJsonLd(toolId, locale, messages) : null;
+  const breadcrumbJsonLd = tool ? buildBreadcrumbJsonLd(toolId, locale, messages) : null;
+  const faqJsonLd = tool ? buildToolFaqJsonLd(toolId, messages) : null;
 
   return (
     <>

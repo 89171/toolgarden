@@ -1,10 +1,19 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { ToolDirectory } from '@/components/ToolDirectory';
+import { AllToolsDirectory, type AllToolsSection } from '@/components/AllToolsDirectory';
 import type { ToolCardData } from '@/components/ToolDirectory';
-import { getJsonToolGroups, getJsonTools } from '@/lib/tools/registry';
 import {
-  createFaqJsonLd,
+  getFileMergeTools,
+  getImageTools,
+  getInfoCodecTools,
+  getJsonTools,
+  getPdfTools,
+  getQrCodeTools,
+  getSubtitleTools,
+  getTextTools,
+} from '@/lib/tools/registry';
+import type { ToolMeta } from '@/lib/tools/types';
+import {
   createToolItemListJsonLd,
   getLocaleMessages,
   getLocalizedToolCards,
@@ -16,37 +25,55 @@ interface HomePageContentProps {
   locale: string;
 }
 
+function orderFeaturedFirst(tools: ToolCardData[]): ToolCardData[] {
+  const featured: ToolCardData[] = [];
+  const rest: ToolCardData[] = [];
+  for (const tool of tools) {
+    (tool.featured ? featured : rest).push(tool);
+  }
+  return [...featured, ...rest];
+}
+
 export function HomePageContent({ locale }: HomePageContentProps) {
   const normalizedLocale = normalizeLocale(locale);
   const m = getLocaleMessages(normalizedLocale);
   const localizedTools = getLocalizedToolCards(normalizedLocale);
-  const jsonToolIds = new Set(getJsonTools().map((tool) => tool.id));
-  const tools = localizedTools.filter((tool) => jsonToolIds.has(tool.id));
   const toolById = new Map(localizedTools.map((tool) => [tool.id, tool]));
-  const groups = getJsonToolGroups().map((group) => ({
-    category: group.category,
-    label: m.categories[group.category],
-    tools: group.tools
-      .map((tool) => toolById.get(tool.id))
-      .filter((tool): tool is ToolCardData => Boolean(tool)),
-  }));
 
-  const faqItems = [
-    ['privacy_q', 'privacy_a'],
-    ['formats_q', 'formats_a'],
-    ['free_q', 'free_a'],
-    ['loose_q', 'loose_a'],
-  ] as const;
+  const buildSection = (
+    key: string,
+    label: string,
+    href: string | null,
+    metas: ToolMeta[],
+  ): AllToolsSection => ({
+    key,
+    label,
+    href,
+    tools: orderFeaturedFirst(
+      metas
+        .map((meta) => toolById.get(meta.id))
+        .filter((tool): tool is ToolCardData => Boolean(tool)),
+    ),
+  });
+
+  const sections: AllToolsSection[] = [
+    buildSection('json',       m.nav.json_tools_menu,  `/${normalizedLocale}/json-tools`, getJsonTools()),
+    buildSection('image',      m.nav.image_toolbar,    `/${normalizedLocale}/image`,      getImageTools()),
+    buildSection('pdf',        m.nav.pdf_tools,        `/${normalizedLocale}/pdf`,        getPdfTools()),
+    buildSection('text',       m.nav.text_tools,       `/${normalizedLocale}/text`,       getTextTools()),
+    buildSection('file-merge', m.nav.file_merge_tools, `/${normalizedLocale}/file-merge`, getFileMergeTools()),
+    buildSection('info-codec', m.nav.info_codec_tools, null,                              getInfoCodecTools()),
+    buildSection('qr',         m.nav.qr_tools,         null,                              getQrCodeTools()),
+    buildSection('subtitle',   m.nav.subtitle_tools,   null,                              getSubtitleTools()),
+  ].filter((section) => section.tools.length > 0);
+
+  const featured = localizedTools.filter((tool) => tool.featured);
 
   return (
     <div className="flex min-h-[100dvh] flex-col bg-background text-foreground">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: toJsonLd(createToolItemListJsonLd(normalizedLocale)) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: toJsonLd(createFaqJsonLd(normalizedLocale)) }}
       />
       <div className="flex w-full flex-grow flex-col px-3 py-3 sm:px-6 sm:py-4 lg:px-10 xl:px-14 2xl:px-20">
         <Header compact />
@@ -63,31 +90,19 @@ export function HomePageContent({ locale }: HomePageContentProps) {
           </p>
         </header>
 
-        <ToolDirectory
-          allToolsTitle={m.home.all_tools}
-          featuredTitle={m.home.featured}
-          groups={groups}
-          noResultsLabel={m.home.no_results}
-          searchPlaceholder={m.home.search_placeholder}
-          searchResultsTitle={m.home.search_results}
-          tools={tools}
+        <AllToolsDirectory
+          sections={sections}
+          featured={featured}
+          labels={{
+            searchPlaceholder: m.home.search_placeholder,
+            searchResults: m.home.search_results,
+            noResults: m.home.no_results,
+            featured: m.home.featured,
+            expandMore: m.home.expand_more,
+            showLess: m.home.show_less,
+            viewAllTemplate: m.home.view_all_in,
+          }}
         />
-
-        <section className="mt-14">
-          <h2 className="mb-4 border-b border-border-subtle pb-2 text-xs font-semibold uppercase tracking-normal text-content-faint">
-            {m.home.faq_title}
-          </h2>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {faqItems.map(([questionKey, answerKey]) => (
-              <article key={questionKey} className="rounded-lg border border-border-base bg-surface p-5">
-                <h3 className="font-semibold text-content">{m.home.faq[questionKey]}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-content-muted">
-                  {m.home.faq[answerKey]}
-                </p>
-              </article>
-            ))}
-          </div>
-        </section>
       </div>
       <Footer />
     </div>

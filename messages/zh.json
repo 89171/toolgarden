@@ -1631,35 +1631,58 @@
   },
   "image_hub": {
     "title": "图片工具",
-    "meta_title": "免费在线图片工具 - 图片编辑、压缩、合并、去背景、去水印、Base64、JPG、PNG、WebP、AVIF 转换",
-    "description": "免费在线批量编辑、压缩、合并、去背景、去水印、Base64 编解码、转换、裁剪和修改图片尺寸，所有处理都在浏览器本地完成，支持绘制形状、文字、马赛克、模糊、AI 选区修复、智能压缩、图片合成 PDF 或长图、透明 PNG、JPG、PNG、WebP、AVIF 输出、预览对比和 ZIP 批量下载。",
+    "meta_title": "图片工具 - 图片编辑、压缩、合并、去背景、去水印、Base64、JPG、PNG、WebP、AVIF 转换",
+    "description": "批量编辑、压缩、合并、去背景、去水印、Base64 编解码、转换、裁剪和修改图片尺寸，所有处理都在浏览器本地完成，支持绘制形状、文字、马赛克、模糊、AI 选区修复、智能压缩、图片合成 PDF 或长图、透明 PNG、JPG、PNG、WebP、AVIF 输出、预览对比和 ZIP 批量下载。",
     "all_tools": "图片转换工具",
     "breadcrumb": "图片工具",
     "privacy_note": "图片仅在本地浏览器处理，不会上传到服务器。"
   },
   "pdf_hub": {
     "title": "PDF 工具",
-    "meta_title": "免费在线 PDF 工具 - PDF 转 Word、Word 转 PDF、合并、拆分",
-    "description": "免费在线完成 PDF 转 Word、Word/Excel/PowerPoint/EPUB/MOBI/图片转 PDF，并支持合并、拆分、提取页面和整理 PDF 页面。所有首版 PDF 操作都在浏览器本地完成。",
+    "meta_title": "PDF 工具 - PDF 转 Word、Word 转 PDF、合并、拆分",
+    "description": "完成 PDF 转 Word、Word/Excel/PowerPoint/EPUB/MOBI/图片转 PDF，并支持合并、拆分、提取页面和整理 PDF 页面。所有首版 PDF 操作都在浏览器本地完成。",
     "all_tools": "PDF 工具",
     "breadcrumb": "PDF 工具",
     "privacy_note": "首版 PDF 转换在浏览器本地完成，文件不会上传到服务器。"
   },
   "file_merge_hub": {
     "title": "文件合并工具",
-    "meta_title": "免费在线文件合并工具 - PDF、Word、PPT、Excel、图片合并长图",
-    "description": "免费在线合并 PDF、Word、PPT、TXT、Markdown、CSV、RTF、Excel 和图片，按文件类型导出原格式：PDF 合并为 PDF，Word 合并为 DOCX，PPT 合并为 PPTX，图片可合成 PDF 或长图。所有处理都在浏览器本地完成。",
+    "meta_title": "文件合并工具 - PDF、Word、PPT、Excel、图片合并长图",
+    "description": "合并 PDF、Word、PPT、TXT、Markdown、CSV、RTF、Excel 和图片，按文件类型导出原格式：PDF 合并为 PDF，Word 合并为 DOCX，PPT 合并为 PPTX，图片可合成 PDF 或长图。所有处理都在浏览器本地完成。",
     "all_tools": "文件合并工具",
     "breadcrumb": "文件合并工具",
     "privacy_note": "文件仅在本地浏览器处理，不会上传到服务器。"
   },
   "text_hub": {
     "title": "文本工具",
-    "meta_title": "免费在线文本工具 - 字数统计、文本对比",
-    "description": "免费在线处理文本内容，支持字数统计、词数统计、行数统计、段落统计和两段文本差异对比。所有处理都在浏览器本地完成，无需上传。",
+    "meta_title": "文本工具 - 字数统计、文本对比",
+    "description": "处理文本内容，支持字数统计、词数统计、行数统计、段落统计和两段文本差异对比。所有处理都在浏览器本地完成，无需上传。",
     "all_tools": "文本工具",
     "breadcrumb": "文本工具",
     "privacy_note": "文本仅在本地浏览器处理，不会上传到服务器。"
+  },
+  "json_hub": {
+    "title": "JSON 工具包",
+    "meta_title": "JSON 工具包 - 本地处理、安全隐私、格式转换",
+    "description": "完成 JSON 格式化、压缩、对比，JSON/YAML/XML/CSV/Excel/TypeScript 转换，JSON Schema、JSONPath 与 JWT 解析。所有处理在浏览器本地完成，无需上传，更安心保护隐私。",
+    "featured": "常用 JSON 工具",
+    "all_tools": "全部 JSON 工具",
+    "search_placeholder": "搜索 JSON 工具、格式或用途...",
+    "search_results": "搜索结果",
+    "no_results": "没有匹配的工具",
+    "privacy_note": "所有处理都在浏览器本地完成，输入内容不会上传到服务器，适合处理隐私敏感数据。",
+    "breadcrumb": "JSON 工具",
+    "faq_title": "常见问题",
+    "faq": {
+      "privacy_q": "这个 JSON 工具包会上传我的数据吗？",
+      "privacy_a": "不会。格式化、转换、统计、JWT 解析和文件处理都在浏览器本地执行，服务器不会接收你的输入内容。",
+      "formats_q": "支持哪些 JSON 相关格式？",
+      "formats_a": "支持 JSON、YAML、XML、CSV、Excel、TypeScript interface、JSON Schema、JSONPath 与 JWT。图片压缩、去背景和格式转换可从顶部图片工具栏进入。",
+      "free_q": "这些工具可以免费使用吗？",
+      "free_a": "可以。所有工具都可以使用，无需账号，并直接在浏览器中运行。",
+      "loose_q": "JSON 格式化支持宽松语法吗？",
+      "loose_a": "支持常见的宽松输入，例如未加引号的 key 和单引号字符串，方便快速整理开发调试数据。"
+    }
   },
   "blog": {
     "title": "ToolGarden 博客",
@@ -1678,27 +1701,19 @@
     "toc_title": "目录"
   },
   "home": {
-    "title": "JSON 工具包",
+    "title": "ToolGarden 工具箱",
     "breadcrumb": "首页",
-    "meta_title": "免费在线 JSON 工具包 - 本地处理、安全隐私、格式转换",
-    "subtitle": "免费在线完成 JSON 格式化、压缩、对比，JSON/YAML/XML/CSV/Excel/TypeScript 转换，JSON Schema、JSONPath 与 JWT 解析。图片处理工具已整理到顶部图片工具栏，数据仍在浏览器本地处理，无需上传，更安心保护隐私。",
-    "featured": "常用 JSON 工具",
-    "all_tools": "全部 JSON 工具",
-    "search_placeholder": "搜索 JSON 工具、格式或用途...",
+    "meta_title": "ToolGarden 工具箱 - JSON、图片、PDF、文本、二维码在线工具",
+    "subtitle": "在浏览器本地完成 JSON、图片、PDF、文本、二维码、字幕等常见工具操作，无需上传，无需登录，更安心保护隐私。",
+    "featured": "常用工具",
+    "all_tools": "全部工具",
+    "search_placeholder": "搜索工具、格式或用途...",
     "search_results": "搜索结果",
     "no_results": "没有匹配的工具",
     "privacy_note": "所有处理都在浏览器本地完成，输入内容不会上传到服务器，适合处理隐私敏感数据。",
-    "faq_title": "常见问题",
-    "faq": {
-      "privacy_q": "这个 JSON 工具包会上传我的数据吗？",
-      "privacy_a": "不会。格式化、转换、统计、JWT 解析和文件处理都在浏览器本地执行，服务器不会接收你的输入内容。",
-      "formats_q": "支持哪些 JSON 相关格式？",
-      "formats_a": "支持 JSON、YAML、XML、CSV、Excel、TypeScript interface、JSON Schema、JSONPath 与 JWT。图片压缩、去背景和格式转换可从顶部图片工具栏进入。",
-      "free_q": "这些工具可以免费使用吗？",
-      "free_a": "可以。所有工具都可以免费在线使用，无需账号，并直接在浏览器中运行。",
-      "loose_q": "JSON 格式化支持宽松语法吗？",
-      "loose_a": "支持常见的宽松输入，例如未加引号的 key 和单引号字符串，方便快速整理开发调试数据。"
-    }
+    "expand_more": "展开更多",
+    "show_less": "收起",
+    "view_all_in": "查看 {section}"
   },
   "not_found": {
     "title": "页面没有找到",
@@ -1716,7 +1731,7 @@
   "tools": {
     "json-format": {
       "name": "JSON 格式化",
-      "description": "免费在线格式化、压缩、验证 JSON / JSONC / JSON5，支持注释、尾逗号、树形展示与节点操作",
+      "description": "格式化、压缩、验证 JSON / JSONC / JSON5，支持注释、尾逗号、树形展示与节点操作",
       "input_title": "输入 JSON",
       "output_title": "输出结果",
       "format": "格式化",
@@ -1736,7 +1751,7 @@
     },
     "json-escape": {
       "name": "JSON 压缩转义",
-      "description": "免费在线压缩 JSON / JSONC / JSON5 并转义特殊字符，反转义还原可读格式",
+      "description": "压缩 JSON / JSONC / JSON5 并转义特殊字符，反转义还原可读格式",
       "input_title": "输入",
       "output_title": "输出",
       "escape": "压缩转义",
@@ -1745,7 +1760,7 @@
     },
     "json-repair": {
       "name": "JSON 修复清洗",
-      "description": "免费在线修复 JSONC / JSON5 注释、尾逗号、单引号、未加引号 key 等常见 JSON 问题",
+      "description": "修复 JSONC / JSON5 注释、尾逗号、单引号、未加引号 key 等常见 JSON 问题",
       "input_title": "待修复 JSON",
       "output_title": "修复结果",
       "repair": "修复并格式化",
@@ -1754,7 +1769,7 @@
     },
     "json-diff": {
       "name": "JSON 对比",
-      "description": "免费在线可视化对比两份 JSON / JSONC / JSON5 的差异，高亮增删改",
+      "description": "可视化对比两份 JSON / JSONC / JSON5 的差异，高亮增删改",
       "left_title": "左侧 JSON（原始）",
       "right_title": "右侧 JSON（新版）",
       "compare": "开始对比",
@@ -1769,7 +1784,7 @@
     },
     "json-yaml": {
       "name": "JSON ↔ YAML",
-      "description": "免费在线完成 JSON 与 YAML 格式双向互转",
+      "description": "完成 JSON 与 YAML 格式双向互转",
       "to_yaml": "→ YAML",
       "to_json": "→ JSON",
       "json_placeholder": "粘贴 JSON / JSONC / JSON5 对象，例如 key/value 配置",
@@ -1777,7 +1792,7 @@
     },
     "json-xml": {
       "name": "JSON ↔ XML",
-      "description": "免费在线完成 JSON 与 XML 格式双向互转",
+      "description": "完成 JSON 与 XML 格式双向互转",
       "to_xml": "→ XML",
       "to_json": "→ JSON",
       "json_placeholder": "粘贴 JSON / JSONC / JSON5 对象，例如姓名和年龄字段",
@@ -1785,7 +1800,7 @@
     },
     "json-to-csv": {
       "name": "JSON → CSV",
-      "description": "免费在线将 JSON / JSONC / JSON5 数组导出为 CSV 文件",
+      "description": "将 JSON / JSONC / JSON5 数组导出为 CSV 文件",
       "input_title": "输入 JSON / JSONC / JSON5 数组",
       "output_title": "CSV 输出",
       "convert": "转换为 CSV",
@@ -1795,7 +1810,7 @@
     },
     "json-to-excel": {
       "name": "JSON → Excel",
-      "description": "免费在线将 JSON / JSONC / JSON5 数组导出为 Excel (.xlsx) 文件，支持多层属性自动展开",
+      "description": "将 JSON / JSONC / JSON5 数组导出为 Excel (.xlsx) 文件，支持多层属性自动展开",
       "input_title": "输入 JSON / JSONC / JSON5 数组",
       "preview_title": "预览",
       "upload_json": "上传 JSON 文件",
@@ -1815,7 +1830,7 @@
     },
     "excel-to-json": {
       "name": "Excel → JSON",
-      "description": "免费在线读取 Excel (.xlsx/.xls) 文件，转换为 JSON 数组，支持用 > 还原多层属性",
+      "description": "读取 Excel (.xlsx/.xls) 文件，转换为 JSON 数组，支持用 > 还原多层属性",
       "upload_title": "上传 Excel 文件",
       "output_title": "JSON 输出",
       "drop_title": "点击或拖拽上传",
@@ -1826,7 +1841,7 @@
     },
     "json-to-ts": {
       "name": "JSON → TypeScript",
-      "description": "免费在线从 JSON / JSONC / JSON5 自动推断并生成 TypeScript interface 类型",
+      "description": "从 JSON / JSONC / JSON5 自动推断并生成 TypeScript interface 类型",
       "input_title": "输入 JSON / JSONC / JSON5",
       "output_title": "TypeScript 类型",
       "placeholder": "粘贴 JSON / JSONC / JSON5 样本，例如 id 和 name 字段",
@@ -1834,7 +1849,7 @@
     },
     "json-flatten": {
       "name": "JSON Flatten / Unflatten",
-      "description": "免费在线将嵌套 JSON / JSONC / JSON5 平铺为路径键，或从路径键还原嵌套结构",
+      "description": "将嵌套 JSON / JSONC / JSON5 平铺为路径键，或从路径键还原嵌套结构",
       "input_title": "输入 JSON / JSONC / JSON5",
       "output_title": "输出结果",
       "flatten": "Flatten",
@@ -1845,131 +1860,131 @@
     },
     "image-to-jpg": {
       "name": "图片转 JPG",
-      "description": "免费在线将 PNG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 JPG"
+      "description": "将 PNG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 JPG"
     },
     "image-compress": {
       "name": "图片压缩",
-      "description": "免费在线智能压缩 JPG、PNG、WebP 等图片，默认保持原格式，也可选择输出 WebP"
+      "description": "智能压缩 JPG、PNG、WebP 等图片，默认保持原格式，也可选择输出 WebP"
     },
     "image-upscale": {
       "name": "图片无损放大",
-      "description": "免费在线将 JPG、PNG、WebP 等图片按 2x、3x、4x 或自定义尺寸放大，支持像素无损、平滑高清和清晰增强模式"
+      "description": "将 JPG、PNG、WebP 等图片按 2x、3x、4x 或自定义尺寸放大，支持像素无损、平滑高清和清晰增强模式"
     },
     "image-remove-bg": {
       "name": "图片去背景",
-      "description": "免费在线使用开源模型移除图片背景，在浏览器本地导出透明 PNG"
+      "description": "使用开源模型移除图片背景，在浏览器本地导出透明 PNG"
     },
     "image-id-photo": {
       "name": "证件照制作",
-      "description": "免费在线制作证件照，支持中国 1 寸、2 寸、中国签证、2 x 2 inch 等尺寸，AI 去背景、人脸构图、底色切换和拖动缩放调整"
+      "description": "制作证件照，支持中国 1 寸、2 寸、中国签证、2 x 2 inch 等尺寸，AI 去背景、人脸构图、底色切换和拖动缩放调整"
     },
     "image-remove-watermark": {
       "name": "图片去水印",
-      "description": "免费在线框选图片水印区域，使用浏览器本地 AI 模型补全或快速修复，导出 JPG、PNG 或 WebP"
+      "description": "框选图片水印区域，使用浏览器本地 AI 模型补全或快速修复，导出 JPG、PNG 或 WebP"
     },
     "image-watermark": {
       "name": "图片加水印",
-      "description": "免费在线为图片添加文字或图片水印，支持拖动、九宫格定位、平铺、旋转和透明度设置"
+      "description": "为图片添加文字或图片水印，支持拖动、九宫格定位、平铺、旋转和透明度设置"
     },
     "image-editor": {
       "name": "图片编辑",
-      "description": "免费在线为图片绘制形状、折线、画笔、记号笔、文字、马赛克、模糊和橡皮擦标注"
+      "description": "为图片绘制形状、折线、画笔、记号笔、文字、马赛克、模糊和橡皮擦标注"
     },
     "image-to-icon": {
       "name": "图片转 Icon",
-      "description": "免费在线将 PNG、SVG、JPG、WebP 等图片制作成 ICO、ICNS 或多尺寸 PNG ZIP 图标，支持去背景、拖拽缩放、圆角和浏览器预览"
+      "description": "将 PNG、SVG、JPG、WebP 等图片制作成 ICO、ICNS 或多尺寸 PNG ZIP 图标，支持去背景、拖拽缩放、圆角和浏览器预览"
     },
     "image-to-png": {
       "name": "图片转 PNG",
-      "description": "免费在线将 JPG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 PNG"
+      "description": "将 JPG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 PNG"
     },
     "image-to-webp": {
       "name": "图片转 WebP",
-      "description": "免费在线将 JPG、PNG、GIF、BMP、SVG、AVIF 等图片转换为 WebP"
+      "description": "将 JPG、PNG、GIF、BMP、SVG、AVIF 等图片转换为 WebP"
     },
     "image-to-avif": {
       "name": "图片转 AVIF",
-      "description": "免费在线将 JPG、PNG、WebP、GIF、BMP、SVG 等图片转换为 AVIF"
+      "description": "将 JPG、PNG、WebP、GIF、BMP、SVG 等图片转换为 AVIF"
     },
     "image-to-base64": {
       "name": "图片转 Base64",
-      "description": "免费在线将 PNG、JPG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 Base64 Data URL，支持选择、拖拽和 Ctrl + V 粘贴图片"
+      "description": "将 PNG、JPG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 Base64 Data URL，支持选择、拖拽和 Ctrl + V 粘贴图片"
     },
     "base64-to-image": {
       "name": "Base64 转图片",
-      "description": "免费在线将 Base64 或 data:image Data URL 还原为图片文件，在浏览器本地预览并下载"
+      "description": "将 Base64 或 data:image Data URL 还原为图片文件，在浏览器本地预览并下载"
     },
     "image-crop": {
       "name": "图片裁剪",
-      "description": "免费在线拖拽裁剪框，移动或调整裁剪区域后导出图片"
+      "description": "拖拽裁剪框，移动或调整裁剪区域后导出图片"
     },
     "image-resize": {
       "name": "图片尺寸修改",
-      "description": "免费在线按指定宽度或高度等比例缩放图片并导出"
+      "description": "按指定宽度或高度等比例缩放图片并导出"
     },
     "pdf-to-pdf": {
       "name": "转为 PDF",
-      "description": "免费在线将 Word、Excel、PowerPoint、EPUB、MOBI、JPG、PNG、WebP、TXT、Markdown、HTML 转换为 PDF"
+      "description": "将 Word、Excel、PowerPoint、EPUB、MOBI、JPG、PNG、WebP、TXT、Markdown、HTML 转换为 PDF"
     },
     "pdf-to-word": {
       "name": "PDF 转 Word",
-      "description": "免费在线从 PDF 中提取文本并生成可编辑的 Word DOCX 文档"
+      "description": "从 PDF 中提取文本并生成可编辑的 Word DOCX 文档"
     },
     "pdf-merge": {
       "name": "合并 PDF",
-      "description": "免费在线将多个 PDF 文件合并成一个文档，支持拖放重新排序"
+      "description": "将多个 PDF 文件合并成一个文档，支持拖放重新排序"
     },
     "file-merge": {
       "name": "文件合并",
-      "description": "免费在线合并 PDF、Word、PPT、TXT、Markdown、CSV、RTF、Excel 和图片，并按文件类型导出原格式"
+      "description": "合并 PDF、Word、PPT、TXT、Markdown、CSV、RTF、Excel 和图片，并按文件类型导出原格式"
     },
     "word-merge": {
       "name": "Word 合并",
-      "description": "免费在线将多个 Word DOCX 文档合并成一个 DOCX 文件"
+      "description": "将多个 Word DOCX 文档合并成一个 DOCX 文件"
     },
     "ppt-merge": {
       "name": "PPT 合并",
-      "description": "免费在线将多个 PPTX 演示文稿合并成一个 PPTX 文件"
+      "description": "将多个 PPTX 演示文稿合并成一个 PPTX 文件"
     },
     "txt-merge": {
       "name": "TXT 合并",
-      "description": "免费在线将多个 TXT 文本文件合并成一个 TXT 文件"
+      "description": "将多个 TXT 文本文件合并成一个 TXT 文件"
     },
     "markdown-merge": {
       "name": "Markdown 合并",
-      "description": "免费在线将多个 Markdown 文件合并成一个 MD 文件"
+      "description": "将多个 Markdown 文件合并成一个 MD 文件"
     },
     "csv-merge": {
       "name": "CSV 合并",
-      "description": "免费在线将多个 CSV 文件按表格行合并成一个 CSV 文件"
+      "description": "将多个 CSV 文件按表格行合并成一个 CSV 文件"
     },
     "rtf-merge": {
       "name": "RTF 合并",
-      "description": "免费在线将多个 RTF 富文本文件合并成一个 RTF 文件"
+      "description": "将多个 RTF 富文本文件合并成一个 RTF 文件"
     },
     "excel-merge": {
       "name": "Excel 合并",
-      "description": "免费在线合并多个 Excel / CSV 文件，支持汇总到同一个 Sheet 或保留多个来源 Sheet"
+      "description": "合并多个 Excel / CSV 文件，支持汇总到同一个 Sheet 或保留多个来源 Sheet"
     },
     "image-merge": {
       "name": "图片合并长图",
-      "description": "免费在线将多张图片垂直拼接成长图 PNG，或合成为 PDF"
+      "description": "将多张图片垂直拼接成长图 PNG，或合成为 PDF"
     },
     "pdf-split": {
       "name": "拆分 PDF",
-      "description": "免费在线将 PDF 文件拆分成多个文档，支持提取特定页面或按页面范围分割"
+      "description": "将 PDF 文件拆分成多个文档，支持提取特定页面或按页面范围分割"
     },
     "pdf-extract-pages": {
       "name": "提取页面",
-      "description": "免费在线从 PDF 文件中提取特定页面，选择并保存单个页面或页面范围为新文档"
+      "description": "从 PDF 文件中提取特定页面，选择并保存单个页面或页面范围为新文档"
     },
     "pdf-organize": {
       "name": "整理 PDF",
-      "description": "免费在线重新排序、复制和删除 PDF 页面，拖放整理后导出新文档"
+      "description": "重新排序、复制和删除 PDF 页面，拖放整理后导出新文档"
     },
     "text-word-count": {
       "name": "字数统计",
-      "description": "免费在线统计文本字数、词数、行数、段落、句子和字节大小",
+      "description": "统计文本字数、词数、行数、段落、句子和字节大小",
       "input_title": "输入文本",
       "result_title": "统计结果",
       "placeholder": "粘贴或输入需要统计的文本...",
@@ -1985,7 +2000,7 @@
     },
     "text-diff": {
       "name": "文本对比",
-      "description": "免费在线使用开源 diff 算法对比两段文本差异，按行和词高亮增删改",
+      "description": "使用开源 diff 算法对比两段文本差异，按行和词高亮增删改",
       "left_title": "左侧文本（原始）",
       "right_title": "右侧文本（新版）",
       "left_result": "原始文本",
@@ -2003,7 +2018,7 @@
     },
     "subtitle-maker": {
       "name": "字幕编辑器",
-      "description": "免费在线编辑 LRC 和 SRT 字幕，支持媒体预览、时间轴校准和字幕导出",
+      "description": "编辑 LRC 和 SRT 字幕，支持媒体预览、时间轴校准和字幕导出",
       "load_media": "加载媒体",
       "load_subtitle": "加载字幕",
       "export": "导出字幕",
@@ -2039,7 +2054,7 @@
     },
     "json-schema": {
       "name": "JSON Schema 生成",
-      "description": "免费在线从 JSON / JSONC / JSON5 样本自动推断生成 JSON Schema 定义",
+      "description": "从 JSON / JSONC / JSON5 样本自动推断生成 JSON Schema 定义",
       "input_title": "输入 JSON / JSONC / JSON5 样本",
       "output_title": "JSON Schema",
       "placeholder": "粘贴 JSON / JSONC / JSON5 样本，例如 id 和 name 字段",
@@ -2047,7 +2062,7 @@
     },
     "json-schema-validate": {
       "name": "JSON Schema 校验",
-      "description": "免费在线使用 JSON Schema 校验 JSON / JSONC / JSON5 数据，输出错误路径和原因",
+      "description": "使用 JSON Schema 校验 JSON / JSONC / JSON5 数据，输出错误路径和原因",
       "json_title": "JSON / JSONC / JSON5 数据",
       "schema_title": "JSON Schema",
       "result_title": "校验结果",
@@ -2060,7 +2075,7 @@
     },
     "json-path": {
       "name": "JSONPath 查询",
-      "description": "免费在线使用 JSONPath 表达式从 JSON / JSONC / JSON5 中精准提取嵌套字段",
+      "description": "使用 JSONPath 表达式从 JSON / JSONC / JSON5 中精准提取嵌套字段",
       "input_title": "输入 JSON / JSONC / JSON5",
       "path_title": "JSONPath 表达式",
       "result_title": "查询结果",
@@ -2073,7 +2088,7 @@
     },
     "json-stats": {
       "name": "JSON 统计分析",
-      "description": "免费在线分析 JSON / JSONC / JSON5 结构：嵌套层级、Key 数量、类型分布、体积对比",
+      "description": "分析 JSON / JSONC / JSON5 结构：嵌套层级、Key 数量、类型分布、体积对比",
       "input_title": "输入 JSON / JSONC / JSON5",
       "raw_size": "原始体积",
       "max_depth": "最大嵌套层级",
@@ -2087,7 +2102,7 @@
     },
     "info-codec": {
       "name": "信息编码转换",
-      "description": "免费在线处理 Unicode、URL、UTF16、Base64、MD5、SHA1、十六进制、JWT、Cookie、Gzip 和字符串转义",
+      "description": "处理 Unicode、URL、UTF16、Base64、MD5、SHA1、十六进制、JWT、Cookie、Gzip 和字符串转义",
       "input_title": "输入内容",
       "operation_title": "转换方式",
       "output_title": "输出结果",
@@ -2132,7 +2147,7 @@
     },
     "jwt": {
       "name": "JWT 解析",
-      "description": "免费在线解码 JWT Token，查看 Header / Payload，支持 HS256 签名验证",
+      "description": "解码 JWT Token，查看 Header / Payload，支持 HS256 签名验证",
       "token_title": "JWT Token",
       "decode": "解码",
       "verify_title": "HS256 签名验证",
@@ -2152,7 +2167,7 @@
     },
     "qr-code-generator": {
       "name": "二维码生成",
-      "description": "免费在线将网址、文本、联系信息或 Wi-Fi 配置文本生成二维码 PNG",
+      "description": "将网址、文本、联系信息或 Wi-Fi 配置文本生成二维码 PNG",
       "generate_title": "生成二维码",
       "preview_title": "二维码预览",
       "text_label": "二维码内容",
@@ -2184,7 +2199,7 @@
     },
     "qr-code-decoder": {
       "name": "二维码解码",
-      "description": "免费在线上传二维码图片或开启摄像头实时识别，在浏览器本地解码并复制二维码内容",
+      "description": "上传二维码图片或开启摄像头实时识别，在浏览器本地解码并复制二维码内容",
       "decode_title": "上传图片或摄像头识别",
       "result_title": "识别结果",
       "choose_image": "选择图片",
@@ -2218,7 +2233,7 @@
     },
     "timestamp": {
       "name": "时间戳转换",
-      "description": "免费在线 Unix 时间戳与日期双向转换，支持秒、毫秒、微秒精度和多时区",
+      "description": "Unix 时间戳与日期双向转换，支持秒、毫秒、微秒精度和多时区",
       "current_title": "当前时间",
       "current_second": "秒",
       "current_millisecond": "毫秒",
@@ -2243,7 +2258,7 @@
     },
     "uuid": {
       "name": "UUID 生成",
-      "description": "免费在线批量生成 UUID v1 / v4 / v7 和 NanoID，支持大小写切换和去连字符",
+      "description": "批量生成 UUID v1 / v4 / v7 和 NanoID，支持大小写切换和去连字符",
       "settings_title": "生成设置",
       "result_title": "结果",
       "version_label": "版本",
@@ -2263,7 +2278,7 @@
     },
     "color-converter": {
       "name": "颜色转换器",
-      "description": "免费在线 HEX、RGB、HSL、HSV、CMYK 颜色格式互转，实时预览色板",
+      "description": "HEX、RGB、HSL、HSV、CMYK 颜色格式互转，实时预览色板",
       "preview_title": "颜色预览",
       "formats_title": "颜色格式",
       "picker_label": "颜色选择器",
@@ -2276,7 +2291,7 @@
     },
     "regex": {
       "name": "正则表达式测试",
-      "description": "免费在线正则表达式测试工具，支持 flags、命名分组、高亮匹配和常用模板",
+      "description": "正则表达式测试工具，支持 flags、命名分组、高亮匹配和常用模板",
       "pattern_title": "正则表达式",
       "test_text_title": "测试文本",
       "result_title": "匹配结果",
@@ -2300,7 +2315,7 @@
     },
     "cron": {
       "name": "Cron 表达式解析",
-      "description": "免费在线解析 Cron 表达式为人类可读描述，并预览下 N 次执行时间",
+      "description": "解析 Cron 表达式为人类可读描述，并预览下 N 次执行时间",
       "expression_title": "Cron 表达式",
       "description_title": "解析结果",
       "next_runs_title": "下次执行时间",
@@ -2315,7 +2330,7 @@
     },
     "url-builder": {
       "name": "URL / Query String 构造器",
-      "description": "免费在线拆解和构造 URL Query String，添加、编辑、编码参数并实时预览",
+      "description": "拆解和构造 URL Query String，添加、编辑、编码参数并实时预览",
       "input_title": "URL",
       "params_title": "参数",
       "result_title": "构造结果",
@@ -2332,7 +2347,7 @@
     },
     "image-exif": {
       "name": "图片 EXIF 查看 / 清除",
-      "description": "免费在线读取图片 EXIF 元信息，或一键抹除后导出",
+      "description": "读取图片 EXIF 元信息，或一键抹除后导出",
       "upload_title": "上传图片",
       "exif_title": "EXIF 元信息",
       "drop_title": "点击或拖拽图片到这里",
@@ -2348,7 +2363,7 @@
     },
     "image-ocr": {
       "name": "图片 OCR 文字识别",
-      "description": "免费在线从图片中提取文字，支持快速识别和高精度识别，适合扫描件、截图和拍照图片",
+      "description": "从图片中提取文字，支持快速识别和高精度识别，适合扫描件、截图和拍照图片",
       "upload_title": "上传图片",
       "settings_title": "识别设置",
       "result_title": "识别结果",
@@ -2390,7 +2405,7 @@
     },
     "image-rotate": {
       "name": "图片旋转 / 翻转",
-      "description": "免费在线旋转 90°、180°、270°，或水平 / 垂直翻转图片",
+      "description": "旋转 90°、180°、270°，或水平 / 垂直翻转图片",
       "upload_title": "上传图片",
       "transform_title": "变换设置",
       "result_title": "预览与下载",
@@ -2407,7 +2422,7 @@
     },
     "image-color-picker": {
       "name": "图片取色器",
-      "description": "免费在线上传图片，点击任意位置读取 HEX、RGB、HSL 颜色",
+      "description": "上传图片，点击任意位置读取 HEX、RGB、HSL 颜色",
       "upload_title": "上传图片",
       "picker_title": "在图片上点击取色",
       "result_title": "拾取记录",
@@ -2421,7 +2436,7 @@
     },
     "image-gif": {
       "name": "GIF 分帧 / 合成",
-      "description": "免费在线将 GIF 拆成逐帧 PNG，或把多张 PNG / JPG 合成为 GIF 动图",
+      "description": "将 GIF 拆成逐帧 PNG，或把多张 PNG / JPG 合成为 GIF 动图",
       "mode_split": "GIF 拆帧",
       "mode_compose": "合成 GIF",
       "upload_title": "上传文件",
@@ -2442,7 +2457,7 @@
     },
     "pdf-encrypt": {
       "name": "PDF 加密 / 解密",
-      "description": "免费在线为 PDF 设置或移除打开密码，支持权限限制",
+      "description": "为 PDF 设置或移除打开密码，支持权限限制",
       "mode_encrypt": "加密",
       "mode_decrypt": "解密",
       "upload_title": "上传 PDF",
@@ -2466,7 +2481,7 @@
     },
     "pdf-watermark": {
       "name": "PDF 加水印",
-      "description": "免费在线为 PDF 添加文字水印，支持九宫格定位、平铺、对角线和透明度",
+      "description": "为 PDF 添加文字水印，支持九宫格定位、平铺、对角线和透明度",
       "upload_title": "上传 PDF",
       "settings_title": "水印设置",
       "result_title": "结果",
@@ -2487,7 +2502,7 @@
     },
     "pdf-to-image": {
       "name": "PDF 转图片",
-      "description": "免费在线将 PDF 每一页导出为高清 PNG 或 JPG",
+      "description": "将 PDF 每一页导出为高清 PNG 或 JPG",
       "upload_title": "上传 PDF",
       "settings_title": "导出设置",
       "result_title": "预览页面",
