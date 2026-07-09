@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
@@ -20,6 +20,7 @@ import {
   type FileTypeMergeOutcome,
   type ImageMergeOutcome,
   type ImageMergeOutput,
+  type ImageMergeTransform,
 } from '@/lib/utils/file-merge';
 
 interface ModeMeta {
@@ -54,6 +55,47 @@ function moveItem<T>(items: T[], fromIndex: number, toIndex: number): T[] {
 }
 
 type FileMergeResult = FileTypeMergeOutcome | ExcelMergeOutcome | ImageMergeOutcome;
+type ImageFlipKey = 'flipHorizontal' | 'flipVertical';
+
+const DEFAULT_IMAGE_TRANSFORM: ImageMergeTransform = {
+  flipHorizontal: false,
+  flipVertical: false,
+  rotateTurns: 0,
+};
+
+type IconProps = { className?: string };
+
+const IconFlipHorizontal: React.FC<IconProps> = ({ className }) => (
+  <svg aria-hidden="true" viewBox="0 0 20 20" className={className} fill="none">
+    <path d="M10 3v14" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+    <path d="M3.5 5.5 8 10l-4.5 4.5v-9Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+    <path d="M16.5 5.5 12 10l4.5 4.5v-9Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+  </svg>
+);
+
+const IconFlipVertical: React.FC<IconProps> = ({ className }) => (
+  <svg aria-hidden="true" viewBox="0 0 20 20" className={className} fill="none">
+    <path d="M3 10h14" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+    <path d="M5.5 3.5 10 8l4.5-4.5h-9Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+    <path d="M5.5 16.5 10 12l4.5 4.5h-9Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+  </svg>
+);
+
+const IconRotateLeft: React.FC<IconProps> = ({ className }) => (
+  <svg aria-hidden="true" viewBox="0 0 20 20" className={className} fill="none">
+    <path d="M6.5 5.5H3.5V2.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M3.8 5.5A6 6 0 1 1 3.2 12" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+    <path d="M10 7.5v4l3 1.8" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const IconRotateRight: React.FC<IconProps> = ({ className }) => (
+  <svg aria-hidden="true" viewBox="0 0 20 20" className={className} fill="none">
+    <path d="M13.5 5.5h3V2.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M16.2 5.5A6 6 0 1 0 16.8 12" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+    <path d="M10 7.5v4l-3 1.8" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
 
 function isExcelMergeOutcome(result: FileMergeResult | null): result is ExcelMergeOutcome & { ok: true } {
   return Boolean(result && result.ok && 'sheetCount' in result);
@@ -71,6 +113,7 @@ export function FileMergeTool({ mode }: FileMergeToolProps) {
   const tc = useTranslations('common');
   const t = useTranslations('file_merge');
   const inputRef = useRef<HTMLInputElement>(null);
+  const imageMergeRequestRef = useRef(0);
   const [currentFiles, setCurrentFiles] = useState<FileMergeItem[]>([]);
   const [currentResult, setCurrentResult] = useState<FileMergeResult | null>(null);
   const [currentError, setCurrentError] = useState('');
@@ -141,7 +184,7 @@ export function FileMergeTool({ mode }: FileMergeToolProps) {
     ));
   }, [currentResult]);
 
-  const getErrorMessage = (code: string): string => {
+  const getErrorMessage = useCallback((code: string): string => {
     switch (code) {
       case 'empty_selection':
         return t('errors.empty_selection');
@@ -174,7 +217,54 @@ export function FileMergeTool({ mode }: FileMergeToolProps) {
       default:
         return t('errors.general');
     }
-  };
+  }, [t]);
+
+  useEffect(() => {
+    if (mode !== 'images') return undefined;
+
+    const requestId = imageMergeRequestRef.current + 1;
+    imageMergeRequestRef.current = requestId;
+
+    if (currentFiles.length === 0) {
+      setIsProcessing(false);
+      setCurrentResult(null);
+      setCurrentError('');
+      return undefined;
+    }
+
+    setIsProcessing(true);
+    setCurrentError('');
+    setCurrentResult(null);
+
+    mergeImageFiles(
+      currentFiles.map((item) => ({
+        file: item.file,
+        transform: item.imageTransform,
+      })),
+      imageOutput
+    ).then((result) => {
+      if (imageMergeRequestRef.current !== requestId) return;
+
+      setIsProcessing(false);
+      if (result.ok) {
+        setCurrentResult(result);
+        setCurrentError('');
+        return;
+      }
+
+      setCurrentError(getErrorMessage(result.code));
+    }).catch(() => {
+      if (imageMergeRequestRef.current !== requestId) return;
+      setIsProcessing(false);
+      setCurrentError(getErrorMessage('general'));
+    });
+
+    return () => {
+      if (imageMergeRequestRef.current === requestId) {
+        imageMergeRequestRef.current += 1;
+      }
+    };
+  }, [currentFiles, getErrorMessage, imageOutput, mode]);
 
   const updateFiles = (updater: (items: FileMergeItem[]) => FileMergeItem[]) => {
     setCurrentFiles((current) => updater(current));
@@ -199,6 +289,7 @@ export function FileMergeTool({ mode }: FileMergeToolProps) {
       ...selectedFiles.map((file, index) => ({
         id: createItemId(file, index),
         file,
+        imageTransform: mode === 'images' ? DEFAULT_IMAGE_TRANSFORM : undefined,
       })),
     ]);
   };
@@ -228,6 +319,40 @@ export function FileMergeTool({ mode }: FileMergeToolProps) {
     updateError('');
   };
 
+  const toggleImageFlip = (id: string, key: ImageFlipKey) => {
+    updateFiles((current) => current.map((item) => {
+      if (item.id !== id) return item;
+
+      const currentTransform = item.imageTransform ?? DEFAULT_IMAGE_TRANSFORM;
+      return {
+        ...item,
+        imageTransform: {
+          ...currentTransform,
+          [key]: !currentTransform[key],
+        },
+      };
+    }));
+    updateResult(null);
+    updateError('');
+  };
+
+  const rotateImage = (id: string, delta: -1 | 1) => {
+    updateFiles((current) => current.map((item) => {
+      if (item.id !== id) return item;
+
+      const currentTransform = item.imageTransform ?? DEFAULT_IMAGE_TRANSFORM;
+      return {
+        ...item,
+        imageTransform: {
+          ...currentTransform,
+          rotateTurns: (((currentTransform.rotateTurns ?? 0) + delta) % 4 + 4) % 4,
+        },
+      };
+    }));
+    updateResult(null);
+    updateError('');
+  };
+
   const merge = async () => {
     if (currentFiles.length === 0 || isProcessing) return;
 
@@ -240,7 +365,13 @@ export function FileMergeTool({ mode }: FileMergeToolProps) {
       mode === 'excel'
         ? await mergeExcelFiles(sourceFiles, excelStrategy)
         : mode === 'images'
-          ? await mergeImageFiles(sourceFiles, imageOutput)
+          ? await mergeImageFiles(
+            currentFiles.map((item) => ({
+              file: item.file,
+              transform: item.imageTransform,
+            })),
+            imageOutput
+          )
           : await mergeFilesByType(sourceFiles, mode);
 
     setIsProcessing(false);
@@ -271,33 +402,97 @@ export function FileMergeTool({ mode }: FileMergeToolProps) {
 
     return (
       <div className="flex flex-col gap-2">
-        {currentFiles.map((item, index) => (
-          <article key={item.id} className="rounded border border-border-base bg-surface p-3">
-            <div className="flex min-w-0 items-start justify-between gap-3">
-              <div className="min-w-0">
-                <h3 className="truncate text-sm font-semibold text-content-secondary">
-                  {index + 1}. {item.file.name}
-                </h3>
-                <p className="mt-1 text-xs text-content-muted">{formatFileSize(item.file.size)}</p>
-              </div>
-              <span className="rounded border border-border-subtle bg-surface-raised px-2 py-1 text-xs text-content-muted">
-                {index + 1}
-              </span>
-            </div>
+        {currentFiles.map((item, index) => {
+          const imageTransform = item.imageTransform ?? DEFAULT_IMAGE_TRANSFORM;
+          const rotationDegrees = ((imageTransform.rotateTurns ?? 0) % 4) * 90;
 
-            <div className="mt-3 flex flex-wrap gap-2">
-              <Button variant="secondary" size="sm" onClick={() => moveBy(item.id, -1)} disabled={index === 0}>
-                {t('move_up')}
-              </Button>
-              <Button variant="secondary" size="sm" onClick={() => moveBy(item.id, 1)} disabled={index === currentFiles.length - 1}>
-                {t('move_down')}
-              </Button>
-              <Button variant="danger" size="sm" onClick={() => removeItem(item.id)}>
-                {tc('delete')}
-              </Button>
-            </div>
-          </article>
-        ))}
+          return (
+            <article key={item.id} className="rounded border border-border-base bg-surface p-3">
+              <div className="flex min-w-0 items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <h3 className="truncate text-sm font-semibold text-content-secondary">
+                    {index + 1}. {item.file.name}
+                  </h3>
+                  <p className="mt-1 text-xs text-content-muted">{formatFileSize(item.file.size)}</p>
+                </div>
+                <span className="rounded border border-border-subtle bg-surface-raised px-2 py-1 text-xs text-content-muted">
+                  {index + 1}
+                </span>
+              </div>
+
+              {mode === 'images' ? (
+                <div className="mt-3 flex items-center justify-between gap-3 rounded border border-border-subtle bg-surface-raised p-2">
+                  <span className="text-xs font-medium text-content-muted">
+                    {t('image_transform_title')}
+                    {rotationDegrees > 0 ? (
+                      <span className="ml-2 font-mono text-content-faint">{rotationDegrees}°</span>
+                    ) : null}
+                  </span>
+                  <div className="flex shrink-0 gap-2">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      className="h-9 w-9 px-0"
+                      onClick={() => rotateImage(item.id, -1)}
+                      aria-label={t('rotate_left')}
+                      title={t('rotate_left')}
+                    >
+                      <IconRotateLeft className="h-4 w-4" />
+                      <span className="sr-only">{t('rotate_left')}</span>
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      className="h-9 w-9 px-0"
+                      onClick={() => rotateImage(item.id, 1)}
+                      aria-label={t('rotate_right')}
+                      title={t('rotate_right')}
+                    >
+                      <IconRotateRight className="h-4 w-4" />
+                      <span className="sr-only">{t('rotate_right')}</span>
+                    </Button>
+                    <Button
+                      variant={imageTransform.flipHorizontal ? 'primary' : 'secondary'}
+                      size="sm"
+                      className="h-9 w-9 px-0"
+                      onClick={() => toggleImageFlip(item.id, 'flipHorizontal')}
+                      aria-label={t('flip_horizontal')}
+                      aria-pressed={imageTransform.flipHorizontal}
+                      title={t('flip_horizontal')}
+                    >
+                      <IconFlipHorizontal className="h-4 w-4" />
+                      <span className="sr-only">{t('flip_horizontal')}</span>
+                    </Button>
+                    <Button
+                      variant={imageTransform.flipVertical ? 'primary' : 'secondary'}
+                      size="sm"
+                      className="h-9 w-9 px-0"
+                      onClick={() => toggleImageFlip(item.id, 'flipVertical')}
+                      aria-label={t('flip_vertical')}
+                      aria-pressed={imageTransform.flipVertical}
+                      title={t('flip_vertical')}
+                    >
+                      <IconFlipVertical className="h-4 w-4" />
+                      <span className="sr-only">{t('flip_vertical')}</span>
+                    </Button>
+                  </div>
+                </div>
+              ) : null}
+
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Button variant="secondary" size="sm" onClick={() => moveBy(item.id, -1)} disabled={index === 0}>
+                  {t('move_up')}
+                </Button>
+                <Button variant="secondary" size="sm" onClick={() => moveBy(item.id, 1)} disabled={index === currentFiles.length - 1}>
+                  {t('move_down')}
+                </Button>
+                <Button variant="danger" size="sm" onClick={() => removeItem(item.id)}>
+                  {tc('delete')}
+                </Button>
+              </div>
+            </article>
+          );
+        })}
       </div>
     );
   };
@@ -360,6 +555,12 @@ export function FileMergeTool({ mode }: FileMergeToolProps) {
     }
 
     if (!currentResult?.ok) {
+      const idleDescription = isProcessing
+        ? t('merging')
+        : mode === 'images'
+          ? t('auto_idle_desc')
+          : t('idle_desc', { mode: modeMeta[mode].label });
+
       return (
         <div className="flex h-full items-center justify-center text-center text-content-faint">
           <div>
@@ -369,7 +570,7 @@ export function FileMergeTool({ mode }: FileMergeToolProps) {
             >
               MERGE
             </p>
-            <p className="text-sm">{t('idle_desc', { mode: modeMeta[mode].label })}</p>
+            <p className="text-sm">{idleDescription}</p>
           </div>
         </div>
       );
@@ -603,9 +804,11 @@ export function FileMergeTool({ mode }: FileMergeToolProps) {
               {renderFileList()}
             </div>
 
-            <Button onClick={merge} disabled={currentFiles.length === 0 || isProcessing}>
-              {isProcessing ? t('merging') : t('merge_action')}
-            </Button>
+            {mode !== 'images' ? (
+              <Button onClick={merge} disabled={currentFiles.length === 0 || isProcessing}>
+                {isProcessing ? t('merging') : t('merge_action')}
+              </Button>
+            ) : null}
           </div>
         </Panel>
 

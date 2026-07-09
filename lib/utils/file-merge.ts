@@ -13,6 +13,19 @@ export type FileMergeMode =
 export type ExcelMergeStrategy = 'single-sheet' | 'multi-sheet';
 export type ImageMergeOutput = 'pdf' | 'long-image';
 
+export interface ImageMergeTransform {
+  flipHorizontal: boolean;
+  flipVertical: boolean;
+  rotateTurns: number;
+}
+
+export interface ImageMergeSource {
+  file: File;
+  transform?: Partial<ImageMergeTransform>;
+}
+
+export type ImageMergeInput = File | ImageMergeSource;
+
 export type FileMergeErrorCode =
   | 'empty_selection'
   | 'unsupported_input'
@@ -103,6 +116,7 @@ export type ImageMergeOutcome = ImageMergePdfSuccess | ImageMergeLongSuccess | F
 export interface FileMergeItem {
   file: File;
   id: string;
+  imageTransform?: ImageMergeTransform;
 }
 
 type ZipMap = Record<string, Uint8Array>;
@@ -112,6 +126,11 @@ interface Relationship {
   type: string;
   target: string;
   targetMode?: string;
+}
+
+interface NormalizedImageMergeSource {
+  file: File;
+  transform: ImageMergeTransform;
 }
 
 interface ContentTypes {
@@ -129,6 +148,11 @@ const RELS_NS = 'http://schemas.openxmlformats.org/package/2006/relationships';
 const PPT_SLIDE_REL_TYPE = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide';
 const EXCEL_PREVIEW_MAX_ROWS = 100;
 const EXCEL_PREVIEW_MAX_COLUMNS = 30;
+const DEFAULT_IMAGE_MERGE_TRANSFORM: ImageMergeTransform = {
+  flipHorizontal: false,
+  flipVertical: false,
+  rotateTurns: 0,
+};
 
 const fileModeConfig: Record<FileMergeMode, {
   accept: string;
@@ -519,6 +543,124 @@ function canvasToBlob(
       }
       resolve(blob);
     }, mimeType, quality);
+  });
+}
+
+function isImageMergeSource(source: ImageMergeInput): source is ImageMergeSource {
+  return 'file' in source;
+}
+
+function normalizeImageMergeTransform(transform?: Partial<ImageMergeTransform>): ImageMergeTransform {
+  return {
+    flipHorizontal: Boolean(transform?.flipHorizontal),
+    flipVertical: Boolean(transform?.flipVertical),
+    rotateTurns: normalizeRotationTurns(transform?.rotateTurns),
+  };
+}
+
+function normalizeImageMergeSources(sources: ImageMergeInput[]): NormalizedImageMergeSource[] {
+  return sources.map((source) => (
+    isImageMergeSource(source)
+      ? {
+        file: source.file,
+        transform: normalizeImageMergeTransform(source.transform),
+      }
+      : {
+        file: source,
+        transform: DEFAULT_IMAGE_MERGE_TRANSFORM,
+      }
+  ));
+}
+
+function hasImageMergeTransform(transform: ImageMergeTransform): boolean {
+  return transform.flipHorizontal || transform.flipVertical || normalizeRotationTurns(transform.rotateTurns) !== 0;
+}
+
+function normalizeRotationTurns(value = 0): number {
+  return ((Math.trunc(value) % 4) + 4) % 4;
+}
+
+function getTransformedDimensions(width: number, height: number, transform: ImageMergeTransform) {
+  const rotateTurns = normalizeRotationTurns(transform.rotateTurns);
+  return rotateTurns % 2 === 0
+    ? { width, height }
+    : { width: height, height: width };
+}
+
+function drawRotatedImage(
+  context: CanvasRenderingContext2D,
+  image: CanvasImageSource,
+  width: number,
+  height: number,
+  rotateTurns: number
+) {
+  switch (rotateTurns) {
+    case 1:
+      context.translate(width, 0);
+      context.rotate(Math.PI / 2);
+      context.drawImage(image, 0, 0, height, width);
+      return;
+    case 2:
+      context.translate(width, height);
+      context.rotate(Math.PI);
+      context.drawImage(image, 0, 0, width, height);
+      return;
+    case 3:
+      context.translate(0, height);
+      context.rotate(-Math.PI / 2);
+      context.drawImage(image, 0, 0, height, width);
+      return;
+    default:
+      context.drawImage(image, 0, 0, width, height);
+  }
+}
+
+function drawImageWithTransform(
+  context: CanvasRenderingContext2D,
+  image: CanvasImageSource,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  transform: ImageMergeTransform
+) {
+  const rotateTurns = normalizeRotationTurns(transform.rotateTurns);
+
+  if (!transform.flipHorizontal && !transform.flipVertical && rotateTurns === 0) {
+    context.drawImage(image, x, y, width, height);
+    return;
+  }
+
+  context.save();
+  context.translate(x, y);
+
+  if (transform.flipHorizontal || transform.flipVertical) {
+    context.translate(transform.flipHorizontal ? width : 0, transform.flipVertical ? height : 0);
+    context.scale(transform.flipHorizontal ? -1 : 1, transform.flipVertical ? -1 : 1);
+  }
+
+  drawRotatedImage(context, image, width, height, rotateTurns);
+  context.restore();
+}
+
+async function createTransformedImageFile(source: NormalizedImageMergeSource): Promise<File> {
+  const image = await loadImage(source.file);
+  const naturalWidth = Math.max(1, image.naturalWidth || image.width || 1);
+  const naturalHeight = Math.max(1, image.naturalHeight || image.height || 1);
+  const dimensions = getTransformedDimensions(naturalWidth, naturalHeight, source.transform);
+  const canvas = document.createElement('canvas');
+  canvas.width = dimensions.width;
+  canvas.height = dimensions.height;
+
+  const context = canvas.getContext('2d');
+  if (!context) throw new Error('canvas_context');
+
+  drawImageWithTransform(context, image, 0, 0, canvas.width, canvas.height, source.transform);
+
+  const blob = await canvasToBlob(canvas, 'image/png');
+  return new File([blob], `${stripExtension(source.file.name)}-transformed.png`, {
+    type: 'image/png',
+    lastModified: source.file.lastModified,
   });
 }
 
@@ -1102,23 +1244,37 @@ export async function mergeExcelFiles(
 }
 
 export async function mergeImageFiles(
-  files: File[],
+  inputs: ImageMergeInput[],
   output: ImageMergeOutput
 ): Promise<ImageMergeOutcome> {
-  if (files.length === 0) return createError('empty_selection');
+  if (inputs.length === 0) return createError('empty_selection');
 
   const startedAt = typeof performance === 'undefined' ? Date.now() : performance.now();
+  const sources = normalizeImageMergeSources(inputs);
 
   if (output === 'pdf') {
     const { convertFileToPdf, mergePdfBlobs } = await import('./pdf-browser');
     const blobs: Blob[] = [];
-    for (const file of files) {
+    for (const source of sources) {
+      const { file, transform } = source;
       const mimeType = inferImageMimeType(file);
       if (!supportedImageInputs.some((format) => format.mimeType === mimeType)) {
         return createError('unsupported_input', file.type || file.name);
       }
 
-      const converted = await convertFileToPdf(file);
+      let inputFile = file;
+      if (hasImageMergeTransform(transform)) {
+        try {
+          inputFile = await createTransformedImageFile(source);
+        } catch (error) {
+          if (error instanceof Error && error.message === 'canvas_context') return createError('canvas_context');
+          return createError(
+            error instanceof Error && error.message === 'image_load_failed' ? 'image_load_failed' : 'load_failed'
+          );
+        }
+      }
+
+      const converted = await convertFileToPdf(inputFile);
       if (!converted.ok) return createError(converted.code as FileMergeErrorCode, converted.detail, converted.maxSize);
       blobs.push(converted.blob);
     }
@@ -1130,18 +1286,19 @@ export async function mergeImageFiles(
       ok: true,
       blob: merged.blob,
       filename: 'merged-images.pdf',
-      imageCount: files.length,
+      imageCount: sources.length,
       outputSize: merged.outputSize,
       durationMs: merged.durationMs,
       format: 'pdf',
     };
   }
 
-  let loaded: Array<{ file: File; image: HTMLImageElement }>;
+  let loaded: Array<NormalizedImageMergeSource & { image: HTMLImageElement }>;
   try {
-    loaded = await Promise.all(files.map(async (file) => ({
-      file,
-      image: await loadImage(file),
+    loaded = await Promise.all(sources.map(async (source) => ({
+      file: source.file,
+      transform: source.transform,
+      image: await loadImage(source.file),
     })));
   } catch (error) {
     return createError(
@@ -1151,16 +1308,26 @@ export async function mergeImageFiles(
 
   const targetWidth = Math.max(
     1,
-    Math.min(2400, Math.max(...loaded.map((entry) => entry.image.naturalWidth || 1)))
+    Math.min(2400, Math.max(...loaded.map((entry) => (
+      getTransformedDimensions(
+        Math.max(1, entry.image.naturalWidth || 1),
+        Math.max(1, entry.image.naturalHeight || 1),
+        entry.transform
+      ).width
+    ))))
   );
   const gap = 24;
   const scaled = loaded.map((entry) => {
-    const naturalWidth = Math.max(1, entry.image.naturalWidth);
-    const scale = targetWidth / naturalWidth;
+    const dimensions = getTransformedDimensions(
+      Math.max(1, entry.image.naturalWidth || 1),
+      Math.max(1, entry.image.naturalHeight || 1),
+      entry.transform
+    );
+    const scale = targetWidth / dimensions.width;
     return {
       ...entry,
       width: targetWidth,
-      height: Math.max(1, Math.round(entry.image.naturalHeight * scale)),
+      height: Math.max(1, Math.round(dimensions.height * scale)),
     };
   });
 
@@ -1177,7 +1344,7 @@ export async function mergeImageFiles(
 
   let cursorY = 0;
   for (const entry of scaled) {
-    context.drawImage(entry.image, 0, cursorY, entry.width, entry.height);
+    drawImageWithTransform(context, entry.image, 0, cursorY, entry.width, entry.height, entry.transform);
     cursorY += entry.height + gap;
   }
 
@@ -1186,7 +1353,7 @@ export async function mergeImageFiles(
     ok: true,
     blob,
     filename: 'merged-long-image.png',
-    imageCount: files.length,
+    imageCount: sources.length,
     outputSize: blob.size,
     durationMs: Math.round((typeof performance === 'undefined' ? Date.now() : performance.now()) - startedAt),
     format: 'png',
