@@ -1610,6 +1610,7 @@
     "title": "JSON Toolkit",
     "json_tools_menu": "JSON tools",
     "image_toolbar": "Image tools",
+    "audio_tools": "Audio tools",
     "pdf_tools": "PDF tools",
     "file_merge_tools": "File merge tools",
     "info_codec_tools": "Info codec",
@@ -1635,6 +1636,62 @@
     "copied": "Copied",
     "copy_failed": "Copy failed. Please copy the email address manually."
   },
+  "audio_tool": {
+    "upload_audio_title": "Upload audio",
+    "upload_video_title": "Upload video",
+    "upload_multiple_title": "Upload audio files",
+    "record_title": "Recorder",
+    "output_title": "Output audio",
+    "transcript_title": "Transcript",
+    "drop_title": "Click or drag files here",
+    "drop_audio_hint": "Supports common audio formats such as MP3, WAV, M4A, AAC, OGG, OPUS, WebM, and FLAC.",
+    "drop_video_hint": "Supports video formats such as MP4, MOV, WebM, MKV, AVI, and MPEG, then extracts the audio track.",
+    "drop_multiple_hint": "Choose multiple audio files in order. The tool concatenates them into one MP3.",
+    "bitrate_label": "MP3 bitrate",
+    "start_seconds": "Start time (seconds)",
+    "end_seconds": "End time (seconds)",
+    "processing": "Processing...",
+    "clear": "Clear",
+    "download_output": "Download result",
+    "download_raw": "Download raw recording",
+    "start_recording": "Start recording",
+    "stop_recording": "Stop recording",
+    "recording_now": "Recording now. Keep this page open. After stopping, you can preview and export MP3.",
+    "record_hint": "Recording runs locally in your browser. The browser asks for microphone permission the first time.",
+    "empty_output": "Choose a file and start processing. The output audio will appear here.",
+    "empty_recording_output": "After recording, export MP3 and preview it here.",
+    "empty_transcript": "Upload audio and start transcription. The recognized text will appear here.",
+    "unknown_type": "unknown type",
+    "actions": {
+      "to_mp3": "Convert to MP3",
+      "to_wav": "Convert to WAV",
+      "extract": "Extract MP3 audio",
+      "merge": "Merge audio",
+      "trim": "Trim audio",
+      "compress": "Compress audio",
+      "transcribe": "Transcribe",
+      "export_recording": "Export MP3"
+    },
+    "stages": {
+      "model": "Loading model",
+      "prepare": "Preparing files",
+      "processing": "Processing",
+      "encode": "Encoding output",
+      "done": "Done"
+    },
+    "errors": {
+      "empty_file": "Choose a valid file.",
+      "unsupported_input": "This file type is not supported yet: {type}.",
+      "file_too_large": "The file is too large. Each file can be up to {maxSize}.",
+      "too_many_files": "This tool processes one file at a time.",
+      "merge_needs_two": "Audio merge needs at least two files.",
+      "invalid_range": "End time must be greater than start time.",
+      "recorder_unsupported": "This browser does not support online recording. Try the latest Chrome, Edge, or Safari.",
+      "microphone_denied": "Microphone access failed. Allow microphone permission in the browser address bar and try again.",
+      "processing_failed": "Audio processing failed. Try another file or a smaller file.",
+      "model_failed": "Audio transcription failed."
+    }
+  },
   "image_hub": {
     "title": "Image tools",
     "meta_title": "Free Online Image Tools - Image Editing, Compression, Merge, Background and Watermark Removal, Base64, JPG, PNG, WebP, and AVIF Conversion",
@@ -1642,6 +1699,14 @@
     "all_tools": "Image conversion tools",
     "breadcrumb": "Image tools",
     "privacy_note": "Images are processed locally in your browser and are not uploaded to a server."
+  },
+  "audio_hub": {
+    "title": "Audio tools",
+    "meta_title": "Free Online Audio Tools - MP3, WAV, Extract Audio from Video, Merge, Trim, Compress, Recorder, and Transcription",
+    "description": "Free online audio tools for MP3 conversion, WAV conversion, extracting audio from video, audio merge, audio trim, audio compression, microphone recording, and audio-to-text transcription. Conversion, trimming, merging, compression, and recording export run locally in your browser, while transcription can load an open-source Whisper model in the browser.",
+    "all_tools": "Audio tools",
+    "breadcrumb": "Audio tools",
+    "privacy_note": "Audio and video are processed locally in your browser first; transcription downloads open-source model files only when needed."
   },
   "pdf_hub": {
     "title": "PDF tools",
@@ -1987,6 +2052,38 @@
     "pdf-organize": {
       "name": "Organize PDF",
       "description": "Free online tool to reorder, duplicate, and delete PDF pages before exporting a new document"
+    },
+    "audio-to-mp3": {
+      "name": "Audio to MP3",
+      "description": "Free online tool to convert WAV, M4A, AAC, OGG, OPUS, WebM, FLAC, and other audio files to MP3 locally in your browser"
+    },
+    "audio-to-wav": {
+      "name": "Audio to WAV",
+      "description": "Free online tool to convert MP3, M4A, AAC, OGG, OPUS, WebM, FLAC, and other audio files to WAV locally in your browser"
+    },
+    "audio-extract": {
+      "name": "Extract audio",
+      "description": "Free online tool to extract audio from MP4, MOV, WebM, MKV, AVI, MPEG, and other video files as MP3"
+    },
+    "audio-merge": {
+      "name": "Audio merge",
+      "description": "Free online tool to merge multiple audio files in different formats into one MP3 file"
+    },
+    "audio-trim": {
+      "name": "Audio trim",
+      "description": "Free online tool to cut or trim audio by start and end time, then export the result as MP3"
+    },
+    "audio-compress": {
+      "name": "Audio compressor",
+      "description": "Free online tool to reduce audio file size by lowering MP3 bitrate and exporting compressed audio locally in your browser"
+    },
+    "audio-recorder": {
+      "name": "Voice recorder",
+      "description": "Free online microphone recorder to capture audio in your browser, preview it locally, and export MP3"
+    },
+    "audio-to-text": {
+      "name": "Audio to text",
+      "description": "Free online audio transcription tool that loads an open-source Whisper model in the browser and converts speech to text"
     },
     "text-word-count": {
       "name": "Word Count",

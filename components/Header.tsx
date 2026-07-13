@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { useTranslations, useLocale } from 'next-intl';
 import {
+  getAudioTools,
   getFileMergeTools,
   getImageTools,
   getInfoCodecTools,
@@ -56,6 +57,7 @@ const Header: React.FC<HeaderProps> = ({ compact = false }) => {
   const locale = useLocale();
   const jsonGroups = getJsonToolGroups();
   const imageTools = getImageTools();
+  const audioTools = getAudioTools();
   const pdfTools = getPdfTools();
   const fileMergeTools = getFileMergeTools();
   const infoCodecTools = getInfoCodecTools();
@@ -136,6 +138,21 @@ const Header: React.FC<HeaderProps> = ({ compact = false }) => {
             <MenuDropdownPanel>
                 <div className="grid gap-1 sm:grid-cols-2">
                   {imageTools.map(renderToolLink)}
+                </div>
+            </MenuDropdownPanel>
+          </div>
+
+          <div className="group relative shrink-0 snap-start">
+            <Link
+              href={`/${locale}/audio`}
+              className="flex min-h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+            >
+              <span>{t('nav.audio_tools')}</span>
+              <MenuDropdownCaret />
+            </Link>
+            <MenuDropdownPanel>
+                <div className="grid gap-1 sm:grid-cols-2">
+                  {audioTools.map(renderToolLink)}
                 </div>
             </MenuDropdownPanel>
           </div>

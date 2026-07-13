@@ -23,6 +23,7 @@ import {
   type Locale,
 } from './jsonld';
 import {
+  getAudioTools,
   getFileMergeTools,
   getImageTools,
   getJsonTools,
@@ -119,6 +120,30 @@ export function createPdfHubMetadata(locale: string): Metadata {
     },
     openGraph: {
       title: `${m.pdf_hub.title} | ${m.home.title}`,
+      description: seoDescription,
+      type: 'website',
+      locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
+      siteName: m.home.title,
+      url: getLocalizedPath(normalizedLocale, path),
+    },
+  };
+}
+
+export function createAudioHubMetadata(locale: string): Metadata {
+  const normalizedLocale = normalizeLocale(locale);
+  const m = getLocaleMessages(normalizedLocale);
+  const path = '/audio';
+  const seoDescription = createPrivacySeoDescription(m.audio_hub.description, normalizedLocale);
+
+  return {
+    title: m.audio_hub.meta_title,
+    description: seoDescription,
+    alternates: {
+      canonical: getLocalizedPath(normalizedLocale, path),
+      languages: getLanguageAlternates(path),
+    },
+    openGraph: {
+      title: `${m.audio_hub.title} | ${m.home.title}`,
       description: seoDescription,
       type: 'website',
       locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
@@ -374,6 +399,28 @@ export function createPdfToolItemListJsonLd(locale: string) {
     name: m.pdf_hub.title,
     description: createPrivacySeoDescription(m.pdf_hub.description, normalizedLocale),
     itemListElement: getPdfTools().map((tool, index) => {
+      const localizedTool = m.tools[tool.id as ToolMessageId];
+      return {
+        '@type': 'ListItem',
+        position: index + 1,
+        url: getLocalizedUrl(normalizedLocale, tool.path),
+        name: localizedTool.name,
+        description: createToolSeoDescription(localizedTool.description, normalizedLocale),
+      };
+    }),
+  };
+}
+
+export function createAudioToolItemListJsonLd(locale: string) {
+  const normalizedLocale = normalizeLocale(locale);
+  const m = getLocaleMessages(normalizedLocale);
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: m.audio_hub.title,
+    description: createPrivacySeoDescription(m.audio_hub.description, normalizedLocale),
+    itemListElement: getAudioTools().map((tool, index) => {
       const localizedTool = m.tools[tool.id as ToolMessageId];
       return {
         '@type': 'ListItem',

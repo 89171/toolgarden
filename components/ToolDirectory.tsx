@@ -37,7 +37,7 @@ function ToolCard({ tool }: { tool: ToolCardData }) {
     <Link
       href={tool.localizedPath}
       aria-label={`${tool.name}: ${tool.description}`}
-      className="group flex min-h-32 flex-col gap-3 rounded-lg border border-border-base p-4 transition-all hover:border-border-strong hover:bg-surface-hover hover:shadow-sm sm:min-h-36 sm:p-5"
+      className="group flex min-h-32 flex-col gap-3 rounded-lg border border-border-base bg-background p-4 transition-all hover:border-border-strong hover:bg-surface-hover hover:shadow-sm sm:min-h-36 sm:p-5"
     >
       <span
         aria-hidden="true"

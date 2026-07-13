@@ -28,10 +28,12 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
   const toolDesc  = tool ? t(`tools.${toolId}.description`) : '';
   const catLabel  = tool ? t(`categories.${tool.category}`) : '';
   const isImageTool = Boolean(tool?.path.startsWith('/image/'));
+  const isAudioTool = Boolean(tool?.path.startsWith('/audio/'));
   const isPdfTool = Boolean(tool?.path.startsWith('/pdf/'));
   const isFileMergeTool = Boolean(tool?.path.startsWith('/file-merge/'));
   const homeLabel = t('home.breadcrumb');
   const imageHubLabel = t('image_hub.breadcrumb');
+  const audioHubLabel = t('audio_hub.breadcrumb');
   const pdfHubLabel = t('pdf_hub.breadcrumb');
   const fileMergeHubLabel = t('file_merge_hub.breadcrumb');
   const toolJsonLd = tool ? buildToolJsonLd(toolId, locale, messages) : null;
@@ -86,6 +88,16 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
               <span className="font-medium text-content-secondary">{toolName}</span>
             </>
           )}
+          {tool && isAudioTool && (
+            <>
+              <span className="shrink-0">/</span>
+              <Link href={`/${locale}/audio`} className="shrink-0 font-medium text-content-secondary hover:text-content">
+                {audioHubLabel}
+              </Link>
+              <span className="shrink-0">/</span>
+              <span className="font-medium text-content-secondary">{toolName}</span>
+            </>
+          )}
           {tool && isFileMergeTool && (
             <>
               <span className="shrink-0">/</span>
@@ -96,7 +108,7 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
               <span className="font-medium text-content-secondary">{toolName}</span>
             </>
           )}
-          {tool && !isImageTool && !isPdfTool && !isFileMergeTool && (
+          {tool && !isImageTool && !isAudioTool && !isPdfTool && !isFileMergeTool && (
             <>
               <span className="shrink-0">/</span>
               <span className="shrink-0 rounded bg-surface-hover px-1 py-0.5 text-xs text-content-faint">

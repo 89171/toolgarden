@@ -131,6 +131,7 @@ export interface LocalizedTool {
 export interface JsonLdMessages {
   home: { title: string; breadcrumb: string };
   image_hub?: { breadcrumb: string };
+  audio_hub?: { breadcrumb: string };
   pdf_hub?: { breadcrumb: string };
   file_merge_hub?: { breadcrumb: string };
   text_hub?: { breadcrumb: string };
@@ -180,6 +181,7 @@ export function buildBreadcrumbJsonLd(toolId: string, locale: string, messages: 
 
   const hub = (() => {
     if (tool.path.startsWith('/image/')) return { key: 'image_hub' as const, path: '/image' };
+    if (tool.path.startsWith('/audio/')) return { key: 'audio_hub' as const, path: '/audio' };
     if (tool.path.startsWith('/pdf/')) return { key: 'pdf_hub' as const, path: '/pdf' };
     if (tool.path.startsWith('/file-merge/')) return { key: 'file_merge_hub' as const, path: '/file-merge' };
     if (tool.path.startsWith('/text/')) return { key: 'text_hub' as const, path: '/text' };

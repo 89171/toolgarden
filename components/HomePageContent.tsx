@@ -3,6 +3,7 @@ import Footer from '@/components/Footer';
 import { AllToolsDirectory, type AllToolsSection } from '@/components/AllToolsDirectory';
 import type { ToolCardData } from '@/components/ToolDirectory';
 import {
+  getAudioTools,
   getFileMergeTools,
   getImageTools,
   getInfoCodecTools,
@@ -60,6 +61,7 @@ export function HomePageContent({ locale }: HomePageContentProps) {
     buildSection('json',       m.nav.json_tools_menu,  `/${normalizedLocale}/json-tools`, getJsonTools()),
     buildSection('image',      m.nav.image_toolbar,    `/${normalizedLocale}/image`,      getImageTools()),
     buildSection('pdf',        m.nav.pdf_tools,        `/${normalizedLocale}/pdf`,        getPdfTools()),
+    buildSection('audio',      m.nav.audio_tools,      `/${normalizedLocale}/audio`,      getAudioTools()),
     buildSection('text',       m.nav.text_tools,       `/${normalizedLocale}/text`,       getTextTools()),
     buildSection('file-merge', m.nav.file_merge_tools, `/${normalizedLocale}/file-merge`, getFileMergeTools()),
     buildSection('info-codec', m.nav.info_codec_tools, null,                              getInfoCodecTools()),

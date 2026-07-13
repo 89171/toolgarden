@@ -12,7 +12,7 @@ export const dynamic = 'force-static';
 const BUILD_DATE = new Date().toISOString().slice(0, 10);
 const PROJECT_ROOT = process.cwd();
 
-const hubPaths = ['/json-tools', '/image', '/pdf', '/file-merge', '/text'] as const;
+const hubPaths = ['/json-tools', '/image', '/audio', '/pdf', '/file-merge', '/text'] as const;
 const blogPaths = [
   BLOG_INDEX_PATH,
   ...blogArticles.map((article) => `${BLOG_INDEX_PATH}/${article.slug}`),

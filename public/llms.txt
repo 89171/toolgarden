@@ -70,6 +70,15 @@ ToolGarden provides developers with a suite of tools for working with JSON data.
 - **Base64 to Image** (`/image/base64-to-image`): Restore image Base64 strings or `data:image` Data URLs into previewable downloadable image files locally in the browser.
 - **Image Crop** (`/image/crop`): Crop images with a draggable frame locally in the browser.
 - **Image Resize** (`/image/resize`): Resize full images at a proportional target width or height locally in the browser.
+- **Audio Tools** (`/audio`): Browse browser-local audio conversion, extraction, merge, trim, compression, recording, and transcription tools.
+- **Audio to MP3** (`/audio/to-mp3`): Convert WAV, M4A, AAC, OGG, OPUS, WebM, FLAC, and other audio files to MP3 locally in the browser with ffmpeg.wasm.
+- **Audio to WAV** (`/audio/to-wav`): Convert common audio files to WAV locally in the browser.
+- **Extract Audio** (`/audio/extract`): Extract an MP3 audio track from MP4, MOV, WebM, MKV, AVI, MPEG, and other video files.
+- **Audio Merge** (`/audio/merge`): Merge multiple audio files into one MP3 locally in the browser.
+- **Audio Trim** (`/audio/trim`): Cut audio by start and end time and export MP3.
+- **Audio Compressor** (`/audio/compress`): Reduce audio size by lowering MP3 bitrate.
+- **Voice Recorder** (`/audio/recorder`): Record from the microphone in the browser, preview locally, and export MP3.
+- **Audio to Text** (`/audio/to-text`): Transcribe uploaded audio with a browser-loaded open-source Whisper model.
 - **PDF Tools** (`/pdf`): Browse PDF conversion and document tools.
 - **Convert to PDF** (`/pdf/to-pdf`): Convert Word, Excel, PowerPoint, EPUB, MOBI, JPG, PNG, WebP, TXT, Markdown, and HTML to PDF. The first release runs locally in the browser for docx, xlsx/xls, pptx, EPUB, unencrypted legacy MOBI/PalmDOC, images, and text-based formats.
 - **PDF to Word** (`/pdf/to-word`): Extract text from text-based PDF files locally in the browser and generate editable Word DOCX documents.
@@ -112,6 +121,7 @@ ToolGarden provides developers with a suite of tools for working with JSON data.
 - YAML support via the `yaml` npm package
 - XML support via fast-xml-parser
 - Image tools support editing, compression, upscaling, ID photo making, background removal, AI watermark selection repair, conversion, Base64 image encode/decode, crop, resize, JPG, PNG, WebP, GIF, BMP, SVG, AVIF, drag-and-drop, clipboard paste, preview comparison, and ZIP batch download
+- Audio tools use ffmpeg.wasm for browser-local conversion, video audio extraction, merge, trim, compression, and recording export; audio-to-text can load an open-source Whisper model through Transformers.js
 - PDF tools use pdf-lib for PDF generation and page-level PDF operations, pdfjs-dist for PDF text extraction, fflate for Office OpenXML/EPUB/DOCX packaging, SheetJS for spreadsheets, a PalmDOC text extractor for legacy MOBI, and browser Canvas for Unicode text rendering
 - Subtitle Maker supports LRC and SRT parsing, editing, timing calibration against local audio/video, and export without uploading files
 - Info Encoder / Decoder supports Unicode, URL, UTF16-style hex escapes, Base64, MD5, SHA1, hex, JWT decoding, Cookie formatting, Gzip decompression, HTML entity decoding, URL parameter parsing, and string escaping locally in the browser

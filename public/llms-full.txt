@@ -398,6 +398,57 @@ Canonical examples:
 - Exports the full resized image as JPG, PNG, or WebP; JPG uses a white background for transparent pixels
 - Uses browser Canvas APIs and does not upload image data to a server
 
+### Audio Tools (/audio)
+- Lists audio conversion, video audio extraction, merge, trim, compression, recorder, and transcription tools
+- Child tool URLs use the `/audio/*` namespace
+- Conversion, extraction, merge, trim, compression, and recording export use ffmpeg.wasm locally in the browser
+- Audio-to-text loads an open-source Whisper model in the browser through Transformers.js
+- Audio and video files are not uploaded to a server
+
+### Audio to MP3 (/audio/to-mp3)
+- Converts WAV, M4A, AAC, OGG, OPUS, WebM, FLAC, and other browser-readable audio files to MP3
+- Uses self-hosted ffmpeg-core WASM assets and libmp3lame
+- Supports selectable MP3 bitrate
+- Runs locally in the browser without uploading audio files
+
+### Audio to WAV (/audio/to-wav)
+- Converts MP3, M4A, AAC, OGG, OPUS, WebM, FLAC, and other audio files to WAV
+- Outputs 44.1 kHz stereo PCM WAV
+- Runs locally in the browser without uploading audio files
+
+### Extract Audio (/audio/extract)
+- Extracts audio from MP4, MOV, WebM, MKV, AVI, MPEG, and similar video files
+- Exports MP3 with no video stream
+- Runs locally in the browser with ffmpeg.wasm
+
+### Audio Merge (/audio/merge)
+- Accepts multiple audio files in different formats
+- Decodes and concatenates audio streams in file order
+- Exports one MP3 file
+- Runs locally in the browser without uploading files
+
+### Audio Trim (/audio/trim)
+- Cuts or trims one audio file by start and end time in seconds
+- Exports the selected range as MP3
+- Runs locally in the browser with ffmpeg.wasm
+
+### Audio Compressor (/audio/compress)
+- Reduces output size by lowering MP3 bitrate
+- Supports common bitrate presets from 64 kbps to 320 kbps
+- Runs locally in the browser and exports MP3
+
+### Voice Recorder (/audio/recorder)
+- Uses MediaRecorder and microphone permission to record audio in the browser
+- Lets users preview and download the raw browser recording
+- Converts the recording to MP3 with ffmpeg.wasm
+- No recording is uploaded to a server
+
+### Audio to Text (/audio/to-text)
+- Uploads an audio file and transcribes speech to text in the browser
+- Uses Transformers.js with the open-source `Xenova/whisper-tiny` model by default
+- Downloads model files on first use and caches them in the browser when possible
+- Audio files are not uploaded to ToolGarden servers
+
 ### PDF Tools (/pdf)
 - Lists PDF conversion and page operation tools
 - Child tool URLs use the `/pdf/*` namespace

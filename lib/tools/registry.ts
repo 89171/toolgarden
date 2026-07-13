@@ -366,6 +366,73 @@ export const toolRegistry: ToolMeta[] = [
     featured: true,
   },
   {
+    id: 'audio-to-mp3',
+    name: '音频转 MP3',
+    description: '在浏览器本地将 WAV、M4A、OGG、FLAC、WebM 等音频转换为 MP3',
+    path: '/audio/to-mp3',
+    icon: 'MP3',
+    category: 'convert',
+    featured: true,
+  },
+  {
+    id: 'audio-to-wav',
+    name: '音频转 WAV',
+    description: '在浏览器本地将 MP3、M4A、OGG、FLAC、WebM 等音频转换为 WAV',
+    path: '/audio/to-wav',
+    icon: 'WAV',
+    category: 'convert',
+  },
+  {
+    id: 'audio-extract',
+    name: '音频提取',
+    description: '从 MP4、MOV、WebM、MKV 等视频中提取音频并导出为 MP3',
+    path: '/audio/extract',
+    icon: 'EXT',
+    category: 'convert',
+    featured: true,
+  },
+  {
+    id: 'audio-merge',
+    name: '音频合并',
+    description: '将多个不同格式的音频文件按顺序合并为一个 MP3 文件',
+    path: '/audio/merge',
+    icon: 'MRG',
+    category: 'convert',
+  },
+  {
+    id: 'audio-trim',
+    name: '音频剪辑',
+    description: '按开始和结束时间剪切或修剪音频，并导出为 MP3',
+    path: '/audio/trim',
+    icon: 'CUT',
+    category: 'convert',
+  },
+  {
+    id: 'audio-compress',
+    name: '音频压缩',
+    description: '通过降低码率在浏览器本地减少音频文件大小并导出 MP3',
+    path: '/audio/compress',
+    icon: 'ZIP',
+    category: 'convert',
+  },
+  {
+    id: 'audio-recorder',
+    name: '录音笔',
+    description: '使用麦克风在浏览器中录制音频，可预览并导出为 MP3',
+    path: '/audio/recorder',
+    icon: 'REC',
+    category: 'convert',
+  },
+  {
+    id: 'audio-to-text',
+    name: '音频转文本',
+    description: '在浏览器本地加载开源 Whisper 模型，将上传的音频转写为文本',
+    path: '/audio/to-text',
+    icon: 'TXT',
+    category: 'convert',
+    featured: true,
+  },
+  {
     id: 'text-word-count',
     name: '字数统计',
     description: '统计文本字数、词数、行数、段落、句子和字节大小',
@@ -620,6 +687,11 @@ export function getTextTools(): ToolMeta[] {
   return toolRegistry.filter((tool) => tool.path.startsWith('/text/'));
 }
 
+/** 获取音频工具集合 */
+export function getAudioTools(): ToolMeta[] {
+  return toolRegistry.filter((tool) => tool.path.startsWith('/audio/'));
+}
+
 /** 获取二维码工具集合 */
 export function getQrCodeTools(): ToolMeta[] {
   return toolRegistry.filter((tool) => tool.path.startsWith('/qr-code/'));
@@ -637,6 +709,7 @@ function isNonJsonTopLevelTool(tool: ToolMeta): boolean {
     tool.path.startsWith('/file-merge/') ||
     tool.path.startsWith('/subtitle') ||
     tool.path.startsWith('/text/') ||
+    tool.path.startsWith('/audio/') ||
     tool.path.startsWith('/qr-code/') ||
     tool.path.startsWith('/info-codec')
   );

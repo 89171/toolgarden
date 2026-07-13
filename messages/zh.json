@@ -1610,6 +1610,7 @@
     "title": "JSON 工具包",
     "json_tools_menu": "JSON工具",
     "image_toolbar": "图片工具",
+    "audio_tools": "音频工具",
     "pdf_tools": "PDF工具",
     "file_merge_tools": "文件合并工具",
     "info_codec_tools": "信息编码",
@@ -1635,6 +1636,62 @@
     "copied": "已复制",
     "copy_failed": "复制失败，请手动复制邮箱地址。"
   },
+  "audio_tool": {
+    "upload_audio_title": "上传音频",
+    "upload_video_title": "上传视频",
+    "upload_multiple_title": "上传多个音频",
+    "record_title": "录音",
+    "output_title": "输出音频",
+    "transcript_title": "转写文本",
+    "drop_title": "点击或拖拽文件到这里",
+    "drop_audio_hint": "支持 MP3、WAV、M4A、AAC、OGG、OPUS、WebM、FLAC 等常见音频格式。",
+    "drop_video_hint": "支持 MP4、MOV、WebM、MKV、AVI、MPEG 等视频格式，会提取其中的音频轨道。",
+    "drop_multiple_hint": "按顺序选择多个音频文件，工具会依次拼接并导出一个 MP3。",
+    "bitrate_label": "MP3 码率",
+    "start_seconds": "开始时间（秒）",
+    "end_seconds": "结束时间（秒）",
+    "processing": "处理中...",
+    "clear": "清空",
+    "download_output": "下载结果",
+    "download_raw": "下载原始录音",
+    "start_recording": "开始录音",
+    "stop_recording": "停止录音",
+    "recording_now": "正在录音，请保持页面打开。停止后可预览并导出 MP3。",
+    "record_hint": "录音在浏览器本地完成。首次使用时浏览器会请求麦克风权限。",
+    "empty_output": "选择文件并开始处理后，输出音频会显示在这里。",
+    "empty_recording_output": "录音完成后可以导出 MP3 并在这里预览。",
+    "empty_transcript": "上传音频并开始转文本后，识别结果会显示在这里。",
+    "unknown_type": "未知类型",
+    "actions": {
+      "to_mp3": "转换为 MP3",
+      "to_wav": "转换为 WAV",
+      "extract": "提取 MP3 音频",
+      "merge": "合并音频",
+      "trim": "剪辑音频",
+      "compress": "压缩音频",
+      "transcribe": "开始转文本",
+      "export_recording": "导出 MP3"
+    },
+    "stages": {
+      "model": "加载模型",
+      "prepare": "准备文件",
+      "processing": "处理中",
+      "encode": "编码输出",
+      "done": "完成"
+    },
+    "errors": {
+      "empty_file": "请选择有效文件。",
+      "unsupported_input": "暂不支持该文件类型：{type}。",
+      "file_too_large": "文件过大，单个文件最大支持 {maxSize}。",
+      "too_many_files": "该工具一次只处理一个文件。",
+      "merge_needs_two": "音频合并至少需要选择两个文件。",
+      "invalid_range": "结束时间必须大于开始时间。",
+      "recorder_unsupported": "当前浏览器不支持在线录音，请换用最新版 Chrome、Edge 或 Safari。",
+      "microphone_denied": "无法访问麦克风，请在浏览器地址栏允许麦克风权限后重试。",
+      "processing_failed": "音频处理失败，请换一个文件或降低文件大小后重试。",
+      "model_failed": "音频转文本失败。"
+    }
+  },
   "image_hub": {
     "title": "图片工具",
     "meta_title": "图片工具 - 图片编辑、压缩、合并、去背景、去水印、Base64、JPG、PNG、WebP、AVIF 转换",
@@ -1642,6 +1699,14 @@
     "all_tools": "图片转换工具",
     "breadcrumb": "图片工具",
     "privacy_note": "图片仅在本地浏览器处理，不会上传到服务器。"
+  },
+  "audio_hub": {
+    "title": "音频工具",
+    "meta_title": "音频工具 - MP3、WAV 转换、视频提取音频、合并、剪辑、压缩、录音和转文本",
+    "description": "在线处理音频，支持转 MP3、转 WAV、从视频提取音频、音频合并、音频剪辑、音频压缩、麦克风录音和音频转文本。转换、剪辑、合并、压缩和录音导出优先在浏览器本地完成，转文本可在浏览器中加载开源 Whisper 模型。",
+    "all_tools": "音频工具",
+    "breadcrumb": "音频工具",
+    "privacy_note": "音频和视频优先在本地浏览器处理；转文本模型会按需下载开源模型资源。"
   },
   "pdf_hub": {
     "title": "PDF 工具",
@@ -1987,6 +2052,38 @@
     "pdf-organize": {
       "name": "整理 PDF",
       "description": "重新排序、复制和删除 PDF 页面，拖放整理后导出新文档"
+    },
+    "audio-to-mp3": {
+      "name": "音频转 MP3",
+      "description": "将 WAV、M4A、AAC、OGG、OPUS、WebM、FLAC 等音频在浏览器本地转换为 MP3"
+    },
+    "audio-to-wav": {
+      "name": "音频转 WAV",
+      "description": "将 MP3、M4A、AAC、OGG、OPUS、WebM、FLAC 等音频在浏览器本地转换为 WAV"
+    },
+    "audio-extract": {
+      "name": "音频提取",
+      "description": "从 MP4、MOV、WebM、MKV、AVI、MPEG 等视频中提取音频并导出 MP3"
+    },
+    "audio-merge": {
+      "name": "音频合并",
+      "description": "将多个不同格式的音频文件按顺序合并为一个 MP3 文件"
+    },
+    "audio-trim": {
+      "name": "音频剪辑",
+      "description": "按开始和结束时间剪切或修剪音频，并导出为 MP3"
+    },
+    "audio-compress": {
+      "name": "音频压缩",
+      "description": "通过降低 MP3 码率减少音频文件大小，并在浏览器本地导出压缩音频"
+    },
+    "audio-recorder": {
+      "name": "录音笔",
+      "description": "使用麦克风在线录制音频，在浏览器本地预览并导出 MP3"
+    },
+    "audio-to-text": {
+      "name": "音频转文本",
+      "description": "上传音频后在浏览器本地加载开源 Whisper 模型，将语音转写为文本"
     },
     "text-word-count": {
       "name": "字数统计",
