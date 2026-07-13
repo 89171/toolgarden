@@ -71,7 +71,7 @@ ToolGarden provides developers with a suite of tools for working with JSON data.
 - **Image Crop** (`/image/crop`): Crop images with a draggable frame locally in the browser.
 - **Image Resize** (`/image/resize`): Resize full images at a proportional target width or height locally in the browser.
 - **Audio Tools** (`/audio`): Browse browser-local audio conversion, extraction, merge, trim, compression, recording, and transcription tools.
-- **Audio to MP3** (`/audio/to-mp3`): Convert WAV, M4A, AAC, OGG, OPUS, WebM, FLAC, and other audio files to MP3 locally in the browser with ffmpeg.wasm.
+- **Audio to MP3** (`/audio/to-mp3`): Convert WAV, M4A, AAC, OGG, OPUS, WebM, FLAC, and other audio files to MP3 locally in the browser with ffmpeg.wasm; FFmpeg core assets download on demand.
 - **Audio to WAV** (`/audio/to-wav`): Convert common audio files to WAV locally in the browser.
 - **Extract Audio** (`/audio/extract`): Extract an MP3 audio track from MP4, MOV, WebM, MKV, AVI, MPEG, and other video files.
 - **Audio Merge** (`/audio/merge`): Merge multiple audio files into one MP3 locally in the browser.

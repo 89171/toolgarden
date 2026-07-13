@@ -29,8 +29,9 @@ type FFmpegInstance = import('@ffmpeg/ffmpeg').FFmpeg;
 type TransformersModule = typeof import('@xenova/transformers');
 type Transcriber = (audio: string | URL, options?: Record<string, unknown>) => Promise<{ text?: string }>;
 
-const FFMPEG_CORE_URL = '/vendor/ffmpeg-core/ffmpeg-core.js';
-const FFMPEG_WASM_URL = '/vendor/ffmpeg-core/ffmpeg-core.wasm';
+const FFMPEG_CORE_CDN_BASE = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/esm';
+const FFMPEG_CORE_URL = `${FFMPEG_CORE_CDN_BASE}/ffmpeg-core.js`;
+const FFMPEG_WASM_URL = `${FFMPEG_CORE_CDN_BASE}/ffmpeg-core.wasm`;
 const FFMPEG_WORKER_URL = '/vendor/ffmpeg/worker.js';
 const DEFAULT_MP3_BITRATE = 192;
 const DEFAULT_COMPRESS_BITRATE = 96;
@@ -38,11 +39,33 @@ const DEFAULT_TRANSCRIPTION_MODEL = 'Xenova/whisper-tiny';
 
 let ffmpegPromise: Promise<FFmpegInstance> | null = null;
 let ffmpeg: FFmpegInstance | null = null;
+let ffmpegCoreAssetPromise: Promise<{ coreURL: string; wasmURL: string }> | null = null;
 let transcriberPromise: Promise<Transcriber> | null = null;
 
 function toPublicAssetUrl(path: string): string {
   if (typeof window === 'undefined') return path;
   return new URL(path, window.location.origin).href;
+}
+
+async function loadFfmpegCoreAssets(
+  onProgress?: (progress: AudioProcessingProgress) => void
+): Promise<{ coreURL: string; wasmURL: string }> {
+  if (!ffmpegCoreAssetPromise) {
+    ffmpegCoreAssetPromise = (async () => {
+      const { toBlobURL } = await import('@ffmpeg/util');
+      onProgress?.({ stage: 'prepare', label: 'downloading-ffmpeg-core', percent: 10 });
+      const coreURL = await toBlobURL(FFMPEG_CORE_URL, 'text/javascript');
+      onProgress?.({ stage: 'prepare', label: 'downloading-ffmpeg-wasm', percent: 12 });
+      const wasmURL = await toBlobURL(FFMPEG_WASM_URL, 'application/wasm');
+      onProgress?.({ stage: 'prepare', label: 'ffmpeg-core-ready', percent: 18 });
+      return { coreURL, wasmURL };
+    })().catch((error) => {
+      ffmpegCoreAssetPromise = null;
+      throw error;
+    });
+  }
+
+  return ffmpegCoreAssetPromise;
 }
 
 function toProgress(label: string, percent: number): AudioProcessingProgress {
@@ -58,6 +81,7 @@ async function loadFfmpeg(onProgress?: (progress: AudioProcessingProgress) => vo
   if (!ffmpegPromise) {
     ffmpegPromise = (async () => {
       const { FFmpeg } = await import('@ffmpeg/ffmpeg');
+      const { coreURL, wasmURL } = await loadFfmpegCoreAssets(onProgress);
       const instance = new FFmpeg();
       instance.on('log', ({ message }) => {
         if (/error|failed|invalid/i.test(message)) {
@@ -66,8 +90,8 @@ async function loadFfmpeg(onProgress?: (progress: AudioProcessingProgress) => vo
       });
       await instance.load({
         classWorkerURL: toPublicAssetUrl(FFMPEG_WORKER_URL),
-        coreURL: toPublicAssetUrl(FFMPEG_CORE_URL),
-        wasmURL: toPublicAssetUrl(FFMPEG_WASM_URL),
+        coreURL,
+        wasmURL,
       });
       ffmpeg = instance;
       return instance;

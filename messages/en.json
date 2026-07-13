@@ -1706,7 +1706,7 @@
     "description": "Free online audio tools for MP3 conversion, WAV conversion, extracting audio from video, audio merge, audio trim, audio compression, microphone recording, and audio-to-text transcription. Conversion, trimming, merging, compression, and recording export run locally in your browser, while transcription can load an open-source Whisper model in the browser.",
     "all_tools": "Audio tools",
     "breadcrumb": "Audio tools",
-    "privacy_note": "Audio and video are processed locally in your browser first; transcription downloads open-source model files only when needed."
+    "privacy_note": "Audio and video are processed locally in your browser first; FFmpeg WASM and transcription model files are downloaded only when needed."
   },
   "pdf_hub": {
     "title": "PDF tools",

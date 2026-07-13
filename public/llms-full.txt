@@ -401,13 +401,13 @@ Canonical examples:
 ### Audio Tools (/audio)
 - Lists audio conversion, video audio extraction, merge, trim, compression, recorder, and transcription tools
 - Child tool URLs use the `/audio/*` namespace
-- Conversion, extraction, merge, trim, compression, and recording export use ffmpeg.wasm locally in the browser
+- Conversion, extraction, merge, trim, compression, and recording export use ffmpeg.wasm locally in the browser; FFmpeg core assets are downloaded on demand as static CDN resources
 - Audio-to-text loads an open-source Whisper model in the browser through Transformers.js
 - Audio and video files are not uploaded to a server
 
 ### Audio to MP3 (/audio/to-mp3)
 - Converts WAV, M4A, AAC, OGG, OPUS, WebM, FLAC, and other browser-readable audio files to MP3
-- Uses self-hosted ffmpeg-core WASM assets and libmp3lame
+- Uses ffmpeg-core WASM assets downloaded on demand and libmp3lame
 - Supports selectable MP3 bitrate
 - Runs locally in the browser without uploading audio files
 
