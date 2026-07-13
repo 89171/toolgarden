@@ -34,7 +34,6 @@ const nextConfig: NextConfig = {
   turbopack: {
     resolveAlias: {
       'next-intl/config': nextIntlRequestConfig,
-      'onnxruntime-web': onnxRuntimeWasmEntry,
       'onnxruntime-web/webgpu': onnxRuntimeWasmEntry,
     },
   },
@@ -43,7 +42,6 @@ const nextConfig: NextConfig = {
       config.context,
       nextIntlRequestConfig,
     );
-    config.resolve.alias['onnxruntime-web$'] = onnxRuntimeWasmEntry;
     config.resolve.alias['onnxruntime-web/webgpu$'] = onnxRuntimeWasmEntry;
 
     return config;

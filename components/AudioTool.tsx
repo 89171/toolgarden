@@ -152,9 +152,27 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
 
   const setSelectedFiles = useCallback((nextFiles: FileList | File[]) => {
     const selected = Array.from(nextFiles);
+    if (selected.length === 0) return;
     clearOutput();
-    setFiles(isMerge ? selected : selected.slice(0, 1));
+    setFiles((current) => (isMerge ? [...current, ...selected] : selected.slice(0, 1)));
   }, [clearOutput, isMerge]);
+
+  const moveSelectedFile = useCallback((index: number, direction: -1 | 1) => {
+    clearOutput();
+    setFiles((current) => {
+      const nextIndex = index + direction;
+      if (nextIndex < 0 || nextIndex >= current.length) return current;
+      const reordered = [...current];
+      [reordered[index], reordered[nextIndex]] = [reordered[nextIndex], reordered[index]];
+      return reordered;
+    });
+  }, [clearOutput]);
+
+  const removeSelectedFile = useCallback((index: number) => {
+    clearOutput();
+    setFiles((current) => current.filter((_, currentIndex) => currentIndex !== index));
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  }, [clearOutput]);
 
   const runTool = useCallback(async () => {
     if (mode === 'recorder') return;
@@ -210,21 +228,21 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
 
     setIsProcessing(true);
     clearOutput();
-    const result = await convertRecordedAudioToMp3(recording.blob, recording.filename, setProgress);
-    setIsProcessing(false);
+    try {
+      const result = await convertRecordedAudioToMp3(recording.blob, recording.filename, setProgress);
 
-    if (!result.ok) {
-      setError(getErrorMessage(result));
-      return;
+      if (!result.ok) {
+        setError(getErrorMessage(result));
+        return;
+      }
+
+      const url = URL.createObjectURL(result.blob);
+      downloadUrl(url, result.filename);
+      window.setTimeout(() => URL.revokeObjectURL(url), 30_000);
+      setProgress({ stage: 'done', label: 'done', percent: 100 });
+    } finally {
+      setIsProcessing(false);
     }
-
-    setOutput({
-      url: URL.createObjectURL(result.blob),
-      filename: result.filename,
-      mimeType: result.mimeType,
-      size: result.outputSize,
-      durationMs: result.durationMs,
-    });
   }, [clearOutput, getErrorMessage, recording]);
 
   const startRecording = useCallback(async () => {
@@ -241,7 +259,12 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
 
     try {
       setError('');
+      setProgress(null);
       chunksRef.current = [];
+      setRecording((current) => {
+        if (current) URL.revokeObjectURL(current.url);
+        return null;
+      });
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
       const recorder = new MediaRecorder(stream, { mimeType });
@@ -281,9 +304,31 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
     if (event.dataTransfer.files.length > 0) setSelectedFiles(event.dataTransfer.files);
   }, [setSelectedFiles]);
 
+  const progressBlock = progress ? (
+    <div className="rounded-lg border border-border-base bg-surface p-4">
+      <div className="mb-2 flex items-center justify-between gap-3 text-sm">
+        <span className="font-medium text-content-secondary">{t(`stages.${progress.stage}`)}</span>
+        <span className="text-content-muted">{progress.percent}%</span>
+      </div>
+      <div className="h-2 overflow-hidden rounded bg-surface-raised">
+        <div className="h-full bg-action transition-[width]" style={{ width: `${progress.percent}%` }} />
+      </div>
+      <p className="mt-2 text-xs text-content-faint">{progress.label}</p>
+    </div>
+  ) : null;
+
+  const errorBlock = error ? (
+    <div className="rounded-lg border border-danger-content bg-danger-surface p-4 text-sm text-danger-content">
+      {error}
+    </div>
+  ) : null;
+
   return (
     <ToolLayout toolId={toolId}>
-      <div className="grid min-h-0 flex-grow gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+      <div className={[
+        'grid min-h-0 flex-grow gap-4',
+        isRecorder ? 'lg:grid-cols-1' : 'lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]',
+      ].join(' ')}>
         <Panel title={isRecorder ? t('record_title') : uploadTitle}>
           {isRecorder ? (
             <div className="flex flex-col gap-4">
@@ -315,6 +360,13 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
               {recording && (
                 <audio controls src={recording.url} className="w-full" />
               )}
+
+              {(progressBlock || errorBlock) && (
+                <div className="flex flex-col gap-3">
+                  {progressBlock}
+                  {errorBlock}
+                </div>
+              )}
             </div>
           ) : (
             <label
@@ -340,6 +392,7 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
                 className="sr-only"
                 onChange={(event) => {
                   if (event.target.files) setSelectedFiles(event.target.files);
+                  event.currentTarget.value = '';
                 }}
               />
               <span className="text-sm font-semibold text-content">{t('drop_title')}</span>
@@ -351,11 +404,48 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
 
           {files.length > 0 && !isRecorder && (
             <ul className="mt-4 flex flex-col gap-2">
-              {files.map((file) => (
-                <li key={`${file.name}-${file.size}-${file.lastModified}`} className="rounded border border-border-subtle bg-surface-raised p-3">
-                  <div className="truncate text-sm font-medium text-content">{file.name}</div>
-                  <div className="mt-1 text-xs text-content-muted">
-                    {file.type || t('unknown_type')} · {formatAudioFileSize(file.size)}
+              {files.map((file, index) => (
+                <li key={`${file.name}-${file.size}-${file.lastModified}-${index}`} className="rounded border border-border-subtle bg-surface-raised p-3">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="min-w-0">
+                      <div className="truncate text-sm font-medium text-content">
+                        {isMerge ? `${index + 1}. ` : ''}{file.name}
+                      </div>
+                      <div className="mt-1 text-xs text-content-muted">
+                        {file.type || t('unknown_type')} · {formatAudioFileSize(file.size)}
+                      </div>
+                    </div>
+                    {isMerge && (
+                      <div className="flex shrink-0 flex-wrap gap-2">
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          onClick={() => moveSelectedFile(index, -1)}
+                          disabled={index === 0 || isProcessing}
+                          aria-label={t('move_up')}
+                        >
+                          {t('move_up')}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          onClick={() => moveSelectedFile(index, 1)}
+                          disabled={index === files.length - 1 || isProcessing}
+                          aria-label={t('move_down')}
+                        >
+                          {t('move_down')}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="danger"
+                          onClick={() => removeSelectedFile(index)}
+                          disabled={isProcessing}
+                          aria-label={t('remove_file')}
+                        >
+                          {t('remove_file')}
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </li>
               ))}
@@ -432,54 +522,40 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
           </div>
         </Panel>
 
-        <Panel title={isTranscribe ? t('transcript_title') : t('output_title')}>
-          <div className="flex min-h-80 flex-grow flex-col gap-4">
-            {progress && (
-              <div className="rounded-lg border border-border-base bg-surface p-4">
-                <div className="mb-2 flex items-center justify-between gap-3 text-sm">
-                  <span className="font-medium text-content-secondary">{t(`stages.${progress.stage}`)}</span>
-                  <span className="text-content-muted">{progress.percent}%</span>
-                </div>
-                <div className="h-2 overflow-hidden rounded bg-surface-raised">
-                  <div className="h-full bg-action transition-[width]" style={{ width: `${progress.percent}%` }} />
-                </div>
-                <p className="mt-2 text-xs text-content-faint">{progress.label}</p>
-              </div>
-            )}
+        {!isRecorder && (
+          <Panel title={isTranscribe ? t('transcript_title') : t('output_title')}>
+            <div className="flex min-h-80 flex-grow flex-col gap-4">
+              {progressBlock}
+              {errorBlock}
 
-            {error && (
-              <div className="rounded-lg border border-danger-content bg-danger-surface p-4 text-sm text-danger-content">
-                {error}
-              </div>
-            )}
-
-            {isTranscribe ? (
-              <textarea
-                value={transcript}
-                readOnly
-                placeholder={t('empty_transcript')}
-                className="min-h-72 flex-grow resize-none rounded border border-border-input bg-surface-raised p-3 text-sm leading-6 text-content-secondary placeholder:text-content-faint focus:outline-none"
-              />
-            ) : output ? (
-              <div className="flex flex-col gap-4">
-                <audio controls src={output.url} className="w-full" />
-                <div className="rounded-lg border border-border-base bg-surface p-4 text-sm text-content-muted">
-                  <div className="font-medium text-content">{output.filename}</div>
-                  <div className="mt-1">
-                    {output.mimeType} · {formatAudioFileSize(output.size)} · {output.durationMs} ms
+              {isTranscribe ? (
+                <textarea
+                  value={transcript}
+                  readOnly
+                  placeholder={t('empty_transcript')}
+                  className="min-h-72 flex-grow resize-none rounded border border-border-input bg-surface-raised p-3 text-sm leading-6 text-content-secondary placeholder:text-content-faint focus:outline-none"
+                />
+              ) : output ? (
+                <div className="flex flex-col gap-4">
+                  <audio controls src={output.url} className="w-full" />
+                  <div className="rounded-lg border border-border-base bg-surface p-4 text-sm text-content-muted">
+                    <div className="font-medium text-content">{output.filename}</div>
+                    <div className="mt-1">
+                      {output.mimeType} · {formatAudioFileSize(output.size)} · {output.durationMs} ms
+                    </div>
                   </div>
+                  <Button onClick={() => downloadUrl(output.url, output.filename)}>
+                    {t('download_output')}
+                  </Button>
                 </div>
-                <Button onClick={() => downloadUrl(output.url, output.filename)}>
-                  {t('download_output')}
-                </Button>
-              </div>
-            ) : (
-              <div className="flex min-h-72 flex-grow items-center justify-center rounded-lg border border-border-subtle bg-surface-raised p-6 text-center text-sm text-content-muted">
-                {isRecorder ? t('empty_recording_output') : isTranscribe ? t('empty_transcript') : t('empty_output')}
-              </div>
-            )}
-          </div>
-        </Panel>
+              ) : (
+                <div className="flex min-h-72 flex-grow items-center justify-center rounded-lg border border-border-subtle bg-surface-raised p-6 text-center text-sm text-content-muted">
+                  {isTranscribe ? t('empty_transcript') : t('empty_output')}
+                </div>
+              )}
+            </div>
+          </Panel>
+        )}
       </div>
     </ToolLayout>
   );

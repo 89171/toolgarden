@@ -36,6 +36,7 @@ const FFMPEG_WORKER_URL = '/vendor/ffmpeg/worker.js';
 const DEFAULT_MP3_BITRATE = 192;
 const DEFAULT_COMPRESS_BITRATE = 96;
 const DEFAULT_TRANSCRIPTION_MODEL = 'Xenova/whisper-tiny';
+const TRANSFORMERS_WASM_PATH = '/models/transformers/';
 
 let ffmpegPromise: Promise<FFmpegInstance> | null = null;
 let ffmpeg: FFmpegInstance | null = null;
@@ -290,10 +291,10 @@ async function loadTranscriber(options: TranscribeAudioOptions): Promise<Transcr
   if (!transcriberPromise) {
     transcriberPromise = (async () => {
       options.onProgress?.({ stage: 'model', label: 'loading-model', percent: 5 });
-      const transformers = await import('@xenova/transformers') as TransformersModule;
+      const transformers = await import('@xenova/transformers/dist/transformers.min.js') as TransformersModule;
       transformers.env.allowLocalModels = false;
       transformers.env.useBrowserCache = true;
-      transformers.env.backends.onnx.wasm.wasmPaths = '/models/transformers/';
+      transformers.env.backends.onnx.wasm.wasmPaths = TRANSFORMERS_WASM_PATH;
       transformers.env.backends.onnx.wasm.numThreads = 1;
 
       const pipe = await transformers.pipeline(
@@ -312,7 +313,10 @@ async function loadTranscriber(options: TranscribeAudioOptions): Promise<Transcr
       );
       options.onProgress?.({ stage: 'model', label: 'model-ready', percent: 92 });
       return pipe as unknown as Transcriber;
-    })();
+    })().catch((error) => {
+      transcriberPromise = null;
+      throw error;
+    });
   }
 
   return transcriberPromise;
