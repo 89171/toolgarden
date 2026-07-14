@@ -1,37 +1,38 @@
 'use client';
 
 import { useLocale, useTranslations } from 'next-intl';
-import { type WheelEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
-import { tldrawAssetUrls } from '@/lib/utils/tldrawAssets';
 
-const TLDRAW_LICENSE_KEY = 'tldraw-2026-07-28/WyI1S0s4WDI1WiIsWyIqIl0sMTYsIjIwMjYtMDctMjgiXQ.Co00PkZK5Y9riUOpUZ1epqucZY3ICPqLN4khtffwseNd6VftYmhztDXyUuMrIHa6z3SIxu7/+eWHS+F3XNMrJA';
-const TLDRAW_PERSISTENCE_KEY = 'toolgarden-whiteboard-tldraw';
+const EXCALIDRAW_ASSET_PATH = '/excalidraw/';
 
-type TldrawComponent = typeof import('tldraw').Tldraw;
-type DefaultToolbarComponent = typeof import('tldraw').DefaultToolbar;
-type TldrawComponents = NonNullable<Parameters<TldrawComponent>[0]['components']>;
-type TldrawCameraOptions = NonNullable<Parameters<TldrawComponent>[0]['cameraOptions']>;
+type ExcalidrawComponent = typeof import('@excalidraw/excalidraw').Excalidraw;
 
-export function WhiteboardTool() {
-  const t = useTranslations('whiteboard_tool');
+const configureExcalidrawAssetPath = () => {
+  if (typeof window === 'undefined') return;
+
+  (window as Window & { EXCALIDRAW_ASSET_PATH?: string }).EXCALIDRAW_ASSET_PATH = EXCALIDRAW_ASSET_PATH;
+};
+
+configureExcalidrawAssetPath();
+
+export function ExcalidrawBoardTool() {
+  const t = useTranslations('excalidraw_board_tool');
   const locale = useLocale();
   const fullscreenRef = useRef<HTMLDivElement | null>(null);
-  const [Tldraw, setTldraw] = useState<TldrawComponent | null>(null);
-  const [DefaultToolbar, setDefaultToolbar] = useState<DefaultToolbarComponent | null>(null);
+  const [Excalidraw, setExcalidraw] = useState<ExcalidrawComponent | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isFullscreenFallback, setIsFullscreenFallback] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
+    configureExcalidrawAssetPath();
 
-    void import('tldraw').then((module) => {
+    void import('@excalidraw/excalidraw').then((module) => {
       if (isMounted) {
-        setTldraw(() => module.Tldraw);
-        setDefaultToolbar(() => module.DefaultToolbar);
-        window.setTimeout(() => window.dispatchEvent(new Event('resize')), 0);
+        setExcalidraw(() => module.Excalidraw);
       }
     });
 
@@ -98,42 +99,9 @@ export function WhiteboardTool() {
   };
 
   const isFullscreenActive = isFullscreen || isFullscreenFallback;
-  const cameraOptions = useMemo<TldrawCameraOptions>(() => ({
-    wheelBehavior: isFullscreenActive ? 'pan' : 'none',
-  }), [isFullscreenActive]);
-  const tldrawComponents = useMemo<TldrawComponents | undefined>(() => {
-    if (!DefaultToolbar) return undefined;
-    const Toolbar: DefaultToolbarComponent = DefaultToolbar;
-
-    function LeftToolbar() {
-      return (
-        <Toolbar
-          orientation="vertical"
-          minItems={8}
-          minSizePx={360}
-          maxItems={14}
-          maxSizePx={620}
-        />
-      );
-    }
-
-    return { Toolbar: LeftToolbar };
-  }, [DefaultToolbar]);
-  const scrollPageFromCanvas = (event: WheelEvent<HTMLDivElement>) => {
-    if (isFullscreenActive || event.ctrlKey || event.metaKey) return;
-    if (event.deltaX === 0 && event.deltaY === 0) return;
-
-    event.preventDefault();
-    event.stopPropagation();
-    window.scrollBy({
-      left: event.deltaX,
-      top: event.deltaY,
-      behavior: 'auto',
-    });
-  };
 
   return (
-    <ToolLayout toolId="whiteboard">
+    <ToolLayout toolId="excalidraw-board">
       <div
         ref={fullscreenRef}
         className={`flex min-h-0 flex-1 flex-col bg-background ${isFullscreenActive ? 'fixed inset-0 z-50 h-screen overflow-hidden p-3' : ''}`}
@@ -148,27 +116,40 @@ export function WhiteboardTool() {
           )}
         >
           <div
-            className={`whiteboard-canvas-frame overflow-hidden rounded-lg border border-border-base ${
-              isFullscreenActive ? 'min-h-0 flex-1' : 'h-[880px] min-h-[760px]'
+            className={`overflow-hidden rounded-lg border border-border-base bg-surface-raised ${
+              isFullscreenActive ? 'min-h-0 flex-1' : 'h-[720px] min-h-[620px]'
             }`}
           >
-            <div className="tldraw-left-toolbar relative h-full w-full" onWheelCapture={scrollPageFromCanvas}>
-              {Tldraw ? (
-                <Tldraw
-                  autoFocus
-                  colorScheme="light"
-                  initialState="select"
-                  assetUrls={tldrawAssetUrls}
-                  cameraOptions={cameraOptions}
-                  components={tldrawComponents}
-                  licenseKey={TLDRAW_LICENSE_KEY}
-                  locale={locale === 'zh' ? 'zh-cn' : 'en'}
-                  persistenceKey={TLDRAW_PERSISTENCE_KEY}
-                />
-              ) : (
-                <div className="h-full" />
-              )}
-            </div>
+            {Excalidraw ? (
+              <Excalidraw
+                langCode={locale === 'zh' ? 'zh-CN' : 'en'}
+                name="toolgarden-excalidraw-board"
+                theme="light"
+                initialData={{
+                  appState: {
+                    viewBackgroundColor: '#ffffff',
+                    currentItemStrokeColor: '#111827',
+                    currentItemBackgroundColor: 'transparent',
+                  },
+                }}
+                UIOptions={{
+                  canvasActions: {
+                    changeViewBackgroundColor: true,
+                    clearCanvas: true,
+                    export: { saveFileToDisk: true },
+                    loadScene: true,
+                    saveAsImage: true,
+                    saveToActiveFile: true,
+                    toggleTheme: true,
+                  },
+                  tools: {
+                    image: true,
+                  },
+                }}
+              />
+            ) : (
+              <div className="h-full bg-surface-raised" />
+            )}
           </div>
           <p className="mt-3 text-sm text-content-faint">{t('local_note')}</p>
         </Panel>

@@ -1733,7 +1733,13 @@
     "color": "Color",
     "stroke_width": "Stroke",
     "canvas_label": "Whiteboard canvas",
-    "local_note": "The board is edited locally in your browser. Use the built-in menu to import, save, and export PNG, SVG, or Excalidraw files."
+    "local_note": "The board is edited and saved locally in your browser. Use the built-in tldraw menu to import, save, insert images, and export PNG, SVG, or tldraw files."
+  },
+  "excalidraw_board_tool": {
+    "canvas_title": "Excalidraw Board",
+    "fullscreen": "Fullscreen",
+    "exit_fullscreen": "Exit fullscreen",
+    "local_note": "The board is edited locally in your browser. Use the built-in Excalidraw menu to import, save, and export PNG, SVG, or Excalidraw files."
   },
   "mind_map_tool": {
     "input_title": "Markdown outline",
@@ -1826,11 +1832,11 @@
   },
   "other_hub": {
     "title": "Other tools",
-    "meta_title": "Free Online Other Tools - Whiteboard and Mind Map",
-    "description": "A simple collection of online tools for local whiteboard sketching and Markdown mind maps, built with mature open-source libraries and running in your browser.",
+    "meta_title": "Free Online Other Tools - Whiteboard, Excalidraw Board, and Mind Map",
+    "description": "A simple collection of online tools for local tldraw whiteboards, Excalidraw boards, and Markdown mind maps, built with mature libraries and running in your browser.",
     "all_tools": "Other tools",
     "breadcrumb": "Other tools",
-    "privacy_note": "Whiteboard and mind map content is processed locally in your browser and is not uploaded to a server."
+    "privacy_note": "Whiteboard, board, and mind map content is processed locally in your browser and is not uploaded to a server."
   },
   "json_hub": {
     "title": "JSON Toolkit",
@@ -1902,7 +1908,11 @@
   "tools": {
     "whiteboard": {
       "name": "Whiteboard",
-      "description": "Draw, write, create shapes, insert images, and export a local whiteboard with the open-source Excalidraw editor"
+      "description": "Create a full local whiteboard with tldraw, including shapes, drawing, notes, images, pages, and export"
+    },
+    "excalidraw-board": {
+      "name": "Excalidraw Board",
+      "description": "Draw a local hand-drawn style board with open-source Excalidraw, including shapes, text, images, and export"
     },
     "mind-map": {
       "name": "Mind Map",

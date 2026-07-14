@@ -1733,7 +1733,13 @@
     "color": "颜色",
     "stroke_width": "线宽",
     "canvas_label": "白板画布",
-    "local_note": "内容在浏览器本地编辑；可使用内置菜单导入、保存和导出 PNG、SVG 或 Excalidraw 文件。"
+    "local_note": "内容在浏览器本地编辑并保存；可使用 tldraw 内置菜单导入、保存、插入图片，并导出 PNG、SVG 或 tldraw 文件。"
+  },
+  "excalidraw_board_tool": {
+    "canvas_title": "Excalidraw画板",
+    "fullscreen": "全屏",
+    "exit_fullscreen": "退出全屏",
+    "local_note": "内容在浏览器本地编辑；可使用 Excalidraw 内置菜单导入、保存和导出 PNG、SVG 或 Excalidraw 文件。"
   },
   "mind_map_tool": {
     "input_title": "Markdown 大纲",
@@ -1826,11 +1832,11 @@
   },
   "other_hub": {
     "title": "其他工具",
-    "meta_title": "其他工具 - 白板、思维导图",
-    "description": "简洁的在线工具集合，包含本地白板绘制和 Markdown 思维导图，优先使用成熟开源能力并在浏览器本地运行。",
+    "meta_title": "其他工具 - 白板、Excalidraw画板、思维导图",
+    "description": "简洁的在线工具集合，包含 tldraw 白板、Excalidraw 画板和 Markdown 思维导图，优先使用成熟能力并在浏览器本地运行。",
     "all_tools": "其他工具",
     "breadcrumb": "其他工具",
-    "privacy_note": "白板和思维导图内容在浏览器本地处理，不会上传到服务器。"
+    "privacy_note": "白板、画板和思维导图内容在浏览器本地处理，不会上传到服务器。"
   },
   "json_hub": {
     "title": "JSON 工具包",
@@ -1902,7 +1908,11 @@
   "tools": {
     "whiteboard": {
       "name": "白板工具",
-      "description": "使用开源 Excalidraw 在浏览器本地绘制、书写、画图形、插入图片并导出白板"
+      "description": "使用 tldraw 在浏览器本地创建完整白板，支持图形、画笔、便签、图片、页面和导出"
+    },
+    "excalidraw-board": {
+      "name": "Excalidraw画板",
+      "description": "使用开源 Excalidraw 在浏览器本地绘制手绘风画板，支持图形、文字、图片和导出"
     },
     "mind-map": {
       "name": "思维导图",

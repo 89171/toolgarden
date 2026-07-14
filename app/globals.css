@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "mind-elixir/style.css";
 @import "../node_modules/@excalidraw/excalidraw/dist/prod/index.css";
+@import "tldraw/tldraw.css";
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    Layer 1 — Raw values (Light mode)
@@ -14,6 +15,7 @@
   /* Page canvas */
   --background:        #ffffff;
   --foreground:        #171717;
+  --whiteboard-canvas: #ffffff;
 
   /* Surface — panel / input 背景 */
   --surface:           #f9fafb;   /* gray-50 */
@@ -68,6 +70,7 @@
   :root {
     --background:        #0a0a0a;
     --foreground:        #ededed;
+    --whiteboard-canvas: #ffffff;
 
     --surface:           #111827;
     --surface-raised:    #1f2937;
@@ -184,7 +187,37 @@ html {
   min-width: 0;
 }
 
+.whiteboard-canvas-frame,
+.whiteboard-canvas-frame .tl-container,
+.whiteboard-canvas-frame .tl-background {
+  background: var(--whiteboard-canvas);
+}
+
+.whiteboard-canvas-frame .tl-theme__light {
+  --tl-color-background: var(--whiteboard-canvas);
+}
+
+.tldraw-left-toolbar .tlui-main-toolbar--vertical {
+  left: var(--tl-space-3);
+  top: 76px;
+  bottom: 112px;
+  align-items: flex-start;
+  padding-left: 0;
+}
+
+.tldraw-left-toolbar .tlui-main-toolbar--vertical .tlui-main-toolbar__inner,
+.tldraw-left-toolbar .tlui-main-toolbar--vertical .tlui-main-toolbar__left,
+.tldraw-left-toolbar .tlui-main-toolbar--vertical .tlui-main-toolbar__tools {
+  max-height: 100%;
+}
+
 @media (max-width: 767px) {
+  .tldraw-left-toolbar .tlui-main-toolbar--vertical {
+    left: var(--tl-space-2);
+    top: 64px;
+    bottom: 80px;
+  }
+
   input,
   textarea,
   select {

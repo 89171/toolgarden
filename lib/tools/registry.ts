@@ -684,9 +684,17 @@ export const toolRegistry: ToolMeta[] = [
   {
     id: 'whiteboard',
     name: '白板工具',
-    description: '使用开源 Excalidraw 在浏览器本地绘制、书写、画图形、插入图片并导出白板',
+    description: '使用 tldraw 在浏览器本地创建完整白板，支持图形、画笔、便签、图片、页面和导出',
     path: '/other/whiteboard',
     icon: 'WBD',
+    category: 'format',
+  },
+  {
+    id: 'excalidraw-board',
+    name: 'Excalidraw画板',
+    description: '使用开源 Excalidraw 在浏览器本地绘制手绘风画板，支持图形、文字、图片和导出',
+    path: '/other/excalidraw-board',
+    icon: 'EXD',
     category: 'format',
   },
   {
