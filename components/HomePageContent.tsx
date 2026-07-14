@@ -8,6 +8,7 @@ import {
   getImageTools,
   getInfoCodecTools,
   getJsonTools,
+  getOtherTools,
   getPdfTools,
   getQrCodeTools,
   getSubtitleTools,
@@ -67,6 +68,7 @@ export function HomePageContent({ locale }: HomePageContentProps) {
     buildSection('info-codec', m.nav.info_codec_tools, null,                              getInfoCodecTools()),
     buildSection('qr',         m.nav.qr_tools,         null,                              getQrCodeTools()),
     buildSection('subtitle',   m.nav.subtitle_tools,   null,                              getSubtitleTools()),
+    buildSection('other',      m.nav.other_tools,      `/${normalizedLocale}/other`,      getOtherTools()),
   ].filter((section) => section.tools.length > 0);
 
   const featured = localizedTools.filter((tool) => tool.featured);

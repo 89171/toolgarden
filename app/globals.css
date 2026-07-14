@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "mind-elixir/style.css";
+@import "../node_modules/@excalidraw/excalidraw/dist/prod/index.css";
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    Layer 1 — Raw values (Light mode)

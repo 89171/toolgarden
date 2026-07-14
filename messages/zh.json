@@ -1617,6 +1617,10 @@
     "qr_tools": "二维码工具",
     "text_tools": "文本工具",
     "subtitle_tools": "字幕工具",
+    "other_tools": "其他工具",
+    "more": "更多",
+    "menu": "菜单",
+    "close_menu": "关闭",
     "blog": "博客",
     "github": "GitHub"
   },
@@ -1648,8 +1652,21 @@
     "drop_video_hint": "支持 MP4、MOV、WebM、MKV、AVI、MPEG 等视频格式，会提取其中的音频轨道。",
     "drop_multiple_hint": "可多次选择音频文件追加到列表，工具会按列表顺序拼接并导出一个 MP3。",
     "bitrate_label": "MP3 码率",
+    "volume_label": "音量",
+    "speed_label": "播放速度",
+    "sample_rate_label": "采样率",
+    "silence_threshold_label": "静音阈值",
+    "silence_duration_label": "最短静音时长",
     "start_seconds": "开始时间（秒）",
     "end_seconds": "结束时间（秒）",
+    "tts_input_title": "文字转语音",
+    "tts_placeholder": "输入要朗读的文字...",
+    "tts_voice_label": "语音",
+    "tts_default_voice": "浏览器默认语音",
+    "tts_rate_label": "语速",
+    "tts_pitch_label": "音调",
+    "tts_volume_label": "朗读音量",
+    "tts_speaking": "正在朗读",
     "processing": "处理中...",
     "clear": "清空",
     "download_output": "下载结果",
@@ -1673,6 +1690,13 @@
       "trim": "剪辑音频",
       "compress": "压缩音频",
       "transcribe": "开始转文本",
+      "volume": "调整音量",
+      "speed": "调整速度",
+      "sample_rate": "修改采样率",
+      "bitrate": "调整比特率",
+      "remove_silence": "去除静音",
+      "speak": "开始朗读",
+      "stop_speaking": "停止朗读",
       "export_recording": "导出 MP3"
     },
     "stages": {
@@ -1691,9 +1715,74 @@
       "invalid_range": "结束时间必须大于开始时间。",
       "recorder_unsupported": "当前浏览器不支持在线录音，请换用最新版 Chrome、Edge 或 Safari。",
       "microphone_denied": "无法访问麦克风，请在浏览器地址栏允许麦克风权限后重试。",
+      "tts_unsupported": "当前浏览器不支持文字转语音，请换用最新版 Chrome、Edge 或 Safari。",
+      "empty_text": "请输入要朗读的文字。",
+      "invalid_value": "参数值无效，请调整后重试。",
       "processing_failed": "音频处理失败，请换一个文件或降低文件大小后重试。",
       "model_failed": "音频转文本失败。"
     }
+  },
+  "whiteboard_tool": {
+    "canvas_title": "白板",
+    "draw": "画笔",
+    "select": "选择",
+    "clear": "清空",
+    "export_png": "导出 PNG",
+    "fullscreen": "全屏",
+    "exit_fullscreen": "退出全屏",
+    "color": "颜色",
+    "stroke_width": "线宽",
+    "canvas_label": "白板画布",
+    "local_note": "内容在浏览器本地编辑；可使用内置菜单导入、保存和导出 PNG、SVG 或 Excalidraw 文件。"
+  },
+  "mind_map_tool": {
+    "input_title": "Markdown 大纲",
+    "preview_title": "思维导图",
+    "canvas_label": "思维导图编辑画布",
+    "markdown_title": "Markdown 大纲",
+    "placeholder": "输入 Markdown 标题和列表...",
+    "fit": "适配视图",
+    "new_map": "新建",
+    "reset_sample": "恢复示例",
+    "add_child": "子主题",
+    "add_sibling": "同级主题",
+    "edit_node": "编辑",
+    "delete_node": "删除",
+    "create_summary": "概要",
+    "focus_node": "专注",
+    "exit_focus": "退出专注",
+    "link_node": "关联线",
+    "link_bidirectional": "双向线",
+    "cancel_link": "取消关联",
+    "undo": "撤销",
+    "redo": "重做",
+    "layout_group": "布局",
+    "layout_left": "左侧",
+    "layout_side": "两侧",
+    "layout_right": "右侧",
+    "fullscreen": "全屏",
+    "exit_fullscreen": "退出全屏",
+    "show_markdown": "Markdown",
+    "hide_markdown": "收起大纲",
+    "import_markdown": "应用大纲",
+    "import_json": "导入 JSON",
+    "export_json": "导出 JSON",
+    "export_svg": "导出 SVG",
+    "export_png": "导出 PNG",
+    "export_html": "导出 HTML",
+    "export_markdown": "导出 Markdown",
+    "rendering": "渲染中",
+    "render_error": "思维导图渲染失败。",
+    "import_error": "导入思维导图失败。",
+    "export_error": "导出思维导图失败。",
+    "selected_topic": "已选中：{topic}（{count}）",
+    "no_selection": "未选中节点",
+    "link_hint": "关联模式：点击另一个节点创建连接线",
+    "keyboard_hint": "拖拽空白画布 · 双击编辑 · Tab 子主题 · Enter 同级 · Delete 删除",
+    "edit_hint": "双击节点可直接编辑文字，拖拽节点可调整结构，拖拽空白画布可移动视图；右键节点可添加、删除、移动、专注、概要或创建连接线。",
+    "default_root": "中心主题",
+    "new_topic": "新节点",
+    "sample_markdown": "# 产品计划\n\n## 目标\n- 明确用户问题\n- 保持界面简洁\n- 本地优先处理\n\n## 功能\n- 快速记录想法\n- 拆分任务\n- 标记下一步\n\n## 发布\n- 检查内容\n- 分享或截图"
   },
   "image_hub": {
     "title": "图片工具",
@@ -1705,8 +1794,8 @@
   },
   "audio_hub": {
     "title": "音频工具",
-    "meta_title": "音频工具 - MP3、WAV 转换、视频提取音频、合并、剪辑、压缩、录音和转文本",
-    "description": "在线处理音频，支持转 MP3、转 WAV、从视频提取音频、音频合并、音频剪辑、音频压缩、麦克风录音和音频转文本。转换、剪辑、合并、压缩和录音导出优先在浏览器本地完成，转文本可在浏览器中加载开源 Whisper 模型。",
+    "meta_title": "音频工具 - MP3、WAV、视频提取音频、合并、剪辑、压缩、录音、转文本和 TTS",
+    "description": "在线处理音频，支持转 MP3、转 WAV、从视频提取音频、音频合并、音频剪辑、音频压缩、麦克风录音、音频转文本、修改音量、修改播放速度、修改采样率、调整比特率、去除静音和文字转语音。转换、剪辑、合并、压缩和音频编辑优先在浏览器本地完成，转文本可在浏览器中加载开源 Whisper 模型。",
     "all_tools": "音频工具",
     "breadcrumb": "音频工具",
     "privacy_note": "音频和视频优先在本地浏览器处理；FFmpeg WASM 和转文本模型会按需下载开源资源。"
@@ -1734,6 +1823,14 @@
     "all_tools": "文本工具",
     "breadcrumb": "文本工具",
     "privacy_note": "文本仅在本地浏览器处理，不会上传到服务器。"
+  },
+  "other_hub": {
+    "title": "其他工具",
+    "meta_title": "其他工具 - 白板、思维导图",
+    "description": "简洁的在线工具集合，包含本地白板绘制和 Markdown 思维导图，优先使用成熟开源能力并在浏览器本地运行。",
+    "all_tools": "其他工具",
+    "breadcrumb": "其他工具",
+    "privacy_note": "白板和思维导图内容在浏览器本地处理，不会上传到服务器。"
   },
   "json_hub": {
     "title": "JSON 工具包",
@@ -1803,6 +1900,14 @@
     "encode": "编解码"
   },
   "tools": {
+    "whiteboard": {
+      "name": "白板工具",
+      "description": "使用开源 Excalidraw 在浏览器本地绘制、书写、画图形、插入图片并导出白板"
+    },
+    "mind-map": {
+      "name": "思维导图",
+      "description": "使用开源 Mind Elixir 直接编辑思维导图，并可导出 Markdown 大纲"
+    },
     "json-format": {
       "name": "JSON 格式化",
       "description": "格式化、压缩、验证 JSON / JSONC / JSON5，支持注释、尾逗号、树形展示与节点操作",
@@ -2087,6 +2192,30 @@
     "audio-to-text": {
       "name": "音频转文本",
       "description": "上传音频后在浏览器本地加载开源 Whisper 模型，将语音转写为文本"
+    },
+    "audio-volume": {
+      "name": "修改音量",
+      "description": "调整音频音量大小，并在浏览器本地导出 MP3"
+    },
+    "audio-speed": {
+      "name": "修改播放速度",
+      "description": "改变音频播放速度，并在浏览器本地导出 MP3"
+    },
+    "audio-sample-rate": {
+      "name": "修改采样率",
+      "description": "将音频重新采样为指定采样率，并导出 MP3"
+    },
+    "audio-bitrate": {
+      "name": "调整比特率",
+      "description": "按指定 MP3 比特率重新编码音频文件"
+    },
+    "audio-remove-silence": {
+      "name": "去除静音",
+      "description": "自动裁掉音频中的静音和空白片段，并导出 MP3"
+    },
+    "audio-tts": {
+      "name": "文字转语音",
+      "description": "使用浏览器本地语音合成朗读输入文字"
     },
     "text-word-count": {
       "name": "字数统计",

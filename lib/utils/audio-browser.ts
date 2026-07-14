@@ -11,11 +11,27 @@ import {
 } from './audio';
 
 interface ProcessAudioOptions {
-  mode: 'to-mp3' | 'to-wav' | 'extract' | 'merge' | 'trim' | 'compress';
+  mode:
+    | 'to-mp3'
+    | 'to-wav'
+    | 'extract'
+    | 'merge'
+    | 'trim'
+    | 'compress'
+    | 'volume'
+    | 'speed'
+    | 'sample-rate'
+    | 'bitrate'
+    | 'remove-silence';
   targetFormat?: AudioOutputFormat;
   bitrateKbps?: number;
   startSeconds?: number;
   endSeconds?: number;
+  volumeGain?: number;
+  playbackRate?: number;
+  sampleRate?: number;
+  silenceThresholdDb?: number;
+  silenceDuration?: number;
   onProgress?: (progress: AudioProcessingProgress) => void;
 }
 
@@ -35,6 +51,15 @@ const FFMPEG_WASM_URL = `${FFMPEG_CORE_CDN_BASE}/ffmpeg-core.wasm`;
 const FFMPEG_WORKER_URL = '/vendor/ffmpeg/worker.js';
 const DEFAULT_MP3_BITRATE = 192;
 const DEFAULT_COMPRESS_BITRATE = 96;
+const DEFAULT_SAMPLE_RATE = 44100;
+const MIN_VOLUME_GAIN = 0;
+const MAX_VOLUME_GAIN = 4;
+const MIN_PLAYBACK_RATE = 0.25;
+const MAX_PLAYBACK_RATE = 4;
+const MIN_SILENCE_THRESHOLD_DB = -80;
+const MAX_SILENCE_THRESHOLD_DB = -10;
+const MIN_SILENCE_DURATION = 0.05;
+const MAX_SILENCE_DURATION = 10;
 const DEFAULT_TRANSCRIPTION_MODEL = 'Xenova/whisper-tiny';
 const TRANSFORMERS_WASM_PATH = '/models/transformers/';
 
@@ -134,6 +159,29 @@ async function cleanupFiles(instance: FFmpegInstance, names: string[]) {
   );
 }
 
+function clampNumber(value: number | undefined, min: number, max: number, fallback: number): number {
+  if (!Number.isFinite(value)) return fallback;
+  return Math.min(max, Math.max(min, value as number));
+}
+
+function buildAtempoFilter(rate: number): string {
+  const filters: string[] = [];
+  let remaining = clampNumber(rate, MIN_PLAYBACK_RATE, MAX_PLAYBACK_RATE, 1);
+
+  while (remaining > 2) {
+    filters.push('atempo=2');
+    remaining /= 2;
+  }
+
+  while (remaining < 0.5) {
+    filters.push('atempo=0.5');
+    remaining /= 0.5;
+  }
+
+  filters.push(`atempo=${remaining.toFixed(3).replace(/0+$/, '').replace(/\.$/, '')}`);
+  return filters.join(',');
+}
+
 function buildCommand(inputNames: string[], outputName: string, options: ProcessAudioOptions): string[] {
   const bitrate = `${options.bitrateKbps ?? (options.mode === 'compress' ? DEFAULT_COMPRESS_BITRATE : DEFAULT_MP3_BITRATE)}k`;
 
@@ -175,6 +223,75 @@ function buildCommand(inputNames: string[], outputName: string, options: Process
 
   if (options.mode === 'to-wav' || options.targetFormat === 'wav') {
     return ['-i', inputNames[0], '-vn', '-acodec', 'pcm_s16le', '-ar', '44100', '-ac', '2', outputName];
+  }
+
+  if (options.mode === 'volume') {
+    const gain = clampNumber(options.volumeGain, MIN_VOLUME_GAIN, MAX_VOLUME_GAIN, 1);
+    return [
+      '-i',
+      inputNames[0],
+      '-vn',
+      '-filter:a',
+      `volume=${gain}`,
+      '-codec:a',
+      'libmp3lame',
+      '-b:a',
+      bitrate,
+      outputName,
+    ];
+  }
+
+  if (options.mode === 'speed') {
+    return [
+      '-i',
+      inputNames[0],
+      '-vn',
+      '-filter:a',
+      buildAtempoFilter(options.playbackRate ?? 1),
+      '-codec:a',
+      'libmp3lame',
+      '-b:a',
+      bitrate,
+      outputName,
+    ];
+  }
+
+  if (options.mode === 'sample-rate') {
+    const sampleRate = Math.round(clampNumber(options.sampleRate, 8000, 96000, DEFAULT_SAMPLE_RATE));
+    return [
+      '-i',
+      inputNames[0],
+      '-vn',
+      '-ar',
+      String(sampleRate),
+      '-codec:a',
+      'libmp3lame',
+      '-b:a',
+      bitrate,
+      outputName,
+    ];
+  }
+
+  if (options.mode === 'remove-silence') {
+    const threshold = clampNumber(
+      options.silenceThresholdDb,
+      MIN_SILENCE_THRESHOLD_DB,
+      MAX_SILENCE_THRESHOLD_DB,
+      -45
+    );
+    const duration = clampNumber(options.silenceDuration, MIN_SILENCE_DURATION, MAX_SILENCE_DURATION, 0.3);
+    return [
+      '-i',
+      inputNames[0],
+      '-vn',
+      '-af',
+      `silenceremove=start_periods=1:start_duration=${duration}:start_threshold=${threshold}dB:stop_periods=-1:stop_duration=${duration}:stop_threshold=${threshold}dB`,
+      '-codec:a',
+      'libmp3lame',
+      '-b:a',
+      bitrate,
+      outputName,
+    ];
   }
 
   return [
@@ -251,7 +368,17 @@ export async function processAudioFiles(
           ? 'trimmed'
           : options.mode === 'merge'
             ? 'merged'
-            : outputFormat;
+            : options.mode === 'volume'
+              ? 'volume'
+              : options.mode === 'speed'
+                ? 'speed'
+                : options.mode === 'sample-rate'
+                  ? 'sample-rate'
+                  : options.mode === 'bitrate'
+                    ? 'bitrate'
+                    : options.mode === 'remove-silence'
+                      ? 'no-silence'
+                      : outputFormat;
 
     return {
       ok: true,

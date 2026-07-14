@@ -433,6 +433,54 @@ export const toolRegistry: ToolMeta[] = [
     featured: true,
   },
   {
+    id: 'audio-volume',
+    name: '修改音量',
+    description: '调整音频音量大小并在浏览器本地导出 MP3',
+    path: '/audio/volume',
+    icon: 'VOL',
+    category: 'convert',
+  },
+  {
+    id: 'audio-speed',
+    name: '修改播放速度',
+    description: '改变音频播放速度并在浏览器本地导出 MP3',
+    path: '/audio/speed',
+    icon: 'SPD',
+    category: 'convert',
+  },
+  {
+    id: 'audio-sample-rate',
+    name: '修改采样率',
+    description: '将音频重新采样为指定采样率并导出 MP3',
+    path: '/audio/sample-rate',
+    icon: 'AR',
+    category: 'convert',
+  },
+  {
+    id: 'audio-bitrate',
+    name: '调整比特率',
+    description: '按指定 MP3 比特率重新编码音频文件',
+    path: '/audio/bitrate',
+    icon: 'BR',
+    category: 'convert',
+  },
+  {
+    id: 'audio-remove-silence',
+    name: '去除静音',
+    description: '自动裁掉音频中的静音和空白片段并导出 MP3',
+    path: '/audio/remove-silence',
+    icon: 'SIL',
+    category: 'convert',
+  },
+  {
+    id: 'audio-tts',
+    name: '文字转语音',
+    description: '使用浏览器本地语音合成朗读输入文字',
+    path: '/audio/tts',
+    icon: 'TTS',
+    category: 'convert',
+  },
+  {
     id: 'text-word-count',
     name: '字数统计',
     description: '统计文本字数、词数、行数、段落、句子和字节大小',
@@ -634,6 +682,22 @@ export const toolRegistry: ToolMeta[] = [
     category: 'encode',
   },
   {
+    id: 'whiteboard',
+    name: '白板工具',
+    description: '使用开源 Excalidraw 在浏览器本地绘制、书写、画图形、插入图片并导出白板',
+    path: '/other/whiteboard',
+    icon: 'WBD',
+    category: 'format',
+  },
+  {
+    id: 'mind-map',
+    name: '思维导图',
+    description: '使用开源 Mind Elixir 直接编辑思维导图，并可导出 Markdown 大纲',
+    path: '/other/mind-map',
+    icon: 'MAP',
+    category: 'format',
+  },
+  {
     id: 'jwt',
     name: 'JWT 解析',
     description: '解码 JWT Token，查看 Header / Payload，支持 HS256 签名验证',
@@ -702,6 +766,11 @@ export function getInfoCodecTools(): ToolMeta[] {
   return toolRegistry.filter((tool) => tool.path.startsWith('/info-codec'));
 }
 
+/** 获取其他工具集合 */
+export function getOtherTools(): ToolMeta[] {
+  return toolRegistry.filter((tool) => tool.path.startsWith('/other/'));
+}
+
 function isNonJsonTopLevelTool(tool: ToolMeta): boolean {
   return (
     tool.path.startsWith('/image/') ||
@@ -711,7 +780,8 @@ function isNonJsonTopLevelTool(tool: ToolMeta): boolean {
     tool.path.startsWith('/text/') ||
     tool.path.startsWith('/audio/') ||
     tool.path.startsWith('/qr-code/') ||
-    tool.path.startsWith('/info-codec')
+    tool.path.startsWith('/info-codec') ||
+    tool.path.startsWith('/other/')
   );
 }
 

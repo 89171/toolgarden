@@ -6,7 +6,13 @@ export type AudioToolMode =
   | 'trim'
   | 'compress'
   | 'recorder'
-  | 'transcribe';
+  | 'transcribe'
+  | 'volume'
+  | 'speed'
+  | 'sample-rate'
+  | 'bitrate'
+  | 'remove-silence'
+  | 'tts';
 
 export type AudioOutputFormat = 'mp3' | 'wav' | 'webm';
 
@@ -42,6 +48,9 @@ export type AudioProcessingErrorCode =
   | 'invalid_range'
   | 'recorder_unsupported'
   | 'microphone_denied'
+  | 'tts_unsupported'
+  | 'empty_text'
+  | 'invalid_value'
   | 'processing_failed'
   | 'model_failed';
 

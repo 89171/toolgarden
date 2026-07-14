@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import Script from 'next/script';
 import { NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -80,6 +81,9 @@ export default async function LocaleLayout({
   return (
     <html lang={normalizedLocale}>
       <head>
+        <Script id="excalidraw-asset-path" strategy="beforeInteractive">
+          {`window.EXCALIDRAW_ASSET_PATH = '/excalidraw/';`}
+        </Script>
         <meta name="baidu-site-verification" content="codeva-zyi03tAgf4" />
         {googleEnabled ? (
           <>

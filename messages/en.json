@@ -1617,6 +1617,10 @@
     "qr_tools": "QR tools",
     "text_tools": "Text tools",
     "subtitle_tools": "Subtitle tools",
+    "other_tools": "Other tools",
+    "more": "More",
+    "menu": "Menu",
+    "close_menu": "Close",
     "blog": "Blog",
     "github": "GitHub"
   },
@@ -1648,8 +1652,21 @@
     "drop_video_hint": "Supports video formats such as MP4, MOV, WebM, MKV, AVI, and MPEG, then extracts the audio track.",
     "drop_multiple_hint": "Choose audio files multiple times to append them. The tool concatenates the list order into one MP3.",
     "bitrate_label": "MP3 bitrate",
+    "volume_label": "Volume",
+    "speed_label": "Playback speed",
+    "sample_rate_label": "Sample rate",
+    "silence_threshold_label": "Silence threshold",
+    "silence_duration_label": "Minimum silence duration",
     "start_seconds": "Start time (seconds)",
     "end_seconds": "End time (seconds)",
+    "tts_input_title": "Text to speech",
+    "tts_placeholder": "Enter text to read aloud...",
+    "tts_voice_label": "Voice",
+    "tts_default_voice": "Browser default voice",
+    "tts_rate_label": "Rate",
+    "tts_pitch_label": "Pitch",
+    "tts_volume_label": "Speech volume",
+    "tts_speaking": "Speaking",
     "processing": "Processing...",
     "clear": "Clear",
     "download_output": "Download result",
@@ -1673,6 +1690,13 @@
       "trim": "Trim audio",
       "compress": "Compress audio",
       "transcribe": "Transcribe",
+      "volume": "Adjust volume",
+      "speed": "Adjust speed",
+      "sample_rate": "Change sample rate",
+      "bitrate": "Adjust bitrate",
+      "remove_silence": "Remove silence",
+      "speak": "Speak",
+      "stop_speaking": "Stop speaking",
       "export_recording": "Export MP3"
     },
     "stages": {
@@ -1691,9 +1715,74 @@
       "invalid_range": "End time must be greater than start time.",
       "recorder_unsupported": "This browser does not support online recording. Try the latest Chrome, Edge, or Safari.",
       "microphone_denied": "Microphone access failed. Allow microphone permission in the browser address bar and try again.",
+      "tts_unsupported": "This browser does not support text to speech. Try the latest Chrome, Edge, or Safari.",
+      "empty_text": "Enter text to read aloud.",
+      "invalid_value": "A parameter value is invalid. Adjust it and try again.",
       "processing_failed": "Audio processing failed. Try another file or a smaller file.",
       "model_failed": "Audio transcription failed."
     }
+  },
+  "whiteboard_tool": {
+    "canvas_title": "Whiteboard",
+    "draw": "Draw",
+    "select": "Select",
+    "clear": "Clear",
+    "export_png": "Export PNG",
+    "fullscreen": "Fullscreen",
+    "exit_fullscreen": "Exit fullscreen",
+    "color": "Color",
+    "stroke_width": "Stroke",
+    "canvas_label": "Whiteboard canvas",
+    "local_note": "The board is edited locally in your browser. Use the built-in menu to import, save, and export PNG, SVG, or Excalidraw files."
+  },
+  "mind_map_tool": {
+    "input_title": "Markdown outline",
+    "preview_title": "Mind map",
+    "canvas_label": "Mind map editor canvas",
+    "markdown_title": "Markdown outline",
+    "placeholder": "Enter Markdown headings and lists...",
+    "fit": "Fit view",
+    "new_map": "New",
+    "reset_sample": "Reset sample",
+    "add_child": "Child topic",
+    "add_sibling": "Sibling topic",
+    "edit_node": "Edit",
+    "delete_node": "Delete",
+    "create_summary": "Summary",
+    "focus_node": "Focus",
+    "exit_focus": "Exit focus",
+    "link_node": "Link",
+    "link_bidirectional": "Two-way link",
+    "cancel_link": "Cancel link",
+    "undo": "Undo",
+    "redo": "Redo",
+    "layout_group": "Layout",
+    "layout_left": "Left",
+    "layout_side": "Both sides",
+    "layout_right": "Right",
+    "fullscreen": "Fullscreen",
+    "exit_fullscreen": "Exit fullscreen",
+    "show_markdown": "Markdown",
+    "hide_markdown": "Hide outline",
+    "import_markdown": "Apply outline",
+    "import_json": "Import JSON",
+    "export_json": "Export JSON",
+    "export_svg": "Export SVG",
+    "export_png": "Export PNG",
+    "export_html": "Export HTML",
+    "export_markdown": "Export Markdown",
+    "rendering": "Rendering",
+    "render_error": "Mind map rendering failed.",
+    "import_error": "Mind map import failed.",
+    "export_error": "Mind map export failed.",
+    "selected_topic": "Selected: {topic} ({count})",
+    "no_selection": "No node selected",
+    "link_hint": "Link mode: click another node to create a connection",
+    "keyboard_hint": "Drag blank canvas · Double-click edit · Tab child · Enter sibling · Delete remove",
+    "edit_hint": "Double-click a node to edit text, drag nodes to reorganize the map, and drag blank canvas to pan the view. Right-click a node to add, remove, move, focus, summarize, or create links.",
+    "default_root": "Central topic",
+    "new_topic": "New node",
+    "sample_markdown": "# Product plan\n\n## Goals\n- Clarify the user problem\n- Keep the interface simple\n- Prefer local processing\n\n## Features\n- Capture ideas quickly\n- Break down tasks\n- Mark next steps\n\n## Release\n- Review content\n- Share or screenshot"
   },
   "image_hub": {
     "title": "Image tools",
@@ -1705,8 +1794,8 @@
   },
   "audio_hub": {
     "title": "Audio tools",
-    "meta_title": "Free Online Audio Tools - MP3, WAV, Extract Audio from Video, Merge, Trim, Compress, Recorder, and Transcription",
-    "description": "Free online audio tools for MP3 conversion, WAV conversion, extracting audio from video, audio merge, audio trim, audio compression, microphone recording, and audio-to-text transcription. Conversion, trimming, merging, compression, and recording export run locally in your browser, while transcription can load an open-source Whisper model in the browser.",
+    "meta_title": "Free Online Audio Tools - MP3, WAV, Extract Audio, Merge, Trim, Compress, Recorder, Transcription, and TTS",
+    "description": "Free online audio tools for MP3 conversion, WAV conversion, extracting audio from video, audio merge, audio trim, audio compression, microphone recording, audio-to-text transcription, volume changes, playback speed changes, sample rate changes, bitrate adjustment, silence removal, and text to speech. Conversion, trimming, merging, compression, and audio editing run locally in your browser, while transcription can load an open-source Whisper model in the browser.",
     "all_tools": "Audio tools",
     "breadcrumb": "Audio tools",
     "privacy_note": "Audio and video are processed locally in your browser first; FFmpeg WASM and transcription model files are downloaded only when needed."
@@ -1734,6 +1823,14 @@
     "all_tools": "Text tools",
     "breadcrumb": "Text tools",
     "privacy_note": "Text is processed locally in your browser and is not uploaded to a server."
+  },
+  "other_hub": {
+    "title": "Other tools",
+    "meta_title": "Free Online Other Tools - Whiteboard and Mind Map",
+    "description": "A simple collection of online tools for local whiteboard sketching and Markdown mind maps, built with mature open-source libraries and running in your browser.",
+    "all_tools": "Other tools",
+    "breadcrumb": "Other tools",
+    "privacy_note": "Whiteboard and mind map content is processed locally in your browser and is not uploaded to a server."
   },
   "json_hub": {
     "title": "JSON Toolkit",
@@ -1803,6 +1900,14 @@
     "encode": "Encode / Decode"
   },
   "tools": {
+    "whiteboard": {
+      "name": "Whiteboard",
+      "description": "Draw, write, create shapes, insert images, and export a local whiteboard with the open-source Excalidraw editor"
+    },
+    "mind-map": {
+      "name": "Mind Map",
+      "description": "Edit mind maps directly with the open-source Mind Elixir library and export a Markdown outline"
+    },
     "json-format": {
       "name": "JSON Formatter",
       "description": "Free online JSON / JSONC / JSON5 formatter to format, minify, and validate data with comments, trailing commas, tree view, and node operations",
@@ -2087,6 +2192,30 @@
     "audio-to-text": {
       "name": "Audio to text",
       "description": "Free online audio transcription tool that loads an open-source Whisper model in the browser and converts speech to text"
+    },
+    "audio-volume": {
+      "name": "Change volume",
+      "description": "Free online tool to adjust audio volume and export MP3 locally in your browser"
+    },
+    "audio-speed": {
+      "name": "Change playback speed",
+      "description": "Free online tool to change audio playback speed and export MP3 locally in your browser"
+    },
+    "audio-sample-rate": {
+      "name": "Change sample rate",
+      "description": "Free online tool to resample audio to a selected sample rate and export MP3"
+    },
+    "audio-bitrate": {
+      "name": "Adjust bitrate",
+      "description": "Free online tool to re-encode audio with a selected MP3 bitrate"
+    },
+    "audio-remove-silence": {
+      "name": "Remove silence",
+      "description": "Free online tool to automatically trim silence and blank sections from audio and export MP3"
+    },
+    "audio-tts": {
+      "name": "Text to speech",
+      "description": "Free online tool to read text aloud with browser-local speech synthesis"
     },
     "text-word-count": {
       "name": "Word Count",

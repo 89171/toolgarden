@@ -28,6 +28,7 @@ import {
   getImageTools,
   getJsonTools,
   getLocalizedToolPath,
+  getOtherTools,
   getPdfTools,
   getTextTools,
   getToolById,
@@ -216,6 +217,30 @@ export function createTextHubMetadata(locale: string): Metadata {
     },
     openGraph: {
       title: `${m.text_hub.title} | ${m.home.title}`,
+      description: seoDescription,
+      type: 'website',
+      locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
+      siteName: m.home.title,
+      url: getLocalizedPath(normalizedLocale, path),
+    },
+  };
+}
+
+export function createOtherHubMetadata(locale: string): Metadata {
+  const normalizedLocale = normalizeLocale(locale);
+  const m = getLocaleMessages(normalizedLocale);
+  const path = '/other';
+  const seoDescription = createPrivacySeoDescription(m.other_hub.description, normalizedLocale);
+
+  return {
+    title: m.other_hub.meta_title,
+    description: seoDescription,
+    alternates: {
+      canonical: getLocalizedPath(normalizedLocale, path),
+      languages: getLanguageAlternates(path),
+    },
+    openGraph: {
+      title: `${m.other_hub.title} | ${m.home.title}`,
       description: seoDescription,
       type: 'website',
       locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
@@ -465,6 +490,28 @@ export function createTextToolItemListJsonLd(locale: string) {
     name: m.text_hub.title,
     description: createPrivacySeoDescription(m.text_hub.description, normalizedLocale),
     itemListElement: getTextTools().map((tool, index) => {
+      const localizedTool = m.tools[tool.id as ToolMessageId];
+      return {
+        '@type': 'ListItem',
+        position: index + 1,
+        url: getLocalizedUrl(normalizedLocale, tool.path),
+        name: localizedTool.name,
+        description: createToolSeoDescription(localizedTool.description, normalizedLocale),
+      };
+    }),
+  };
+}
+
+export function createOtherToolItemListJsonLd(locale: string) {
+  const normalizedLocale = normalizeLocale(locale);
+  const m = getLocaleMessages(normalizedLocale);
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: m.other_hub.title,
+    description: createPrivacySeoDescription(m.other_hub.description, normalizedLocale),
+    itemListElement: getOtherTools().map((tool, index) => {
       const localizedTool = m.tools[tool.id as ToolMessageId];
       return {
         '@type': 'ListItem',

@@ -135,6 +135,7 @@ export interface JsonLdMessages {
   pdf_hub?: { breadcrumb: string };
   file_merge_hub?: { breadcrumb: string };
   text_hub?: { breadcrumb: string };
+  other_hub?: { breadcrumb: string };
   tools: Record<string, LocalizedTool>;
   tool_faq?: Record<string, { items?: Array<{ question: string; answer: string }> }>;
 }
@@ -185,6 +186,7 @@ export function buildBreadcrumbJsonLd(toolId: string, locale: string, messages: 
     if (tool.path.startsWith('/pdf/')) return { key: 'pdf_hub' as const, path: '/pdf' };
     if (tool.path.startsWith('/file-merge/')) return { key: 'file_merge_hub' as const, path: '/file-merge' };
     if (tool.path.startsWith('/text/')) return { key: 'text_hub' as const, path: '/text' };
+    if (tool.path.startsWith('/other/')) return { key: 'other_hub' as const, path: '/other' };
     return null;
   })();
 

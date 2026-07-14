@@ -32,7 +32,8 @@ interface OutputState {
   durationMs: number;
 }
 
-const bitrateOptions = [64, 96, 128, 192, 256, 320];
+const bitrateOptions = [32, 48, 64, 96, 128, 160, 192, 256, 320];
+const sampleRateOptions = [8000, 11025, 16000, 22050, 32000, 44100, 48000, 96000];
 
 function downloadUrl(url: string, filename: string) {
   const anchor = document.createElement('a');
@@ -74,19 +75,48 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
   const [output, setOutput] = useState<OutputState | null>(null);
   const [transcript, setTranscript] = useState('');
   const [bitrate, setBitrate] = useState(mode === 'compress' ? 96 : 192);
+  const [volumeGain, setVolumeGain] = useState(1);
+  const [playbackRate, setPlaybackRate] = useState(1);
+  const [sampleRate, setSampleRate] = useState(44100);
+  const [silenceThresholdDb, setSilenceThresholdDb] = useState(-45);
+  const [silenceDuration, setSilenceDuration] = useState(0.3);
   const [startSeconds, setStartSeconds] = useState(0);
   const [endSeconds, setEndSeconds] = useState(30);
   const [recordingState, setRecordingState] = useState<'idle' | 'recording' | 'ready'>('idle');
   const [recording, setRecording] = useState<{ blob: Blob; url: string; filename: string } | null>(null);
+  const [ttsText, setTtsText] = useState('');
+  const [ttsRate, setTtsRate] = useState(1);
+  const [ttsPitch, setTtsPitch] = useState(1);
+  const [ttsVolume, setTtsVolume] = useState(1);
+  const [ttsVoiceUri, setTtsVoiceUri] = useState('');
+  const [ttsVoices, setTtsVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
   const isMerge = mode === 'merge';
   const isRecorder = mode === 'recorder';
   const isTranscribe = mode === 'transcribe';
   const isExtract = mode === 'extract';
   const isTrim = mode === 'trim';
+  const isTts = mode === 'tts';
+  const isStandalone = isRecorder || isTts;
+  const usesBitrate = [
+    'to-mp3',
+    'compress',
+    'merge',
+    'trim',
+    'volume',
+    'speed',
+    'sample-rate',
+    'bitrate',
+    'remove-silence',
+  ].includes(mode);
   const targetFormat: AudioOutputFormat = mode === 'to-wav' ? 'wav' : 'mp3';
   const accept = getAudioAcceptValue(isExtract);
-  const canRun = isRecorder ? Boolean(recording) : files.length > 0 && !isProcessing;
+  const canRun = isRecorder
+    ? Boolean(recording)
+    : isTts
+      ? ttsText.trim().length > 0 && !isSpeaking
+      : files.length > 0 && !isProcessing;
 
   const uploadTitle = useMemo(() => {
     if (isExtract) return t('upload_video_title');
@@ -102,6 +132,12 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
     if (mode === 'trim') return t('actions.trim');
     if (mode === 'compress') return t('actions.compress');
     if (mode === 'transcribe') return t('actions.transcribe');
+    if (mode === 'volume') return t('actions.volume');
+    if (mode === 'speed') return t('actions.speed');
+    if (mode === 'sample-rate') return t('actions.sample_rate');
+    if (mode === 'bitrate') return t('actions.bitrate');
+    if (mode === 'remove-silence') return t('actions.remove_silence');
+    if (mode === 'tts') return t('actions.speak');
     return t('actions.export_recording');
   }, [mode, t]);
 
@@ -123,6 +159,12 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
         return t('errors.recorder_unsupported');
       case 'microphone_denied':
         return t('errors.microphone_denied');
+      case 'tts_unsupported':
+        return t('errors.tts_unsupported');
+      case 'empty_text':
+        return t('errors.empty_text');
+      case 'invalid_value':
+        return t('errors.invalid_value');
       case 'model_failed':
         return processingError.detail
           ? `${t('errors.model_failed')} ${processingError.detail}`
@@ -150,6 +192,24 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
     streamRef.current?.getTracks().forEach((track) => track.stop());
   }, [output, recording]);
 
+  useEffect(() => {
+    if (!isTts || typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+
+    const updateVoices = () => {
+      const voices = window.speechSynthesis.getVoices();
+      setTtsVoices(voices);
+      setTtsVoiceUri((current) => current || voices[0]?.voiceURI || '');
+    };
+
+    updateVoices();
+    window.speechSynthesis.addEventListener('voiceschanged', updateVoices);
+
+    return () => {
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.removeEventListener('voiceschanged', updateVoices);
+    };
+  }, [isTts]);
+
   const setSelectedFiles = useCallback((nextFiles: FileList | File[]) => {
     const selected = Array.from(nextFiles);
     if (selected.length === 0) return;
@@ -175,7 +235,7 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
   }, [clearOutput]);
 
   const runTool = useCallback(async () => {
-    if (mode === 'recorder') return;
+    if (mode === 'recorder' || mode === 'tts') return;
 
     setIsProcessing(true);
     clearOutput();
@@ -203,6 +263,11 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
         bitrateKbps: bitrate,
         startSeconds,
         endSeconds,
+        volumeGain,
+        playbackRate,
+        sampleRate,
+        silenceThresholdDb,
+        silenceDuration,
         onProgress: setProgress,
       });
 
@@ -221,7 +286,22 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
     } finally {
       setIsProcessing(false);
     }
-  }, [bitrate, clearOutput, endSeconds, files, getErrorMessage, mode, startSeconds, t, targetFormat]);
+  }, [
+    bitrate,
+    clearOutput,
+    endSeconds,
+    files,
+    getErrorMessage,
+    mode,
+    playbackRate,
+    sampleRate,
+    silenceDuration,
+    silenceThresholdDb,
+    startSeconds,
+    t,
+    targetFormat,
+    volumeGain,
+  ]);
 
   const exportRecording = useCallback(async () => {
     if (!recording) return;
@@ -298,6 +378,44 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
     mediaRecorderRef.current = null;
   }, []);
 
+  const speakTts = useCallback(() => {
+    const text = ttsText.trim();
+    if (!text) {
+      setError(getErrorMessage({ ok: false, code: 'empty_text' }));
+      return;
+    }
+
+    if (typeof window === 'undefined' || !('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') {
+      setError(getErrorMessage({ ok: false, code: 'tts_unsupported' }));
+      return;
+    }
+
+    clearOutput();
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    const voice = ttsVoices.find((item) => item.voiceURI === ttsVoiceUri);
+    if (voice) utterance.voice = voice;
+    utterance.rate = ttsRate;
+    utterance.pitch = ttsPitch;
+    utterance.volume = ttsVolume;
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => {
+      setIsSpeaking(false);
+      setError(getErrorMessage({ ok: false, code: 'processing_failed' }));
+    };
+
+    setError('');
+    window.speechSynthesis.speak(utterance);
+  }, [clearOutput, getErrorMessage, ttsPitch, ttsRate, ttsText, ttsVoiceUri, ttsVoices, ttsVolume]);
+
+  const stopTts = useCallback(() => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+    setIsSpeaking(false);
+  }, []);
+
   const onDrop = useCallback((event: React.DragEvent<HTMLLabelElement>) => {
     event.preventDefault();
     setDragging(false);
@@ -327,10 +445,93 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
     <ToolLayout toolId={toolId}>
       <div className={[
         'grid min-h-0 flex-grow gap-4',
-        isRecorder ? 'lg:grid-cols-1' : 'lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]',
+        isStandalone ? 'lg:grid-cols-1' : 'lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]',
       ].join(' ')}>
-        <Panel title={isRecorder ? t('record_title') : uploadTitle}>
-          {isRecorder ? (
+        <Panel title={isRecorder ? t('record_title') : isTts ? t('tts_input_title') : uploadTitle}>
+          {isTts ? (
+            <div className="flex flex-col gap-4">
+              <textarea
+                value={ttsText}
+                onChange={(event) => setTtsText(event.target.value)}
+                placeholder={t('tts_placeholder')}
+                className="min-h-56 resize-y rounded border border-border-input bg-surface-raised p-3 text-sm leading-6 text-content-secondary placeholder:text-content-faint focus:outline-none focus:ring-2 focus:ring-action"
+              />
+
+              <div className="grid gap-3 rounded-lg border border-border-base bg-surface p-4 sm:grid-cols-2">
+                <label className="text-sm font-medium text-content-secondary">
+                  {t('tts_voice_label')}
+                  <select
+                    value={ttsVoiceUri}
+                    onChange={(event) => setTtsVoiceUri(event.target.value)}
+                    className="mt-2 w-full rounded border border-border-input bg-surface-raised px-3 py-2 text-sm text-content-secondary focus:outline-none focus:ring-2 focus:ring-action"
+                  >
+                    <option value="">{t('tts_default_voice')}</option>
+                    {ttsVoices.map((voice) => (
+                      <option key={voice.voiceURI} value={voice.voiceURI}>
+                        {voice.name}{voice.lang ? ` (${voice.lang})` : ''}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <label className="text-sm font-medium text-content-secondary">
+                  <span className="flex items-center justify-between gap-3">
+                    <span>{t('tts_rate_label')}</span>
+                    <span className="text-content-muted">{ttsRate.toFixed(1)}x</span>
+                  </span>
+                  <input
+                    type="range"
+                    min="0.5"
+                    max="2"
+                    step="0.1"
+                    value={ttsRate}
+                    onChange={(event) => setTtsRate(Number(event.target.value))}
+                    className="mt-3 w-full accent-action"
+                  />
+                </label>
+
+                <label className="text-sm font-medium text-content-secondary">
+                  <span className="flex items-center justify-between gap-3">
+                    <span>{t('tts_pitch_label')}</span>
+                    <span className="text-content-muted">{ttsPitch.toFixed(1)}</span>
+                  </span>
+                  <input
+                    type="range"
+                    min="0"
+                    max="2"
+                    step="0.1"
+                    value={ttsPitch}
+                    onChange={(event) => setTtsPitch(Number(event.target.value))}
+                    className="mt-3 w-full accent-action"
+                  />
+                </label>
+
+                <label className="text-sm font-medium text-content-secondary">
+                  <span className="flex items-center justify-between gap-3">
+                    <span>{t('tts_volume_label')}</span>
+                    <span className="text-content-muted">{Math.round(ttsVolume * 100)}%</span>
+                  </span>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.05"
+                    value={ttsVolume}
+                    onChange={(event) => setTtsVolume(Number(event.target.value))}
+                    className="mt-3 w-full accent-action"
+                  />
+                </label>
+              </div>
+
+              {isSpeaking && (
+                <div className="rounded-lg border border-border-base bg-surface-raised p-4 text-sm font-medium text-content-secondary">
+                  {t('tts_speaking')}
+                </div>
+              )}
+
+              {errorBlock}
+            </div>
+          ) : isRecorder ? (
             <div className="flex flex-col gap-4">
               <div className="rounded-lg border border-border-base bg-surface-raised p-4">
                 <div className="flex flex-wrap gap-2">
@@ -402,7 +603,7 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
             </label>
           )}
 
-          {files.length > 0 && !isRecorder && (
+          {files.length > 0 && !isStandalone && (
             <ul className="mt-4 flex flex-col gap-2">
               {files.map((file, index) => (
                 <li key={`${file.name}-${file.size}-${file.lastModified}-${index}`} className="rounded border border-border-subtle bg-surface-raised p-3">
@@ -452,7 +653,7 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
             </ul>
           )}
 
-          {(mode === 'to-mp3' || mode === 'compress' || mode === 'merge' || mode === 'trim') && (
+          {usesBitrate && !isStandalone && (
             <div className="mt-4 rounded-lg border border-border-base bg-surface p-4">
               <label className="text-sm font-medium text-content-secondary" htmlFor="audio-bitrate">
                 {t('bitrate_label')}
@@ -467,6 +668,101 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
                   <option key={value} value={value}>{value} kbps</option>
                 ))}
               </select>
+            </div>
+          )}
+
+          {mode === 'volume' && (
+            <div className="mt-4 rounded-lg border border-border-base bg-surface p-4">
+              <label className="text-sm font-medium text-content-secondary" htmlFor="audio-volume">
+                <span className="flex items-center justify-between gap-3">
+                  <span>{t('volume_label')}</span>
+                  <span className="text-content-muted">{Math.round(volumeGain * 100)}%</span>
+                </span>
+              </label>
+              <input
+                id="audio-volume"
+                type="range"
+                min="0"
+                max="4"
+                step="0.05"
+                value={volumeGain}
+                onChange={(event) => setVolumeGain(Number(event.target.value))}
+                className="mt-3 w-full accent-action"
+              />
+            </div>
+          )}
+
+          {mode === 'speed' && (
+            <div className="mt-4 rounded-lg border border-border-base bg-surface p-4">
+              <label className="text-sm font-medium text-content-secondary" htmlFor="audio-speed">
+                <span className="flex items-center justify-between gap-3">
+                  <span>{t('speed_label')}</span>
+                  <span className="text-content-muted">{playbackRate.toFixed(2)}x</span>
+                </span>
+              </label>
+              <input
+                id="audio-speed"
+                type="range"
+                min="0.25"
+                max="4"
+                step="0.05"
+                value={playbackRate}
+                onChange={(event) => setPlaybackRate(Number(event.target.value))}
+                className="mt-3 w-full accent-action"
+              />
+            </div>
+          )}
+
+          {mode === 'sample-rate' && (
+            <div className="mt-4 rounded-lg border border-border-base bg-surface p-4">
+              <label className="text-sm font-medium text-content-secondary" htmlFor="audio-sample-rate">
+                {t('sample_rate_label')}
+              </label>
+              <select
+                id="audio-sample-rate"
+                value={sampleRate}
+                onChange={(event) => setSampleRate(Number(event.target.value))}
+                className="mt-2 w-full rounded border border-border-input bg-surface-raised px-3 py-2 text-sm text-content-secondary focus:outline-none focus:ring-2 focus:ring-action"
+              >
+                {sampleRateOptions.map((value) => (
+                  <option key={value} value={value}>{value} Hz</option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {mode === 'remove-silence' && (
+            <div className="mt-4 grid gap-3 rounded-lg border border-border-base bg-surface p-4 sm:grid-cols-2">
+              <label className="text-sm font-medium text-content-secondary">
+                <span className="flex items-center justify-between gap-3">
+                  <span>{t('silence_threshold_label')}</span>
+                  <span className="text-content-muted">{silenceThresholdDb} dB</span>
+                </span>
+                <input
+                  type="range"
+                  min="-80"
+                  max="-10"
+                  step="1"
+                  value={silenceThresholdDb}
+                  onChange={(event) => setSilenceThresholdDb(Number(event.target.value))}
+                  className="mt-3 w-full accent-action"
+                />
+              </label>
+              <label className="text-sm font-medium text-content-secondary">
+                <span className="flex items-center justify-between gap-3">
+                  <span>{t('silence_duration_label')}</span>
+                  <span className="text-content-muted">{silenceDuration.toFixed(2)}s</span>
+                </span>
+                <input
+                  type="range"
+                  min="0.05"
+                  max="2"
+                  step="0.05"
+                  value={silenceDuration}
+                  onChange={(event) => setSilenceDuration(Number(event.target.value))}
+                  className="mt-3 w-full accent-action"
+                />
+              </label>
             </div>
           )}
 
@@ -498,7 +794,28 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
           )}
 
           <div className="mt-4 flex flex-wrap gap-2">
-            {isRecorder ? (
+            {isTts ? (
+              <>
+                <Button onClick={speakTts} disabled={!canRun}>
+                  {isSpeaking ? t('tts_speaking') : actionLabel}
+                </Button>
+                <Button variant="secondary" onClick={stopTts} disabled={!isSpeaking}>
+                  {t('actions.stop_speaking')}
+                </Button>
+                {ttsText && (
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      stopTts();
+                      setTtsText('');
+                      clearOutput();
+                    }}
+                  >
+                    {t('clear')}
+                  </Button>
+                )}
+              </>
+            ) : isRecorder ? (
               <Button onClick={exportRecording} disabled={!recording || isProcessing}>
                 {isProcessing ? t('processing') : t('actions.export_recording')}
               </Button>
@@ -507,7 +824,7 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
                 {isProcessing ? t('processing') : actionLabel}
               </Button>
             )}
-            {!isRecorder && files.length > 0 && (
+            {!isStandalone && files.length > 0 && (
               <Button
                 variant="secondary"
                 onClick={() => {
@@ -522,7 +839,7 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
           </div>
         </Panel>
 
-        {!isRecorder && (
+        {!isStandalone && (
           <Panel title={isTranscribe ? t('transcript_title') : t('output_title')}>
             <div className="flex min-h-80 flex-grow flex-col gap-4">
               {progressBlock}
