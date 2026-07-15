@@ -1050,7 +1050,64 @@
     "generate_link": "二维码生成",
     "decode_link": "二维码解码"
   },
+  "font_subset": {
+    "input_title": "字体与字符",
+    "output_title": "子集输出",
+    "clear": "清空",
+    "download": "下载字体",
+    "drop_title": "点击或拖拽字体上传",
+    "drop_hint": "支持 {formats} 字体，文件仅在浏览器本地处理",
+    "drop_action": "选择字体",
+    "characters_label": "要保留的字符",
+    "characters_placeholder": "粘贴页面实际会用到的文字，例如品牌名、按钮文案、标题和数字。",
+    "unique_count": "字符统计",
+    "unique_count_value": "去重后 {count} 个字符",
+    "load_sample": "载入示例",
+    "output_format": "输出格式",
+    "font_tables": "字体表",
+    "keep_hinting": "保留 Hinting",
+    "keep_kerning": "保留 Kerning",
+    "generate": "生成子集字体",
+    "processing": "生成中",
+    "original_size": "原始体积",
+    "output_size": "输出体积",
+    "saved_size": "节省体积",
+    "coverage": "覆盖",
+    "preview": "预览",
+    "preview_empty": "暂无预览文字",
+    "included_title": "已提取字符",
+    "missing_title": "字体中缺失",
+    "none": "无",
+    "empty_title": "等待生成子集字体",
+    "empty_body": "上传 TTF 或 WOFF 字体，输入要保留的字符，然后生成新的 TTF 或 WOFF 文件。",
+    "errors": {
+      "no_file": "请先上传 TTF 或 WOFF 字体文件。",
+      "empty_file": "文件为空，请选择有效字体。",
+      "unsupported_input": "暂不支持这种字体类型：{type}。",
+      "file_too_large": "字体文件过大，最大支持 {maxSize}。",
+      "empty_chars": "请输入至少一个要保留的字符。",
+      "parse_failed": "字体读取失败，文件可能已损坏或当前浏览器不支持。",
+      "no_glyphs": "没有从字体中找到可提取的字符，请检查输入字符或更换字体。",
+      "render_failed": "字体子集生成失败，请换一个字体重试。"
+    }
+  },
   "tool_faq": {
+    "font-subset": {
+      "items": [
+        {
+          "question": "字体提取会上传我的字体文件吗？",
+          "answer": "不会。TTF 和 WOFF 字体会在浏览器本地读取、裁剪和重新生成，文件不会上传到服务器。"
+        },
+        {
+          "question": "为什么生成后的字体可能仍然包含额外字形？",
+          "answer": "字体库会保留必要的基础字形、复合字形依赖和字体表，确保子集字体可以正常加载和渲染。"
+        },
+        {
+          "question": "可以同时输出 TTF 和 WOFF 吗？",
+          "answer": "当前每次生成一个目标格式。你可以切换输出格式后再次生成，得到对应的 TTF 或 WOFF 文件。"
+        }
+      ]
+    },
     "qr-code-generator": {
       "items": [
         {
@@ -1832,11 +1889,11 @@
   },
   "other_hub": {
     "title": "其他工具",
-    "meta_title": "其他工具 - 白板、Excalidraw画板、思维导图",
-    "description": "简洁的在线工具集合，包含 tldraw 白板、Excalidraw 画板和 Markdown 思维导图，优先使用成熟能力并在浏览器本地运行。",
+    "meta_title": "其他工具 - 字体提取、白板、Excalidraw画板、思维导图",
+    "description": "简洁的在线工具集合，包含字体提取、tldraw 白板、Excalidraw 画板和 Markdown 思维导图，优先使用成熟能力并在浏览器本地运行。",
     "all_tools": "其他工具",
     "breadcrumb": "其他工具",
-    "privacy_note": "白板、画板和思维导图内容在浏览器本地处理，不会上传到服务器。"
+    "privacy_note": "字体、白板、画板和思维导图内容在浏览器本地处理，不会上传到服务器。"
   },
   "json_hub": {
     "title": "JSON 工具包",
@@ -1906,6 +1963,10 @@
     "encode": "编解码"
   },
   "tools": {
+    "font-subset": {
+      "name": "字体提取",
+      "description": "从 TTF / WOFF 字体中提取指定字符，生成更小的 TTF 或 WOFF 子集字体"
+    },
     "whiteboard": {
       "name": "白板工具",
       "description": "使用 tldraw 在浏览器本地创建完整白板，支持图形、画笔、便签、图片、页面和导出"

@@ -200,18 +200,15 @@ function pruneDefaultLocaleRedirectExports() {
   return { redirects: routePaths.length, removedFiles };
 }
 
-function pruneBlogSegmentPrefetchFiles() {
+function pruneNextSegmentPrefetchFiles() {
   let removedFiles = 0;
 
-  for (const locale of localeSegments) {
-    const blogDir = path.join(outDir, locale, 'blog');
-    if (!fs.existsSync(blogDir)) continue;
+  for (const file of walkFiles(outDir)) {
+    const filename = path.basename(file);
 
-    for (const file of walkFiles(blogDir)) {
-      if (path.basename(file).startsWith('__next') && file.endsWith('.txt')) {
-        fs.rmSync(file);
-        removedFiles += 1;
-      }
+    if (filename.startsWith('__next') && filename.endsWith('.txt')) {
+      fs.rmSync(file);
+      removedFiles += 1;
     }
   }
 
@@ -231,7 +228,7 @@ const removedMaps = removeSourceMaps(filesBeforeCleanup);
 const updatedReferences = removeSourceMapComments(walkFiles(outDir));
 writeStaticHeaders();
 const prunedRedirectExports = pruneDefaultLocaleRedirectExports();
-const prunedBlogPrefetchFiles = pruneBlogSegmentPrefetchFiles();
+const prunedNextPrefetchFiles = pruneNextSegmentPrefetchFiles();
 const copiedPublicHtmlFiles = copyPublicRootHtmlFiles();
 
 const remainingMaps = walkFiles(outDir).filter((file) => file.endsWith('.map'));
@@ -242,5 +239,5 @@ if (remainingMaps.length > 0) {
 const exportFileCount = getExportFileCount();
 
 console.log(
-  `Hardened static export: removed ${removedMaps} source map file(s), stripped ${updatedReferences} source map reference(s), wrote out/_headers, wrote ${prunedRedirectExports.redirects} redirect(s), pruned ${prunedRedirectExports.removedFiles} redirect export file(s), pruned ${prunedBlogPrefetchFiles} blog segment prefetch file(s), copied ${copiedPublicHtmlFiles} root public HTML file(s), final file count ${exportFileCount}.`
+  `Hardened static export: removed ${removedMaps} source map file(s), stripped ${updatedReferences} source map reference(s), wrote out/_headers, wrote ${prunedRedirectExports.redirects} redirect(s), pruned ${prunedRedirectExports.removedFiles} redirect export file(s), pruned ${prunedNextPrefetchFiles} Next segment prefetch file(s), copied ${copiedPublicHtmlFiles} root public HTML file(s), final file count ${exportFileCount}.`
 );

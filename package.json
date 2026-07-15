@@ -31,6 +31,7 @@
     "fast-xml-parser": "^4.5.3",
     "fflate": "^0.8.3",
     "file-saver": "^2.0.5",
+    "fonteditor-core": "^2.6.3",
     "gif.js": "^0.2.0",
     "gifuct-js": "^2.1.2",
     "json5": "^2.2.3",

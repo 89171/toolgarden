@@ -1050,7 +1050,64 @@
     "generate_link": "QR code generator",
     "decode_link": "QR code decoder"
   },
+  "font_subset": {
+    "input_title": "Font and characters",
+    "output_title": "Subset output",
+    "clear": "Clear",
+    "download": "Download font",
+    "drop_title": "Click or drag a font here",
+    "drop_hint": "Supports {formats} fonts and processes files locally in your browser",
+    "drop_action": "Choose font",
+    "characters_label": "Characters to keep",
+    "characters_placeholder": "Paste the exact text your page uses, such as brand names, button labels, headings, and numbers.",
+    "unique_count": "Character count",
+    "unique_count_value": "{count} unique characters",
+    "load_sample": "Load sample",
+    "output_format": "Output format",
+    "font_tables": "Font tables",
+    "keep_hinting": "Keep hinting",
+    "keep_kerning": "Keep kerning",
+    "generate": "Generate subset font",
+    "processing": "Generating",
+    "original_size": "Original size",
+    "output_size": "Output size",
+    "saved_size": "Saved size",
+    "coverage": "Coverage",
+    "preview": "Preview",
+    "preview_empty": "No preview text",
+    "included_title": "Extracted characters",
+    "missing_title": "Missing from font",
+    "none": "None",
+    "empty_title": "Waiting to generate a subset font",
+    "empty_body": "Upload a TTF or WOFF font, enter the characters to keep, then generate a new TTF or WOFF file.",
+    "errors": {
+      "no_file": "Upload a TTF or WOFF font file first.",
+      "empty_file": "The file is empty. Choose a valid font.",
+      "unsupported_input": "This font type is not supported yet: {type}.",
+      "file_too_large": "The font file is too large. Maximum size is {maxSize}.",
+      "empty_chars": "Enter at least one character to keep.",
+      "parse_failed": "The font could not be read. It may be damaged or unsupported by this browser.",
+      "no_glyphs": "No matching glyphs were found in the font. Check the characters or choose another font.",
+      "render_failed": "Subset font generation failed. Try another font."
+    }
+  },
   "tool_faq": {
+    "font-subset": {
+      "items": [
+        {
+          "question": "Does Font Subset upload my font file?",
+          "answer": "No. TTF and WOFF fonts are read, subset, and regenerated locally in your browser, so files are not uploaded to a server."
+        },
+        {
+          "question": "Why can the generated font still include extra glyphs?",
+          "answer": "The font library keeps required base glyphs, composite glyph dependencies, and font tables so the subset font can load and render correctly."
+        },
+        {
+          "question": "Can I export TTF and WOFF at the same time?",
+          "answer": "The tool currently generates one target format at a time. Switch the output format and generate again to get the matching TTF or WOFF file."
+        }
+      ]
+    },
     "qr-code-generator": {
       "items": [
         {
@@ -1832,11 +1889,11 @@
   },
   "other_hub": {
     "title": "Other tools",
-    "meta_title": "Free Online Other Tools - Whiteboard, Excalidraw Board, and Mind Map",
-    "description": "A simple collection of online tools for local tldraw whiteboards, Excalidraw boards, and Markdown mind maps, built with mature libraries and running in your browser.",
+    "meta_title": "Free Online Other Tools - Font Subset, Whiteboard, Excalidraw Board, and Mind Map",
+    "description": "A simple collection of online tools for font subsetting, local tldraw whiteboards, Excalidraw boards, and Markdown mind maps, built with mature libraries and running in your browser.",
     "all_tools": "Other tools",
     "breadcrumb": "Other tools",
-    "privacy_note": "Whiteboard, board, and mind map content is processed locally in your browser and is not uploaded to a server."
+    "privacy_note": "Fonts, whiteboards, boards, and mind maps are processed locally in your browser and are not uploaded to a server."
   },
   "json_hub": {
     "title": "JSON Toolkit",
@@ -1906,6 +1963,10 @@
     "encode": "Encode / Decode"
   },
   "tools": {
+    "font-subset": {
+      "name": "Font Subset",
+      "description": "Extract selected characters from TTF / WOFF fonts and generate a smaller TTF or WOFF subset font"
+    },
     "whiteboard": {
       "name": "Whiteboard",
       "description": "Create a full local whiteboard with tldraw, including shapes, drawing, notes, images, pages, and export"

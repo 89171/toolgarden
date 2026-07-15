@@ -682,6 +682,14 @@ export const toolRegistry: ToolMeta[] = [
     category: 'encode',
   },
   {
+    id: 'font-subset',
+    name: '字体提取',
+    description: '从 TTF / WOFF 字体中提取指定字符，生成更小的 TTF 或 WOFF 子集字体',
+    path: '/other/font-subset',
+    icon: 'FNT',
+    category: 'convert',
+  },
+  {
     id: 'whiteboard',
     name: '白板工具',
     description: '使用 tldraw 在浏览器本地创建完整白板，支持图形、画笔、便签、图片、页面和导出',

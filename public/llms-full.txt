@@ -17,6 +17,860 @@ Canonical examples:
 - PDF hub: https://toolgarden.xyz/en/pdf
 - Blog article: https://toolgarden.xyz/en/blog/why-json-can-have-comments
 
+<!-- registry-tools:start -->
+## Registry Tool Reference
+
+> Generated from `lib/tools/registry.ts` and `messages/*.json` during `npm run build`. The registry is the source of truth for official tool discovery.
+
+### Format / 格式化
+
+#### JSON Formatter / JSON 格式化 (/json-format)
+- ID: `json-format`
+- Category: Format / 格式化
+- Icon label: `{}`
+- Featured: yes
+- English description: Free online JSON / JSONC / JSON5 formatter to format, minify, and validate data with comments, trailing commas, tree view, and node operations
+- Chinese description: 格式化、压缩、验证 JSON / JSONC / JSON5，支持注释、尾逗号、树形展示与节点操作
+- English URL: https://toolgarden.xyz/en/json-format
+- Chinese URL: https://toolgarden.xyz/zh/json-format
+
+#### JSON Escape / JSON 压缩转义 (/json-escape)
+- ID: `json-escape`
+- Category: Format / 格式化
+- Icon label: `\"`
+- Featured: no
+- English description: Free online JSON escape tool to minify and escape JSON / JSONC / JSON5 for embedding in strings, or unescape back
+- Chinese description: 压缩 JSON / JSONC / JSON5 并转义特殊字符，反转义还原可读格式
+- English URL: https://toolgarden.xyz/en/json-escape
+- Chinese URL: https://toolgarden.xyz/zh/json-escape
+
+#### JSON Repair / Clean / JSON 修复清洗 (/json-repair)
+- ID: `json-repair`
+- Category: Format / 格式化
+- Icon label: `FIX`
+- Featured: yes
+- English description: Free online JSONC / JSON5 repair tool for comments, trailing commas, single quotes, unquoted keys, and other common JSON issues
+- Chinese description: 修复 JSONC / JSON5 注释、尾逗号、单引号、未加引号 key 等常见 JSON 问题
+- English URL: https://toolgarden.xyz/en/json-repair
+- Chinese URL: https://toolgarden.xyz/zh/json-repair
+
+#### JSON Diff / JSON 对比 (/json-diff)
+- ID: `json-diff`
+- Category: Format / 格式化
+- Icon label: `≠`
+- Featured: no
+- English description: Free online JSON / JSONC / JSON5 diff tool to visually compare two documents, highlighting additions, removals, and changes
+- Chinese description: 可视化对比两份 JSON / JSONC / JSON5 的差异，高亮增删改
+- English URL: https://toolgarden.xyz/en/json-diff
+- Chinese URL: https://toolgarden.xyz/zh/json-diff
+
+#### Text Diff / 文本对比 (/text/diff)
+- ID: `text-diff`
+- Category: Format / 格式化
+- Icon label: `TXT`
+- Featured: yes
+- English description: Free online text diff using an open-source diff algorithm to highlight line and word changes
+- Chinese description: 使用开源 diff 算法对比两段文本差异，按行和词高亮增删改
+- English URL: https://toolgarden.xyz/en/text/diff
+- Chinese URL: https://toolgarden.xyz/zh/text/diff
+
+#### Whiteboard / 白板工具 (/other/whiteboard)
+- ID: `whiteboard`
+- Category: Format / 格式化
+- Icon label: `WBD`
+- Featured: no
+- English description: Create a full local whiteboard with tldraw, including shapes, drawing, notes, images, pages, and export
+- Chinese description: 使用 tldraw 在浏览器本地创建完整白板，支持图形、画笔、便签、图片、页面和导出
+- English URL: https://toolgarden.xyz/en/other/whiteboard
+- Chinese URL: https://toolgarden.xyz/zh/other/whiteboard
+
+#### Excalidraw Board / Excalidraw画板 (/other/excalidraw-board)
+- ID: `excalidraw-board`
+- Category: Format / 格式化
+- Icon label: `EXD`
+- Featured: no
+- English description: Draw a local hand-drawn style board with open-source Excalidraw, including shapes, text, images, and export
+- Chinese description: 使用开源 Excalidraw 在浏览器本地绘制手绘风画板，支持图形、文字、图片和导出
+- English URL: https://toolgarden.xyz/en/other/excalidraw-board
+- Chinese URL: https://toolgarden.xyz/zh/other/excalidraw-board
+
+#### Mind Map / 思维导图 (/other/mind-map)
+- ID: `mind-map`
+- Category: Format / 格式化
+- Icon label: `MAP`
+- Featured: no
+- English description: Edit mind maps directly with the open-source Mind Elixir library and export a Markdown outline
+- Chinese description: 使用开源 Mind Elixir 直接编辑思维导图，并可导出 Markdown 大纲
+- English URL: https://toolgarden.xyz/en/other/mind-map
+- Chinese URL: https://toolgarden.xyz/zh/other/mind-map
+
+### Convert / 转换
+
+#### JSON ↔ YAML / JSON ↔ YAML (/json-yaml)
+- ID: `json-yaml`
+- Category: Convert / 转换
+- Icon label: `YML`
+- Featured: yes
+- English description: Free online JSON to YAML and YAML to JSON converter
+- Chinese description: 完成 JSON 与 YAML 格式双向互转
+- English URL: https://toolgarden.xyz/en/json-yaml
+- Chinese URL: https://toolgarden.xyz/zh/json-yaml
+
+#### JSON ↔ XML / JSON ↔ XML (/json-xml)
+- ID: `json-xml`
+- Category: Convert / 转换
+- Icon label: `XML`
+- Featured: no
+- English description: Free online JSON to XML and XML to JSON converter
+- Chinese description: 完成 JSON 与 XML 格式双向互转
+- English URL: https://toolgarden.xyz/en/json-xml
+- Chinese URL: https://toolgarden.xyz/zh/json-xml
+
+#### JSON → CSV / JSON → CSV (/json-to-csv)
+- ID: `json-to-csv`
+- Category: Convert / 转换
+- Icon label: `CSV`
+- Featured: no
+- English description: Free online tool to export a JSON / JSONC / JSON5 array as a CSV file
+- Chinese description: 将 JSON / JSONC / JSON5 数组导出为 CSV 文件
+- English URL: https://toolgarden.xyz/en/json-to-csv
+- Chinese URL: https://toolgarden.xyz/zh/json-to-csv
+
+#### JSON → Excel / JSON → Excel (/json-to-excel)
+- ID: `json-to-excel`
+- Category: Convert / 转换
+- Icon label: `XLS`
+- Featured: no
+- English description: Free online tool to export a JSON / JSONC / JSON5 array as an Excel (.xlsx) file with multi-level fields flattened automatically
+- Chinese description: 将 JSON / JSONC / JSON5 数组导出为 Excel (.xlsx) 文件，支持多层属性自动展开
+- English URL: https://toolgarden.xyz/en/json-to-excel
+- Chinese URL: https://toolgarden.xyz/zh/json-to-excel
+
+#### Excel → JSON / Excel → JSON (/excel-to-json)
+- ID: `excel-to-json`
+- Category: Convert / 转换
+- Icon label: `XLS`
+- Featured: no
+- English description: Free online tool to read an Excel (.xlsx/.xls) file and convert it to a JSON array, restoring multi-level fields with >
+- Chinese description: 读取 Excel (.xlsx/.xls) 文件，转换为 JSON 数组，支持用 > 还原多层属性
+- English URL: https://toolgarden.xyz/en/excel-to-json
+- Chinese URL: https://toolgarden.xyz/zh/excel-to-json
+
+#### JSON → TypeScript / JSON → TypeScript (/json-to-ts)
+- ID: `json-to-ts`
+- Category: Convert / 转换
+- Icon label: `TS`
+- Featured: yes
+- English description: Free online tool to infer and generate TypeScript interface types from JSON / JSONC / JSON5
+- Chinese description: 从 JSON / JSONC / JSON5 自动推断并生成 TypeScript interface 类型
+- English URL: https://toolgarden.xyz/en/json-to-ts
+- Chinese URL: https://toolgarden.xyz/zh/json-to-ts
+
+#### JSON Flatten / Unflatten / JSON Flatten / Unflatten (/json-flatten)
+- ID: `json-flatten`
+- Category: Convert / 转换
+- Icon label: `FLT`
+- Featured: no
+- English description: Free online tool to flatten nested JSON / JSONC / JSON5 into path keys, or restore nested structures from path keys
+- Chinese description: 将嵌套 JSON / JSONC / JSON5 平铺为路径键，或从路径键还原嵌套结构
+- English URL: https://toolgarden.xyz/en/json-flatten
+- Chinese URL: https://toolgarden.xyz/zh/json-flatten
+
+#### Convert to PDF / 转为 PDF (/pdf/to-pdf)
+- ID: `pdf-to-pdf`
+- Category: Convert / 转换
+- Icon label: `PDF`
+- Featured: yes
+- English description: Free online tool to convert Word, Excel, PowerPoint, EPUB, MOBI, JPG, PNG, WebP, TXT, Markdown, and HTML to PDF
+- Chinese description: 将 Word、Excel、PowerPoint、EPUB、MOBI、JPG、PNG、WebP、TXT、Markdown、HTML 转换为 PDF
+- English URL: https://toolgarden.xyz/en/pdf/to-pdf
+- Chinese URL: https://toolgarden.xyz/zh/pdf/to-pdf
+
+#### PDF to Word / PDF 转 Word (/pdf/to-word)
+- ID: `pdf-to-word`
+- Category: Convert / 转换
+- Icon label: `DOC`
+- Featured: yes
+- English description: Free online tool to extract text from PDF files and generate editable Word DOCX documents
+- Chinese description: 从 PDF 中提取文本并生成可编辑的 Word DOCX 文档
+- English URL: https://toolgarden.xyz/en/pdf/to-word
+- Chinese URL: https://toolgarden.xyz/zh/pdf/to-word
+
+#### Merge PDF / 合并 PDF (/pdf/merge)
+- ID: `pdf-merge`
+- Category: Convert / 转换
+- Icon label: `MRG`
+- Featured: yes
+- English description: Free online PDF merger that combines multiple PDF files into one document with drag-and-drop reordering
+- Chinese description: 将多个 PDF 文件合并成一个文档，支持拖放重新排序
+- English URL: https://toolgarden.xyz/en/pdf/merge
+- Chinese URL: https://toolgarden.xyz/zh/pdf/merge
+
+#### Split PDF / 拆分 PDF (/pdf/split)
+- ID: `pdf-split`
+- Category: Convert / 转换
+- Icon label: `SPL`
+- Featured: no
+- English description: Free online PDF splitter that extracts specific pages or splits by page ranges into multiple documents
+- Chinese description: 将 PDF 文件拆分成多个文档，支持提取特定页面或按页面范围分割
+- English URL: https://toolgarden.xyz/en/pdf/split
+- Chinese URL: https://toolgarden.xyz/zh/pdf/split
+
+#### Extract pages / 提取页面 (/pdf/extract-pages)
+- ID: `pdf-extract-pages`
+- Category: Convert / 转换
+- Icon label: `EXT`
+- Featured: no
+- English description: Free online tool to extract specific pages from a PDF and save selected pages or ranges as a new document
+- Chinese description: 从 PDF 文件中提取特定页面，选择并保存单个页面或页面范围为新文档
+- English URL: https://toolgarden.xyz/en/pdf/extract-pages
+- Chinese URL: https://toolgarden.xyz/zh/pdf/extract-pages
+
+#### Organize PDF / 整理 PDF (/pdf/organize)
+- ID: `pdf-organize`
+- Category: Convert / 转换
+- Icon label: `ORG`
+- Featured: no
+- English description: Free online tool to reorder, duplicate, and delete PDF pages before exporting a new document
+- Chinese description: 重新排序、复制和删除 PDF 页面，拖放整理后导出新文档
+- English URL: https://toolgarden.xyz/en/pdf/organize
+- Chinese URL: https://toolgarden.xyz/zh/pdf/organize
+
+#### Word Merge / Word 合并 (/file-merge/word)
+- ID: `word-merge`
+- Category: Convert / 转换
+- Icon label: `DOC`
+- Featured: no
+- English description: Free online tool to merge multiple Word DOCX documents into one DOCX file locally in your browser
+- Chinese description: 将多个 Word DOCX 文档合并成一个 DOCX 文件
+- English URL: https://toolgarden.xyz/en/file-merge/word
+- Chinese URL: https://toolgarden.xyz/zh/file-merge/word
+
+#### PPT Merge / PPT 合并 (/file-merge/ppt)
+- ID: `ppt-merge`
+- Category: Convert / 转换
+- Icon label: `PPT`
+- Featured: no
+- English description: Free online tool to merge multiple PPTX presentations into one PPTX file locally in your browser
+- Chinese description: 将多个 PPTX 演示文稿合并成一个 PPTX 文件
+- English URL: https://toolgarden.xyz/en/file-merge/ppt
+- Chinese URL: https://toolgarden.xyz/zh/file-merge/ppt
+
+#### TXT Merge / TXT 合并 (/file-merge/txt)
+- ID: `txt-merge`
+- Category: Convert / 转换
+- Icon label: `TXT`
+- Featured: no
+- English description: Free online tool to merge multiple TXT files into one TXT file
+- Chinese description: 将多个 TXT 文本文件合并成一个 TXT 文件
+- English URL: https://toolgarden.xyz/en/file-merge/txt
+- Chinese URL: https://toolgarden.xyz/zh/file-merge/txt
+
+#### Markdown Merge / Markdown 合并 (/file-merge/markdown)
+- ID: `markdown-merge`
+- Category: Convert / 转换
+- Icon label: `MD`
+- Featured: no
+- English description: Free online tool to merge multiple Markdown files into one MD file
+- Chinese description: 将多个 Markdown 文件合并成一个 MD 文件
+- English URL: https://toolgarden.xyz/en/file-merge/markdown
+- Chinese URL: https://toolgarden.xyz/zh/file-merge/markdown
+
+#### CSV Merge / CSV 合并 (/file-merge/csv)
+- ID: `csv-merge`
+- Category: Convert / 转换
+- Icon label: `CSV`
+- Featured: no
+- English description: Free online tool to merge multiple CSV files by table rows into one CSV file
+- Chinese description: 将多个 CSV 文件按表格行合并成一个 CSV 文件
+- English URL: https://toolgarden.xyz/en/file-merge/csv
+- Chinese URL: https://toolgarden.xyz/zh/file-merge/csv
+
+#### RTF Merge / RTF 合并 (/file-merge/rtf)
+- ID: `rtf-merge`
+- Category: Convert / 转换
+- Icon label: `RTF`
+- Featured: no
+- English description: Free online tool to merge multiple RTF rich text files into one RTF file
+- Chinese description: 将多个 RTF 富文本文件合并成一个 RTF 文件
+- English URL: https://toolgarden.xyz/en/file-merge/rtf
+- Chinese URL: https://toolgarden.xyz/zh/file-merge/rtf
+
+#### Excel Merge / Excel 合并 (/file-merge/excel)
+- ID: `excel-merge`
+- Category: Convert / 转换
+- Icon label: `XLS`
+- Featured: no
+- English description: Free online tool to merge multiple Excel / CSV files into one Sheet or keep source Sheets in one workbook
+- Chinese description: 合并多个 Excel / CSV 文件，支持汇总到同一个 Sheet 或保留多个来源 Sheet
+- English URL: https://toolgarden.xyz/en/file-merge/excel
+- Chinese URL: https://toolgarden.xyz/zh/file-merge/excel
+
+#### Image Merge / 图片合并长图 (/file-merge/images)
+- ID: `image-merge`
+- Category: Convert / 转换
+- Icon label: `IMG`
+- Featured: no
+- English description: Free online tool to merge images into a PDF or stitch them into one long PNG
+- Chinese description: 将多张图片垂直拼接成长图 PNG，或合成为 PDF
+- English URL: https://toolgarden.xyz/en/file-merge/images
+- Chinese URL: https://toolgarden.xyz/zh/file-merge/images
+
+#### Image Compressor / 图片压缩 (/image/compress)
+- ID: `image-compress`
+- Category: Convert / 转换
+- Icon label: `ZIP`
+- Featured: yes
+- English description: Free online image compressor for JPG, PNG, WebP, and other images locally in your browser, preserving the original format by default with optional WebP output
+- Chinese description: 智能压缩 JPG、PNG、WebP 等图片，默认保持原格式，也可选择输出 WebP
+- English URL: https://toolgarden.xyz/en/image/compress
+- Chinese URL: https://toolgarden.xyz/zh/image/compress
+
+#### Image Upscale / 图片无损放大 (/image/upscale)
+- ID: `image-upscale`
+- Category: Convert / 转换
+- Icon label: `2X`
+- Featured: yes
+- English description: Free online image upscaler for JPG, PNG, WebP, and other images at 2x, 3x, 4x, or custom dimensions with pixel-perfect, Smooth HD, and Sharp enhance modes
+- Chinese description: 将 JPG、PNG、WebP 等图片按 2x、3x、4x 或自定义尺寸放大，支持像素无损、平滑高清和清晰增强模式
+- English URL: https://toolgarden.xyz/en/image/upscale
+- Chinese URL: https://toolgarden.xyz/zh/image/upscale
+
+#### Remove image background / 图片去背景 (/image/remove-bg)
+- ID: `image-remove-bg`
+- Category: Convert / 转换
+- Icon label: `BG`
+- Featured: yes
+- English description: Free online background remover that processes images locally in your browser with an open-source model and exports a transparent PNG
+- Chinese description: 使用开源模型移除图片背景，在浏览器本地导出透明 PNG
+- English URL: https://toolgarden.xyz/en/image/remove-bg
+- Chinese URL: https://toolgarden.xyz/zh/image/remove-bg
+
+#### ID Photo Maker / 证件照制作 (/image/id-photo)
+- ID: `image-id-photo`
+- Category: Convert / 转换
+- Icon label: `ID`
+- Featured: yes
+- English description: Free online ID photo maker with China 1 inch, 2 inch, China visa, 2 x 2 inch, and custom sizes, with AI background removal, face framing, background colors, drag, and zoom
+- Chinese description: 制作证件照，支持中国 1 寸、2 寸、中国签证、2 x 2 inch 等尺寸，AI 去背景、人脸构图、底色切换和拖动缩放调整
+- English URL: https://toolgarden.xyz/en/image/id-photo
+- Chinese URL: https://toolgarden.xyz/zh/image/id-photo
+
+#### Image watermark remover / 图片去水印 (/image/remove-watermark)
+- ID: `image-remove-watermark`
+- Category: Convert / 转换
+- Icon label: `WM-`
+- Featured: yes
+- English description: Free online tool to select a watermark area, inpaint it with a local browser AI model or fast pixel repair, and export JPG, PNG, or WebP
+- Chinese description: 框选图片水印区域，使用浏览器本地 AI 模型补全或快速修复，导出 JPG、PNG 或 WebP
+- English URL: https://toolgarden.xyz/en/image/remove-watermark
+- Chinese URL: https://toolgarden.xyz/zh/image/remove-watermark
+
+#### Image watermark / 图片加水印 (/image/watermark)
+- ID: `image-watermark`
+- Category: Convert / 转换
+- Icon label: `WM+`
+- Featured: yes
+- English description: Free online tool to add text or image watermarks with drag positioning, grids, tiling, rotation, and opacity controls
+- Chinese description: 为图片添加文字或图片水印，支持拖动、九宫格定位、平铺、旋转和透明度设置
+- English URL: https://toolgarden.xyz/en/image/watermark
+- Chinese URL: https://toolgarden.xyz/zh/image/watermark
+
+#### Image editor / 图片编辑 (/image/edit)
+- ID: `image-editor`
+- Category: Convert / 转换
+- Icon label: `EDT`
+- Featured: yes
+- English description: Free online image editor for shapes, polylines, brush, marker, text, mosaic, blur, and eraser annotations
+- Chinese description: 为图片绘制形状、折线、画笔、记号笔、文字、马赛克、模糊和橡皮擦标注
+- English URL: https://toolgarden.xyz/en/image/edit
+- Chinese URL: https://toolgarden.xyz/zh/image/edit
+
+#### Image to Icon / 图片转 Icon (/image/to-icon)
+- ID: `image-to-icon`
+- Category: Convert / 转换
+- Icon label: `ICO`
+- Featured: yes
+- English description: Free online tool to turn PNG, SVG, JPG, WebP, and other images into ICO, ICNS, or multi-size PNG ZIP icons with background removal, drag scaling, corner radius, and browser previews
+- Chinese description: 将 PNG、SVG、JPG、WebP 等图片制作成 ICO、ICNS 或多尺寸 PNG ZIP 图标，支持去背景、拖拽缩放、圆角和浏览器预览
+- English URL: https://toolgarden.xyz/en/image/to-icon
+- Chinese URL: https://toolgarden.xyz/zh/image/to-icon
+
+#### Image to JPG / 图片转 JPG (/image/to-jpg)
+- ID: `image-to-jpg`
+- Category: Convert / 转换
+- Icon label: `JPG`
+- Featured: no
+- English description: Free online tool to convert PNG, WebP, GIF, BMP, SVG, AVIF, and other images to JPG locally in your browser
+- Chinese description: 将 PNG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 JPG
+- English URL: https://toolgarden.xyz/en/image/to-jpg
+- Chinese URL: https://toolgarden.xyz/zh/image/to-jpg
+
+#### Image to PNG / 图片转 PNG (/image/to-png)
+- ID: `image-to-png`
+- Category: Convert / 转换
+- Icon label: `PNG`
+- Featured: no
+- English description: Free online tool to convert JPG, WebP, GIF, BMP, SVG, AVIF, and other images to PNG locally in your browser
+- Chinese description: 将 JPG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 PNG
+- English URL: https://toolgarden.xyz/en/image/to-png
+- Chinese URL: https://toolgarden.xyz/zh/image/to-png
+
+#### Image to WebP / 图片转 WebP (/image/to-webp)
+- ID: `image-to-webp`
+- Category: Convert / 转换
+- Icon label: `WEB`
+- Featured: no
+- English description: Free online tool to convert JPG, PNG, GIF, BMP, SVG, AVIF, and other images to WebP locally in your browser
+- Chinese description: 将 JPG、PNG、GIF、BMP、SVG、AVIF 等图片转换为 WebP
+- English URL: https://toolgarden.xyz/en/image/to-webp
+- Chinese URL: https://toolgarden.xyz/zh/image/to-webp
+
+#### Image to AVIF / 图片转 AVIF (/image/to-avif)
+- ID: `image-to-avif`
+- Category: Convert / 转换
+- Icon label: `AVF`
+- Featured: no
+- English description: Free online tool to convert JPG, PNG, WebP, GIF, BMP, SVG, and other images to AVIF locally in your browser
+- Chinese description: 将 JPG、PNG、WebP、GIF、BMP、SVG 等图片转换为 AVIF
+- English URL: https://toolgarden.xyz/en/image/to-avif
+- Chinese URL: https://toolgarden.xyz/zh/image/to-avif
+
+#### Image to Base64 / 图片转 Base64 (/image/to-base64)
+- ID: `image-to-base64`
+- Category: Convert / 转换
+- Icon label: `B64`
+- Featured: no
+- English description: Free online tool to convert PNG, JPG, WebP, GIF, BMP, SVG, AVIF, and other images to Base64 Data URLs locally in your browser, with choose, drag, and Ctrl + V paste support
+- Chinese description: 将 PNG、JPG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 Base64 Data URL，支持选择、拖拽和 Ctrl + V 粘贴图片
+- English URL: https://toolgarden.xyz/en/image/to-base64
+- Chinese URL: https://toolgarden.xyz/zh/image/to-base64
+
+#### Base64 to image / Base64 转图片 (/image/base64-to-image)
+- ID: `base64-to-image`
+- Category: Convert / 转换
+- Icon label: `IMG`
+- Featured: no
+- English description: Free online tool to restore Base64 or data:image Data URLs into image files locally in your browser, with preview and download
+- Chinese description: 将 Base64 或 data:image Data URL 还原为图片文件，在浏览器本地预览并下载
+- English URL: https://toolgarden.xyz/en/image/base64-to-image
+- Chinese URL: https://toolgarden.xyz/zh/image/base64-to-image
+
+#### Image crop / 图片裁剪 (/image/crop)
+- ID: `image-crop`
+- Category: Convert / 转换
+- Icon label: `CUT`
+- Featured: no
+- English description: Free online image crop tool that runs locally in your browser with a draggable crop frame
+- Chinese description: 拖拽裁剪框，移动或调整裁剪区域后导出图片
+- English URL: https://toolgarden.xyz/en/image/crop
+- Chinese URL: https://toolgarden.xyz/zh/image/crop
+
+#### Image resize / 图片尺寸修改 (/image/resize)
+- ID: `image-resize`
+- Category: Convert / 转换
+- Icon label: `SIZ`
+- Featured: no
+- English description: Free online image resize tool that runs locally in your browser by entering a target width or height while keeping the original ratio
+- Chinese description: 按指定宽度或高度等比例缩放图片并导出
+- English URL: https://toolgarden.xyz/en/image/resize
+- Chinese URL: https://toolgarden.xyz/zh/image/resize
+
+#### Subtitle Maker / 字幕编辑器 (/subtitle-maker)
+- ID: `subtitle-maker`
+- Category: Convert / 转换
+- Icon label: `SUB`
+- Featured: yes
+- English description: Free online LRC and SRT subtitle editor with media preview, timeline calibration, and subtitle export
+- Chinese description: 编辑 LRC 和 SRT 字幕，支持媒体预览、时间轴校准和字幕导出
+- English URL: https://toolgarden.xyz/en/subtitle-maker
+- Chinese URL: https://toolgarden.xyz/zh/subtitle-maker
+
+#### Audio to MP3 / 音频转 MP3 (/audio/to-mp3)
+- ID: `audio-to-mp3`
+- Category: Convert / 转换
+- Icon label: `MP3`
+- Featured: yes
+- English description: Free online tool to convert WAV, M4A, AAC, OGG, OPUS, WebM, FLAC, and other audio files to MP3 locally in your browser
+- Chinese description: 将 WAV、M4A、AAC、OGG、OPUS、WebM、FLAC 等音频在浏览器本地转换为 MP3
+- English URL: https://toolgarden.xyz/en/audio/to-mp3
+- Chinese URL: https://toolgarden.xyz/zh/audio/to-mp3
+
+#### Audio to WAV / 音频转 WAV (/audio/to-wav)
+- ID: `audio-to-wav`
+- Category: Convert / 转换
+- Icon label: `WAV`
+- Featured: no
+- English description: Free online tool to convert MP3, M4A, AAC, OGG, OPUS, WebM, FLAC, and other audio files to WAV locally in your browser
+- Chinese description: 将 MP3、M4A、AAC、OGG、OPUS、WebM、FLAC 等音频在浏览器本地转换为 WAV
+- English URL: https://toolgarden.xyz/en/audio/to-wav
+- Chinese URL: https://toolgarden.xyz/zh/audio/to-wav
+
+#### Extract audio / 音频提取 (/audio/extract)
+- ID: `audio-extract`
+- Category: Convert / 转换
+- Icon label: `EXT`
+- Featured: yes
+- English description: Free online tool to extract audio from MP4, MOV, WebM, MKV, AVI, MPEG, and other video files as MP3
+- Chinese description: 从 MP4、MOV、WebM、MKV、AVI、MPEG 等视频中提取音频并导出 MP3
+- English URL: https://toolgarden.xyz/en/audio/extract
+- Chinese URL: https://toolgarden.xyz/zh/audio/extract
+
+#### Audio merge / 音频合并 (/audio/merge)
+- ID: `audio-merge`
+- Category: Convert / 转换
+- Icon label: `MRG`
+- Featured: no
+- English description: Free online tool to merge multiple audio files in different formats into one MP3 file
+- Chinese description: 将多个不同格式的音频文件按顺序合并为一个 MP3 文件
+- English URL: https://toolgarden.xyz/en/audio/merge
+- Chinese URL: https://toolgarden.xyz/zh/audio/merge
+
+#### Audio trim / 音频剪辑 (/audio/trim)
+- ID: `audio-trim`
+- Category: Convert / 转换
+- Icon label: `CUT`
+- Featured: no
+- English description: Free online tool to cut or trim audio by start and end time, then export the result as MP3
+- Chinese description: 按开始和结束时间剪切或修剪音频，并导出为 MP3
+- English URL: https://toolgarden.xyz/en/audio/trim
+- Chinese URL: https://toolgarden.xyz/zh/audio/trim
+
+#### Audio compressor / 音频压缩 (/audio/compress)
+- ID: `audio-compress`
+- Category: Convert / 转换
+- Icon label: `ZIP`
+- Featured: no
+- English description: Free online tool to reduce audio file size by lowering MP3 bitrate and exporting compressed audio locally in your browser
+- Chinese description: 通过降低 MP3 码率减少音频文件大小，并在浏览器本地导出压缩音频
+- English URL: https://toolgarden.xyz/en/audio/compress
+- Chinese URL: https://toolgarden.xyz/zh/audio/compress
+
+#### Voice recorder / 录音笔 (/audio/recorder)
+- ID: `audio-recorder`
+- Category: Convert / 转换
+- Icon label: `REC`
+- Featured: no
+- English description: Free online microphone recorder to capture audio in your browser, preview it locally, and export MP3
+- Chinese description: 使用麦克风在线录制音频，在浏览器本地预览并导出 MP3
+- English URL: https://toolgarden.xyz/en/audio/recorder
+- Chinese URL: https://toolgarden.xyz/zh/audio/recorder
+
+#### Audio to text / 音频转文本 (/audio/to-text)
+- ID: `audio-to-text`
+- Category: Convert / 转换
+- Icon label: `TXT`
+- Featured: yes
+- English description: Free online audio transcription tool that loads an open-source Whisper model in the browser and converts speech to text
+- Chinese description: 上传音频后在浏览器本地加载开源 Whisper 模型，将语音转写为文本
+- English URL: https://toolgarden.xyz/en/audio/to-text
+- Chinese URL: https://toolgarden.xyz/zh/audio/to-text
+
+#### Change volume / 修改音量 (/audio/volume)
+- ID: `audio-volume`
+- Category: Convert / 转换
+- Icon label: `VOL`
+- Featured: no
+- English description: Free online tool to adjust audio volume and export MP3 locally in your browser
+- Chinese description: 调整音频音量大小，并在浏览器本地导出 MP3
+- English URL: https://toolgarden.xyz/en/audio/volume
+- Chinese URL: https://toolgarden.xyz/zh/audio/volume
+
+#### Change playback speed / 修改播放速度 (/audio/speed)
+- ID: `audio-speed`
+- Category: Convert / 转换
+- Icon label: `SPD`
+- Featured: no
+- English description: Free online tool to change audio playback speed and export MP3 locally in your browser
+- Chinese description: 改变音频播放速度，并在浏览器本地导出 MP3
+- English URL: https://toolgarden.xyz/en/audio/speed
+- Chinese URL: https://toolgarden.xyz/zh/audio/speed
+
+#### Change sample rate / 修改采样率 (/audio/sample-rate)
+- ID: `audio-sample-rate`
+- Category: Convert / 转换
+- Icon label: `AR`
+- Featured: no
+- English description: Free online tool to resample audio to a selected sample rate and export MP3
+- Chinese description: 将音频重新采样为指定采样率，并导出 MP3
+- English URL: https://toolgarden.xyz/en/audio/sample-rate
+- Chinese URL: https://toolgarden.xyz/zh/audio/sample-rate
+
+#### Adjust bitrate / 调整比特率 (/audio/bitrate)
+- ID: `audio-bitrate`
+- Category: Convert / 转换
+- Icon label: `BR`
+- Featured: no
+- English description: Free online tool to re-encode audio with a selected MP3 bitrate
+- Chinese description: 按指定 MP3 比特率重新编码音频文件
+- English URL: https://toolgarden.xyz/en/audio/bitrate
+- Chinese URL: https://toolgarden.xyz/zh/audio/bitrate
+
+#### Remove silence / 去除静音 (/audio/remove-silence)
+- ID: `audio-remove-silence`
+- Category: Convert / 转换
+- Icon label: `SIL`
+- Featured: no
+- English description: Free online tool to automatically trim silence and blank sections from audio and export MP3
+- Chinese description: 自动裁掉音频中的静音和空白片段，并导出 MP3
+- English URL: https://toolgarden.xyz/en/audio/remove-silence
+- Chinese URL: https://toolgarden.xyz/zh/audio/remove-silence
+
+#### Text to speech / 文字转语音 (/audio/tts)
+- ID: `audio-tts`
+- Category: Convert / 转换
+- Icon label: `TTS`
+- Featured: no
+- English description: Free online tool to read text aloud with browser-local speech synthesis
+- Chinese description: 使用浏览器本地语音合成朗读输入文字
+- English URL: https://toolgarden.xyz/en/audio/tts
+- Chinese URL: https://toolgarden.xyz/zh/audio/tts
+
+#### Image EXIF Viewer & Cleaner / 图片 EXIF 查看 / 清除 (/image/exif)
+- ID: `image-exif`
+- Category: Convert / 转换
+- Icon label: `EXF`
+- Featured: no
+- English description: Free online image EXIF metadata viewer, or strip metadata with one click and download the cleaned image
+- Chinese description: 读取图片 EXIF 元信息，或一键抹除后导出
+- English URL: https://toolgarden.xyz/en/image/exif
+- Chinese URL: https://toolgarden.xyz/zh/image/exif
+
+#### Image OCR (Text Recognition) / 图片 OCR 文字识别 (/image/ocr)
+- ID: `image-ocr`
+- Category: Convert / 转换
+- Icon label: `OCR`
+- Featured: yes
+- English description: Free online OCR that extracts text from images with fast and high-accuracy modes for scans, screenshots, and photos
+- Chinese description: 从图片中提取文字，支持快速识别和高精度识别，适合扫描件、截图和拍照图片
+- English URL: https://toolgarden.xyz/en/image/ocr
+- Chinese URL: https://toolgarden.xyz/zh/image/ocr
+
+#### Image Rotate / Flip / 图片旋转 / 翻转 (/image/rotate)
+- ID: `image-rotate`
+- Category: Convert / 转换
+- Icon label: `ROT`
+- Featured: no
+- English description: Free online image rotate 90°, 180°, 270° and horizontal / vertical flip in the browser
+- Chinese description: 旋转 90°、180°、270°，或水平 / 垂直翻转图片
+- English URL: https://toolgarden.xyz/en/image/rotate
+- Chinese URL: https://toolgarden.xyz/zh/image/rotate
+
+#### Image Color Picker / 图片取色器 (/image/color-picker)
+- ID: `image-color-picker`
+- Category: Convert / 转换
+- Icon label: `EYE`
+- Featured: no
+- English description: Free online image color picker: upload an image and click any pixel to read HEX, RGB and HSL
+- Chinese description: 上传图片，点击任意位置读取 HEX、RGB、HSL 颜色
+- English URL: https://toolgarden.xyz/en/image/color-picker
+- Chinese URL: https://toolgarden.xyz/zh/image/color-picker
+
+#### GIF Split / Compose / GIF 分帧 / 合成 (/image/gif)
+- ID: `image-gif`
+- Category: Convert / 转换
+- Icon label: `GIF`
+- Featured: no
+- English description: Free online tool to split a GIF into per-frame PNGs, or compose multiple PNGs / JPGs into an animated GIF
+- Chinese description: 将 GIF 拆成逐帧 PNG，或把多张 PNG / JPG 合成为 GIF 动图
+- English URL: https://toolgarden.xyz/en/image/gif
+- Chinese URL: https://toolgarden.xyz/zh/image/gif
+
+#### PDF Encrypt / Decrypt / PDF 加密 / 解密 (/pdf/encrypt)
+- ID: `pdf-encrypt`
+- Category: Convert / 转换
+- Icon label: `KEY`
+- Featured: yes
+- English description: Free online PDF password protection and removal with permission restrictions, all processed in the browser
+- Chinese description: 为 PDF 设置或移除打开密码，支持权限限制
+- English URL: https://toolgarden.xyz/en/pdf/encrypt
+- Chinese URL: https://toolgarden.xyz/zh/pdf/encrypt
+
+#### PDF Watermark / PDF 加水印 (/pdf/watermark)
+- ID: `pdf-watermark`
+- Category: Convert / 转换
+- Icon label: `WMK`
+- Featured: yes
+- English description: Free online PDF watermark tool with center / tile / diagonal layout, opacity, rotation and color options
+- Chinese description: 为 PDF 添加文字水印，支持九宫格定位、平铺、对角线和透明度
+- English URL: https://toolgarden.xyz/en/pdf/watermark
+- Chinese URL: https://toolgarden.xyz/zh/pdf/watermark
+
+#### PDF to Image / PDF 转图片 (/pdf/to-image)
+- ID: `pdf-to-image`
+- Category: Convert / 转换
+- Icon label: `P2I`
+- Featured: yes
+- English description: Free online PDF to image converter that exports each page as high-resolution PNG or JPG
+- Chinese description: 将 PDF 每一页导出为高清 PNG 或 JPG
+- English URL: https://toolgarden.xyz/en/pdf/to-image
+- Chinese URL: https://toolgarden.xyz/zh/pdf/to-image
+
+#### Font Subset / 字体提取 (/other/font-subset)
+- ID: `font-subset`
+- Category: Convert / 转换
+- Icon label: `FNT`
+- Featured: no
+- English description: Extract selected characters from TTF / WOFF fonts and generate a smaller TTF or WOFF subset font
+- Chinese description: 从 TTF / WOFF 字体中提取指定字符，生成更小的 TTF 或 WOFF 子集字体
+- English URL: https://toolgarden.xyz/en/other/font-subset
+- Chinese URL: https://toolgarden.xyz/zh/other/font-subset
+
+### Validate / 验证
+
+#### Word Count / 字数统计 (/text/word-count)
+- ID: `text-word-count`
+- Category: Validate / 验证
+- Icon label: `ABC`
+- Featured: yes
+- English description: Free online text counter for characters, words, lines, paragraphs, sentences, and byte size
+- Chinese description: 统计文本字数、词数、行数、段落、句子和字节大小
+- English URL: https://toolgarden.xyz/en/text/word-count
+- Chinese URL: https://toolgarden.xyz/zh/text/word-count
+
+#### JSON Schema Generator / JSON Schema 生成 (/json-schema)
+- ID: `json-schema`
+- Category: Validate / 验证
+- Icon label: `SCH`
+- Featured: no
+- English description: Free online JSON Schema generator that automatically infers a schema from a sample JSON / JSONC / JSON5 document
+- Chinese description: 从 JSON / JSONC / JSON5 样本自动推断生成 JSON Schema 定义
+- English URL: https://toolgarden.xyz/en/json-schema
+- Chinese URL: https://toolgarden.xyz/zh/json-schema
+
+#### JSON Schema Validator / JSON Schema 校验 (/json-schema-validate)
+- ID: `json-schema-validate`
+- Category: Validate / 验证
+- Icon label: `VAL`
+- Featured: no
+- English description: Free online JSON Schema validator that checks JSON / JSONC / JSON5 data and shows error paths and reasons
+- Chinese description: 使用 JSON Schema 校验 JSON / JSONC / JSON5 数据，输出错误路径和原因
+- English URL: https://toolgarden.xyz/en/json-schema-validate
+- Chinese URL: https://toolgarden.xyz/zh/json-schema-validate
+
+#### JSONPath Query / JSONPath 查询 (/json-path)
+- ID: `json-path`
+- Category: Validate / 验证
+- Icon label: `$.`
+- Featured: no
+- English description: Free online JSONPath query tool to extract nested fields from JSON / JSONC / JSON5 using JSONPath expressions
+- Chinese description: 使用 JSONPath 表达式从 JSON / JSONC / JSON5 中精准提取嵌套字段
+- English URL: https://toolgarden.xyz/en/json-path
+- Chinese URL: https://toolgarden.xyz/zh/json-path
+
+#### JSON Stats / JSON 统计分析 (/json-stats)
+- ID: `json-stats`
+- Category: Validate / 验证
+- Icon label: `SUM`
+- Featured: no
+- English description: Free online JSON / JSONC / JSON5 statistics tool to analyze nesting depth, key count, type distribution, and size comparison
+- Chinese description: 分析 JSON / JSONC / JSON5 结构：嵌套层级、Key 数量、类型分布、体积对比
+- English URL: https://toolgarden.xyz/en/json-stats
+- Chinese URL: https://toolgarden.xyz/zh/json-stats
+
+#### Regex Tester / 正则表达式测试 (/regex)
+- ID: `regex`
+- Category: Validate / 验证
+- Icon label: `.*`
+- Featured: yes
+- English description: Free online regular expression tester with flags, named groups, highlighted matches and common templates
+- Chinese description: 正则表达式测试工具，支持 flags、命名分组、高亮匹配和常用模板
+- English URL: https://toolgarden.xyz/en/regex
+- Chinese URL: https://toolgarden.xyz/zh/regex
+
+#### Cron Expression Parser / Cron 表达式解析 (/cron)
+- ID: `cron`
+- Category: Validate / 验证
+- Icon label: `*/`
+- Featured: no
+- English description: Free online Cron expression parser that converts to human-readable text and previews the next N run times
+- Chinese description: 解析 Cron 表达式为人类可读描述，并预览下 N 次执行时间
+- English URL: https://toolgarden.xyz/en/cron
+- Chinese URL: https://toolgarden.xyz/zh/cron
+
+### Encode / Decode / 编解码
+
+#### Timestamp Converter / 时间戳转换 (/timestamp)
+- ID: `timestamp`
+- Category: Encode / Decode / 编解码
+- Icon label: `TSP`
+- Featured: yes
+- English description: Free online Unix timestamp and date converter with second, millisecond, microsecond precision and multiple time zones
+- Chinese description: Unix 时间戳与日期双向转换，支持秒、毫秒、微秒精度和多时区
+- English URL: https://toolgarden.xyz/en/timestamp
+- Chinese URL: https://toolgarden.xyz/zh/timestamp
+
+#### UUID Generator / UUID 生成 (/uuid)
+- ID: `uuid`
+- Category: Encode / Decode / 编解码
+- Icon label: `UID`
+- Featured: yes
+- English description: Free online UUID v1 / v4 / v7 and NanoID generator with batch output, case toggle and hyphen removal
+- Chinese description: 批量生成 UUID v1 / v4 / v7 和 NanoID，支持大小写切换和去连字符
+- English URL: https://toolgarden.xyz/en/uuid
+- Chinese URL: https://toolgarden.xyz/zh/uuid
+
+#### Color Converter / 颜色转换器 (/color-converter)
+- ID: `color-converter`
+- Category: Encode / Decode / 编解码
+- Icon label: `RGB`
+- Featured: yes
+- English description: Free online color format converter between HEX, RGB, HSL, HSV, CMYK with a live swatch preview
+- Chinese description: HEX、RGB、HSL、HSV、CMYK 颜色格式互转，实时预览色板
+- English URL: https://toolgarden.xyz/en/color-converter
+- Chinese URL: https://toolgarden.xyz/zh/color-converter
+
+#### URL / Query String Builder / URL / Query String 构造器 (/url-builder)
+- ID: `url-builder`
+- Category: Encode / Decode / 编解码
+- Icon label: `?=`
+- Featured: no
+- English description: Free online URL and query string parser and builder with add, edit, encode parameters and live preview
+- Chinese description: 拆解和构造 URL Query String，添加、编辑、编码参数并实时预览
+- English URL: https://toolgarden.xyz/en/url-builder
+- Chinese URL: https://toolgarden.xyz/zh/url-builder
+
+#### Info Encoder / Decoder / 信息编码转换 (/info-codec)
+- ID: `info-codec`
+- Category: Encode / Decode / 编解码
+- Icon label: `ENC`
+- Featured: yes
+- English description: Free online tool for Unicode, URL, UTF16, Base64, MD5, SHA1, hex, JWT, Cookie, Gzip, and string escaping
+- Chinese description: 处理 Unicode、URL、UTF16、Base64、MD5、SHA1、十六进制、JWT、Cookie、Gzip 和字符串转义
+- English URL: https://toolgarden.xyz/en/info-codec
+- Chinese URL: https://toolgarden.xyz/zh/info-codec
+
+#### QR Code Generator / 二维码生成 (/qr-code/generate)
+- ID: `qr-code-generator`
+- Category: Encode / Decode / 编解码
+- Icon label: `QR+`
+- Featured: no
+- English description: Free online QR code generator for URLs, text, contact data, and Wi-Fi configuration text with PNG export
+- Chinese description: 将网址、文本、联系信息或 Wi-Fi 配置文本生成二维码 PNG
+- English URL: https://toolgarden.xyz/en/qr-code/generate
+- Chinese URL: https://toolgarden.xyz/zh/qr-code/generate
+
+#### QR Code Decoder / 二维码解码 (/qr-code/decode)
+- ID: `qr-code-decoder`
+- Category: Encode / Decode / 编解码
+- Icon label: `QR?`
+- Featured: no
+- English description: Free online QR code decoder that reads uploaded images or scans your camera locally in your browser
+- Chinese description: 上传二维码图片或开启摄像头实时识别，在浏览器本地解码并复制二维码内容
+- English URL: https://toolgarden.xyz/en/qr-code/decode
+- Chinese URL: https://toolgarden.xyz/zh/qr-code/decode
+
+#### JWT Parser / JWT 解析 (/jwt)
+- ID: `jwt`
+- Category: Encode / Decode / 编解码
+- Icon label: `JWT`
+- Featured: yes
+- English description: Free online JWT parser to decode tokens, inspect Header / Payload, and verify HS256 signatures
+- Chinese description: 解码 JWT Token，查看 Header / Payload，支持 HS256 签名验证
+- English URL: https://toolgarden.xyz/en/jwt
+- Chinese URL: https://toolgarden.xyz/zh/jwt
+<!-- registry-tools:end -->
+
 ## Blog Reference
 
 ### How I Built a Fully Browser-Local Online Toolkit (/blog/how-i-built-browser-local-online-tool-site)
