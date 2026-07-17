@@ -1,7 +1,6 @@
 import * as ort from 'onnxruntime-web/wasm';
 import type {
   OcrLanguage,
-  OcrMode,
   OcrOutcome,
   OcrProgress,
   OcrProgressStage,
@@ -20,7 +19,6 @@ interface OcrWorkerRequest {
   id: string;
   type: 'recognize';
   file: OcrWorkerFile;
-  mode: OcrMode;
   language: OcrLanguage;
 }
 
@@ -35,6 +33,7 @@ interface OcrSessions {
   cls: ort.InferenceSession;
   rec: ort.InferenceSession;
   characters: string[];
+  preferredClassMasks: Record<OcrLanguage, Uint8Array>;
 }
 
 interface DetectionBox extends OcrTextBox {
@@ -82,21 +81,16 @@ const MIN_TEXT_BOX_SIDE = 5;
 const CLS_WIDTH = 192;
 const CLS_HEIGHT = 48;
 const REC_HEIGHT = 48;
-const OCR_PROFILES: Record<OcrMode, OcrWorkerProfile> = {
-  fast: {
-    detectionMaxSide: 640,
-    detectionThreshold: 0.34,
-    detectionBoxThreshold: 0.48,
-    maxTextBoxes: 32,
-    recognitionMaxWidth: 512,
-  },
-  accurate: {
-    detectionMaxSide: 960,
-    detectionThreshold: 0.3,
-    detectionBoxThreshold: 0.45,
-    maxTextBoxes: 80,
-    recognitionMaxWidth: 960,
-  },
+const CONTRAST_PERCENTILE_LOW = 0.02;
+const CONTRAST_PERCENTILE_HIGH = 0.98;
+const LANGUAGE_BIAS_MIN_RATIO = 0.72;
+const OCR_LANGUAGES: OcrLanguage[] = ['eng', 'chi_sim', 'chi_tra', 'jpn'];
+const OCR_PROFILE: OcrWorkerProfile = {
+  detectionMaxSide: 960,
+  detectionThreshold: 0.3,
+  detectionBoxThreshold: 0.45,
+  maxTextBoxes: 80,
+  recognitionMaxWidth: 960,
 };
 
 let sessionsPromise: Promise<OcrSessions> | null = null;
@@ -138,6 +132,143 @@ function normalizeInputByte(value: number, channel: number, mode: NormalizeMode)
   }
 
   return (scaled - 0.5) / 0.5;
+}
+
+function getCharacterCodePoint(character: string): number {
+  return character.codePointAt(0) ?? 0;
+}
+
+function isAsciiLetterOrDigit(character: string): boolean {
+  const codePoint = getCharacterCodePoint(character);
+  return (
+    (codePoint >= 48 && codePoint <= 57) ||
+    (codePoint >= 65 && codePoint <= 90) ||
+    (codePoint >= 97 && codePoint <= 122)
+  );
+}
+
+function isAsciiPunctuation(character: string): boolean {
+  const codePoint = getCharacterCodePoint(character);
+  return (
+    (codePoint >= 32 && codePoint <= 47) ||
+    (codePoint >= 58 && codePoint <= 64) ||
+    (codePoint >= 91 && codePoint <= 96) ||
+    (codePoint >= 123 && codePoint <= 126)
+  );
+}
+
+function isCjkCharacter(character: string): boolean {
+  const codePoint = getCharacterCodePoint(character);
+  return (
+    (codePoint >= 0x3400 && codePoint <= 0x4dbf) ||
+    (codePoint >= 0x4e00 && codePoint <= 0x9fff) ||
+    (codePoint >= 0xf900 && codePoint <= 0xfaff)
+  );
+}
+
+function isJapaneseKana(character: string): boolean {
+  const codePoint = getCharacterCodePoint(character);
+  return (
+    (codePoint >= 0x3040 && codePoint <= 0x309f) ||
+    (codePoint >= 0x30a0 && codePoint <= 0x30ff) ||
+    (codePoint >= 0xff66 && codePoint <= 0xff9f)
+  );
+}
+
+function isFullWidthPunctuation(character: string): boolean {
+  const codePoint = getCharacterCodePoint(character);
+  return (
+    (codePoint >= 0x3000 && codePoint <= 0x303f) ||
+    (codePoint >= 0xff00 && codePoint <= 0xff65)
+  );
+}
+
+function isLanguagePreferredCharacter(language: OcrLanguage, character: string): boolean {
+  if (!character || character === '#') return false;
+  if (isAsciiPunctuation(character) || isFullWidthPunctuation(character)) return true;
+
+  if (language === 'eng') {
+    return isAsciiLetterOrDigit(character);
+  }
+
+  if (language === 'jpn') {
+    return isCjkCharacter(character) || isJapaneseKana(character) || isAsciiLetterOrDigit(character);
+  }
+
+  return isCjkCharacter(character) || isAsciiLetterOrDigit(character);
+}
+
+function getRecognitionCharacter(characters: string[], classIndex: number): string {
+  return characters[classIndex] ?? characters[classIndex - 1] ?? '';
+}
+
+function createPreferredClassMasks(characters: string[]): Record<OcrLanguage, Uint8Array> {
+  const maskLength = characters.length + 1;
+  return OCR_LANGUAGES.reduce((masks, language) => {
+    const mask = new Uint8Array(maskLength);
+
+    for (let classIndex = 1; classIndex < maskLength; classIndex += 1) {
+      const character = getRecognitionCharacter(characters, classIndex);
+      mask[classIndex] = isLanguagePreferredCharacter(language, character) ? 1 : 0;
+    }
+
+    return { ...masks, [language]: mask };
+  }, {} as Record<OcrLanguage, Uint8Array>);
+}
+
+function findContrastBounds(pixels: Uint8ClampedArray): { low: number; high: number } {
+  const histogram = new Uint32Array(256);
+  const pixelCount = pixels.length / 4;
+
+  for (let pixelIndex = 0; pixelIndex < pixelCount; pixelIndex += 1) {
+    const sourceIndex = pixelIndex * 4;
+    const gray = clampInteger(
+      pixels[sourceIndex] * 0.299 + pixels[sourceIndex + 1] * 0.587 + pixels[sourceIndex + 2] * 0.114,
+      0,
+      255
+    );
+    histogram[gray] += 1;
+  }
+
+  const lowTarget = pixelCount * CONTRAST_PERCENTILE_LOW;
+  const highTarget = pixelCount * CONTRAST_PERCENTILE_HIGH;
+  let cumulative = 0;
+  let low = 0;
+  let high = 255;
+
+  for (let value = 0; value < histogram.length; value += 1) {
+    cumulative += histogram[value];
+    if (cumulative >= lowTarget) {
+      low = value;
+      break;
+    }
+  }
+
+  cumulative = 0;
+  for (let value = 0; value < histogram.length; value += 1) {
+    cumulative += histogram[value];
+    if (cumulative >= highTarget) {
+      high = value;
+      break;
+    }
+  }
+
+  return { low, high };
+}
+
+function getTextInputByte(
+  pixels: Uint8ClampedArray,
+  sourceIndex: number,
+  channel: number,
+  mode: NormalizeMode,
+  contrastBounds: { low: number; high: number } | null
+): number {
+  if (mode !== 'paddle' || !contrastBounds || contrastBounds.high - contrastBounds.low < 24) {
+    return pixels[sourceIndex + channel];
+  }
+
+  const gray = pixels[sourceIndex] * 0.299 + pixels[sourceIndex + 1] * 0.587 + pixels[sourceIndex + 2] * 0.114;
+  return clampInteger(((gray - contrastBounds.low) / (contrastBounds.high - contrastBounds.low)) * 255, 0, 255);
 }
 
 function createPreparedCanvas(
@@ -182,12 +313,25 @@ function canvasToTensor(
   const pixels = imageData.data;
   const planeSize = width * height;
   const tensorData = new Float32Array(planeSize * 3);
+  const contrastBounds = mode === 'paddle' ? findContrastBounds(pixels) : null;
 
   for (let pixelIndex = 0; pixelIndex < planeSize; pixelIndex += 1) {
     const sourceIndex = pixelIndex * 4;
-    tensorData[pixelIndex] = normalizeInputByte(pixels[sourceIndex], 0, mode);
-    tensorData[planeSize + pixelIndex] = normalizeInputByte(pixels[sourceIndex + 1], 1, mode);
-    tensorData[planeSize * 2 + pixelIndex] = normalizeInputByte(pixels[sourceIndex + 2], 2, mode);
+    tensorData[pixelIndex] = normalizeInputByte(
+      getTextInputByte(pixels, sourceIndex, 0, mode, contrastBounds),
+      0,
+      mode
+    );
+    tensorData[planeSize + pixelIndex] = normalizeInputByte(
+      getTextInputByte(pixels, sourceIndex, 1, mode, contrastBounds),
+      1,
+      mode
+    );
+    tensorData[planeSize * 2 + pixelIndex] = normalizeInputByte(
+      getTextInputByte(pixels, sourceIndex, 2, mode, contrastBounds),
+      2,
+      mode
+    );
   }
 
   return new ort.Tensor('float32', tensorData, [1, 3, height, width]);
@@ -226,8 +370,9 @@ async function loadOcrSessions(id: string): Promise<OcrSessions> {
 
       const dictionary = await dictResponse.text();
       const characters = dictionary.split(/\r?\n/).filter((line) => line.length > 0);
+      const preferredClassMasks = createPreferredClassMasks(characters);
 
-      return { det, cls, rec, characters };
+      return { det, cls, rec, characters, preferredClassMasks };
     })().catch((error) => {
       sessionsPromise = null;
       throw error;
@@ -301,11 +446,12 @@ function dilateBinaryMask(binary: Uint8Array, width: number, height: number, rad
 }
 
 function expandBox(box: DetectionBox, imageWidth: number, imageHeight: number): DetectionBox {
-  const pad = clampInteger(Math.max(4, box.height * 0.16), 4, 18);
-  const x = clampNumber(box.x - pad, 0, imageWidth - 1);
-  const y = clampNumber(box.y - pad, 0, imageHeight - 1);
-  const maxX = clampNumber(box.x + box.width + pad, 1, imageWidth);
-  const maxY = clampNumber(box.y + box.height + pad, 1, imageHeight);
+  const horizontalPad = clampInteger(Math.max(4, box.height * 0.22), 4, 24);
+  const verticalPad = clampInteger(Math.max(2, box.height * 0.12), 2, 14);
+  const x = clampNumber(box.x - horizontalPad, 0, imageWidth - 1);
+  const y = clampNumber(box.y - verticalPad, 0, imageHeight - 1);
+  const maxX = clampNumber(box.x + box.width + horizontalPad, 1, imageWidth);
+  const maxY = clampNumber(box.y + box.height + verticalPad, 1, imageHeight);
 
   return {
     ...box,
@@ -581,7 +727,48 @@ function getRecognitionWidth(crop: OffscreenCanvas, profile: OcrWorkerProfile): 
   return ceilToMultiple(clampInteger(REC_HEIGHT * ratio, REC_HEIGHT, profile.recognitionMaxWidth), 32);
 }
 
-function decodeRecognitionOutput(output: ort.Tensor, characters: string[]): RecognitionResult {
+function selectRecognitionClass(
+  data: Float32Array,
+  offset: number,
+  classCount: number,
+  preferredClassMask: Uint8Array
+): { index: number; score: number } {
+  let bestIndex = 0;
+  let bestScore = data[offset] ?? 0;
+  let preferredIndex = 0;
+  let preferredScore = -Infinity;
+
+  for (let classIndex = 1; classIndex < classCount; classIndex += 1) {
+    const score = data[offset + classIndex] ?? 0;
+
+    if (score > bestScore) {
+      bestIndex = classIndex;
+      bestScore = score;
+    }
+
+    if (preferredClassMask[classIndex] && score > preferredScore) {
+      preferredIndex = classIndex;
+      preferredScore = score;
+    }
+  }
+
+  if (
+    bestIndex !== 0 &&
+    !preferredClassMask[bestIndex] &&
+    preferredIndex !== 0 &&
+    preferredScore >= bestScore * LANGUAGE_BIAS_MIN_RATIO
+  ) {
+    return { index: preferredIndex, score: preferredScore };
+  }
+
+  return { index: bestIndex, score: bestScore };
+}
+
+function decodeRecognitionOutput(
+  output: ort.Tensor,
+  characters: string[],
+  preferredClassMask: Uint8Array
+): RecognitionResult {
   if (!(output.data instanceof Float32Array) || output.dims.length < 3) {
     return { text: '', confidence: 0 };
   }
@@ -595,19 +782,15 @@ function decodeRecognitionOutput(output: ort.Tensor, characters: string[]): Reco
 
   for (let step = 0; step < steps; step += 1) {
     const offset = step * classCount;
-    let bestIndex = 0;
-    let bestScore = data[offset] ?? 0;
-
-    for (let classIndex = 1; classIndex < classCount; classIndex += 1) {
-      const score = data[offset + classIndex] ?? 0;
-      if (score > bestScore) {
-        bestIndex = classIndex;
-        bestScore = score;
-      }
-    }
+    const { index: bestIndex, score: bestScore } = selectRecognitionClass(
+      data,
+      offset,
+      classCount,
+      preferredClassMask
+    );
 
     if (bestIndex !== 0 && bestIndex !== previousIndex) {
-      const character = characters[bestIndex] ?? characters[bestIndex - 1] ?? '';
+      const character = getRecognitionCharacter(characters, bestIndex);
       if (character && character !== '#') {
         text += character;
         confidenceSum += bestScore;
@@ -627,7 +810,8 @@ function decodeRecognitionOutput(output: ort.Tensor, characters: string[]): Reco
 async function recognizeTextCrop(
   sessions: OcrSessions,
   crop: OffscreenCanvas,
-  profile: OcrWorkerProfile
+  profile: OcrWorkerProfile,
+  language: OcrLanguage
 ): Promise<RecognitionResult> {
   const width = getRecognitionWidth(crop, profile);
   const tensor = canvasToTensor(crop, width, REC_HEIGHT, 'paddle', 'contain-left');
@@ -638,10 +822,28 @@ async function recognizeTextCrop(
   const output = outputName ? result[outputName] : undefined;
 
   if (!output) return { text: '', confidence: 0 };
-  return decodeRecognitionOutput(output, sessions.characters);
+  return decodeRecognitionOutput(output, sessions.characters, sessions.preferredClassMasks[language]);
 }
 
-function mergeRecognizedBlocks(blocks: OcrTextBlock[]): string {
+function shouldInsertSpace(left: string, right: string, language: OcrLanguage): boolean {
+  if (!left || !right) return false;
+  if (language === 'eng') return true;
+
+  const leftLast = [...left].at(-1) ?? '';
+  const rightFirst = [...right][0] ?? '';
+  return isAsciiLetterOrDigit(leftLast) && isAsciiLetterOrDigit(rightFirst);
+}
+
+function joinTextRow(row: OcrTextBlock[], language: OcrLanguage): string {
+  const sorted = row.sort((a, b) => a.box.x - b.box.x);
+
+  return sorted.reduce((line, block) => {
+    if (!line) return block.text;
+    return `${line}${shouldInsertSpace(line, block.text, language) ? ' ' : ''}${block.text}`;
+  }, '');
+}
+
+function mergeRecognizedBlocks(blocks: OcrTextBlock[], language: OcrLanguage): string {
   if (!blocks.length) return '';
 
   const rows: OcrTextBlock[][] = [];
@@ -662,14 +864,14 @@ function mergeRecognizedBlocks(blocks: OcrTextBlock[]): string {
   }
 
   return rows
-    .map((row) => row.sort((a, b) => a.box.x - b.box.x).map((block) => block.text).join(' '))
+    .map((row) => joinTextRow(row, language))
     .join('\n')
     .trim();
 }
 
 async function runAccurateOcr(request: OcrWorkerRequest): Promise<OcrOutcome> {
   const startedAt = performance.now();
-  const profile = OCR_PROFILES[request.mode];
+  const profile = OCR_PROFILE;
   const sessions = await loadOcrSessions(request.id);
   postProgress(request.id, 'prepare', 38);
 
@@ -692,7 +894,7 @@ async function runAccurateOcr(request: OcrWorkerRequest): Promise<OcrOutcome> {
     postProgress(request.id, 'classify', 48 + (index / total) * 12, index, total);
     const oriented = await classifyTextOrientation(sessions, crop);
     postProgress(request.id, 'recognize', 60 + (index / total) * 34, index, total);
-    const recognized = await recognizeTextCrop(sessions, oriented.canvas, profile);
+    const recognized = await recognizeTextCrop(sessions, oriented.canvas, profile, request.language);
 
     if (!recognized.text) continue;
 
@@ -710,7 +912,7 @@ async function runAccurateOcr(request: OcrWorkerRequest): Promise<OcrOutcome> {
   }
 
   postProgress(request.id, 'merge', 98, total, total);
-  const text = mergeRecognizedBlocks(blocks);
+  const text = mergeRecognizedBlocks(blocks, request.language);
 
   if (!text) return { ok: false, code: 'no_text_detected' };
 
@@ -718,7 +920,6 @@ async function runAccurateOcr(request: OcrWorkerRequest): Promise<OcrOutcome> {
     ok: true,
     text,
     blocks,
-    mode: request.mode,
     imageWidth: image.width,
     imageHeight: image.height,
     durationMs: Math.round(performance.now() - startedAt),

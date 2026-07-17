@@ -6,7 +6,11 @@ import { useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
-import { inspectImageFile, removeImageBackground } from '@/lib/utils/image-browser';
+import {
+  inspectImageFile,
+  preloadImageBackgroundRemovalModel,
+  removeImageBackground,
+} from '@/lib/utils/image-browser';
 import {
   formatFileSize,
   getImageAcceptValue,
@@ -196,6 +200,32 @@ export function ImageIdPhotoTool() {
   useEffect(() => {
     transformRef.current = transform;
   }, [transform]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const preloadModel = () => {
+      if (cancelled) return;
+      void preloadImageBackgroundRemovalModel(model).catch(() => undefined);
+    };
+    const idleWindow = window as Window & {
+      requestIdleCallback?: (callback: () => void, options?: { timeout?: number }) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
+
+    if (idleWindow.requestIdleCallback) {
+      const handle = idleWindow.requestIdleCallback(preloadModel, { timeout: 2500 });
+      return () => {
+        cancelled = true;
+        idleWindow.cancelIdleCallback?.(handle);
+      };
+    }
+
+    const handle = window.setTimeout(preloadModel, 1200);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(handle);
+    };
+  }, [model]);
 
   useEffect(() => {
     const preview = previewRef.current;

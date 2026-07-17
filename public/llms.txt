@@ -199,7 +199,7 @@ ToolGarden provides developers with a suite of tools for working with JSON data.
 - **Image EXIF Viewer & Cleaner / 图片 EXIF 查看 / 清除** (`/image/exif`): Free online image EXIF metadata viewer, or strip metadata with one click and download the cleaned image
   - English: https://toolgarden.xyz/en/image/exif
   - Chinese: https://toolgarden.xyz/zh/image/exif
-- **Image OCR (Text Recognition) / 图片 OCR 文字识别** (`/image/ocr`): Free online OCR that extracts text from images with fast and high-accuracy modes for scans, screenshots, and photos
+- **Image OCR (Text Recognition) / 图片 OCR 文字识别** (`/image/ocr`): Free online OCR that extracts text from images, ideal for scans, screenshots, and photos
   - English: https://toolgarden.xyz/en/image/ocr
   - Chinese: https://toolgarden.xyz/zh/image/ocr
 - **Image Rotate / Flip / 图片旋转 / 翻转** (`/image/rotate`): Free online image rotate 90°, 180°, 270° and horizontal / vertical flip in the browser

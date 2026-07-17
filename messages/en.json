@@ -536,6 +536,11 @@
       "sharp": {
         "label": "Sharp enhance",
         "hint": "Uses high-quality resampling plus light sharpening for text, screenshots, and general images."
+      },
+      "ai": {
+        "label": "AI upscale",
+        "hint": "Neural network model reconstructs detail. Best quality, slower, 2x/4x only.",
+        "detail": "Runs a Real-ESRGAN-style neural network locally in your browser to reconstruct sharper detail than traditional interpolation, especially for photos and portraits. The first use downloads a ~1MB model file, processing takes noticeably longer than the other modes, and only fixed 2x/4x scales are supported. The model does not support transparency — images with a transparent background will be flattened to opaque."
       }
     },
     "output_format": "Output format",
@@ -549,7 +554,7 @@
     "algorithm": "Algorithm",
     "duration": "Duration",
     "duration_value": "{value}ms",
-    "local_note": "All image upscaling happens locally in your browser. Files are not uploaded. Sharp enhance uses high-quality resampling and light sharpening, but does not generate new AI detail.",
+    "local_note": "All image upscaling happens locally in your browser. Files are not uploaded. Pixel-perfect, Smooth HD, and Sharp enhance are traditional resampling algorithms; AI upscale runs a real neural network, also entirely on-device.",
     "related_compress_title": "Need to compress after upscaling?",
     "related_compress_body": "Upscaled images usually become larger, so you can continue with Image Compressor to reduce the output file size.",
     "apply": "Generate upscaled image",
@@ -574,6 +579,7 @@
       "canvas_export": "Image export failed. Try another browser.",
       "unsupported_output": "This browser cannot export {format}.",
       "invalid_dimensions": "Enter a valid output width and height.",
+      "ai_model_unavailable": "The AI model failed to load. Check your connection and try again.",
       "general": "Image upscaling failed. Please try again."
     }
   },
@@ -1735,6 +1741,13 @@
     "stop_recording": "Stop recording",
     "recording_now": "Recording now. Keep this page open. After stopping, you can preview and export MP3.",
     "record_hint": "Recording runs locally in your browser. The browser asks for microphone permission the first time.",
+    "start_microphone_transcription": "Start microphone transcription",
+    "stop_microphone_transcription": "Stop and finalize",
+    "microphone_transcribing_now": "Listening now. The transcript refreshes every few seconds and is finalized when you stop.",
+    "microphone_transcription_hint": "Use the microphone for near real-time transcription. Audio stays in this browser session.",
+    "microphone_requesting": "requesting microphone permission",
+    "microphone_listening": "listening from microphone",
+    "microphone_finalizing": "Finalizing microphone transcription...",
     "empty_output": "Choose a file and start processing. The output audio will appear here.",
     "empty_recording_output": "After recording, export MP3 and preview it here.",
     "empty_transcript": "Upload audio and start transcription. The recognized text will appear here.",
@@ -2669,18 +2682,13 @@
     },
     "image-ocr": {
       "name": "Image OCR (Text Recognition)",
-      "description": "Free online OCR that extracts text from images with fast and high-accuracy modes for scans, screenshots, and photos",
+      "description": "Free online OCR that extracts text from images, ideal for scans, screenshots, and photos",
       "upload_title": "Upload image",
       "settings_title": "Recognition settings",
       "result_title": "Extracted text",
       "drop_title": "Click or drop an image here",
       "drop_hint": "Supports PNG, JPG, WebP, BMP",
       "preview_alt": "Image preview for OCR",
-      "model_label": "Recognition model",
-      "mode_fast": "Fast recognition",
-      "mode_fast_scene": "Best for clear scans, dark text on light backgrounds, and short text. Starts faster.",
-      "mode_accurate": "High accuracy",
-      "mode_accurate_scene": "Best for Chinese/English mixed text, screenshots, camera photos, complex backgrounds, and multi-line text.",
       "language_label": "Language",
       "language_eng": "English",
       "language_chi_sim": "Simplified Chinese",
@@ -2688,8 +2696,7 @@
       "language_jpn": "Japanese",
       "recognize": "Start recognition",
       "progress_label": "{stage}... {progress}%",
-      "fast_note": "Fast recognition is designed for document-like images and runs locally in your browser.",
-      "accurate_note": "High accuracy runs text detection, orientation checks, cropped recognition, and result merging in a local Worker. The first run downloads model assets.",
+      "local_note": "Recognition runs text detection, orientation checks, cropped recognition, and result merging in a local Worker. The first run downloads model assets.",
       "empty_result": "Upload an image and click Start",
       "stages": {
         "model": "Loading model",
@@ -2702,8 +2709,8 @@
       "errors": {
         "empty_file": "The file is empty. Choose a valid image.",
         "load_failed": "The image could not be read. The file may be damaged or unsupported by this browser.",
-        "worker_unavailable": "This browser could not start the local OCR Worker. Try Fast recognition or another browser.",
-        "model_load_failed": "The high-accuracy model could not be loaded. Check your network and try again. {detail}",
+        "worker_unavailable": "This browser could not start the local OCR Worker. Try another browser.",
+        "model_load_failed": "The model could not be loaded. Check your network and try again. {detail}",
         "canvas_context": "Could not create a Canvas drawing context.",
         "recognition_failed": "Recognition failed. Try a clearer image. {detail}",
         "no_text_detected": "No text was detected. Try a clearer image with stronger contrast."

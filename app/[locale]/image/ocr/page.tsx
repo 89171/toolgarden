@@ -5,13 +5,11 @@ import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
 import {
-  OCR_RECOGNITION_MODES,
   type OcrErrorCode,
   type OcrLanguage,
-  type OcrMode,
   type OcrProgress,
 } from '@/lib/utils/ocr';
-import { getOcrModeLabelKey, recognizeImageOcr } from '@/lib/utils/ocr-browser';
+import { recognizeImageOcr } from '@/lib/utils/ocr-browser';
 
 const OCR_LANGUAGE_OPTIONS: OcrLanguage[] = ['eng', 'chi_sim', 'chi_tra', 'jpn'];
 
@@ -21,7 +19,6 @@ export default function ImageOcrPage() {
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>('');
   const [language, setLanguage] = useState<OcrLanguage>('eng');
-  const [mode, setMode] = useState<OcrMode>('fast');
   const [result, setResult] = useState('');
   const [error, setError] = useState('');
   const [progress, setProgress] = useState<OcrProgress | null>(null);
@@ -51,7 +48,6 @@ export default function ImageOcrPage() {
     setError('');
 
     const outcome = await recognizeImageOcr(file, {
-      mode,
       language,
       onProgress: setProgress,
     });
@@ -100,34 +96,6 @@ export default function ImageOcrPage() {
           )}
 
           <div className="mt-4">
-            <h3 className="text-sm font-semibold text-content">{t('model_label')}</h3>
-            <div className="mt-2 grid gap-2 sm:grid-cols-2" role="radiogroup" aria-label={t('model_label')}>
-              {OCR_RECOGNITION_MODES.map((option) => {
-                const active = mode === option;
-                return (
-                  <button
-                    key={option}
-                    type="button"
-                    role="radio"
-                    aria-checked={active}
-                    onClick={() => setMode(option)}
-                    className={`rounded border p-3 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong ${
-                      active
-                        ? 'border-border-strong bg-surface-hover ring-2 ring-action/25'
-                        : 'border-border-base bg-surface-raised hover:border-border-strong hover:bg-surface-hover'
-                    }`}
-                  >
-                    <span className="block text-sm font-medium text-content">{t(getOcrModeLabelKey(option))}</span>
-                    <span className="mt-1 block text-xs leading-5 text-content-muted">
-                      {t(option === 'accurate' ? 'mode_accurate_scene' : 'mode_fast_scene')}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="mt-4">
             <h3 className="text-sm font-semibold text-content">{t('settings_title')}</h3>
             <label className="text-xs uppercase tracking-normal text-content-faint">{t('language_label')}</label>
             <select
@@ -148,7 +116,7 @@ export default function ImageOcrPage() {
                 : t('recognize')}
             </Button>
             <p className="text-xs leading-5 text-content-muted">
-              {mode === 'accurate' ? t('accurate_note') : t('fast_note')}
+              {t('local_note')}
             </p>
           </div>
         </Panel>

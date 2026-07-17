@@ -1,4 +1,6 @@
 import {
+  AI_UPSCALE_MAX_SOURCE_PIXELS,
+  AI_UPSCALE_SCALES,
   calculateSavingsRatio,
   clampNumber,
   createBackgroundRemovedImageFilename,
@@ -17,6 +19,7 @@ import {
   MAX_IMAGE_PIXELS,
   normalizeImageQuality,
   normalizeCropRect,
+  type AiUpscaleScale,
   type ImageBackgroundRemovalModel,
   type ImageBackgroundRemovalOutcome,
   type ImageBackgroundRemovalProgress,
@@ -42,6 +45,8 @@ type OrtWasmModule = typeof import('onnxruntime-web/wasm');
 type OrtInferenceSession = Awaited<ReturnType<OrtWasmModule['InferenceSession']['create']>>;
 type PicaInstance = ReturnType<typeof import('pica')['default']>;
 type SvgoBrowserModule = typeof import('svgo/browser');
+type UpscalerModule = typeof import('upscaler');
+type AiUpscalerInstance = InstanceType<UpscalerModule['default']>;
 
 interface AvifEncodeOptions {
   quality: number;
@@ -228,6 +233,21 @@ let watermarkMiganSessionPromise:
 let svgCanvasResizerPromise: Promise<PicaInstance> | null = null;
 let svgoBrowserPromise: Promise<SvgoBrowserModule> | null = null;
 let avifEncoderPromise: Promise<AvifEncoderModule> | null = null;
+const aiUpscalerPromises: Partial<Record<AiUpscaleScale, Promise<AiUpscalerInstance>>> = {};
+const backgroundRemovalPreloadPromises: Partial<Record<ImageBackgroundRemovalModel, Promise<void>>> = {};
+const backgroundRemovalProgressListeners = new Set<(progress: ImageBackgroundRemovalProgress) => void>();
+
+const BACKGROUND_REMOVAL_MODEL_MAP: Record<ImageBackgroundRemovalModel, 'isnet_fp16' | 'isnet_quint8'> = {
+  medium: 'isnet_fp16',
+  small: 'isnet_quint8',
+};
+
+const AI_UPSCALE_MODEL_PATHS: Record<AiUpscaleScale, string> = {
+  2: '/models/upscale/x2/model.json',
+  4: '/models/upscale/x4/model.json',
+};
+const AI_UPSCALE_PATCH_SIZE = 128;
+const AI_UPSCALE_PATCH_PADDING = 8;
 
 interface WatermarkedImageOutput {
   blob: Blob;
@@ -247,6 +267,43 @@ function getImageWorker(): Worker | null {
     imageWorkerUnavailable = true;
     return null;
   }
+}
+
+function reportBackgroundRemovalProgress(label: string, current: number, total: number) {
+  if (backgroundRemovalProgressListeners.size === 0) return;
+  const progress = createBackgroundRemovalProgress(label, current, total);
+  backgroundRemovalProgressListeners.forEach((listener) => listener(progress));
+}
+
+function createBackgroundRemovalConfig(model: ImageBackgroundRemovalModel) {
+  return {
+    publicPath: BACKGROUND_REMOVAL_PUBLIC_PATH,
+    model: BACKGROUND_REMOVAL_MODEL_MAP[model],
+    output: {
+      format: 'image/png',
+      quality: 1,
+    },
+    progress: reportBackgroundRemovalProgress,
+  } as const;
+}
+
+export function preloadImageBackgroundRemovalModel(
+  model: ImageBackgroundRemovalModel = 'medium'
+): Promise<void> {
+  const existing = backgroundRemovalPreloadPromises[model];
+  if (existing) return existing;
+
+  const preloadPromise = import('@imgly/background-removal')
+    .then((backgroundRemoval) => backgroundRemoval.preload(createBackgroundRemovalConfig(model)))
+    .catch((error) => {
+      if (backgroundRemovalPreloadPromises[model] === preloadPromise) {
+        delete backgroundRemovalPreloadPromises[model];
+      }
+      throw error;
+    });
+
+  backgroundRemovalPreloadPromises[model] = preloadPromise;
+  return preloadPromise;
 }
 
 function shouldFallbackFromWorker(code: WorkerFailureCode): boolean {
@@ -904,6 +961,60 @@ async function getSvgCanvasResizer(): Promise<PicaInstance> {
   }
 
   return svgCanvasResizerPromise;
+}
+
+function getAiUpscaler(scale: AiUpscaleScale): Promise<AiUpscalerInstance> {
+  if (!aiUpscalerPromises[scale]) {
+    aiUpscalerPromises[scale] = Promise.all([
+      import('upscaler'),
+      scale === 2 ? import('@upscalerjs/esrgan-slim/2x') : import('@upscalerjs/esrgan-slim/4x'),
+    ])
+      .then(([{ default: Upscaler }, { default: modelDefinition }]) =>
+        new Upscaler({ model: { ...modelDefinition, path: AI_UPSCALE_MODEL_PATHS[scale] } })
+      )
+      .catch((error) => {
+        aiUpscalerPromises[scale] = undefined;
+        throw error;
+      });
+  }
+
+  return aiUpscalerPromises[scale] as Promise<AiUpscalerInstance>;
+}
+
+function loadImageFromDataUrl(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error('Failed to decode image'));
+    image.decoding = 'async';
+    image.src = src;
+  });
+}
+
+function resolveAiUpscaleScale(sourceWidth: number, outputWidth: number): AiUpscaleScale | null {
+  return AI_UPSCALE_SCALES.find((scale) => Math.abs(outputWidth - sourceWidth * scale) <= 1) ?? null;
+}
+
+async function aiUpscaleImageToCanvas(
+  image: LoadedImage,
+  scale: AiUpscaleScale
+): Promise<HTMLCanvasElement | null> {
+  try {
+    const upscaler = await getAiUpscaler(scale);
+    const base64 = await upscaler.upscale(image.element, {
+      patchSize: AI_UPSCALE_PATCH_SIZE,
+      padding: AI_UPSCALE_PATCH_PADDING,
+    });
+    const upscaledImage = await loadImageFromDataUrl(base64);
+    const canvas = createRasterCanvas({ width: upscaledImage.naturalWidth, height: upscaledImage.naturalHeight });
+    const context = canvas.getContext('2d');
+    if (!context) return null;
+
+    context.drawImage(upscaledImage, 0, 0);
+    return canvas;
+  } catch {
+    return null;
+  }
 }
 
 function setHighQualitySmoothing(context: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D) {
@@ -2666,20 +2777,17 @@ export async function removeImageBackground(
 
     const backgroundRemoval = await import('@imgly/background-removal');
     const removeBackground = backgroundRemoval.removeBackground;
-    const modelMap = {
-      medium: 'isnet_fp16',
-      small: 'isnet_quint8',
-    } as const;
-    const blob = await removeBackground(modelInput, {
-      publicPath: BACKGROUND_REMOVAL_PUBLIC_PATH,
-      model: modelMap[options.model ?? 'medium'],
-      output: {
-        format: 'image/png',
-        quality: 1,
-      },
-      progress: (label: string, current: number, total: number) => {
-        options.onProgress?.(createBackgroundRemovalProgress(label, current, total));
-      },
+    if (options.onProgress) {
+      backgroundRemovalProgressListeners.add(options.onProgress);
+    }
+
+    const blob = await removeBackground(
+      modelInput,
+      createBackgroundRemovalConfig(options.model ?? 'medium')
+    ).finally(() => {
+      if (options.onProgress) {
+        backgroundRemovalProgressListeners.delete(options.onProgress);
+      }
     });
     const pngBlob = blob.type === 'image/png' ? blob : new Blob([blob], { type: 'image/png' });
     const output = await maybeWatermarkImageBlob(pngBlob, 'image/png');
@@ -2759,10 +2867,28 @@ export async function upscaleImageFile(
       };
     }
 
-    const canvas = mode === 'sharp'
-      ? await resizeImageWithSharpEnhancement(image, { width: outputWidth, height: outputHeight })
-      : createRasterCanvas({ width: outputWidth, height: outputHeight });
-    if (!canvas) return { ok: false, code: 'canvas_context' };
+    let canvas: HTMLCanvasElement | null;
+
+    if (mode === 'ai') {
+      const aiScale = resolveAiUpscaleScale(image.width, outputWidth);
+      if (!aiScale) return { ok: false, code: 'invalid_dimensions' };
+
+      if (pixelCount > AI_UPSCALE_MAX_SOURCE_PIXELS) {
+        return {
+          ok: false,
+          code: 'too_many_pixels',
+          maxPixels: formatPixelLimit(AI_UPSCALE_MAX_SOURCE_PIXELS),
+        };
+      }
+
+      canvas = await aiUpscaleImageToCanvas(image, aiScale);
+      if (!canvas) return { ok: false, code: 'ai_model_unavailable' };
+    } else if (mode === 'sharp') {
+      canvas = await resizeImageWithSharpEnhancement(image, { width: outputWidth, height: outputHeight });
+      if (!canvas) return { ok: false, code: 'canvas_context' };
+    } else {
+      canvas = createRasterCanvas({ width: outputWidth, height: outputHeight });
+    }
 
     const context = canvas.getContext('2d');
     if (!context) return { ok: false, code: 'canvas_context' };
@@ -2774,7 +2900,7 @@ export async function upscaleImageFile(
       context.globalCompositeOperation = 'source-over';
     }
 
-    if (mode !== 'sharp') {
+    if (mode === 'pixel' || mode === 'smooth') {
       context.imageSmoothingEnabled = mode === 'smooth';
       if (mode === 'smooth') context.imageSmoothingQuality = 'high';
       context.drawImage(image.element, 0, 0, image.width, image.height, 0, 0, outputWidth, outputHeight);

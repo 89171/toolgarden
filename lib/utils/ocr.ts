@@ -1,5 +1,4 @@
 export type OcrLanguage = 'eng' | 'chi_sim' | 'chi_tra' | 'jpn';
-export type OcrMode = 'fast' | 'accurate';
 
 export type OcrProgressStage =
   | 'model'
@@ -34,7 +33,6 @@ export interface OcrSuccess {
   ok: true;
   text: string;
   blocks: OcrTextBlock[];
-  mode: OcrMode;
   imageWidth: number;
   imageHeight: number;
   durationMs: number;
@@ -54,9 +52,6 @@ export type OcrOutcome =
   | { ok: false; code: OcrErrorCode; detail?: string };
 
 export interface RecognizeImageOcrOptions {
-  mode: OcrMode;
   language: OcrLanguage;
   onProgress?: (progress: OcrProgress) => void;
 }
-
-export const OCR_RECOGNITION_MODES: OcrMode[] = ['fast', 'accurate'];

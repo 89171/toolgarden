@@ -1,6 +1,5 @@
 import type {
   OcrLanguage,
-  OcrMode,
   OcrOutcome,
   OcrProgress,
   RecognizeImageOcrOptions,
@@ -41,7 +40,6 @@ function getAccurateOcrWorker(): Worker | null {
 
 async function recognizeWorkerOcr(
   file: File,
-  mode: OcrMode,
   language: OcrLanguage,
   onProgress?: (progress: OcrProgress) => void
 ): Promise<OcrOutcome> {
@@ -101,7 +99,6 @@ async function recognizeWorkerOcr(
         name: file.name,
         size: file.size,
       },
-      mode,
       language,
     }, [fileData]);
   });
@@ -111,9 +108,5 @@ export async function recognizeImageOcr(
   file: File,
   options: RecognizeImageOcrOptions
 ): Promise<OcrOutcome> {
-  return recognizeWorkerOcr(file, options.mode, options.language, options.onProgress);
-}
-
-export function getOcrModeLabelKey(mode: OcrMode): 'mode_fast' | 'mode_accurate' {
-  return mode === 'accurate' ? 'mode_accurate' : 'mode_fast';
+  return recognizeWorkerOcr(file, options.language, options.onProgress);
 }

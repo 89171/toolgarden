@@ -641,8 +641,8 @@ Canonical examples:
 - Category: Convert / 转换
 - Icon label: `OCR`
 - Featured: yes
-- English description: Free online OCR that extracts text from images with fast and high-accuracy modes for scans, screenshots, and photos
-- Chinese description: 从图片中提取文字，支持快速识别和高精度识别，适合扫描件、截图和拍照图片
+- English description: Free online OCR that extracts text from images, ideal for scans, screenshots, and photos
+- Chinese description: 从图片中提取文字，适合扫描件、截图和拍照图片
 - English URL: https://toolgarden.xyz/en/image/ocr
 - Chinese URL: https://toolgarden.xyz/zh/image/ocr
 

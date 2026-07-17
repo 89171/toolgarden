@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
 import { tldrawAssetUrls } from '@/lib/utils/tldrawAssets';
 
-const TLDRAW_LICENSE_KEY = 'tldraw-2026-07-28/WyI1S0s4WDI1WiIsWyIqIl0sMTYsIjIwMjYtMDctMjgiXQ.Co00PkZK5Y9riUOpUZ1epqucZY3ICPqLN4khtffwseNd6VftYmhztDXyUuMrIHa6z3SIxu7/+eWHS+F3XNMrJA';
+const TLDRAW_LICENSE_KEY = 'tldraw-jimmy-zhu-2027-07-17/WyJsLUQ4RXlMciIsWyIqLnRvb2xnYXJkZW4ueHl6Il0sOSwiMjAyNy0wNy0xNyJd.ZurBhW4L3cSjEc1rW398Hlge8lHL2VvvnSlqsi3o+OGkieOP0Fhho30OqXaVXiE6m/nDEUe5PNvdIB1VJ5YDYw';
 const TLDRAW_PERSISTENCE_KEY = 'toolgarden-whiteboard-tldraw';
 
 type TldrawComponent = typeof import('tldraw').Tldraw;

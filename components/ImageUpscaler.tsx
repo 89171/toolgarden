@@ -10,10 +10,12 @@ import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
 import { inspectImageFile, upscaleImageFile } from '@/lib/utils/image-browser';
 import {
+  AI_UPSCALE_SCALES,
   formatFileSize,
   getBasicImageTargetConfig,
   getImageAcceptValue,
   getSupportedImageInputLabel,
+  type AiUpscaleScale,
   type BasicImageTargetFormat,
   type ImageConversionError,
   type ImageInspectionSuccess,
@@ -28,7 +30,11 @@ interface OutputState {
 
 const SCALE_PRESETS = [2, 3, 4] as const;
 const OUTPUT_FORMATS: BasicImageTargetFormat[] = ['png', 'jpg', 'webp'];
-const UPSCALE_MODES: ImageUpscaleMode[] = ['pixel', 'smooth', 'sharp'];
+const UPSCALE_MODES: ImageUpscaleMode[] = ['pixel', 'smooth', 'sharp', 'ai'];
+
+function isAiUpscaleScale(value: number): value is AiUpscaleScale {
+  return (AI_UPSCALE_SCALES as readonly number[]).includes(value);
+}
 
 function parseDimension(value: string): number | null {
   const dimension = Number.parseInt(value, 10);
@@ -119,6 +125,10 @@ export function ImageUpscaler() {
         return ti('errors.canvas_export');
       case 'unsupported_output':
         return ti('errors.unsupported_output', { format: imageError.detail ?? '' });
+      case 'invalid_dimensions':
+        return ti('errors.invalid_dimensions');
+      case 'ai_model_unavailable':
+        return ti('errors.ai_model_unavailable');
       default:
         return ti('errors.general');
     }
@@ -242,6 +252,8 @@ export function ImageUpscaler() {
     downloadUrl(output.url, output.result.filename);
   }, [output]);
 
+  const visibleScalePresets = mode === 'ai' ? SCALE_PRESETS.filter(isAiUpscaleScale) : SCALE_PRESETS;
+
   const outputScaleLabel = image
     ? `${(parseDimension(outputWidth) ?? image.width) / image.width >= 10
       ? ((parseDimension(outputWidth) ?? image.width) / image.width).toFixed(1)
@@ -257,7 +269,7 @@ export function ImageUpscaler() {
           className="h-[min(38rem,calc(100svh-10rem))] min-h-0 overflow-hidden xl:h-auto xl:min-h-0"
         >
           <div className="flex min-h-0 flex-grow flex-col">
-            <div className="flex min-h-0 flex-grow flex-col gap-3 overflow-y-auto overscroll-contain pr-1 sm:gap-4">
+            <div className="flex min-h-0 flex-grow flex-col gap-3 overflow-y-auto pr-1 sm:gap-4">
               <input
                 ref={inputRef}
                 type="file"
@@ -310,8 +322,8 @@ export function ImageUpscaler() {
                 <span className="mb-2 block text-xs font-semibold uppercase tracking-normal text-content-faint">
                   {ti('scale_title')}
                 </span>
-                <div className="grid grid-cols-3 gap-2">
-                  {SCALE_PRESETS.map((preset) => (
+                <div className={`grid gap-2 ${visibleScalePresets.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+                  {visibleScalePresets.map((preset) => (
                     <button
                       key={preset}
                       type="button"
@@ -338,7 +350,7 @@ export function ImageUpscaler() {
                     inputMode="numeric"
                     value={outputWidth}
                     onChange={(event) => handleWidthChange(event.target.value)}
-                    disabled={!image}
+                    disabled={!image || mode === 'ai'}
                     className="w-full rounded border border-border-input bg-surface-raised px-3 py-2 text-sm text-content-secondary outline-none transition focus:border-border-strong focus:ring-2 focus:ring-action disabled:cursor-not-allowed disabled:opacity-50"
                   />
                 </label>
@@ -350,7 +362,7 @@ export function ImageUpscaler() {
                     inputMode="numeric"
                     value={outputHeight}
                     onChange={(event) => handleHeightChange(event.target.value)}
-                    disabled={!image}
+                    disabled={!image || mode === 'ai'}
                     className="w-full rounded border border-border-input bg-surface-raised px-3 py-2 text-sm text-content-secondary outline-none transition focus:border-border-strong focus:ring-2 focus:ring-action disabled:cursor-not-allowed disabled:opacity-50"
                   />
                 </label>
@@ -368,6 +380,9 @@ export function ImageUpscaler() {
                       onClick={() => {
                         setMode(modeOption);
                         clearOutput();
+                        if (modeOption === 'ai' && !isAiUpscaleScale(scale)) {
+                          handleScalePreset(2);
+                        }
                       }}
                       className={`rounded-lg border p-3 text-left transition-colors ${
                         mode === modeOption
@@ -384,6 +399,11 @@ export function ImageUpscaler() {
                     </button>
                   ))}
                 </div>
+                {mode === 'ai' && (
+                  <p className="mt-3 border-t border-border-subtle pt-3 text-xs leading-relaxed text-content-faint">
+                    {ti('modes.ai.detail')}
+                  </p>
+                )}
               </div>
 
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">

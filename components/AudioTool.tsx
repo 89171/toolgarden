@@ -34,6 +34,7 @@ interface OutputState {
 
 const bitrateOptions = [32, 48, 64, 96, 128, 160, 192, 256, 320];
 const sampleRateOptions = [8000, 11025, 16000, 22050, 32000, 44100, 48000, 96000];
+const LIVE_TRANSCRIPTION_REFRESH_MS = 15_000;
 
 function downloadUrl(url: string, filename: string) {
   const anchor = document.createElement('a');
@@ -61,12 +62,25 @@ function getRecorderMimeType(): string {
   return candidates.find((type) => MediaRecorder.isTypeSupported(type)) ?? '';
 }
 
+function wait(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, ms);
+  });
+}
+
 export function AudioTool({ toolId, mode }: AudioToolProps) {
   const t = useTranslations('audio_tool');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+  const liveMediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const liveStreamRef = useRef<MediaStream | null>(null);
+  const liveChunksRef = useRef<Blob[]>([]);
+  const liveMimeTypeRef = useRef('');
+  const liveIntervalRef = useRef<number | null>(null);
+  const liveSnapshotRunningRef = useRef(false);
+  const liveTranscriptionStateRef = useRef<'idle' | 'recording' | 'stopping'>('idle');
   const [files, setFiles] = useState<File[]>([]);
   const [dragging, setDragging] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -84,6 +98,7 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
   const [endSeconds, setEndSeconds] = useState(30);
   const [recordingState, setRecordingState] = useState<'idle' | 'recording' | 'ready'>('idle');
   const [recording, setRecording] = useState<{ blob: Blob; url: string; filename: string } | null>(null);
+  const [liveTranscriptionState, setLiveTranscriptionState] = useState<'idle' | 'recording' | 'stopping'>('idle');
   const [ttsText, setTtsText] = useState('');
   const [ttsRate, setTtsRate] = useState(1);
   const [ttsPitch, setTtsPitch] = useState(1);
@@ -99,6 +114,7 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
   const isTrim = mode === 'trim';
   const isTts = mode === 'tts';
   const isStandalone = isRecorder || isTts;
+  const liveTranscriptionActive = isTranscribe && liveTranscriptionState !== 'idle';
   const usesBitrate = [
     'to-mp3',
     'compress',
@@ -116,7 +132,7 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
     ? Boolean(recording)
     : isTts
       ? ttsText.trim().length > 0 && !isSpeaking
-      : files.length > 0 && !isProcessing;
+      : files.length > 0 && !isProcessing && !liveTranscriptionActive;
 
   const uploadTitle = useMemo(() => {
     if (isExtract) return t('upload_video_title');
@@ -190,7 +206,18 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
     if (output) URL.revokeObjectURL(output.url);
     if (recording) URL.revokeObjectURL(recording.url);
     streamRef.current?.getTracks().forEach((track) => track.stop());
+    liveStreamRef.current?.getTracks().forEach((track) => track.stop());
+    if (liveIntervalRef.current !== null) window.clearInterval(liveIntervalRef.current);
+    if (liveMediaRecorderRef.current && liveMediaRecorderRef.current.state !== 'inactive') {
+      liveMediaRecorderRef.current.ondataavailable = null;
+      liveMediaRecorderRef.current.onstop = null;
+      liveMediaRecorderRef.current.stop();
+    }
   }, [output, recording]);
+
+  useEffect(() => {
+    liveTranscriptionStateRef.current = liveTranscriptionState;
+  }, [liveTranscriptionState]);
 
   useEffect(() => {
     if (!isTts || typeof window === 'undefined' || !('speechSynthesis' in window)) return;
@@ -377,6 +404,152 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
     mediaRecorderRef.current?.stop();
     mediaRecorderRef.current = null;
   }, []);
+
+  const clearLiveTranscriptionInterval = useCallback(() => {
+    if (liveIntervalRef.current === null) return;
+    window.clearInterval(liveIntervalRef.current);
+    liveIntervalRef.current = null;
+  }, []);
+
+  const createLiveTranscriptionFile = useCallback((): File | null => {
+    const chunks = liveChunksRef.current.filter((chunk) => chunk.size > 0);
+    if (chunks.length === 0) return null;
+
+    const mimeType = liveMimeTypeRef.current || chunks[0]?.type || 'audio/webm';
+    const blob = new Blob(chunks, { type: mimeType });
+    if (blob.size === 0) return null;
+
+    return new File([blob], createRecordingFilename(mimeType), { type: mimeType });
+  }, []);
+
+  const transcribeLiveMicrophoneSnapshot = useCallback(async (final = false) => {
+    if (liveSnapshotRunningRef.current) {
+      if (!final) return;
+      while (liveSnapshotRunningRef.current) {
+        await wait(300);
+      }
+    }
+
+    const file = createLiveTranscriptionFile();
+    if (!file) return;
+
+    liveSnapshotRunningRef.current = true;
+    try {
+      const result = await transcribeAudioFile(file, {
+        language: 'auto',
+        onProgress: (nextProgress) => {
+          setProgress(nextProgress);
+        },
+      });
+
+      if (!result.ok) {
+        if (final || result.code === 'model_failed') {
+          setError(getErrorMessage(result));
+        }
+        return;
+      }
+
+      if (result.text.trim()) {
+        setTranscript(result.text.trim());
+      }
+
+      if (final) {
+        setProgress({ stage: 'done', label: 'done', percent: 100 });
+      } else if (liveTranscriptionStateRef.current === 'recording') {
+        setProgress({ stage: 'processing', label: t('microphone_listening'), percent: 75 });
+      }
+    } finally {
+      liveSnapshotRunningRef.current = false;
+    }
+  }, [createLiveTranscriptionFile, getErrorMessage, t]);
+
+  const startLiveTranscription = useCallback(async () => {
+    if (typeof MediaRecorder === 'undefined' || !navigator.mediaDevices?.getUserMedia) {
+      setError(getErrorMessage({ ok: false, code: 'recorder_unsupported' }));
+      return;
+    }
+
+    const mimeType = getRecorderMimeType();
+    if (!mimeType) {
+      setError(getErrorMessage({ ok: false, code: 'recorder_unsupported' }));
+      return;
+    }
+
+    try {
+      clearOutput();
+      setError('');
+      setProgress({ stage: 'prepare', label: t('microphone_requesting'), percent: 5 });
+      liveChunksRef.current = [];
+      liveMimeTypeRef.current = mimeType;
+
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+        },
+      });
+      liveStreamRef.current = stream;
+
+      const recorder = new MediaRecorder(stream, { mimeType });
+      liveMediaRecorderRef.current = recorder;
+
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) liveChunksRef.current.push(event.data);
+      };
+
+      recorder.onstop = () => {
+        void (async () => {
+          clearLiveTranscriptionInterval();
+          liveStreamRef.current?.getTracks().forEach((track) => track.stop());
+          liveStreamRef.current = null;
+          liveMediaRecorderRef.current = null;
+          setLiveTranscriptionState('stopping');
+          liveTranscriptionStateRef.current = 'stopping';
+          setIsProcessing(true);
+          setProgress({ stage: 'processing', label: t('microphone_finalizing'), percent: 92 });
+          await transcribeLiveMicrophoneSnapshot(true);
+          setLiveTranscriptionState('idle');
+          liveTranscriptionStateRef.current = 'idle';
+          setIsProcessing(false);
+        })();
+      };
+
+      recorder.start(1000);
+      setLiveTranscriptionState('recording');
+      liveTranscriptionStateRef.current = 'recording';
+      setProgress({ stage: 'processing', label: t('microphone_listening'), percent: 35 });
+      liveIntervalRef.current = window.setInterval(() => {
+        void transcribeLiveMicrophoneSnapshot(false);
+      }, LIVE_TRANSCRIPTION_REFRESH_MS);
+    } catch {
+      clearLiveTranscriptionInterval();
+      liveStreamRef.current?.getTracks().forEach((track) => track.stop());
+      liveStreamRef.current = null;
+      liveMediaRecorderRef.current = null;
+      setLiveTranscriptionState('idle');
+      liveTranscriptionStateRef.current = 'idle';
+      setError(getErrorMessage({ ok: false, code: 'microphone_denied' }));
+      setProgress(null);
+    }
+  }, [
+    clearLiveTranscriptionInterval,
+    clearOutput,
+    getErrorMessage,
+    t,
+    transcribeLiveMicrophoneSnapshot,
+  ]);
+
+  const stopLiveTranscription = useCallback(() => {
+    clearLiveTranscriptionInterval();
+    const recorder = liveMediaRecorderRef.current;
+    if (!recorder || recorder.state === 'inactive') return;
+
+    setLiveTranscriptionState('stopping');
+    liveTranscriptionStateRef.current = 'stopping';
+    setProgress({ stage: 'processing', label: t('microphone_finalizing'), percent: 90 });
+    recorder.requestData();
+    recorder.stop();
+  }, [clearLiveTranscriptionInterval, t]);
 
   const speakTts = useCallback(() => {
     const text = ttsText.trim();
@@ -570,37 +743,82 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
               )}
             </div>
           ) : (
-            <label
-              className={[
-                'flex min-h-56 cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border border-dashed p-6 text-center transition-colors',
-                dragging
-                  ? 'border-border-strong bg-surface-hover'
-                  : 'border-border-input bg-surface-raised hover:border-border-strong hover:bg-surface-hover',
-              ].join(' ')}
-              onDragEnter={(event) => {
-                event.preventDefault();
-                setDragging(true);
-              }}
-              onDragOver={(event) => event.preventDefault()}
-              onDragLeave={() => setDragging(false)}
-              onDrop={onDrop}
-            >
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept={accept}
-                multiple={isMerge}
-                className="sr-only"
-                onChange={(event) => {
-                  if (event.target.files) setSelectedFiles(event.target.files);
-                  event.currentTarget.value = '';
+            <div className="flex flex-col gap-4">
+              <label
+                className={[
+                  'flex min-h-56 cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border border-dashed p-6 text-center transition-colors',
+                  liveTranscriptionActive
+                    ? 'cursor-not-allowed border-border-subtle bg-surface text-content-faint'
+                    : dragging
+                    ? 'border-border-strong bg-surface-hover'
+                    : 'border-border-input bg-surface-raised hover:border-border-strong hover:bg-surface-hover',
+                ].join(' ')}
+                onDragEnter={(event) => {
+                  event.preventDefault();
+                  if (liveTranscriptionActive) return;
+                  setDragging(true);
                 }}
-              />
-              <span className="text-sm font-semibold text-content">{t('drop_title')}</span>
-              <span className="max-w-sm text-sm leading-relaxed text-content-muted">
-                {isExtract ? t('drop_video_hint') : isMerge ? t('drop_multiple_hint') : t('drop_audio_hint')}
-              </span>
-            </label>
+                onDragOver={(event) => event.preventDefault()}
+                onDragLeave={() => setDragging(false)}
+                onDrop={(event) => {
+                  if (liveTranscriptionActive) {
+                    event.preventDefault();
+                    setDragging(false);
+                    return;
+                  }
+                  onDrop(event);
+                }}
+              >
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept={accept}
+                  multiple={isMerge}
+                  disabled={liveTranscriptionActive}
+                  className="sr-only"
+                  onChange={(event) => {
+                    if (event.target.files) setSelectedFiles(event.target.files);
+                    event.currentTarget.value = '';
+                  }}
+                />
+                <span className="text-sm font-semibold text-content">{t('drop_title')}</span>
+                <span className="max-w-sm text-sm leading-relaxed text-content-muted">
+                  {isExtract ? t('drop_video_hint') : isMerge ? t('drop_multiple_hint') : t('drop_audio_hint')}
+                </span>
+              </label>
+
+              {isTranscribe && (
+                <div className="rounded-lg border border-border-base bg-surface p-4">
+                  <div className="flex flex-wrap gap-2">
+                    {liveTranscriptionState === 'recording' ? (
+                      <Button variant="danger" onClick={stopLiveTranscription}>
+                        {t('stop_microphone_transcription')}
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="secondary"
+                        onClick={startLiveTranscription}
+                        disabled={isProcessing || liveTranscriptionState === 'stopping'}
+                      >
+                        {t('start_microphone_transcription')}
+                      </Button>
+                    )}
+                    {transcript && liveTranscriptionState === 'idle' && (
+                      <Button variant="secondary" onClick={clearOutput}>
+                        {t('clear')}
+                      </Button>
+                    )}
+                  </div>
+                  <p className="mt-3 text-sm leading-6 text-content-muted">
+                    {liveTranscriptionState === 'recording'
+                      ? t('microphone_transcribing_now')
+                      : liveTranscriptionState === 'stopping'
+                        ? t('microphone_finalizing')
+                        : t('microphone_transcription_hint')}
+                  </p>
+                </div>
+              )}
+            </div>
           )}
 
           {files.length > 0 && !isStandalone && (

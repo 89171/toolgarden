@@ -510,7 +510,7 @@ export const toolRegistry: ToolMeta[] = [
   {
     id: 'image-ocr',
     name: '图片 OCR 文字识别',
-    description: '在浏览器本地从图片中提取文字，支持快速识别和高精度识别',
+    description: '在浏览器本地从图片中提取文字',
     path: '/image/ocr',
     icon: 'OCR',
     category: 'convert',
@@ -764,7 +764,11 @@ export function getSubtitleTools(): ToolMeta[] {
 
 /** 获取文本工具集合 */
 export function getTextTools(): ToolMeta[] {
-  return toolRegistry.filter((tool) => tool.path.startsWith('/text/'));
+  const imageOcrTool = getToolById('image-ocr');
+  return [
+    ...toolRegistry.filter((tool) => tool.path.startsWith('/text/')),
+    ...(imageOcrTool ? [imageOcrTool] : []),
+  ];
 }
 
 /** 获取音频工具集合 */

@@ -33,7 +33,9 @@ export type ImageConversionErrorCode =
   | 'load_failed'
   | 'canvas_context'
   | 'canvas_export'
-  | 'unsupported_output';
+  | 'unsupported_output'
+  | 'invalid_dimensions'
+  | 'ai_model_unavailable';
 
 export interface ImageConversionError {
   ok: false;
@@ -59,7 +61,12 @@ export type ImageConversionOutcome = ImageConversionSuccess | ImageConversionErr
 
 export type ImageCompressionStrategy = 'reencoded' | 'kept-original';
 export type ImageCompressionOutputMode = 'preserve' | 'webp';
-export type ImageUpscaleMode = 'pixel' | 'smooth' | 'sharp';
+export type ImageUpscaleMode = 'pixel' | 'smooth' | 'sharp' | 'ai';
+
+/** AI 超分模式（神经网络模型）仅支持的固定放大倍数 */
+export const AI_UPSCALE_SCALES = [2, 4] as const;
+export type AiUpscaleScale = (typeof AI_UPSCALE_SCALES)[number];
+export const AI_UPSCALE_MAX_SOURCE_PIXELS = 4_000_000;
 
 export interface ImageCompressionSuccess {
   ok: true;

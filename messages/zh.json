@@ -536,6 +536,11 @@
       "sharp": {
         "label": "清晰增强",
         "hint": "使用高质量重采样并轻微锐化，适合文字、截图和通用图片。"
+      },
+      "ai": {
+        "label": "AI 超分",
+        "hint": "神经网络模型重建细节，效果最好但耗时更久，仅支持 2x/4x。",
+        "detail": "使用 Real-ESRGAN 风格的神经网络模型在浏览器本地推理，能重建出比传统插值更清晰的细节，尤其适合照片和人像。首次使用需下载约 1MB 的模型文件，处理耗时比其他算法长，且仅支持固定的 2x/4x 倍数；模型不支持透明通道，带透明背景的图片会被填充为不透明。"
       }
     },
     "output_format": "输出格式",
@@ -549,7 +554,7 @@
     "algorithm": "算法",
     "duration": "耗时",
     "duration_value": "{value}ms",
-    "local_note": "所有图片放大都在浏览器本地完成，文件不会上传到任何服务器。清晰增强会使用高质量重采样和轻量锐化，但不会进行 AI 生成。",
+    "local_note": "所有图片放大都在浏览器本地完成，文件不会上传到任何服务器。像素无损/平滑高清/清晰增强都是传统重采样算法；AI 超分使用真正的神经网络模型，同样在本地推理，不上传图片。",
     "related_compress_title": "放大后需要压缩？",
     "related_compress_body": "图片放大后体积通常会变大，可以继续使用图片压缩工具减小输出文件。",
     "apply": "生成放大图片",
@@ -574,6 +579,7 @@
       "canvas_export": "图片导出失败，请换一个浏览器重试。",
       "unsupported_output": "当前浏览器不支持导出 {format}。",
       "invalid_dimensions": "请输入有效的输出宽度和高度。",
+      "ai_model_unavailable": "AI 模型加载失败，请检查网络连接后重试。",
       "general": "图片放大失败，请重试。"
     }
   },
@@ -1735,6 +1741,13 @@
     "stop_recording": "停止录音",
     "recording_now": "正在录音，请保持页面打开。停止后可预览并导出 MP3。",
     "record_hint": "录音在浏览器本地完成。首次使用时浏览器会请求麦克风权限。",
+    "start_microphone_transcription": "开始麦克风转写",
+    "stop_microphone_transcription": "停止并生成最终文本",
+    "microphone_transcribing_now": "正在监听麦克风，转写结果会每隔几秒刷新，停止后会生成最终文本。",
+    "microphone_transcription_hint": "可使用麦克风进行准实时转写，音频只在当前浏览器会话中处理。",
+    "microphone_requesting": "正在请求麦克风权限",
+    "microphone_listening": "正在监听麦克风",
+    "microphone_finalizing": "正在生成最终转写文本...",
     "empty_output": "选择文件并开始处理后，输出音频会显示在这里。",
     "empty_recording_output": "录音完成后可以导出 MP3 并在这里预览。",
     "empty_transcript": "上传音频并开始转文本后，识别结果会显示在这里。",
@@ -2669,18 +2682,13 @@
     },
     "image-ocr": {
       "name": "图片 OCR 文字识别",
-      "description": "从图片中提取文字，支持快速识别和高精度识别，适合扫描件、截图和拍照图片",
+      "description": "从图片中提取文字，适合扫描件、截图和拍照图片",
       "upload_title": "上传图片",
       "settings_title": "识别设置",
       "result_title": "识别结果",
       "drop_title": "点击或拖拽图片到这里",
       "drop_hint": "支持 PNG、JPG、WebP、BMP",
       "preview_alt": "待识别图片预览",
-      "model_label": "识别模型",
-      "mode_fast": "快速识别",
-      "mode_fast_scene": "适合清晰扫描件、白底黑字、少量文字，启动更快。",
-      "mode_accurate": "高精度识别",
-      "mode_accurate_scene": "适合中文/英文混排、截图、拍照图片、复杂背景和多行文本。",
       "language_label": "识别语言",
       "language_eng": "英文",
       "language_chi_sim": "简体中文",
@@ -2688,8 +2696,7 @@
       "language_jpn": "日文",
       "recognize": "开始识别",
       "progress_label": "{stage}... {progress}%",
-      "fast_note": "快速识别适合文档类图片，图片会在浏览器本地处理。",
-      "accurate_note": "高精度识别会在本地 Worker 中完成文本检测、方向判断、裁剪识别和结果合并；首次使用需要下载模型资源。",
+      "local_note": "识别会在本地 Worker 中完成文本检测、方向判断、裁剪识别和结果合并；首次使用需要下载模型资源。",
       "empty_result": "上传图片后点击开始识别",
       "stages": {
         "model": "加载模型",
@@ -2702,8 +2709,8 @@
       "errors": {
         "empty_file": "文件为空，请选择有效图片。",
         "load_failed": "图片读取失败，文件可能已损坏或当前浏览器不支持该格式。",
-        "worker_unavailable": "当前浏览器无法启动本地识别 Worker，请切换快速识别或更换浏览器。",
-        "model_load_failed": "高精度模型加载失败，请检查网络后重试。{detail}",
+        "worker_unavailable": "当前浏览器无法启动本地识别 Worker，请更换浏览器后重试。",
+        "model_load_failed": "模型加载失败，请检查网络后重试。{detail}",
         "canvas_context": "无法创建 Canvas 绘图上下文。",
         "recognition_failed": "识别失败，请换一张更清晰的图片后重试。{detail}",
         "no_text_detected": "没有识别到文字，请换一张更清晰、对比度更高的图片。"
