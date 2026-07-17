@@ -154,7 +154,7 @@ export function ImageIdPhotoTool() {
   const [customHeightMm, setCustomHeightMm] = useState('45');
   const [backgroundColor, setBackgroundColor] = useState<string>(idPhotoBackgroundColors[0].value);
   const [customBackgroundColor, setCustomBackgroundColor] = useState<string>(idPhotoBackgroundColors[0].value);
-  const [model, setModel] = useState<ImageBackgroundRemovalModel>('medium');
+  const [model, setModel] = useState<ImageBackgroundRemovalModel>('small');
   const [outputFormat, setOutputFormat] = useState<OutputFormat>('jpg');
   const [transform, setTransform] = useState<IdPhotoTransform>({ x: 0, y: 0, scale: 1 });
   const [status, setStatus] = useState<ProcessingStatus>('idle');
@@ -574,6 +574,10 @@ export function ImageIdPhotoTool() {
         ? ti('progress_model', { value: progress.percent })
         : ti('progress_compute', { value: progress.percent }))
     : ti('progress_prepare');
+  const isModelProgress = status === 'processing' && (!progress || progress.stage === 'model');
+  const progressModelNote = model === 'small'
+    ? ti('progress_model_note_fast')
+    : ti('progress_model_note_quality');
 
   return (
     <ToolLayout toolId={TOOL_ID}>
@@ -691,10 +695,15 @@ export function ImageIdPhotoTool() {
                 </div>
                 <div className="h-2 overflow-hidden rounded bg-surface-hover">
                   <div
-                    className="h-full rounded bg-action transition-[width]"
+                    className={`h-full rounded bg-action transition-[width] ${isModelProgress ? 'model-progress-pulse' : ''}`}
                     style={{ width: `${progressPercent}%` }}
                   />
                 </div>
+                {isModelProgress && (
+                  <p className="mt-2 text-xs leading-relaxed text-content-muted">
+                    {progressModelNote}
+                  </p>
+                )}
               </div>
             )}
 
