@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { AllToolsDirectory, type AllToolsSection } from '@/components/AllToolsDirectory';
@@ -15,6 +16,7 @@ import {
   getTextTools,
 } from '@/lib/tools/registry';
 import type { ToolMeta } from '@/lib/tools/types';
+import { getLocalizedBlogTopics } from '@/lib/blog/articles';
 import {
   createToolItemListJsonLd,
   getLocaleMessages,
@@ -72,6 +74,7 @@ export function HomePageContent({ locale }: HomePageContentProps) {
   ].filter((section) => section.tools.length > 0);
 
   const featured = localizedTools.filter((tool) => tool.featured);
+  const blogTopics = getLocalizedBlogTopics(normalizedLocale);
 
   return (
     <div className="flex min-h-[100dvh] flex-col bg-background text-foreground">
@@ -107,6 +110,41 @@ export function HomePageContent({ locale }: HomePageContentProps) {
             viewAllTemplate: m.home.view_all_in,
           }}
         />
+
+        <section className="mx-auto mt-14 w-full max-w-[1400px] border-t border-border-subtle py-10" aria-labelledby="home-guides-title">
+          <h2 id="home-guides-title" className="text-2xl font-bold text-content sm:text-3xl">
+            {m.blog.topic_hubs}
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm leading-7 text-content-muted sm:text-base">
+            {m.blog.topic_hubs_description}
+          </p>
+          <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-12">
+            {blogTopics.map((topic, index) => (
+              <Link
+                key={topic.id}
+                href={`/${normalizedLocale}${topic.pillar.path}`}
+                className={`group rounded-lg border border-border-base bg-surface-raised p-5 transition-colors hover:border-border-strong hover:bg-surface-hover ${
+                  index === 0
+                    ? 'md:col-span-2 xl:col-span-7'
+                    : index === 1
+                      ? 'xl:col-span-5'
+                      : index === 2
+                        ? 'xl:col-span-5'
+                        : index === 3
+                          ? 'xl:col-span-7'
+                          : 'md:col-span-2 xl:col-span-12'
+                }`}
+              >
+                <span className="text-xs font-semibold text-content-faint">{m.blog.pillar_guide}</span>
+                <h3 className="mt-2 text-lg font-bold leading-snug text-content">{topic.pillar.title}</h3>
+                <p className="mt-2 line-clamp-2 text-sm leading-6 text-content-muted">{topic.pillar.excerpt}</p>
+                <span className="mt-4 inline-block text-sm font-semibold text-content-secondary transition-colors group-hover:text-content">
+                  {m.blog.read_more}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
       </div>
       <Footer />
     </div>

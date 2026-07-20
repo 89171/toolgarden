@@ -86,14 +86,14 @@ export const workflowSeoBlogArticles = [
   {
     slug: 'how-i-built-browser-local-online-tool-site',
     publishedAt: '2026-07-07',
-    updatedAt: '2026-07-07',
+    updatedAt: '2026-07-20',
     translations: {
       zh: {
-        title: '我是如何建立了一个全部本地处理的在线工具站',
-        excerpt: '为了避免把 JSON、图片、PDF、Token 和内部文档上传到陌生服务器，我把 ToolGarden 做成了一个优先在浏览器本地运行的在线工具站。',
-        metaTitle: '我是如何建立了一个全部本地处理的在线工具站',
-        metaDescription: '记录 ToolGarden 的本地优先技术实现：Next.js 静态站、纯函数工具层、Web Worker、Canvas、Web Crypto、WASM、浏览器本地文件处理和隐私安全设计。',
-        readingTime: '约 10 分钟阅读',
+        title: 'ToolGarden 是如何构建的：浏览器本地工具套件架构',
+        excerpt: '深入了解 ToolGarden 如何通过注册中心、静态页面、纯函数、Worker、Canvas、Web Crypto 和 WASM 构建浏览器本地工具套件。',
+        metaTitle: 'ToolGarden 架构：浏览器本地工具套件是如何构建的',
+        metaDescription: '解析 ToolGarden 浏览器本地架构：Next.js 静态站、注册中心、纯函数工具层、Web Worker、Canvas、Web Crypto、WASM 与隐私设计。',
+        readingTime: '约 12 分钟阅读',
         tags: ['本地处理', '隐私安全', '浏览器工具', 'Next.js', '工程架构'],
         relatedTools: [
           {
@@ -164,6 +164,15 @@ export const workflowSeoBlogArticles = [
           {
             type: 'paragraph',
             text: '这样做有两个目的。第一，工具逻辑可以独立理解和测试，不需要依赖 React 状态。第二，页面不会直接写 JSON.parse、文件解析、diff 算法或图片导出细节，避免每新增一个工具就复制一份隐性风险。',
+          },
+          { type: 'heading', level: 2, text: '注册中心驱动发现入口' },
+          {
+            type: 'paragraph',
+            text: 'ToolGarden 把工具元数据集中在注册中心。首页卡片、分类、面包屑、推荐工具、本地化路径、sitemap、JSON-LD 和 llms 文件都从同一来源派生。新增能力只有完成注册、双语文案、页面、元数据和发现入口后，才算正式进入产品。',
+          },
+          {
+            type: 'paragraph',
+            text: '博客专题也采用同样思路：支柱页、集群文章、目标关键词和工具路径映射放在一份拓扑配置中。页面组件只消费关系，避免手工维护两套相互漂移的内链列表。',
           },
           { type: 'heading', level: 2, text: '不同类型的数据如何留在浏览器里' },
           {
@@ -255,11 +264,11 @@ export const workflowSeoBlogArticles = [
         ],
       },
       en: {
-        title: 'How I Built a Fully Browser-Local Online Toolkit',
-        excerpt: 'I built ToolGarden because I wanted useful online tools without uploading JSON, images, PDFs, tokens, and internal documents to an unknown server.',
-        metaTitle: 'How I Built a Fully Browser-Local Online Toolkit',
-        metaDescription: 'A behind-the-scenes look at ToolGarden: static Next.js pages, pure utility functions, Web Workers, Canvas, Web Crypto, WASM, browser-local file processing, and privacy-first design.',
-        readingTime: '10 min read',
+        title: 'How We Built ToolGarden: Architecture of a Browser-Local Tool Suite',
+        excerpt: 'See how ToolGarden uses a registry, static pages, pure utilities, Workers, Canvas, Web Crypto, and WASM to build a browser-local tool suite.',
+        metaTitle: 'How We Built ToolGarden: Browser-Local Tool Architecture',
+        metaDescription: 'Explore ToolGarden architecture: static Next.js pages, a tool registry, pure utilities, Web Workers, Canvas, Web Crypto, WASM, and privacy-first design.',
+        readingTime: '12 min read',
         tags: ['Local processing', 'Privacy', 'Browser tools', 'Next.js', 'Architecture'],
         relatedTools: [
           {
@@ -330,6 +339,15 @@ export const workflowSeoBlogArticles = [
           {
             type: 'paragraph',
             text: 'This keeps React components from becoming piles of one-off parsing code. It also makes failures explicit: a utility returns an ok or error branch instead of throwing raw exceptions into the page.',
+          },
+          { type: 'heading', level: 2, text: 'A Registry Drives Every Discovery Surface' },
+          {
+            type: 'paragraph',
+            text: 'Tool metadata lives in one registry. Home-page cards, categories, breadcrumbs, related tools, localized paths, sitemap entries, JSON-LD, and llms files derive from that source. A capability is not considered shipped until its registry entry, translations, page, metadata, and discovery surfaces agree.',
+          },
+          {
+            type: 'paragraph',
+            text: 'Blog topical authority follows the same rule. Pillars, cluster articles, target keywords, and tool-path mappings live in one topology file. Components consume the relationship instead of maintaining separate hand-written link lists that drift over time.',
           },
           { type: 'heading', level: 2, text: 'How Different Data Types Stay Local' },
           {
@@ -2273,13 +2291,13 @@ export const workflowSeoBlogArticles = [
   {
     slug: 'json-json5-jsonc-differences',
     publishedAt: '2026-07-02',
-    updatedAt: '2026-07-03',
+    updatedAt: '2026-07-20',
     translations: {
       zh: {
-        title: 'JSON、JSON5、JSONC 到底有什么区别？',
+        title: 'JSON vs JSONC vs JSON5：完整对比指南',
         excerpt: 'JSON 是严格数据格式，JSONC 主要给配置文件增加注释，JSON5 则放宽了更多 JavaScript 风格语法。',
-        metaTitle: 'JSON、JSON5、JSONC 区别：注释、尾逗号、单引号怎么选',
-        metaDescription: '系统比较 JSON、JSON5、JSONC 的区别，包括注释、尾逗号、单引号、未加引号 key、配置文件场景和标准 JSON 输出建议。',
+        metaTitle: 'JSON vs JSONC vs JSON5 完整指南：语法、兼容与选择',
+        metaDescription: '完整比较 JSON、JSONC、JSON5 的注释、尾逗号、单引号、未加引号 key、解析兼容、配置文件场景和转换建议。',
         readingTime: '约 9 分钟阅读',
         tags: ['JSON', 'JSON5', 'JSONC', '配置文件'],
         relatedTools: [
@@ -2398,10 +2416,10 @@ export const workflowSeoBlogArticles = [
         ],
       },
       en: {
-        title: 'What Is the Difference Between JSON, JSON5, and JSONC?',
+        title: 'JSON vs JSONC vs JSON5: A Complete Guide',
         excerpt: 'JSON is strict data interchange, JSONC adds comments mainly for config files, and JSON5 allows more JavaScript-like syntax.',
-        metaTitle: 'JSON vs JSON5 vs JSONC: Comments, Trailing Commas, and Syntax',
-        metaDescription: 'Compare JSON, JSON5, and JSONC by comments, trailing commas, single quotes, unquoted keys, config use cases, and standard JSON output.',
+        metaTitle: 'JSON vs JSONC vs JSON5: Syntax, Compatibility, and Use Cases',
+        metaDescription: 'A complete JSON vs JSONC vs JSON5 comparison covering comments, commas, quotes, parser compatibility, configuration use cases, and conversion.',
         readingTime: '9 min read',
         tags: ['JSON', 'JSON5', 'JSONC', 'configuration'],
         relatedTools: [
@@ -2777,14 +2795,14 @@ export const workflowSeoBlogArticles = [
   {
     slug: 'merge-multiple-pdf-files-keep-order-bookmarks',
     publishedAt: '2026-07-02',
-    updatedAt: '2026-07-03',
+    updatedAt: '2026-07-20',
     translations: {
       zh: {
-        title: '如何合并多个 PDF，并保留书签和顺序',
-        excerpt: '合并 PDF 时最重要的是文件顺序和页面完整性。书签、目录和表单能否保留取决于 PDF 结构和合并工具能力，需要导出后复查。',
-        metaTitle: '如何合并多个 PDF？保留顺序、书签和页面完整性',
-        metaDescription: '讲解多个 PDF 合并流程、拖放排序、页面顺序检查、书签目录兼容性、表单和注释注意事项，以及浏览器本地合并建议。',
-        readingTime: '约 9 分钟阅读',
+        title: '如何在不上传文件的情况下合并 PDF：隐私优先方法',
+        excerpt: '在浏览器本地合并多个 PDF，避免上传源文件，同时检查页面顺序、书签、表单、签名和最终结果。',
+        metaTitle: '无需上传合并 PDF：隐私优先的本地合并指南',
+        metaDescription: '学习如何在浏览器本地合并 PDF，无需上传文件，并检查顺序、书签、表单、数字签名、元数据与输出完整性。',
+        readingTime: '约 10 分钟阅读',
         tags: ['合并 PDF', 'PDF 顺序', 'PDF 书签', 'PDF 工具'],
         relatedTools: [
           {
@@ -2860,6 +2878,20 @@ export const workflowSeoBlogArticles = [
               '数字签名：合并通常会破坏原签名的完整性。',
             ],
           },
+          { type: 'heading', level: 2, text: '为什么选择无需上传的合并流程' },
+          {
+            type: 'paragraph',
+            text: '合同、发票、申请材料和扫描件可能包含身份信息、签名或商业条款。浏览器本地合并可以避免把源文件交给远端任务队列、临时存储、日志或第三方 PDF 接口。它减少的是一次不必要的数据传输，但仍要信任页面来源、浏览器和设备。',
+          },
+          {
+            type: 'list',
+            items: [
+              '用无敏感信息样本配合 Network 面板验证没有文件上传请求。',
+              '在开始前复制源文件，不直接覆盖原件。',
+              '合并后检查文档属性、附件、批注和可搜索文本。',
+              '高度受监管材料仍应遵循组织批准的软件与流程。',
+            ],
+          },
           { type: 'heading', level: 2, text: '导出后快速验收' },
           {
             type: 'list',
@@ -2904,11 +2936,11 @@ export const workflowSeoBlogArticles = [
         ],
       },
       en: {
-        title: 'How to Merge Multiple PDFs While Keeping Page Order and Checking Bookmarks',
-        excerpt: 'When merging PDFs, page order and completeness matter most. Bookmarks and outlines depend on the PDF structure and tool support, so review them after export.',
-        metaTitle: 'How to Merge PDFs and Preserve Order, Bookmarks, and Pages',
-        metaDescription: 'Learn PDF merge workflow, drag sorting, page order checks, bookmark compatibility, forms, annotations, and browser-local merge tips.',
-        readingTime: '9 min read',
+        title: 'How to Merge PDFs Without Uploading Files: A Privacy-First Approach',
+        excerpt: 'Merge multiple PDFs locally in your browser without uploading source files, then verify page order, bookmarks, forms, signatures, and output.',
+        metaTitle: 'Merge PDFs Without Uploading: A Privacy-First Local Guide',
+        metaDescription: 'Learn how to merge PDFs locally without uploading files, then check page order, bookmarks, forms, digital signatures, metadata, and completeness.',
+        readingTime: '10 min read',
         tags: ['merge PDF', 'PDF order', 'PDF bookmarks', 'PDF tools'],
         relatedTools: [
           {
@@ -2982,6 +3014,20 @@ export const workflowSeoBlogArticles = [
               'Attachments: merging pages does not always merge embedded files.',
               'Encrypted PDFs: restrictions or passwords may need to be handled first.',
               'Digital signatures: merging usually invalidates the original signature integrity.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Why Use a No-Upload Merge Workflow' },
+          {
+            type: 'paragraph',
+            text: 'Contracts, invoices, applications, and scans can contain identities, signatures, and commercial terms. Browser-local merging avoids sending source files through a remote queue, temporary store, log, or third-party PDF API. It removes an unnecessary transfer, but the page origin, browser, and device still need to be trusted.',
+          },
+          {
+            type: 'list',
+            items: [
+              'Verify the workflow with a harmless sample and the Network panel.',
+              'Work from copies and never overwrite the source documents.',
+              'Inspect properties, attachments, annotations, and searchable text after merging.',
+              'Use organization-approved software for highly regulated material.',
             ],
           },
           { type: 'heading', level: 2, text: 'Quick Validation After Export' },

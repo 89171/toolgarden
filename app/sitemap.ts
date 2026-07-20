@@ -102,6 +102,8 @@ function getRouteSourcePaths(routePath: string): string[] {
       'app/[locale]/blog/page.tsx',
       'lib/blog/articles.ts',
       'lib/blog/seo-articles.ts',
+      'lib/blog/topic-cluster-articles.ts',
+      'lib/blog/topics.json',
       'lib/blog/workflow-seo-articles.ts',
     ];
   }

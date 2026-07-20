@@ -359,7 +359,7 @@ export const toolRegistry: ToolMeta[] = [
   {
     id: 'subtitle-maker',
     name: '字幕编辑器',
-    description: '免费在线编辑 LRC 和 SRT 字幕，支持媒体预览、时间轴校准和字幕导出',
+    description: '免费在线编辑和转换 LRC、SRT 与 VTT 字幕，支持媒体预览、时间轴校准和字幕导出',
     path: '/subtitle-maker',
     icon: 'SUB',
     category: 'convert',

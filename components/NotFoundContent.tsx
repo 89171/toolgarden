@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { routing } from '@/i18n/routing';
@@ -30,8 +31,17 @@ export function NotFoundContent({ locale }: NotFoundContentProps) {
   const m = messages[normalizedLocale];
   const featuredTools = toolRegistry.filter((tool) => tool.featured).slice(0, 4);
 
+  useEffect(() => {
+    document.title = `${m.not_found.title} | ${m.home.title}`;
+    document.documentElement.lang = normalizedLocale;
+  }, [m.home.title, m.not_found.title, normalizedLocale]);
+
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <>
+      <title>{`${m.not_found.title} | ${m.home.title}`}</title>
+      <meta name="description" content={m.not_found.description} />
+      <meta name="robots" content="noindex,follow" />
+      <div className="flex min-h-[100dvh] flex-col bg-background text-foreground">
       <main className="mx-auto flex w-full max-w-[1100px] flex-grow flex-col justify-center px-4 py-10 sm:px-6 lg:px-8">
         <section className="border-b border-border-subtle pb-8">
           <p className="font-mono text-sm font-semibold text-content-faint">404</p>
@@ -44,7 +54,7 @@ export function NotFoundContent({ locale }: NotFoundContentProps) {
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
               href={`/${normalizedLocale}`}
-              className="rounded bg-action px-4 py-2 text-sm text-white transition-colors hover:bg-action-hover"
+              className="rounded bg-action px-4 py-2 text-sm text-brand-fg transition-colors hover:bg-action-hover"
             >
               {m.not_found.home}
             </Link>
@@ -95,6 +105,7 @@ export function NotFoundContent({ locale }: NotFoundContentProps) {
       <footer className="px-4 pb-6 text-center text-sm text-content-muted">
         {m.footer.text} © {new Date().getFullYear()}
       </footer>
-    </div>
+      </div>
+    </>
   );
 }

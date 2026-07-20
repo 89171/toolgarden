@@ -1652,18 +1652,18 @@
       "items": [
         {
           "question": "字幕编辑器会上传媒体或字幕文件吗？",
-          "answer": "不会。媒体预览、LRC/SRT 解析、编辑和导出都在浏览器本地完成，文件不会上传到服务器。"
+          "answer": "不会。媒体预览、LRC/SRT/VTT 解析、编辑和导出都在浏览器本地完成，文件不会上传到服务器。"
         },
         {
           "question": "支持哪些字幕格式？",
-          "answer": "支持 SRT 和 LRC。可以上传文件，也可以直接粘贴字幕文本后解析。"
+          "answer": "支持 SRT、WebVTT 和 LRC。可以上传文件，也可以直接粘贴字幕文本后解析。"
         },
         {
           "question": "可以边播放边校准时间轴吗？",
           "answer": "可以。上传音频或视频后，选中字幕行并用当前播放时间设置开始或结束时间。"
         },
         {
-          "question": "可以互转 LRC 和 SRT 吗？",
+          "question": "可以互转 LRC、SRT 和 VTT 吗？",
           "answer": "可以。解析字幕后切换输出格式并导出，工具会按目标格式生成时间码。"
         }
       ]
@@ -1946,6 +1946,16 @@
     "updated_label": "更新于",
     "related_tools": "相关工具",
     "related_articles": "相关文章",
+    "topic_hubs": "主题指南",
+    "topic_hubs_description": "先阅读完整指南，再通过集群文章解决具体工作流或问题。",
+    "pillar_guide": "完整指南",
+    "cluster_articles": "该主题下的文章",
+    "back_to_pillar": "返回完整指南",
+    "target_keyword": "核心主题",
+    "more_articles": "更多实用文章",
+    "more_articles_description": "浏览其余 JSON、图片、PDF、前端与浏览器本地处理文章。",
+    "related_guide": "相关隐私优先指南",
+    "related_guide_action": "阅读指南",
     "faq_title": "常见问题",
     "toc_title": "目录"
   },
@@ -2339,7 +2349,7 @@
     },
     "subtitle-maker": {
       "name": "字幕编辑器",
-      "description": "编辑 LRC 和 SRT 字幕，支持媒体预览、时间轴校准和字幕导出",
+      "description": "编辑和转换 LRC、SRT 与 VTT 字幕，支持媒体预览、时间轴校准和字幕导出",
       "load_media": "加载媒体",
       "load_subtitle": "加载字幕",
       "export": "导出字幕",
@@ -2358,11 +2368,11 @@
       "none": "无",
       "empty_media_title": "加载音频或视频开始校准",
       "empty_media_body": "支持本地音频和视频预览。字幕、媒体和导出都在浏览器本地处理。",
-      "empty_subtitles": "上传 LRC / SRT 字幕，或在下方粘贴字幕文本后解析。",
+      "empty_subtitles": "上传 LRC / SRT / VTT 字幕，或在下方粘贴字幕文本后解析。",
       "no_active_line": "当前没有选中的字幕行",
       "new_line": "新字幕",
       "source_title": "字幕源文本",
-      "source_placeholder": "粘贴 SRT 或 LRC 字幕文本...",
+      "source_placeholder": "粘贴 SRT、VTT 或 LRC 字幕文本...",
       "parse_source": "解析文本",
       "export_preview": "导出预览",
       "empty_export": "导出内容将显示在这里",

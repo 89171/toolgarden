@@ -1,4 +1,5 @@
 import { routing } from '@/i18n/routing';
+import { getPillarSlugForToolPath } from '@/lib/blog/topics';
 import { stringifyJSONValue } from '@/lib/utils/json';
 import { getToolById } from './registry';
 
@@ -162,6 +163,13 @@ export function buildToolJsonLd(toolId: string, locale: string, messages: JsonLd
       '@type': 'WebSite',
       name: messages.home.title,
       url: getLocalizedUrl(normalizedLocale),
+    },
+    subjectOf: {
+      '@type': 'WebPage',
+      url: getLocalizedUrl(
+        normalizedLocale,
+        `/blog/${getPillarSlugForToolPath(tool.path)}`
+      ),
     },
   };
 }

@@ -1,4 +1,11 @@
 import { routing } from '@/i18n/routing';
+import { topicClusterBlogArticles } from './topic-cluster-articles';
+import { growthSeoBlogArticles } from './growth-seo-articles';
+import {
+  blogTopics,
+  getBlogTopicByArticleSlug,
+  type BlogTopicRole,
+} from './topics';
 import { workflowSeoBlogArticles } from './workflow-seo-articles';
 import { seoBlogArticles } from './seo-articles';
 
@@ -50,6 +57,18 @@ export interface LocalizedBlogArticle extends BlogArticleTranslation {
   publishedAt: string;
   updatedAt: string;
   locale: BlogLocale;
+}
+
+export interface LocalizedBlogTopic {
+  id: string;
+  targetKeywords: string[];
+  pillar: LocalizedBlogArticle;
+  clusters: LocalizedBlogArticle[];
+}
+
+export interface LocalizedBlogTopicMembership extends LocalizedBlogTopic {
+  role: BlogTopicRole;
+  targetKeyword: string | null;
 }
 
 const tsconfigSnippet = `{
@@ -151,6 +170,8 @@ const json5Snippet = `{
 }`;
 
 export const blogArticles: BlogArticle[] = [
+  ...topicClusterBlogArticles,
+  ...growthSeoBlogArticles,
   ...workflowSeoBlogArticles,
   ...seoBlogArticles,
   {
@@ -1829,13 +1850,13 @@ export const blogArticles: BlogArticle[] = [
   {
     slug: 'jpg-png-webp-avif-differences',
     publishedAt: '2026-07-01',
-    updatedAt: '2026-07-03',
+    updatedAt: '2026-07-20',
     translations: {
       zh: {
-        title: 'JPG、PNG、WebP、AVIF 有什么区别？网页图片格式怎么选',
-        excerpt: 'JPG、PNG、WebP、AVIF 都能用于网页图片，但它们在压缩方式、透明背景、清晰度、兼容性和适用场景上差异很大。',
-        metaTitle: 'JPG、PNG、WebP、AVIF 区别：网页图片格式怎么选',
-        metaDescription: '对比 JPG、PNG、WebP、AVIF 四种图片格式的区别，解释照片、截图、透明图、网页首图、缩略图应该如何选择，并介绍如何用 ToolGarden 转换格式。',
+        title: 'PNG vs WebP vs AVIF：什么时候该用哪种格式？',
+        excerpt: 'PNG、WebP、AVIF 在压缩、透明背景、清晰度、编码速度和兼容性上各有优势，JPG 仍可作为照片与旧环境的实用回退。',
+        metaTitle: 'PNG vs WebP vs AVIF：图片格式选择完整指南',
+        metaDescription: '对比 PNG、WebP、AVIF 的压缩、透明度、画质、兼容性和适用场景，并说明 JPG 何时仍是实用回退。',
         readingTime: '约 8 分钟阅读',
         tags: ['图片格式', 'JPG', 'PNG', 'WebP', 'AVIF'],
         relatedTools: [
@@ -2008,10 +2029,10 @@ export const blogArticles: BlogArticle[] = [
         ],
       },
       en: {
-        title: 'JPG, PNG, WebP, and AVIF: Which Image Format Should You Use for the Web?',
-        excerpt: 'JPG, PNG, WebP, and AVIF all work for web images, but they differ in compression, transparency, quality, compatibility, and best use cases.',
-        metaTitle: 'JPG vs PNG vs WebP vs AVIF: Web Image Format Guide',
-        metaDescription: 'Compare JPG, PNG, WebP, and AVIF for photos, screenshots, transparent images, hero images, thumbnails, and web assets. Learn how to convert images with ToolGarden.',
+        title: 'PNG vs WebP vs AVIF: When to Use Each Format (and Where JPG Fits)',
+        excerpt: 'PNG, WebP, and AVIF each balance compression, transparency, visual quality, encoding cost, and compatibility differently, while JPG remains a practical fallback.',
+        metaTitle: 'PNG vs WebP vs AVIF: Complete Image Format Guide',
+        metaDescription: 'Compare PNG, WebP, and AVIF for compression, transparency, quality, compatibility, and use cases, with guidance on when JPG remains useful.',
         readingTime: '8 min read',
         tags: ['image formats', 'JPG', 'PNG', 'WebP', 'AVIF'],
         relatedTools: [
@@ -3939,6 +3960,43 @@ export function getLocalizedBlogArticle(slug: string, locale: string): Localized
   if (!article) return null;
 
   return toLocalizedArticle(article, normalizeBlogLocale(locale));
+}
+
+export function getLocalizedBlogTopics(locale: string): LocalizedBlogTopic[] {
+  const normalizedLocale = normalizeBlogLocale(locale);
+
+  return blogTopics.flatMap((topic) => {
+    const pillar = getLocalizedBlogArticle(topic.pillarSlug, normalizedLocale);
+    const clusters = topic.clusterSlugs
+      .map((slug) => getLocalizedBlogArticle(slug, normalizedLocale))
+      .filter((item): item is LocalizedBlogArticle => Boolean(item));
+
+    if (!pillar || clusters.length !== topic.clusterSlugs.length) return [];
+
+    return [{
+      id: topic.id,
+      targetKeywords: topic.targetKeywords,
+      pillar,
+      clusters,
+    }];
+  });
+}
+
+export function getLocalizedBlogTopicForArticle(
+  slug: string,
+  locale: string
+): LocalizedBlogTopicMembership | null {
+  const membership = getBlogTopicByArticleSlug(slug);
+  if (!membership) return null;
+
+  const topic = getLocalizedBlogTopics(locale).find((item) => item.id === membership.topic.id);
+  if (!topic) return null;
+
+  return {
+    ...topic,
+    role: membership.role,
+    targetKeyword: membership.targetKeyword,
+  };
 }
 
 /**

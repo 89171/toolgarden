@@ -21,10 +21,18 @@ Welcome to Subtitle Maker.
 
 2
 00:00:04,500 --> 00:00:08,000
-Edit SRT and LRC subtitles in the browser.`;
+Edit SRT, VTT, and LRC subtitles in the browser.`;
 
 const sampleLrc = `[00:01.00]<00:04.00>Welcome to Subtitle Maker.
-[00:04.50]<00:08.00>Edit SRT and LRC subtitles in the browser.`;
+[00:04.50]<00:08.00>Edit SRT, VTT, and LRC subtitles in the browser.`;
+
+const sampleVtt = `WEBVTT
+
+00:00:01.000 --> 00:00:04.000
+Welcome to Subtitle Maker.
+
+00:00:04.500 --> 00:00:08.000
+Edit SRT, VTT, and LRC subtitles in the browser.`;
 
 function clampTime(value: number): number {
   return Number.isFinite(value) ? Math.max(0, value) : 0;
@@ -192,7 +200,7 @@ export default function SubtitleMakerPage() {
             {t('load_subtitle')}
             <input
               type="file"
-              accept=".lrc,.srt,text/plain"
+              accept=".lrc,.srt,.vtt,text/plain,text/vtt"
               className="hidden"
               onChange={(event) => {
                 const file = event.target.files?.[0];
@@ -206,8 +214,11 @@ export default function SubtitleMakerPage() {
           <Button variant={format === 'lrc' ? 'primary' : 'secondary'} onClick={() => switchFormat('lrc')}>
             LRC
           </Button>
+          <Button variant={format === 'vtt' ? 'primary' : 'secondary'} onClick={() => switchFormat('vtt')}>
+            VTT
+          </Button>
           <Button variant="secondary" onClick={() => {
-            const sample = format === 'srt' ? sampleSrt : sampleLrc;
+            const sample = format === 'srt' ? sampleSrt : format === 'vtt' ? sampleVtt : sampleLrc;
             setSourceText(sample);
             parseInput(sample, `sample.${format}`);
           }}>

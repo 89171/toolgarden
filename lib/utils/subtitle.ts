@@ -1,4 +1,4 @@
-export type SubtitleFormat = 'lrc' | 'srt';
+export type SubtitleFormat = 'lrc' | 'srt' | 'vtt';
 
 export interface SubtitleCue {
   start: number;
@@ -20,15 +20,17 @@ function isFiniteTime(value: number): boolean {
 
 export function detectSubtitleFormat(input: string, filename = ''): SubtitleFormat {
   const normalizedName = filename.toLowerCase();
+  if (normalizedName.endsWith('.vtt')) return 'vtt';
   if (normalizedName.endsWith('.srt')) return 'srt';
   if (normalizedName.endsWith('.lrc')) return 'lrc';
+  if (/^\uFEFF?WEBVTT(?:\s|$)/u.test(input.trimStart())) return 'vtt';
   return input.includes('-->') ? 'srt' : 'lrc';
 }
 
 export function parseSubtitleTime(value: string, format: SubtitleFormat): number | null {
   const raw = value.trim();
 
-  if (format === 'srt') {
+  if (format === 'srt' || format === 'vtt') {
     const match = raw.match(/^(\d{1,2}):(\d{2}):(\d{2})[,.](\d{1,3})$/);
     if (!match) return null;
     const [, hours, minutes, seconds, millis] = match;
@@ -69,8 +71,14 @@ export function formatLrcTime(seconds: number): string {
   return `${minutes.toString().padStart(2, '0')}:${wholeSeconds.toString().padStart(2, '0')}.${centiseconds.toString().padStart(2, '0')}`;
 }
 
+export function formatVttTime(seconds: number): string {
+  return formatSrtTime(seconds).replace(',', '.');
+}
+
 export function formatSubtitleTime(seconds: number, format: SubtitleFormat): string {
-  return format === 'srt' ? formatSrtTime(seconds) : formatLrcTime(seconds);
+  if (format === 'srt') return formatSrtTime(seconds);
+  if (format === 'vtt') return formatVttTime(seconds);
+  return formatLrcTime(seconds);
 }
 
 function normalizeCues(cues: SubtitleCue[]): SubtitleCue[] {
@@ -148,7 +156,7 @@ export function parseSubtitle(input: string, filename = ''): SubtitleParseOutcom
   if (!raw) return { ok: false, message: 'Subtitle input is empty.' };
 
   const format = detectSubtitleFormat(raw, filename);
-  const cues = format === 'srt' ? parseSrt(raw) : parseLrc(raw);
+  const cues = format === 'lrc' ? parseLrc(raw) : parseSrt(raw);
 
   if (!cues.length) {
     return { ok: false, message: 'No valid subtitle lines were found.' };
@@ -171,6 +179,18 @@ export function exportSubtitle(cues: SubtitleCue[], format: SubtitleFormat): Sub
           cue.text,
         ].join('\n'))
         .join('\n\n'),
+    };
+  }
+
+  if (format === 'vtt') {
+    return {
+      ok: true,
+      output: `WEBVTT\n\n${normalized
+        .map((cue) => [
+          `${formatVttTime(cue.start)} --> ${formatVttTime(cue.end)}`,
+          cue.text,
+        ].join('\n'))
+        .join('\n\n')}`,
     };
   }
 

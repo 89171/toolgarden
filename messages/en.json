@@ -1652,18 +1652,18 @@
       "items": [
         {
           "question": "Does Subtitle Maker upload media or subtitle files?",
-          "answer": "No. Media preview, LRC/SRT parsing, editing, and export all run locally in your browser. Files are not uploaded to a server."
+          "answer": "No. Media preview, LRC/SRT/VTT parsing, editing, and export all run locally in your browser. Files are not uploaded to a server."
         },
         {
           "question": "Which subtitle formats are supported?",
-          "answer": "SRT and LRC are supported. You can upload a file or paste subtitle text directly and parse it."
+          "answer": "SRT, WebVTT, and LRC are supported. You can upload a file or paste subtitle text directly and parse it."
         },
         {
           "question": "Can I calibrate timing while media plays?",
           "answer": "Yes. Upload audio or video, select a subtitle row, and set its start or end time from the current playback position."
         },
         {
-          "question": "Can I convert between LRC and SRT?",
+          "question": "Can I convert between LRC, SRT, and VTT?",
           "answer": "Yes. After parsing subtitles, switch the output format and export. The tool generates timing codes for the selected target format."
         }
       ]
@@ -1946,6 +1946,16 @@
     "updated_label": "Updated",
     "related_tools": "Related tools",
     "related_articles": "Related articles",
+    "topic_hubs": "Topic guides",
+    "topic_hubs_description": "Start with a complete guide, then use the focused articles for a specific workflow or question.",
+    "pillar_guide": "Complete guide",
+    "cluster_articles": "Articles in this topic",
+    "back_to_pillar": "Back to complete guide",
+    "target_keyword": "Primary topic",
+    "more_articles": "More practical articles",
+    "more_articles_description": "Browse the rest of the JSON, image, PDF, frontend, and browser-local library.",
+    "related_guide": "Related privacy-first guide",
+    "related_guide_action": "Read the guide",
     "faq_title": "Frequently asked questions",
     "toc_title": "Table of contents"
   },
@@ -2339,7 +2349,7 @@
     },
     "subtitle-maker": {
       "name": "Subtitle Maker",
-      "description": "Free online LRC and SRT subtitle editor with media preview, timeline calibration, and subtitle export",
+      "description": "Free online LRC, SRT, and VTT subtitle editor and converter with media preview, timeline calibration, and subtitle export",
       "load_media": "Load media",
       "load_subtitle": "Load subtitles",
       "export": "Export subtitles",
@@ -2358,11 +2368,11 @@
       "none": "None",
       "empty_media_title": "Load audio or video to calibrate timing",
       "empty_media_body": "Local audio and video preview is supported. Subtitles, media, and exports stay in your browser.",
-      "empty_subtitles": "Upload LRC / SRT subtitles, or paste subtitle text below and parse it.",
+      "empty_subtitles": "Upload LRC / SRT / VTT subtitles, or paste subtitle text below and parse it.",
       "no_active_line": "No active subtitle line",
       "new_line": "New subtitle",
       "source_title": "Subtitle source",
-      "source_placeholder": "Paste SRT or LRC subtitle text...",
+      "source_placeholder": "Paste SRT, VTT, or LRC subtitle text...",
       "parse_source": "Parse text",
       "export_preview": "Export preview",
       "empty_export": "Exported content will appear here",

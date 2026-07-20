@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslations, useLocale } from 'next-intl';
 import {
@@ -51,7 +52,7 @@ function MenuDropdownCaret() {
       aria-hidden="true"
       className="hidden shrink-0 transition-transform duration-150 group-hover:rotate-180 group-focus-within:rotate-180 lg:inline-flex"
     >
-      <img src="/down-arrow.svg" alt="" width={12} height={12} className="h-3 w-3" />
+      <Image src="/down-arrow.svg" alt="" width={12} height={12} className="h-3 w-3" />
     </span>
   );
 }
@@ -362,12 +363,14 @@ function Header({ compact = false }: HeaderProps) {
                 </div>
               )}
             </div>
-            <div className="pointer-events-none absolute left-0 top-0 flex items-center gap-2 opacity-0" aria-hidden="true">
-              {navItems.map(renderMeasuredDesktopMenuItem)}
-              <button ref={desktopMoreMeasureRef} type="button" className={menuButtonClassName} tabIndex={-1}>
-                <span>{t('nav.more')}</span>
-                <MenuDropdownCaret />
-              </button>
+            <div className="pointer-events-none absolute inset-x-0 top-0 overflow-hidden opacity-0" aria-hidden="true">
+              <div className="flex w-max items-center gap-2">
+                {navItems.map(renderMeasuredDesktopMenuItem)}
+                <button ref={desktopMoreMeasureRef} type="button" className={menuButtonClassName} tabIndex={-1}>
+                  <span>{t('nav.more')}</span>
+                  <MenuDropdownCaret />
+                </button>
+              </div>
             </div>
           </nav>
         </div>

@@ -151,7 +151,7 @@ ToolGarden provides developers with a suite of tools for working with JSON data.
 - **Image resize / 图片尺寸修改** (`/image/resize`): Free online image resize tool that runs locally in your browser by entering a target width or height while keeping the original ratio
   - English: https://toolgarden.xyz/en/image/resize
   - Chinese: https://toolgarden.xyz/zh/image/resize
-- **Subtitle Maker / 字幕编辑器** (`/subtitle-maker`): Free online LRC and SRT subtitle editor with media preview, timeline calibration, and subtitle export
+- **Subtitle Maker / 字幕编辑器** (`/subtitle-maker`): Free online LRC, SRT, and VTT subtitle editor and converter with media preview, timeline calibration, and subtitle export
   - English: https://toolgarden.xyz/en/subtitle-maker
   - Chinese: https://toolgarden.xyz/zh/subtitle-maker
 - **Audio to MP3 / 音频转 MP3** (`/audio/to-mp3`): Free online tool to convert WAV, M4A, AAC, OGG, OPUS, WebM, FLAC, and other audio files to MP3 locally in your browser
@@ -275,6 +275,80 @@ ToolGarden provides developers with a suite of tools for working with JSON data.
   - English: https://toolgarden.xyz/en/jwt
   - Chinese: https://toolgarden.xyz/zh/jwt
 <!-- registry-tools:end -->
+
+<!-- blog-topic-clusters:start -->
+## Pillar and Cluster Content Map
+
+> Generated from `lib/blog/topics.json` during `npm run build`. Each cluster article links to its pillar, and every pillar links to all of its clusters.
+
+### browser-local-data-processing
+
+- Pillar: https://toolgarden.xyz/en/blog/complete-guide-browser-local-data-processing
+  - Chinese: https://toolgarden.xyz/zh/blog/complete-guide-browser-local-data-processing
+- Cluster articles:
+  - browser local processing: https://toolgarden.xyz/en/blog/why-browser-local-processing-matters-for-privacy
+    - Chinese: https://toolgarden.xyz/zh/blog/why-browser-local-processing-matters-for-privacy
+  - offline JSON editor: https://toolgarden.xyz/en/blog/edit-json-without-uploading-to-server
+    - Chinese: https://toolgarden.xyz/zh/blog/edit-json-without-uploading-to-server
+  - secure file converter no upload: https://toolgarden.xyz/en/blog/privacy-risks-online-file-converters
+    - Chinese: https://toolgarden.xyz/zh/blog/privacy-risks-online-file-converters
+  - GDPR compliant tools: https://toolgarden.xyz/en/blog/gdpr-compliance-client-side-tools
+    - Chinese: https://toolgarden.xyz/zh/blog/gdpr-compliance-client-side-tools
+  - browser local tools vs online converters: https://toolgarden.xyz/en/blog/toolgarden-vs-online-converters
+    - Chinese: https://toolgarden.xyz/zh/blog/toolgarden-vs-online-converters
+  - developer privacy toolkit: https://toolgarden.xyz/en/blog/developer-privacy-toolkit
+    - Chinese: https://toolgarden.xyz/zh/blog/developer-privacy-toolkit
+  - browser local tool architecture: https://toolgarden.xyz/en/blog/how-i-built-browser-local-online-tool-site
+    - Chinese: https://toolgarden.xyz/zh/blog/how-i-built-browser-local-online-tool-site
+
+### json-tools
+
+- Pillar: https://toolgarden.xyz/en/blog/json-tools-master-guide
+  - Chinese: https://toolgarden.xyz/zh/blog/json-tools-master-guide
+- Cluster articles:
+  - JSONC vs JSON5: https://toolgarden.xyz/en/blog/json-json5-jsonc-differences
+    - Chinese: https://toolgarden.xyz/zh/blog/json-json5-jsonc-differences
+  - JSON formatter online: https://toolgarden.xyz/en/blog/format-and-validate-json-in-browser
+    - Chinese: https://toolgarden.xyz/zh/blog/format-and-validate-json-in-browser
+  - JSON syntax error fix: https://toolgarden.xyz/en/blog/common-json-errors-and-fixes
+    - Chinese: https://toolgarden.xyz/zh/blog/common-json-errors-and-fixes
+
+### image-processing
+
+- Pillar: https://toolgarden.xyz/en/blog/image-processing-without-upload
+  - Chinese: https://toolgarden.xyz/zh/blog/image-processing-without-upload
+- Cluster articles:
+  - resize image without upload: https://toolgarden.xyz/en/blog/resize-images-locally-no-upload
+    - Chinese: https://toolgarden.xyz/zh/blog/resize-images-locally-no-upload
+  - PNG vs WebP converter: https://toolgarden.xyz/en/blog/jpg-png-webp-avif-differences
+    - Chinese: https://toolgarden.xyz/zh/blog/jpg-png-webp-avif-differences
+  - batch image compressor offline: https://toolgarden.xyz/en/blog/batch-image-compression-browser
+    - Chinese: https://toolgarden.xyz/zh/blog/batch-image-compression-browser
+  - client-side image processing: https://toolgarden.xyz/en/blog/developer-client-side-image-processing
+    - Chinese: https://toolgarden.xyz/zh/blog/developer-client-side-image-processing
+
+### pdf-tools
+
+- Pillar: https://toolgarden.xyz/en/blog/pdf-tools-guide
+  - Chinese: https://toolgarden.xyz/zh/blog/pdf-tools-guide
+- Cluster articles:
+  - merge PDFs offline: https://toolgarden.xyz/en/blog/merge-multiple-pdf-files-keep-order-bookmarks
+    - Chinese: https://toolgarden.xyz/zh/blog/merge-multiple-pdf-files-keep-order-bookmarks
+  - PDF text extractor local: https://toolgarden.xyz/en/blog/extract-text-from-pdf-in-browser
+    - Chinese: https://toolgarden.xyz/zh/blog/extract-text-from-pdf-in-browser
+
+### qr-subtitle-tools
+
+- Pillar: https://toolgarden.xyz/en/blog/qr-code-subtitle-tools-guide
+  - Chinese: https://toolgarden.xyz/zh/blog/qr-code-subtitle-tools-guide
+- Cluster articles:
+  - QR code generator for URL WiFi contact: https://toolgarden.xyz/en/blog/how-to-generate-qr-code-url-wifi-contact
+    - Chinese: https://toolgarden.xyz/zh/blog/how-to-generate-qr-code-url-wifi-contact
+  - WiFi QR code generator: https://toolgarden.xyz/en/blog/wifi-qr-code-generator-guide
+    - Chinese: https://toolgarden.xyz/zh/blog/wifi-qr-code-generator-guide
+  - SRT to VTT converter: https://toolgarden.xyz/en/blog/srt-to-vtt-browser-workflow
+    - Chinese: https://toolgarden.xyz/zh/blog/srt-to-vtt-browser-workflow
+<!-- blog-topic-clusters:end -->
 
 ## Available Tools
 

@@ -1,0 +1,85 @@
+[
+  {
+    "id": "browser-local-data-processing",
+    "pillarSlug": "complete-guide-browser-local-data-processing",
+    "clusterSlugs": [
+      "why-browser-local-processing-matters-for-privacy",
+      "edit-json-without-uploading-to-server",
+      "privacy-risks-online-file-converters",
+      "gdpr-compliance-client-side-tools",
+      "toolgarden-vs-online-converters",
+      "developer-privacy-toolkit",
+      "how-i-built-browser-local-online-tool-site"
+    ],
+    "targetKeywords": [
+      "browser local processing",
+      "offline JSON editor",
+      "secure file converter no upload",
+      "GDPR compliant tools",
+      "browser local tools vs online converters",
+      "developer privacy toolkit",
+      "browser local tool architecture"
+    ],
+    "toolPathPrefixes": []
+  },
+  {
+    "id": "json-tools",
+    "pillarSlug": "json-tools-master-guide",
+    "clusterSlugs": [
+      "json-json5-jsonc-differences",
+      "format-and-validate-json-in-browser",
+      "common-json-errors-and-fixes"
+    ],
+    "targetKeywords": [
+      "JSONC vs JSON5",
+      "JSON formatter online",
+      "JSON syntax error fix"
+    ],
+    "toolPathPrefixes": ["/json", "/excel-to-json", "/jwt"]
+  },
+  {
+    "id": "image-processing",
+    "pillarSlug": "image-processing-without-upload",
+    "clusterSlugs": [
+      "resize-images-locally-no-upload",
+      "jpg-png-webp-avif-differences",
+      "batch-image-compression-browser",
+      "developer-client-side-image-processing"
+    ],
+    "targetKeywords": [
+      "resize image without upload",
+      "PNG vs WebP converter",
+      "batch image compressor offline",
+      "client-side image processing"
+    ],
+    "toolPathPrefixes": ["/image/"]
+  },
+  {
+    "id": "pdf-tools",
+    "pillarSlug": "pdf-tools-guide",
+    "clusterSlugs": [
+      "merge-multiple-pdf-files-keep-order-bookmarks",
+      "extract-text-from-pdf-in-browser"
+    ],
+    "targetKeywords": [
+      "merge PDFs offline",
+      "PDF text extractor local"
+    ],
+    "toolPathPrefixes": ["/pdf/"]
+  },
+  {
+    "id": "qr-subtitle-tools",
+    "pillarSlug": "qr-code-subtitle-tools-guide",
+    "clusterSlugs": [
+      "how-to-generate-qr-code-url-wifi-contact",
+      "wifi-qr-code-generator-guide",
+      "srt-to-vtt-browser-workflow"
+    ],
+    "targetKeywords": [
+      "QR code generator for URL WiFi contact",
+      "WiFi QR code generator",
+      "SRT to VTT converter"
+    ],
+    "toolPathPrefixes": ["/qr-code", "/subtitle-maker"]
+  }
+]

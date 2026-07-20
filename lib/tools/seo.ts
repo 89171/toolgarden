@@ -5,6 +5,8 @@ import {
   BLOG_INDEX_PATH,
   getLocalizedBlogArticle,
   getLocalizedBlogArticles,
+  getLocalizedBlogTopicForArticle,
+  getLocalizedBlogTopics,
 } from '@/lib/blog/articles';
 import {
   BASE_URL,
@@ -281,10 +283,15 @@ export function createBlogArticleMetadata(slug: string, locale: string): Metadat
   if (!article) return null;
 
   const seoDescription = createPrivacySeoDescription(article.metaDescription, normalizedLocale);
+  const topicMembership = getLocalizedBlogTopicForArticle(slug, normalizedLocale);
 
   return {
     title: article.metaTitle,
     description: seoDescription,
+    keywords: [
+      ...article.tags,
+      ...(topicMembership?.targetKeyword ? [topicMembership.targetKeyword] : []),
+    ],
     alternates: {
       canonical: getLocalizedPath(normalizedLocale, article.path),
       languages: getLanguageAlternates(article.path),
@@ -544,6 +551,36 @@ export function createBlogItemListJsonLd(locale: string) {
   };
 }
 
+export function createBlogTopicCollectionJsonLd(locale: string) {
+  const normalizedLocale = normalizeLocale(locale);
+  const m = getLocaleMessages(normalizedLocale);
+  const topics = getLocalizedBlogTopics(normalizedLocale);
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: m.blog.topic_hubs,
+    description: m.blog.topic_hubs_description,
+    url: getLocalizedUrl(normalizedLocale, BLOG_INDEX_PATH),
+    inLanguage: normalizedLocale === 'zh' ? 'zh-CN' : 'en',
+    isPartOf: {
+      '@type': 'WebSite',
+      name: m.home.title,
+      url: getLocalizedUrl(normalizedLocale),
+    },
+    hasPart: topics.map((topic) => ({
+      '@type': 'WebPage',
+      name: topic.pillar.title,
+      url: getLocalizedUrl(normalizedLocale, topic.pillar.path),
+      hasPart: topic.clusters.map((article) => ({
+        '@type': 'Article',
+        name: article.title,
+        url: getLocalizedUrl(normalizedLocale, article.path),
+      })),
+    })),
+  };
+}
+
 export function createFaqJsonLd(locale: string) {
   const m = getLocaleMessages(locale);
   const faq = m.json_hub.faq;
@@ -599,6 +636,7 @@ export function createBlogArticleJsonLd(slug: string, locale: string) {
   const normalizedLocale = normalizeLocale(locale);
   const m = getLocaleMessages(normalizedLocale);
   const article = getLocalizedBlogArticle(slug, normalizedLocale);
+  const topicMembership = getLocalizedBlogTopicForArticle(slug, normalizedLocale);
 
   if (!article) return null;
 
@@ -611,6 +649,17 @@ export function createBlogArticleJsonLd(slug: string, locale: string) {
     dateModified: article.updatedAt,
     inLanguage: normalizedLocale === 'zh' ? 'zh-CN' : 'en',
     isAccessibleForFree: true,
+    keywords: [
+      ...article.tags,
+      ...(topicMembership?.targetKeyword ? [topicMembership.targetKeyword] : []),
+    ],
+    ...(topicMembership ? {
+      about: {
+        '@type': 'DefinedTerm',
+        name: topicMembership.targetKeyword ?? topicMembership.pillar.title,
+        url: getLocalizedUrl(normalizedLocale, topicMembership.pillar.path),
+      },
+    } : {}),
     author: {
       '@type': 'Organization',
       name: m.home.title,
@@ -625,11 +674,29 @@ export function createBlogArticleJsonLd(slug: string, locale: string) {
       '@type': 'WebPage',
       '@id': getLocalizedUrl(normalizedLocale, article.path),
     },
-    isPartOf: {
-      '@type': 'Blog',
-      name: m.blog.title,
-      url: getLocalizedUrl(normalizedLocale, BLOG_INDEX_PATH),
-    },
+    isPartOf: topicMembership?.role === 'cluster'
+      ? {
+          '@type': 'WebPage',
+          name: topicMembership.pillar.title,
+          url: getLocalizedUrl(normalizedLocale, topicMembership.pillar.path),
+          isPartOf: {
+            '@type': 'Blog',
+            name: m.blog.title,
+            url: getLocalizedUrl(normalizedLocale, BLOG_INDEX_PATH),
+          },
+        }
+      : {
+          '@type': 'Blog',
+          name: m.blog.title,
+          url: getLocalizedUrl(normalizedLocale, BLOG_INDEX_PATH),
+        },
+    ...(topicMembership?.role === 'pillar' ? {
+      hasPart: topicMembership.clusters.map((cluster) => ({
+        '@type': 'Article',
+        name: cluster.title,
+        url: getLocalizedUrl(normalizedLocale, cluster.path),
+      })),
+    } : {}),
   };
 }
 
@@ -641,6 +708,7 @@ export function createBlogArticleBreadcrumbJsonLd(slug: string, locale: string) 
   const normalizedLocale = normalizeLocale(locale);
   const m = getLocaleMessages(normalizedLocale);
   const article = getLocalizedBlogArticle(slug, normalizedLocale);
+  const topicMembership = getLocalizedBlogTopicForArticle(slug, normalizedLocale);
 
   if (!article) return null;
 
@@ -663,9 +731,18 @@ export function createBlogArticleBreadcrumbJsonLd(slug: string, locale: string) 
       {
         '@type': 'ListItem',
         position: 3,
+        name: topicMembership?.role === 'cluster' ? topicMembership.pillar.title : article.title,
+        item: getLocalizedUrl(
+          normalizedLocale,
+          topicMembership?.role === 'cluster' ? topicMembership.pillar.path : article.path
+        ),
+      },
+      ...(topicMembership?.role === 'cluster' ? [{
+        '@type': 'ListItem',
+        position: 4,
         name: article.title,
         item: getLocalizedUrl(normalizedLocale, article.path),
-      },
+      }] : []),
     ],
   };
 }

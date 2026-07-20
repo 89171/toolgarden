@@ -2,10 +2,16 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { BlogArticleRenderer } from '@/components/BlogArticleRenderer';
+import { BlogTopicNavigation } from '@/components/BlogTopicNavigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { routing } from '@/i18n/routing';
-import { getBlogSlugs, getLocalizedBlogArticle, getRelatedBlogArticles } from '@/lib/blog/articles';
+import {
+  getBlogSlugs,
+  getLocalizedBlogArticle,
+  getLocalizedBlogTopicForArticle,
+  getRelatedBlogArticles,
+} from '@/lib/blog/articles';
 import {
   createBlogArticleBreadcrumbJsonLd,
   createBlogArticleFaqJsonLd,
@@ -54,6 +60,7 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
 
   const m = getLocaleMessages(normalizedLocale);
   const relatedArticles = getRelatedBlogArticles(slug, normalizedLocale);
+  const topicMembership = getLocalizedBlogTopicForArticle(slug, normalizedLocale);
   const faqJsonLd = createBlogArticleFaqJsonLd(slug, normalizedLocale);
 
   return (
@@ -85,6 +92,17 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
               {m.blog.breadcrumb}
             </Link>
             <span aria-hidden="true">/</span>
+            {topicMembership?.role === 'cluster' ? (
+              <>
+                <Link
+                  href={getLocalizedPath(normalizedLocale, topicMembership.pillar.path)}
+                  className="shrink-0 transition-colors hover:text-content-secondary"
+                >
+                  {topicMembership.pillar.title}
+                </Link>
+                <span aria-hidden="true">/</span>
+              </>
+            ) : null}
             <span className="shrink-0 font-medium text-content-secondary">{article.title}</span>
           </nav>
 
@@ -107,9 +125,23 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
                 {m.blog.privacy_note}
               </p>
               <p className="mt-4 text-sm text-content-faint">
-                {m.blog.published_label} {formatDate(article.publishedAt, normalizedLocale)} · {article.readingTime}
+                {m.blog.published_label} {formatDate(article.publishedAt, normalizedLocale)} / {article.readingTime}
               </p>
             </header>
+
+            {topicMembership ? (
+              <BlogTopicNavigation
+                locale={normalizedLocale}
+                currentSlug={slug}
+                membership={topicMembership}
+                labels={{
+                  pillarGuide: m.blog.pillar_guide,
+                  clusterArticles: m.blog.cluster_articles,
+                  backToPillar: m.blog.back_to_pillar,
+                  targetKeyword: m.blog.target_keyword,
+                }}
+              />
+            ) : null}
 
             <div className="py-8 sm:py-10">
               <BlogArticleRenderer blocks={article.blocks} locale={normalizedLocale} />

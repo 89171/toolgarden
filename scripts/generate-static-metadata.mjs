@@ -14,6 +14,7 @@ const localeLabels = {
   zh: 'Chinese Simplified',
 };
 const llmsToolsMarker = 'registry-tools';
+const llmsBlogTopicsMarker = 'blog-topic-clusters';
 
 function cleanBuildArtifacts() {
   for (const dir of ['.next', 'out']) {
@@ -252,6 +253,30 @@ function renderGeneratedFullToolReference(tools, messagesByLocale) {
   return lines.join('\n').trim();
 }
 
+function renderGeneratedBlogTopicClusters(topics) {
+  const lines = [
+    '## Pillar and Cluster Content Map',
+    '',
+    '> Generated from `lib/blog/topics.json` during `npm run build`. Each cluster article links to its pillar, and every pillar links to all of its clusters.',
+    '',
+  ];
+
+  for (const topic of topics) {
+    lines.push(`### ${topic.id}`, '');
+    lines.push(`- Pillar: ${BASE_URL}/en/blog/${topic.pillarSlug}`);
+    lines.push(`  - Chinese: ${BASE_URL}/zh/blog/${topic.pillarSlug}`);
+    lines.push('- Cluster articles:');
+    topic.clusterSlugs.forEach((slug, index) => {
+      const keyword = topic.targetKeywords[index] ?? '';
+      lines.push(`  - ${keyword}: ${BASE_URL}/en/blog/${slug}`);
+      lines.push(`    - Chinese: ${BASE_URL}/zh/blog/${slug}`);
+    });
+    lines.push('');
+  }
+
+  return lines.join('\n').trim();
+}
+
 function replaceGeneratedSection(content, marker, generatedSection, insertBeforeHeading) {
   const start = `<!-- ${marker}:start -->`;
   const end = `<!-- ${marker}:end -->`;
@@ -273,6 +298,7 @@ function replaceGeneratedSection(content, marker, generatedSection, insertBefore
 
 function generateLlmsFiles() {
   const tools = readToolRegistry();
+  const blogTopics = readJson('lib/blog/topics.json');
   const messagesByLocale = {
     en: readJson('messages/en.json'),
     zh: readJson('messages/zh.json'),
@@ -308,13 +334,26 @@ function generateLlmsFiles() {
   const llmsContent = fs.existsSync(llmsPath) ? fs.readFileSync(llmsPath, 'utf8') : llmsFallback;
   const llmsFullContent = fs.existsSync(llmsFullPath) ? fs.readFileSync(llmsFullPath, 'utf8') : llmsFullFallback;
 
+  const llmsWithTools = replaceGeneratedSection(
+    llmsContent,
+    llmsToolsMarker,
+    renderGeneratedToolIndex(tools, messagesByLocale),
+    '\n## Available Tools'
+  );
+  const llmsFullWithTools = replaceGeneratedSection(
+    llmsFullContent,
+    llmsToolsMarker,
+    renderGeneratedFullToolReference(tools, messagesByLocale),
+    '\n## Blog Reference'
+  );
+
   fs.writeFileSync(
     llmsPath,
-    `${replaceGeneratedSection(llmsContent, llmsToolsMarker, renderGeneratedToolIndex(tools, messagesByLocale), '\n## Available Tools').trimEnd()}\n`
+    `${replaceGeneratedSection(llmsWithTools, llmsBlogTopicsMarker, renderGeneratedBlogTopicClusters(blogTopics), '\n## Available Tools').trimEnd()}\n`
   );
   fs.writeFileSync(
     llmsFullPath,
-    `${replaceGeneratedSection(llmsFullContent, llmsToolsMarker, renderGeneratedFullToolReference(tools, messagesByLocale), '\n## Blog Reference').trimEnd()}\n`
+    `${replaceGeneratedSection(llmsFullWithTools, llmsBlogTopicsMarker, renderGeneratedBlogTopicClusters(blogTopics), '\n## Blog Reference').trimEnd()}\n`
   );
 }
 
