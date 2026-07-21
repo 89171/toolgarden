@@ -1,5 +1,5 @@
 'use client';
-import Link from 'next/link';
+import Link from '@/components/ui/AppLink';
 import { useLocale } from 'next-intl';
 import { usePathname } from 'next/navigation';
 import { routing } from '@/i18n/routing';

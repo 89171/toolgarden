@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { createToolMetadata } from '@/lib/tools/seo';
+import 'tldraw/tldraw.css';
 
 const TOOL_ID = 'whiteboard';
 

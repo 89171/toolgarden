@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { createToolMetadata } from '@/lib/tools/seo';
+import '@excalidraw/excalidraw/index.css';
 
 const TOOL_ID = 'excalidraw-board';
 

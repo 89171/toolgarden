@@ -2,8 +2,7 @@
 
 import { useId, useState } from 'react';
 import { useTranslations } from 'next-intl';
-
-const FEEDBACK_EMAIL = '891715824@qq.com';
+import { SITE_CONTACT_EMAIL } from '@/lib/site/registry';
 
 type CopyStatus = 'idle' | 'copied' | 'failed';
 
@@ -24,10 +23,10 @@ function fallbackCopy(text: string) {
 }
 
 async function copyEmailToClipboard() {
-  if (fallbackCopy(FEEDBACK_EMAIL)) return true;
+  if (fallbackCopy(SITE_CONTACT_EMAIL)) return true;
 
   try {
-    await navigator.clipboard.writeText(FEEDBACK_EMAIL);
+    await navigator.clipboard.writeText(SITE_CONTACT_EMAIL);
     return true;
   } catch {
     return false;
@@ -105,10 +104,10 @@ export function FeedbackButton() {
                 {t('email_label')}
               </p>
               <a
-                href={`mailto:${FEEDBACK_EMAIL}`}
+                href={`mailto:${SITE_CONTACT_EMAIL}`}
                 className="mt-1 block break-all font-mono text-sm font-semibold text-content-secondary underline-offset-4 hover:text-content hover:underline"
               >
-                {FEEDBACK_EMAIL}
+                {SITE_CONTACT_EMAIL}
               </a>
             </div>
 

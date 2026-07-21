@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
+import Link from '@/components/ui/AppLink';
 import { useTranslations, useLocale } from 'next-intl';
 import {
   getAudioTools,

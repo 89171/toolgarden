@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import Link from '@/components/ui/AppLink';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import { getImageTools } from '@/lib/tools/registry';

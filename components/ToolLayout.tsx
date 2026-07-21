@@ -1,12 +1,11 @@
 'use client';
 import React from 'react';
-import Link from 'next/link';
-import { useTranslations, useLocale, useMessages } from 'next-intl';
+import Link from '@/components/ui/AppLink';
+import { useTranslations, useLocale } from 'next-intl';
 import { getToolById } from '@/lib/tools/registry';
 import { getPillarSlugForToolPath } from '@/lib/blog/topics';
 import {
   buildBreadcrumbJsonLd,
-  buildToolFaqJsonLd,
   buildToolJsonLd,
   toJsonLd,
   type JsonLdMessages,
@@ -22,7 +21,6 @@ interface ToolLayoutProps {
 export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
   const t = useTranslations();
   const locale = useLocale();
-  const messages = useMessages() as unknown as JsonLdMessages;
   const tool = getToolById(toolId);
 
   const toolName  = tool ? t(`tools.${toolId}.name`)        : toolId;
@@ -39,9 +37,18 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
   const pdfHubLabel = t('pdf_hub.breadcrumb');
   const fileMergeHubLabel = t('file_merge_hub.breadcrumb');
   const otherHubLabel = t('other_hub.breadcrumb');
-  const toolJsonLd = tool ? buildToolJsonLd(toolId, locale, messages) : null;
-  const breadcrumbJsonLd = tool ? buildBreadcrumbJsonLd(toolId, locale, messages) : null;
-  const faqJsonLd = tool ? buildToolFaqJsonLd(toolId, messages) : null;
+  const jsonLdMessages: JsonLdMessages = {
+    home: { title: t('home.title'), breadcrumb: homeLabel },
+    image_hub: { breadcrumb: imageHubLabel },
+    audio_hub: { breadcrumb: audioHubLabel },
+    pdf_hub: { breadcrumb: pdfHubLabel },
+    file_merge_hub: { breadcrumb: fileMergeHubLabel },
+    text_hub: { breadcrumb: t('text_hub.breadcrumb') },
+    other_hub: { breadcrumb: otherHubLabel },
+    tools: { [toolId]: { name: toolName, description: toolDesc } },
+  };
+  const toolJsonLd = tool ? buildToolJsonLd(toolId, locale, jsonLdMessages) : null;
+  const breadcrumbJsonLd = tool ? buildBreadcrumbJsonLd(toolId, locale, jsonLdMessages) : null;
   const relatedGuideSlug = tool ? getPillarSlugForToolPath(tool.path) : null;
 
   return (
@@ -56,12 +63,6 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: toJsonLd(breadcrumbJsonLd) }}
-        />
-      )}
-      {faqJsonLd && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: toJsonLd(faqJsonLd) }}
         />
       )}
       <div className="flex min-h-[100dvh] flex-col bg-background text-foreground">
@@ -147,7 +148,7 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
           </div>
         )}
 
-        <div className="flex flex-1 flex-col lg:min-h-0">{children}</div>
+        <div data-clarity-mask="true" className="flex flex-1 flex-col lg:min-h-0">{children}</div>
         {relatedGuideSlug ? (
           <aside className="mt-6 flex flex-col gap-3 rounded-lg border border-border-subtle bg-surface px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
             <div>

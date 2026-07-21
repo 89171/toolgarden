@@ -1690,7 +1690,174 @@
     "github": "GitHub"
   },
   "footer": {
-    "text": "ToolGarden"
+    "text": "ToolGarden",
+    "about": "About",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "security": "Security",
+    "contact": "Contact",
+    "blog": "Blog"
+  },
+  "site_pages": {
+    "eyebrow": "ToolGarden information",
+    "updated_label": "Last updated",
+    "updated_at": "2026-07-21",
+    "about": {
+      "title": "About ToolGarden",
+      "meta_title": "About ToolGarden and Browser-Local Tools",
+      "meta_description": "Learn why ToolGarden builds privacy-first browser-local tools, how the suite works, and how its technical guides are maintained.",
+      "intro": "ToolGarden is a collection of practical web tools designed to process everyday developer and document workflows in the browser whenever the platform can do the work safely and reliably.",
+      "sections": [
+        {
+          "title": "Why ToolGarden exists",
+          "paragraphs": [
+            "Many online utilities require an upload even when the same transformation can run on the user's device. ToolGarden aims to reduce that unnecessary data movement while keeping useful workflows easy to access.",
+            "The site covers JSON, images, PDFs, audio, text, QR codes, subtitles, and related utilities. The tool registry is the source of truth for official tools, navigation, discovery, and search metadata."
+          ]
+        },
+        {
+          "title": "How browser-local processing works",
+          "paragraphs": [
+            "Supported inputs are decoded and transformed by browser APIs, JavaScript, Web Workers, WebAssembly, or locally executed models. Some advanced tools download code, model, font, or runtime assets before processing can begin, but the selected source file is not sent to a ToolGarden processing API.",
+            "Page analytics are a separate data flow from tool processing and are described in the Privacy Policy."
+          ]
+        },
+        {
+          "title": "How guides are maintained",
+          "paragraphs": [
+            "Technical articles are written for practical use and linked to the relevant tools and topic pillars. Material changes should update the visible modified date. Security, privacy, standards, and compliance claims are reviewed conservatively and should point readers to primary sources where appropriate."
+          ],
+          "items": [
+            "Examples should use synthetic data rather than real credentials.",
+            "Privacy claims distinguish local tool input from page telemetry.",
+            "Compliance articles explain limitations instead of promising automatic certification."
+          ]
+        }
+      ]
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "meta_title": "ToolGarden Privacy Policy",
+      "meta_description": "Understand which ToolGarden data stays in your browser, which analytics services receive page telemetry, and how local storage and models are used.",
+      "intro": "ToolGarden is built around browser-local tool processing. This policy explains the important distinction between the text or files you process and the page-level telemetry generated while visiting the site.",
+      "sections": [
+        {
+          "title": "Tool inputs and local processing",
+          "paragraphs": [
+            "Text, files, images, PDFs, audio, and other inputs selected inside supported tools are intended to be processed on your device and are not uploaded to a ToolGarden processing server. Tool workspaces are explicitly marked for Microsoft Clarity masking, and standard input fields are masked by Clarity in all masking modes.",
+            "Some tools download JavaScript, WebAssembly, fonts, codecs, or machine-learning model assets. Network access for those assets is not an upload of your selected source file. You can inspect the browser Network panel when a workflow requires independent verification."
+          ]
+        },
+        {
+          "title": "Analytics and page telemetry",
+          "paragraphs": [
+            "ToolGarden uses Google Analytics, Baidu Analytics, and Microsoft Clarity across the site. These services may receive page URLs and titles, approximate location, browser and device information, identifiers, performance diagnostics, and interaction events such as clicks, scrolling, and page navigation.",
+            "Analytics data is handled under each provider's terms, controls, and retention settings. Do not place personal data or secrets in page URLs. ToolGarden does not intentionally send filenames, tool input values, or generated output values as custom analytics events."
+          ],
+          "links": [
+            { "label": "Google Privacy Policy", "href": "https://policies.google.com/privacy" },
+            { "label": "Microsoft Privacy Statement", "href": "https://privacy.microsoft.com/privacystatement" },
+            { "label": "Baidu Privacy Policy", "href": "https://www.baidu.com/duty/yinsiquan-policy.html" }
+          ]
+        },
+        {
+          "title": "Browser storage and caching",
+          "paragraphs": [
+            "The site may use browser cache, service-worker storage, cookies, or local storage for language routing, offline assets, preferences, and tool-specific persistence such as whiteboard state. These items remain under your browser profile and can be removed through your browser's site-data controls."
+          ]
+        },
+        {
+          "title": "Your choices and questions",
+          "paragraphs": [
+            "Browser privacy controls, content blockers, and site-data settings may limit analytics and stored data, although blocking required scripts or assets can affect tool functionality. Contact ToolGarden if you have a privacy question or believe sensitive data has been exposed."
+          ]
+        }
+      ]
+    },
+    "terms": {
+      "title": "Terms of Use",
+      "meta_title": "ToolGarden Terms of Use",
+      "meta_description": "Review the conditions for using ToolGarden browser-local tools, including acceptable use, output verification, and service limitations.",
+      "intro": "By using ToolGarden, you agree to use the tools lawfully, verify important outputs, and retain appropriate backups of original data.",
+      "sections": [
+        {
+          "title": "Permitted use",
+          "paragraphs": [
+            "You may use the public tools for lawful personal or business workflows. You are responsible for having permission to process the files, media, fonts, documents, and other material you select."
+          ],
+          "items": [
+            "Do not use the site to violate law, privacy, intellectual-property rights, or access controls.",
+            "Do not deliberately disrupt the service, distribute malware, or abuse third-party assets and infrastructure.",
+            "Do not treat demonstrations or generated examples as professional legal, security, medical, or financial advice."
+          ]
+        },
+        {
+          "title": "Verify outputs and keep originals",
+          "paragraphs": [
+            "Browser capabilities, file formats, models, fonts, and third-party libraries can produce incomplete or unexpected results. Preview important outputs and retain the original until the transformed file has been accepted for its intended use."
+          ]
+        },
+        {
+          "title": "Availability and warranties",
+          "paragraphs": [
+            "The service is provided as available without a guarantee that every tool, browser, file, model, or network environment will work without interruption or error. Features and these terms may change as the product evolves."
+          ]
+        }
+      ]
+    },
+    "security": {
+      "title": "Security",
+      "meta_title": "ToolGarden Security and Local Processing",
+      "meta_description": "Learn about ToolGarden security boundaries, browser-local processing, dependency controls, and how to report a potential vulnerability.",
+      "intro": "ToolGarden reduces server-side exposure by processing supported tool inputs in the browser, while recognizing that delivered code, dependencies, analytics, and the user's own device remain part of the security model.",
+      "sections": [
+        {
+          "title": "Security boundaries",
+          "paragraphs": [
+            "No-upload processing removes a remote file-processing step, but it does not make a compromised browser, extension, device, dependency, or website harmless. Use a maintained browser, review unusually sensitive workflows, and work on copies of important files."
+          ]
+        },
+        {
+          "title": "Engineering controls",
+          "paragraphs": [
+            "The project uses a centralized tool registry, pure utility functions, static export hardening, a Content Security Policy, dependency review, and automated lint, type, build, and regression checks. Large libraries and models are loaded only by the tools that need them where practical."
+          ],
+          "items": [
+            "Tool workspace content is marked for Clarity masking.",
+            "Source maps are removed from production exports.",
+            "Hashed application assets are cached separately from navigational documents.",
+            "Security-sensitive dependencies are upgraded or isolated when a compatible fix is available."
+          ]
+        },
+        {
+          "title": "Report a vulnerability",
+          "paragraphs": [
+            "Send a concise report with the affected URL, impact, reproduction steps, browser version, and any safe proof of concept. Do not include live credentials, private user files, or destructive test data. Please allow reasonable time for investigation before public disclosure."
+          ]
+        }
+      ]
+    },
+    "contact": {
+      "title": "Contact ToolGarden",
+      "meta_title": "Contact ToolGarden",
+      "meta_description": "Contact ToolGarden about tool feedback, privacy questions, content corrections, accessibility, or responsible security reports.",
+      "intro": "Feedback is welcome for broken workflows, browser compatibility, privacy questions, article corrections, accessibility, and responsible security reports.",
+      "email_label": "Contact email",
+      "sections": [
+        {
+          "title": "What to include",
+          "paragraphs": [
+            "Include the page URL, browser and operating-system version, expected result, actual result, and steps that reproduce the issue. Use synthetic sample data whenever possible."
+          ]
+        },
+        {
+          "title": "Protect sensitive information",
+          "paragraphs": [
+            "Do not email passwords, API keys, session cookies, identity documents, confidential files, or unredacted customer data. For a security report, provide the minimum safe proof needed to understand the issue."
+          ]
+        }
+      ]
+    }
   },
   "feedback": {
     "button": "Feedback",
@@ -1805,13 +1972,17 @@
     "color": "Color",
     "stroke_width": "Stroke",
     "canvas_label": "Whiteboard canvas",
-    "local_note": "The board is edited and saved locally in your browser. Use the built-in tldraw menu to import, save, insert images, and export PNG, SVG, or tldraw files."
+    "local_note": "The board is edited and saved locally in your browser. Use the built-in tldraw menu to import, save, insert images, and export PNG, SVG, or tldraw files.",
+    "load_error": "The whiteboard editor could not be loaded. Check the connection and try again.",
+    "retry": "Try again"
   },
   "excalidraw_board_tool": {
     "canvas_title": "Excalidraw Board",
     "fullscreen": "Fullscreen",
     "exit_fullscreen": "Exit fullscreen",
-    "local_note": "The board is edited locally in your browser. Use the built-in Excalidraw menu to import, save, and export PNG, SVG, or Excalidraw files."
+    "local_note": "The board is edited locally in your browser. Use the built-in Excalidraw menu to import, save, and export PNG, SVG, or Excalidraw files.",
+    "load_error": "The Excalidraw editor could not be loaded. Check the connection and try again.",
+    "retry": "Try again"
   },
   "mind_map_tool": {
     "input_title": "Markdown outline",
@@ -1944,6 +2115,7 @@
     "read_more": "Read article",
     "published_label": "Published",
     "updated_label": "Updated",
+    "author_label": "By",
     "related_tools": "Related tools",
     "related_articles": "Related articles",
     "topic_hubs": "Topic guides",
@@ -1960,7 +2132,7 @@
     "toc_title": "Table of contents"
   },
   "home": {
-    "title": "ToolGarden Toolkit",
+    "title": "ToolGarden",
     "breadcrumb": "Home",
     "meta_title": "ToolGarden Toolkit - Free Online JSON, Image, PDF, Text and QR Tools",
     "subtitle": "Free online tools that run locally in your browser — JSON, images, PDFs, text, QR codes, and subtitles. No upload, no sign-in.",
@@ -1973,6 +2145,12 @@
     "expand_more": "Show more",
     "show_less": "Show less",
     "view_all_in": "View all {section}"
+  },
+  "errors": {
+    "title": "This page ran into a problem",
+    "description": "Your browser data has not been submitted. Retry the page, or return home and open the tool again.",
+    "retry": "Try again",
+    "home": "Return home"
   },
   "not_found": {
     "title": "Page not found",
@@ -2208,10 +2386,6 @@
     "pdf-merge": {
       "name": "Merge PDF",
       "description": "Free online PDF merger that combines multiple PDF files into one document with drag-and-drop reordering"
-    },
-    "file-merge": {
-      "name": "File Merge",
-      "description": "Free online tool to merge PDF, Word, PPT, TXT, Markdown, CSV, RTF, Excel, and images while exporting the native format for each file type"
     },
     "word-merge": {
       "name": "Word Merge",

@@ -143,7 +143,6 @@ export function ImageCropResize({ mode }: ImageCropResizeProps) {
   const showQuality = target.supportsQuality;
   const isCropMode = mode === 'crop';
   const toolId = isCropMode ? 'image-crop' : 'image-resize';
-  const editorIcon = isCropMode ? 'CUT' : 'SIZ';
   const canProcess = Boolean(file && image && crop && parseDimension(outputWidth) && parseDimension(outputHeight));
 
   useEffect(() => {

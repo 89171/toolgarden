@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import Link from '@/components/ui/AppLink';
 import { notFound } from 'next/navigation';
 import { BlogArticleRenderer } from '@/components/BlogArticleRenderer';
 import { BlogTopicNavigation } from '@/components/BlogTopicNavigation';
@@ -124,8 +124,26 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
               <p className="mt-3 max-w-3xl text-sm leading-6 text-content-faint">
                 {m.blog.privacy_note}
               </p>
-              <p className="mt-4 text-sm text-content-faint">
-                {m.blog.published_label} {formatDate(article.publishedAt, normalizedLocale)} / {article.readingTime}
+              <p className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-content-faint">
+                <span>{m.blog.published_label} {formatDate(article.publishedAt, normalizedLocale)}</span>
+                {article.updatedAt !== article.publishedAt ? (
+                  <>
+                    <span aria-hidden="true">/</span>
+                    <span>{m.blog.updated_label} {formatDate(article.updatedAt, normalizedLocale)}</span>
+                  </>
+                ) : null}
+                <span aria-hidden="true">/</span>
+                <span>{article.readingTime}</span>
+                <span aria-hidden="true">/</span>
+                <span>
+                  {m.blog.author_label}{' '}
+                  <Link
+                    href={getLocalizedPath(normalizedLocale, '/about')}
+                    className="font-medium text-content-secondary underline decoration-border-strong underline-offset-4 transition-colors hover:text-content"
+                  >
+                    ToolGarden
+                  </Link>
+                </span>
               </p>
             </header>
 

@@ -1,7 +1,7 @@
 {
-  "name": "JSON Toolkit",
-  "short_name": "JSON Toolkit",
-  "description": "Free online JSON tools to format, convert, validate, and decode JSON locally in the browser with no uploads for better privacy.",
+  "name": "ToolGarden",
+  "short_name": "ToolGarden",
+  "description": "Free browser-local tools for JSON, images, PDFs, audio, text, QR codes, subtitles, and documents with no file upload required.",
   "start_url": "/en",
   "scope": "/",
   "display": "standalone",

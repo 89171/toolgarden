@@ -10,7 +10,37 @@
  * 版本号更新 CACHE_NAME 即可清除旧缓存。
  */
 
-const CACHE_NAME = 'json-toolkit-v2';
+const CACHE_NAME = 'json-toolkit-v3';
+const NO_CACHE_WRITE = Promise.resolve();
+
+/**
+ * Clone cacheable responses before returning the original response to the
+ * browser. Deferring Response.clone() until after caches.open() resolves can
+ * race with the browser consuming the original body.
+ */
+function fetchWithCacheWrite(request, shouldCache) {
+  return fetch(request).then((response) => {
+    const responseForCache = shouldCache(response) ? response.clone() : null;
+    const cacheWrite = responseForCache
+      ? caches.open(CACHE_NAME).then((cache) => cache.put(request, responseForCache))
+      : NO_CACHE_WRITE;
+
+    return { response, cacheWrite };
+  });
+}
+
+function respondAndKeepCacheWriteAlive(event, task, fallback) {
+  event.respondWith(
+    task
+      .then(({ response }) => response)
+      .catch(fallback)
+  );
+  event.waitUntil(
+    task
+      .then(({ cacheWrite }) => cacheWrite)
+      .catch(() => undefined)
+  );
+}
 
 // ── 安装：立即激活 ─────────────────────────────────────────────
 self.addEventListener('install', () => {
@@ -46,16 +76,14 @@ self.addEventListener('fetch', (event) => {
 
   // ── Cache-First：Next.js 静态资源（内容哈希，永不过期）──────
   if (url.pathname.startsWith('/_next/static/')) {
-    event.respondWith(
-      caches.match(request).then((cached) => {
-        if (cached) return cached;
-        return fetch(request).then((response) => {
-          if (response.ok) {
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, response.clone()));
-          }
-          return response;
-        });
-      })
+    const task = caches.match(request).then((cached) => {
+      if (cached) return { response: cached, cacheWrite: NO_CACHE_WRITE };
+      return fetchWithCacheWrite(request, (response) => response.ok);
+    });
+    respondAndKeepCacheWriteAlive(
+      event,
+      task,
+      () => new Response('Asset unavailable', { status: 503 })
     );
     return;
   }
@@ -66,35 +94,31 @@ self.addEventListener('fetch', (event) => {
     url.pathname === '/manifest.webmanifest' ||
     url.pathname === '/favicon.ico'
   ) {
-    event.respondWith(
-      caches.match(request).then((cached) => {
-        if (cached) return cached;
-        return fetch(request).then((response) => {
-          if (response.ok) {
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, response.clone()));
-          }
-          return response;
-        });
-      })
+    const task = caches.match(request).then((cached) => {
+      if (cached) return { response: cached, cacheWrite: NO_CACHE_WRITE };
+      return fetchWithCacheWrite(request, (response) => response.ok);
+    });
+    respondAndKeepCacheWriteAlive(
+      event,
+      task,
+      () => new Response('Asset unavailable', { status: 503 })
     );
     return;
   }
 
   // ── Network-First：页面 + 其余 ──────────────────────────────
-  event.respondWith(
-    fetch(request)
-      .then((response) => {
-        // 仅缓存成功的 HTML 页面
-        if (response.ok && response.headers.get('content-type')?.includes('text/html')) {
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, response.clone()));
-        }
-        return response;
-      })
-      .catch(() =>
-        // 网络失败：降级到缓存，或返回离线工具首页
-        caches.match(request).then(
-          (cached) => cached ?? caches.match('/en') ?? new Response('Offline', { status: 503 })
-        )
+  const task = fetchWithCacheWrite(
+    request,
+    (response) =>
+      response.ok && response.headers.get('content-type')?.includes('text/html') === true
+  );
+  respondAndKeepCacheWriteAlive(
+    event,
+    task,
+    () =>
+      // 网络失败：降级到缓存，或返回离线工具首页
+      caches.match(request).then(
+        (cached) => cached ?? caches.match('/en') ?? new Response('Offline', { status: 503 })
       )
   );
 });

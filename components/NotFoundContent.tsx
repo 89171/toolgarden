@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import Link from 'next/link';
+import Link from '@/components/ui/AppLink';
 import { usePathname } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { getLocalizedToolPath, toolRegistry } from '@/lib/tools/registry';

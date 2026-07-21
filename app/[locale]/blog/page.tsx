@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import Link from '@/components/ui/AppLink';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { getLocalizedBlogArticles, getLocalizedBlogTopics } from '@/lib/blog/articles';
@@ -145,16 +145,16 @@ export default async function BlogIndexPage({ params }: BlogIndexPageProps) {
             <p className="mt-2 max-w-2xl text-sm leading-7 text-content-muted sm:text-base">
               {m.blog.more_articles_description}
             </p>
-            <details className="mt-6 rounded-lg border border-border-base bg-surface">
-              <summary className="cursor-pointer px-5 py-4 font-semibold text-content marker:text-content-faint">
+            <div className="mt-6">
+              <h3 className="border-b border-border-subtle pb-3 text-sm font-semibold text-content-secondary">
                 {m.blog.all_articles} ({moreArticles.length})
-              </summary>
-              <div className="grid grid-cols-1 gap-2 border-t border-border-subtle p-4 md:grid-cols-2">
+              </h3>
+              <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
                 {moreArticles.map((article) => (
                   <Link
                     key={article.slug}
                     href={getLocalizedPath(normalizedLocale, article.path)}
-                    className="rounded border border-border-subtle bg-surface-raised p-4 transition-colors hover:border-border-strong hover:bg-surface-hover"
+                    className="rounded-lg border border-border-subtle bg-surface-raised p-4 transition-colors hover:border-border-strong hover:bg-surface-hover"
                   >
                     <span className="block text-xs text-content-faint">
                       {formatDate(article.publishedAt, normalizedLocale)} / {article.readingTime}
@@ -164,7 +164,7 @@ export default async function BlogIndexPage({ params }: BlogIndexPageProps) {
                   </Link>
                 ))}
               </div>
-            </details>
+            </div>
           </section>
         </main>
       </div>

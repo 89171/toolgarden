@@ -23,23 +23,28 @@ export function ExcalidrawBoardTool() {
   const locale = useLocale();
   const fullscreenRef = useRef<HTMLDivElement | null>(null);
   const [Excalidraw, setExcalidraw] = useState<ExcalidrawComponent | null>(null);
+  const [loadError, setLoadError] = useState(false);
+  const [loadAttempt, setLoadAttempt] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isFullscreenFallback, setIsFullscreenFallback] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
     configureExcalidrawAssetPath();
+    setLoadError(false);
 
-    void import('@excalidraw/excalidraw').then((module) => {
-      if (isMounted) {
-        setExcalidraw(() => module.Excalidraw);
-      }
-    });
+    void import('@excalidraw/excalidraw')
+      .then((module) => {
+        if (isMounted) setExcalidraw(() => module.Excalidraw);
+      })
+      .catch(() => {
+        if (isMounted) setLoadError(true);
+      });
 
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [loadAttempt]);
 
   useEffect(() => {
     const syncFullscreenState = () => {
@@ -120,7 +125,14 @@ export function ExcalidrawBoardTool() {
               isFullscreenActive ? 'min-h-0 flex-1' : 'h-[720px] min-h-[620px]'
             }`}
           >
-            {Excalidraw ? (
+            {loadError ? (
+              <div className="flex h-full flex-col items-center justify-center gap-4 p-6 text-center">
+                <p className="max-w-md text-sm leading-6 text-content-muted">{t('load_error')}</p>
+                <Button type="button" variant="secondary" onClick={() => setLoadAttempt((attempt) => attempt + 1)}>
+                  {t('retry')}
+                </Button>
+              </div>
+            ) : Excalidraw ? (
               <Excalidraw
                 langCode={locale === 'zh' ? 'zh-CN' : 'en'}
                 name="toolgarden-excalidraw-board"

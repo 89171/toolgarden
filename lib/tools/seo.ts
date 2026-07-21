@@ -14,6 +14,7 @@ import {
   buildToolFaqJsonLd,
   buildToolJsonLd,
   createPrivacySeoDescription,
+  createPageSeoTitle,
   createToolSeoDescription,
   createToolSeoTitle,
   getLanguageAlternates,
@@ -24,6 +25,7 @@ import {
   type JsonLdMessages,
   type Locale,
 } from './jsonld';
+import { SITE_CONTACT_EMAIL, getSitePage, type SitePageId } from '@/lib/site/registry';
 import {
   getAudioTools,
   getFileMergeTools,
@@ -53,8 +55,26 @@ const messages = { zh: zhMessages, en: enMessages } as const;
 
 type ToolMessageId = keyof typeof zhMessages.tools;
 
+const DEFAULT_OPEN_GRAPH_IMAGE = {
+  url: `${BASE_URL}/opengraph-image`,
+  width: 1200,
+  height: 630,
+  alt: 'ToolGarden — browser-local privacy-first web tools',
+};
+
 export function getLocaleMessages(locale: string) {
   return messages[normalizeLocale(locale)];
+}
+
+export function getClientMessages(locale: string) {
+  const {
+    tool_faq: _toolFaq,
+    site_pages: _sitePages,
+    ...clientMessages
+  } = getLocaleMessages(locale);
+  void _toolFaq;
+  void _sitePages;
+  return clientMessages;
 }
 
 export function createLocaleMetadata(locale: string): Metadata {
@@ -64,7 +84,7 @@ export function createLocaleMetadata(locale: string): Metadata {
 
   return {
     title: {
-      default: m.home.meta_title,
+      default: createPageSeoTitle(m.home.meta_title, normalizedLocale),
       template: `%s | ${m.home.title}`,
     },
     description: seoDescription,
@@ -74,7 +94,8 @@ export function createLocaleMetadata(locale: string): Metadata {
       languages: getLanguageAlternates(),
     },
     openGraph: {
-      title: m.home.meta_title,
+      title: createPageSeoTitle(m.home.meta_title, normalizedLocale),
+      images: [DEFAULT_OPEN_GRAPH_IMAGE],
       description: seoDescription,
       type: 'website',
       locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
@@ -91,7 +112,7 @@ export function createImageHubMetadata(locale: string): Metadata {
   const seoDescription = createPrivacySeoDescription(m.image_hub.description, normalizedLocale);
 
   return {
-    title: m.image_hub.meta_title,
+    title: createPageSeoTitle(m.image_hub.meta_title, normalizedLocale),
     description: seoDescription,
     alternates: {
       canonical: getLocalizedPath(normalizedLocale, path),
@@ -99,6 +120,7 @@ export function createImageHubMetadata(locale: string): Metadata {
     },
     openGraph: {
       title: `${m.image_hub.title} | ${m.home.title}`,
+      images: [DEFAULT_OPEN_GRAPH_IMAGE],
       description: seoDescription,
       type: 'website',
       locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
@@ -115,7 +137,7 @@ export function createPdfHubMetadata(locale: string): Metadata {
   const seoDescription = createPrivacySeoDescription(m.pdf_hub.description, normalizedLocale);
 
   return {
-    title: m.pdf_hub.meta_title,
+    title: createPageSeoTitle(m.pdf_hub.meta_title, normalizedLocale),
     description: seoDescription,
     alternates: {
       canonical: getLocalizedPath(normalizedLocale, path),
@@ -123,6 +145,7 @@ export function createPdfHubMetadata(locale: string): Metadata {
     },
     openGraph: {
       title: `${m.pdf_hub.title} | ${m.home.title}`,
+      images: [DEFAULT_OPEN_GRAPH_IMAGE],
       description: seoDescription,
       type: 'website',
       locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
@@ -139,7 +162,7 @@ export function createAudioHubMetadata(locale: string): Metadata {
   const seoDescription = createPrivacySeoDescription(m.audio_hub.description, normalizedLocale);
 
   return {
-    title: m.audio_hub.meta_title,
+    title: createPageSeoTitle(m.audio_hub.meta_title, normalizedLocale),
     description: seoDescription,
     alternates: {
       canonical: getLocalizedPath(normalizedLocale, path),
@@ -147,6 +170,7 @@ export function createAudioHubMetadata(locale: string): Metadata {
     },
     openGraph: {
       title: `${m.audio_hub.title} | ${m.home.title}`,
+      images: [DEFAULT_OPEN_GRAPH_IMAGE],
       description: seoDescription,
       type: 'website',
       locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
@@ -163,7 +187,7 @@ export function createFileMergeHubMetadata(locale: string): Metadata {
   const seoDescription = createPrivacySeoDescription(m.file_merge_hub.description, normalizedLocale);
 
   return {
-    title: m.file_merge_hub.meta_title,
+    title: createPageSeoTitle(m.file_merge_hub.meta_title, normalizedLocale),
     description: seoDescription,
     alternates: {
       canonical: getLocalizedPath(normalizedLocale, path),
@@ -171,6 +195,7 @@ export function createFileMergeHubMetadata(locale: string): Metadata {
     },
     openGraph: {
       title: `${m.file_merge_hub.title} | ${m.home.title}`,
+      images: [DEFAULT_OPEN_GRAPH_IMAGE],
       description: seoDescription,
       type: 'website',
       locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
@@ -187,7 +212,7 @@ export function createJsonToolsHubMetadata(locale: string): Metadata {
   const seoDescription = createPrivacySeoDescription(m.json_hub.description, normalizedLocale);
 
   return {
-    title: m.json_hub.meta_title,
+    title: createPageSeoTitle(m.json_hub.meta_title, normalizedLocale),
     description: seoDescription,
     alternates: {
       canonical: getLocalizedPath(normalizedLocale, path),
@@ -195,6 +220,7 @@ export function createJsonToolsHubMetadata(locale: string): Metadata {
     },
     openGraph: {
       title: `${m.json_hub.title} | ${m.home.title}`,
+      images: [DEFAULT_OPEN_GRAPH_IMAGE],
       description: seoDescription,
       type: 'website',
       locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
@@ -211,7 +237,7 @@ export function createTextHubMetadata(locale: string): Metadata {
   const seoDescription = createPrivacySeoDescription(m.text_hub.description, normalizedLocale);
 
   return {
-    title: m.text_hub.meta_title,
+    title: createPageSeoTitle(m.text_hub.meta_title, normalizedLocale),
     description: seoDescription,
     alternates: {
       canonical: getLocalizedPath(normalizedLocale, path),
@@ -219,6 +245,7 @@ export function createTextHubMetadata(locale: string): Metadata {
     },
     openGraph: {
       title: `${m.text_hub.title} | ${m.home.title}`,
+      images: [DEFAULT_OPEN_GRAPH_IMAGE],
       description: seoDescription,
       type: 'website',
       locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
@@ -235,7 +262,7 @@ export function createOtherHubMetadata(locale: string): Metadata {
   const seoDescription = createPrivacySeoDescription(m.other_hub.description, normalizedLocale);
 
   return {
-    title: m.other_hub.meta_title,
+    title: createPageSeoTitle(m.other_hub.meta_title, normalizedLocale),
     description: seoDescription,
     alternates: {
       canonical: getLocalizedPath(normalizedLocale, path),
@@ -243,6 +270,7 @@ export function createOtherHubMetadata(locale: string): Metadata {
     },
     openGraph: {
       title: `${m.other_hub.title} | ${m.home.title}`,
+      images: [DEFAULT_OPEN_GRAPH_IMAGE],
       description: seoDescription,
       type: 'website',
       locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
@@ -258,7 +286,7 @@ export function createBlogIndexMetadata(locale: string): Metadata {
   const seoDescription = createPrivacySeoDescription(m.blog.description, normalizedLocale);
 
   return {
-    title: m.blog.meta_title,
+    title: createPageSeoTitle(m.blog.meta_title, normalizedLocale),
     description: seoDescription,
     alternates: {
       canonical: getLocalizedPath(normalizedLocale, BLOG_INDEX_PATH),
@@ -266,6 +294,7 @@ export function createBlogIndexMetadata(locale: string): Metadata {
     },
     openGraph: {
       title: `${m.blog.title} | ${m.home.title}`,
+      images: [DEFAULT_OPEN_GRAPH_IMAGE],
       description: seoDescription,
       type: 'website',
       locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
@@ -283,10 +312,11 @@ export function createBlogArticleMetadata(slug: string, locale: string): Metadat
   if (!article) return null;
 
   const seoDescription = createPrivacySeoDescription(article.metaDescription, normalizedLocale);
+  const seoTitle = createPageSeoTitle(article.metaTitle, normalizedLocale);
   const topicMembership = getLocalizedBlogTopicForArticle(slug, normalizedLocale);
 
   return {
-    title: article.metaTitle,
+    title: seoTitle,
     description: seoDescription,
     keywords: [
       ...article.tags,
@@ -297,7 +327,8 @@ export function createBlogArticleMetadata(slug: string, locale: string): Metadat
       languages: getLanguageAlternates(article.path),
     },
     openGraph: {
-      title: `${article.metaTitle} | ${m.home.title}`,
+      title: `${seoTitle} | ${m.home.title}`,
+      images: [DEFAULT_OPEN_GRAPH_IMAGE],
       description: seoDescription,
       type: 'article',
       publishedTime: article.publishedAt,
@@ -327,7 +358,35 @@ export function createToolMetadata(toolId: ToolMessageId, locale: string): Metad
     },
     openGraph: {
       title: `${seoTitle} | ${m.home.title}`,
+      images: [DEFAULT_OPEN_GRAPH_IMAGE],
       description: seoDescription,
+      type: 'website',
+      locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
+      siteName: m.home.title,
+      url: getLocalizedPath(normalizedLocale, path),
+    },
+  };
+}
+
+export function createSitePageMetadata(pageId: SitePageId, locale: string): Metadata {
+  const normalizedLocale = normalizeLocale(locale);
+  const m = getLocaleMessages(normalizedLocale);
+  const page = m.site_pages[pageId];
+  const path = getSitePage(pageId)?.path ?? `/${pageId}`;
+  const title = createPageSeoTitle(page.meta_title, normalizedLocale);
+  const description = createPrivacySeoDescription(page.meta_description, normalizedLocale);
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: getLocalizedPath(normalizedLocale, path),
+      languages: getLanguageAlternates(path),
+    },
+    openGraph: {
+      title: `${title} | ${m.home.title}`,
+      images: [DEFAULT_OPEN_GRAPH_IMAGE],
+      description,
       type: 'website',
       locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
       siteName: m.home.title,
@@ -340,19 +399,54 @@ export function createSiteJsonLd(locale: string) {
   const normalizedLocale = normalizeLocale(locale);
   const m = getLocaleMessages(normalizedLocale);
 
+  const organizationId = `${BASE_URL}/#organization`;
+  const websiteId = `${BASE_URL}/#website`;
+
   return {
     '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    name: m.home.title,
-    description: createPrivacySeoDescription(m.home.subtitle, normalizedLocale),
-    url: getLocalizedUrl(normalizedLocale),
-    applicationCategory: 'DeveloperApplication',
-    operatingSystem: 'Any',
-    isAccessibleForFree: true,
-    browserRequirements: 'Requires a modern browser with JavaScript enabled',
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-    inLanguage: normalizedLocale === 'zh' ? 'zh-CN' : 'en',
-    ...(EXPOSE_SOURCE_METADATA ? { codeRepository: REPOSITORY_URL } : {}),
+    '@graph': [
+      {
+        '@type': 'Organization',
+        '@id': organizationId,
+        name: m.home.title,
+        url: BASE_URL,
+        logo: {
+          '@type': 'ImageObject',
+          url: `${BASE_URL}/icon.svg`,
+        },
+        contactPoint: {
+          '@type': 'ContactPoint',
+          contactType: 'customer support',
+          email: SITE_CONTACT_EMAIL,
+          availableLanguage: ['English', 'Chinese'],
+        },
+        ...(EXPOSE_SOURCE_METADATA ? { sameAs: [REPOSITORY_URL] } : {}),
+      },
+      {
+        '@type': 'WebSite',
+        '@id': websiteId,
+        name: m.home.title,
+        url: BASE_URL,
+        publisher: { '@id': organizationId },
+        inLanguage: ['en', 'zh-CN'],
+      },
+      {
+        '@type': 'WebApplication',
+        '@id': `${getLocalizedUrl(normalizedLocale)}/#application`,
+        name: m.home.title,
+        description: createPrivacySeoDescription(m.home.subtitle, normalizedLocale),
+        url: getLocalizedUrl(normalizedLocale),
+        applicationCategory: 'DeveloperApplication',
+        operatingSystem: 'Any',
+        isAccessibleForFree: true,
+        browserRequirements: 'Requires a modern browser with JavaScript enabled',
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        inLanguage: normalizedLocale === 'zh' ? 'zh-CN' : 'en',
+        publisher: { '@id': organizationId },
+        isPartOf: { '@id': websiteId },
+        ...(EXPOSE_SOURCE_METADATA ? { codeRepository: REPOSITORY_URL } : {}),
+      },
+    ],
   };
 }
 
@@ -662,13 +756,19 @@ export function createBlogArticleJsonLd(slug: string, locale: string) {
     } : {}),
     author: {
       '@type': 'Organization',
+      '@id': `${BASE_URL}/#organization`,
       name: m.home.title,
-      url: getLocalizedUrl(normalizedLocale),
+      url: getLocalizedUrl(normalizedLocale, '/about'),
     },
     publisher: {
       '@type': 'Organization',
+      '@id': `${BASE_URL}/#organization`,
       name: m.home.title,
-      url: getLocalizedUrl(normalizedLocale),
+      url: BASE_URL,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${BASE_URL}/icon.svg`,
+      },
     },
     mainEntityOfPage: {
       '@type': 'WebPage',

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { createToolMetadata } from '@/lib/tools/seo';
+import 'mind-elixir/style.css';
 
 const TOOL_ID = 'mind-map';
 

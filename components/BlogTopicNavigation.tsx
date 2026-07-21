@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import Link from '@/components/ui/AppLink';
 import type { BlogLocale, LocalizedBlogTopicMembership } from '@/lib/blog/articles';
 import { getLocalizedPath } from '@/lib/tools/seo';
 

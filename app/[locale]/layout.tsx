@@ -1,13 +1,12 @@
 import type { Metadata, Viewport } from 'next';
-import Script from 'next/script';
 import { NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import {
   createLocaleMetadata,
-  getLocaleMessages,
   createSiteJsonLd,
+  getClientMessages,
   normalizeLocale,
   toJsonLd,
 } from '@/lib/tools/seo';
@@ -39,7 +38,7 @@ export async function generateMetadata({
     appleWebApp: {
       capable: true,
       statusBarStyle: 'default',
-      title: 'JSON Toolkit',
+      title: 'ToolGarden',
     },
     formatDetection: { telephone: false },
   };
@@ -71,7 +70,7 @@ export default async function LocaleLayout({
   if (!routing.locales.includes(locale as Locale)) notFound();
   const normalizedLocale = normalizeLocale(locale);
   setRequestLocale(normalizedLocale);
-  const m = getLocaleMessages(normalizedLocale);
+  const clientMessages = getClientMessages(normalizedLocale);
   const googleMeasurementId = analyticsConfig.google.measurementId;
   const googleEnabled = analyticsConfig.google.enabled && googleMeasurementId.length > 0;
   const escapedGoogleMeasurementId = googleMeasurementId
@@ -81,9 +80,6 @@ export default async function LocaleLayout({
   return (
     <html lang={normalizedLocale}>
       <head>
-        <Script id="excalidraw-asset-path" strategy="beforeInteractive">
-          {`window.EXCALIDRAW_ASSET_PATH = '/excalidraw/';`}
-        </Script>
         <meta name="baidu-site-verification" content="codeva-zyi03tAgf4" />
         {googleEnabled ? (
           <>
@@ -110,7 +106,7 @@ export default async function LocaleLayout({
         />
       </head>
       <body className="antialiased">
-        <NextIntlClientProvider locale={normalizedLocale} messages={m}>
+        <NextIntlClientProvider locale={normalizedLocale} messages={clientMessages}>
           {children}
           <FeedbackButton />
         </NextIntlClientProvider>

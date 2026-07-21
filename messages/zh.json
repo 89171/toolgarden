@@ -1690,7 +1690,174 @@
     "github": "GitHub"
   },
   "footer": {
-    "text": "ToolGarden"
+    "text": "ToolGarden",
+    "about": "关于",
+    "privacy": "隐私政策",
+    "terms": "使用条款",
+    "security": "安全",
+    "contact": "联系",
+    "blog": "博客"
+  },
+  "site_pages": {
+    "eyebrow": "ToolGarden 站点信息",
+    "updated_label": "最后更新",
+    "updated_at": "2026-07-21",
+    "about": {
+      "title": "关于 ToolGarden",
+      "meta_title": "关于 ToolGarden 与浏览器本地工具",
+      "meta_description": "了解 ToolGarden 为什么构建隐私优先的浏览器本地工具、工具套件的工作方式以及技术指南的维护原则。",
+      "intro": "ToolGarden 是一套实用 Web 工具。在浏览器能够安全、可靠完成任务时，优先让常见开发、文档和媒体工作流直接在用户设备上运行。",
+      "sections": [
+        {
+          "title": "为什么创建 ToolGarden",
+          "paragraphs": [
+            "许多在线工具即使可以在用户设备上完成转换，也要求先上传文件。ToolGarden 希望减少这类不必要的数据流动，同时让日常工具保持易用。",
+            "站点覆盖 JSON、图片、PDF、音频、文本、二维码、字幕等工具。工具注册表是正式功能、导航、发现入口和搜索元数据的唯一事实源。"
+          ]
+        },
+        {
+          "title": "浏览器本地处理如何工作",
+          "paragraphs": [
+            "支持的输入由浏览器 API、JavaScript、Web Worker、WebAssembly 或本地运行的模型完成解码与处理。部分高级工具会先下载代码、模型、字体或运行时资源，但用户选择的源文件不会发送到 ToolGarden 的处理 API。",
+            "页面访问统计与工具输入处理属于不同的数据流，具体说明请查看隐私政策。"
+          ]
+        },
+        {
+          "title": "技术内容如何维护",
+          "paragraphs": [
+            "技术文章面向实际使用场景，并链接到相关工具和主题支柱页面。内容发生实质变化时应更新修改日期；涉及安全、隐私、标准和合规的结论会采用保守表述，并在适合时引用一手资料。"
+          ],
+          "items": [
+            "示例优先使用合成数据，不使用真实凭据。",
+            "隐私说明会区分本地工具输入与页面遥测。",
+            "合规文章说明适用边界，不承诺自动获得认证。"
+          ]
+        }
+      ]
+    },
+    "privacy": {
+      "title": "隐私政策",
+      "meta_title": "ToolGarden 隐私政策",
+      "meta_description": "了解哪些 ToolGarden 数据留在浏览器本地、哪些页面遥测会发送给统计服务，以及浏览器存储和模型资源的使用方式。",
+      "intro": "ToolGarden 以浏览器本地工具处理为核心。本政策说明用户处理的文本或文件，与访问网站时产生的页面级遥测之间的重要区别。",
+      "sections": [
+        {
+          "title": "工具输入与本地处理",
+          "paragraphs": [
+            "在受支持工具中选择的文本、文件、图片、PDF、音频等输入，设计上会在用户设备内处理，不会上传到 ToolGarden 的文件处理服务器。工具工作区已显式标记为 Microsoft Clarity 遮罩区域，标准输入框在 Clarity 的所有遮罩模式下也会被遮罩。",
+            "部分工具会下载 JavaScript、WebAssembly、字体、编解码器或机器学习模型资源。这些资源请求不代表用户选择的源文件被上传。对数据路径有严格要求时，可以使用浏览器 Network 面板独立验证。"
+          ]
+        },
+        {
+          "title": "访问统计与页面遥测",
+          "paragraphs": [
+            "ToolGarden 在全站使用 Google Analytics、百度统计和 Microsoft Clarity。这些服务可能接收页面 URL 与标题、粗略地理位置、浏览器和设备信息、标识符、性能诊断，以及点击、滚动和页面导航等交互事件。",
+            "统计数据受各服务商的条款、控制项和保留设置约束。请勿在页面 URL 中放置个人信息或密钥。ToolGarden 不会主动把文件名、工具输入值或生成结果值作为自定义统计事件发送。"
+          ],
+          "links": [
+            { "label": "Google 隐私权政策", "href": "https://policies.google.com/privacy?hl=zh-CN" },
+            { "label": "Microsoft 隐私声明", "href": "https://privacy.microsoft.com/zh-cn/privacystatement" },
+            { "label": "百度隐私权保护声明", "href": "https://www.baidu.com/duty/yinsiquan-policy.html" }
+          ]
+        },
+        {
+          "title": "浏览器存储与缓存",
+          "paragraphs": [
+            "站点可能使用浏览器缓存、Service Worker 存储、Cookie 或本地存储，用于语言路由、离线资源、偏好设置，以及白板状态等工具专属持久化数据。这些内容位于用户的浏览器配置中，可通过浏览器的站点数据控制项删除。"
+          ]
+        },
+        {
+          "title": "用户选择与问题反馈",
+          "paragraphs": [
+            "浏览器隐私控制、内容拦截器和站点数据设置可以限制统计与存储，但阻止必要脚本或资源也可能影响工具功能。如果你有隐私问题，或认为敏感数据可能被暴露，请联系 ToolGarden。"
+          ]
+        }
+      ]
+    },
+    "terms": {
+      "title": "使用条款",
+      "meta_title": "ToolGarden 使用条款",
+      "meta_description": "查看 ToolGarden 浏览器本地工具的使用条件，包括合理使用、输出校验和服务限制。",
+      "intro": "使用 ToolGarden 即表示你同意合法使用工具、验证重要输出，并妥善保留原始数据备份。",
+      "sections": [
+        {
+          "title": "允许的使用方式",
+          "paragraphs": [
+            "你可以将公开工具用于合法的个人或业务工作流。你有责任确认自己有权处理所选择的文件、媒体、字体、文档和其他材料。"
+          ],
+          "items": [
+            "不得利用本站违反法律、隐私、知识产权或访问控制。",
+            "不得故意破坏服务、传播恶意软件或滥用第三方资源与基础设施。",
+            "不得把演示或生成示例视为专业法律、安全、医疗或金融建议。"
+          ]
+        },
+        {
+          "title": "校验输出并保留原件",
+          "paragraphs": [
+            "浏览器能力、文件格式、模型、字体和第三方库都可能产生不完整或意外结果。请预览重要输出，并在转换后的文件被正式接受前保留原件。"
+          ]
+        },
+        {
+          "title": "可用性与保证",
+          "paragraphs": [
+            "服务按当前可用状态提供，不保证每个工具、浏览器、文件、模型或网络环境都能无中断、无错误运行。随着产品演进，功能和本条款可能调整。"
+          ]
+        }
+      ]
+    },
+    "security": {
+      "title": "安全",
+      "meta_title": "ToolGarden 安全与本地处理",
+      "meta_description": "了解 ToolGarden 的安全边界、浏览器本地处理、依赖治理方式以及潜在漏洞报告流程。",
+      "intro": "ToolGarden 通过在浏览器内处理受支持的工具输入来减少服务端暴露，同时承认交付代码、依赖、页面统计和用户设备仍属于完整安全模型的一部分。",
+      "sections": [
+        {
+          "title": "安全边界",
+          "paragraphs": [
+            "无需上传可以消除远程文件处理环节，但不能让被入侵的浏览器、扩展、设备、依赖或网站变得无害。请使用受维护的浏览器，为高敏感工作流进行额外检查，并始终在文件副本上操作。"
+          ]
+        },
+        {
+          "title": "工程控制",
+          "paragraphs": [
+            "项目使用集中式工具注册表、纯函数工具库、静态导出加固、内容安全策略、依赖审查，以及 lint、类型、构建和回归检查。在可行时，大型依赖和模型只由实际需要的工具延迟加载。"
+          ],
+          "items": [
+            "工具工作区内容已标记为 Clarity 遮罩区域。",
+            "生产导出会移除 source map。",
+            "带内容哈希的应用资源与导航文档采用不同缓存策略。",
+            "安全敏感依赖在存在兼容修复时会优先升级或隔离。"
+          ]
+        },
+        {
+          "title": "报告安全问题",
+          "paragraphs": [
+            "请提供受影响 URL、影响说明、复现步骤、浏览器版本和安全的概念验证。不要包含真实凭据、私人用户文件或破坏性测试数据；公开披露前请预留合理的调查时间。"
+          ]
+        }
+      ]
+    },
+    "contact": {
+      "title": "联系 ToolGarden",
+      "meta_title": "联系 ToolGarden",
+      "meta_description": "就工具反馈、隐私问题、内容纠错、无障碍体验或负责任的安全报告联系 ToolGarden。",
+      "intro": "欢迎反馈无法工作的流程、浏览器兼容性、隐私问题、文章纠错、无障碍体验，以及负责任的安全报告。",
+      "email_label": "联系邮箱",
+      "sections": [
+        {
+          "title": "建议提供的信息",
+          "paragraphs": [
+            "请提供页面 URL、浏览器和操作系统版本、预期结果、实际结果及复现步骤，并尽量使用合成样本数据。"
+          ]
+        },
+        {
+          "title": "保护敏感信息",
+          "paragraphs": [
+            "请勿通过邮件发送密码、API Key、Session Cookie、身份证件、机密文件或未脱敏的客户数据。报告安全问题时，只提供理解问题所需的最小安全证据。"
+          ]
+        }
+      ]
+    }
   },
   "feedback": {
     "button": "反馈",
@@ -1805,13 +1972,17 @@
     "color": "颜色",
     "stroke_width": "线宽",
     "canvas_label": "白板画布",
-    "local_note": "内容在浏览器本地编辑并保存；可使用 tldraw 内置菜单导入、保存、插入图片，并导出 PNG、SVG 或 tldraw 文件。"
+    "local_note": "内容在浏览器本地编辑并保存；可使用 tldraw 内置菜单导入、保存、插入图片，并导出 PNG、SVG 或 tldraw 文件。",
+    "load_error": "白板编辑器加载失败，请检查网络连接后重试。",
+    "retry": "重试"
   },
   "excalidraw_board_tool": {
     "canvas_title": "Excalidraw画板",
     "fullscreen": "全屏",
     "exit_fullscreen": "退出全屏",
-    "local_note": "内容在浏览器本地编辑；可使用 Excalidraw 内置菜单导入、保存和导出 PNG、SVG 或 Excalidraw 文件。"
+    "local_note": "内容在浏览器本地编辑；可使用 Excalidraw 内置菜单导入、保存和导出 PNG、SVG 或 Excalidraw 文件。",
+    "load_error": "Excalidraw 编辑器加载失败，请检查网络连接后重试。",
+    "retry": "重试"
   },
   "mind_map_tool": {
     "input_title": "Markdown 大纲",
@@ -1944,6 +2115,7 @@
     "read_more": "阅读文章",
     "published_label": "发布于",
     "updated_label": "更新于",
+    "author_label": "作者",
     "related_tools": "相关工具",
     "related_articles": "相关文章",
     "topic_hubs": "主题指南",
@@ -1960,7 +2132,7 @@
     "toc_title": "目录"
   },
   "home": {
-    "title": "ToolGarden 工具箱",
+    "title": "ToolGarden",
     "breadcrumb": "首页",
     "meta_title": "ToolGarden 工具箱 - JSON、图片、PDF、文本、二维码在线工具",
     "subtitle": "在浏览器本地完成 JSON、图片、PDF、文本、二维码、字幕等常见工具操作，无需上传，无需登录，更安心保护隐私。",
@@ -1973,6 +2145,12 @@
     "expand_more": "展开更多",
     "show_less": "收起",
     "view_all_in": "查看 {section}"
+  },
+  "errors": {
+    "title": "页面出现问题",
+    "description": "你的浏览器数据尚未提交。可以重试当前页面，或返回首页后重新打开工具。",
+    "retry": "重试",
+    "home": "返回首页"
   },
   "not_found": {
     "title": "页面没有找到",
@@ -2208,10 +2386,6 @@
     "pdf-merge": {
       "name": "合并 PDF",
       "description": "将多个 PDF 文件合并成一个文档，支持拖放重新排序"
-    },
-    "file-merge": {
-      "name": "文件合并",
-      "description": "合并 PDF、Word、PPT、TXT、Markdown、CSV、RTF、Excel 和图片，并按文件类型导出原格式"
     },
     "word-merge": {
       "name": "Word 合并",

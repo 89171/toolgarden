@@ -9,9 +9,14 @@ export const BASE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? DEFAULT_BASE_URL).r
 
 export type Locale = (typeof routing.locales)[number];
 
-const TOOL_TITLE_PHRASE_LIMIT: Record<Locale, number> = {
-  zh: 34,
-  en: 62,
+const TOOL_TITLE_LIMIT: Record<Locale, number> = {
+  zh: 30,
+  en: 47,
+};
+
+const SEO_DESCRIPTION_LIMIT: Record<Locale, number> = {
+  zh: 90,
+  en: 155,
 };
 
 export function normalizeLocale(locale: string): Locale {
@@ -39,8 +44,7 @@ function trimTrailingPunctuation(value: string): string {
   return value.replace(/[\s,.，。;；:：、]+$/u, '');
 }
 
-function truncateSeoPhrase(value: string, locale: Locale): string {
-  const limit = TOOL_TITLE_PHRASE_LIMIT[locale];
+function truncatePlainText(value: string, limit: number, locale: Locale): string {
   const normalizedValue = value.replace(/\s+/g, ' ').trim();
 
   if (normalizedValue.length <= limit) return trimTrailingPunctuation(normalizedValue);
@@ -51,16 +55,24 @@ function truncateSeoPhrase(value: string, locale: Locale): string {
     truncated.lastIndexOf('、'),
     truncated.lastIndexOf(','),
     truncated.lastIndexOf(';'),
-    truncated.lastIndexOf('；')
+    truncated.lastIndexOf('；'),
+    truncated.lastIndexOf(' ')
   );
   const phrase = separatorIndex >= Math.floor(limit * 0.55)
     ? truncated.slice(0, separatorIndex)
     : truncated;
 
-  return `${trimTrailingPunctuation(phrase)}...`;
+  const cleanPhrase = trimTrailingPunctuation(phrase);
+  return locale === 'en'
+    ? cleanPhrase.replace(/\s+(?:a|an|and|for|in|of|on|or|the|to|with)$/iu, '')
+    : cleanPhrase;
 }
 
-export function getToolSeoPhrase(description: string, locale: Locale): string {
+function truncateSeoPhrase(value: string, locale: Locale, limit: number): string {
+  return truncatePlainText(value, limit, locale);
+}
+
+export function getToolSeoPhrase(description: string, locale: Locale, limit = TOOL_TITLE_LIMIT[locale]): string {
   const phrase = locale === 'zh'
     ? description
     : description
@@ -68,12 +80,22 @@ export function getToolSeoPhrase(description: string, locale: Locale): string {
         .replace(/^tool to\s+/iu, '')
         .replace(/^tool for\s+/iu, '');
 
-  return truncateSeoPhrase(phrase, locale);
+  return truncateSeoPhrase(phrase, locale, limit);
 }
 
 export function createToolSeoTitle(toolName: string, description: string, locale: Locale): string {
-  const phrase = getToolSeoPhrase(description, locale);
-  return `${toolName} - ${phrase}`;
+  const titleLimit = TOOL_TITLE_LIMIT[locale];
+  const normalizedName = truncatePlainText(toolName, titleLimit, locale);
+  const phraseBudget = titleLimit - normalizedName.length - 3;
+
+  if (phraseBudget < (locale === 'zh' ? 6 : 12)) return normalizedName;
+
+  const phrase = getToolSeoPhrase(description, locale, phraseBudget);
+  return phrase ? `${normalizedName} - ${phrase}` : normalizedName;
+}
+
+export function createPageSeoTitle(title: string, locale: Locale): string {
+  return truncatePlainText(title, TOOL_TITLE_LIMIT[locale], locale);
 }
 
 function appendSeoSentence(description: string, sentence: string, locale: Locale): string {
@@ -83,6 +105,17 @@ function appendSeoSentence(description: string, sentence: string, locale: Locale
     : (locale === 'zh' ? '。' : '. ');
 
   return `${normalizedDescription}${separator}${sentence}`;
+}
+
+function fitDescriptionWithSuffix(description: string, suffix: string, locale: Locale): string {
+  const limit = SEO_DESCRIPTION_LIMIT[locale];
+  const fullDescription = appendSeoSentence(description, suffix, locale);
+  if (fullDescription.length <= limit) return fullDescription;
+
+  const separator = locale === 'zh' ? '。' : '. ';
+  const descriptionBudget = limit - suffix.length - separator.length;
+  const conciseDescription = truncatePlainText(description, descriptionBudget, locale);
+  return appendSeoSentence(conciseDescription, suffix, locale);
 }
 
 function hasLocalProcessingSignal(description: string, locale: Locale): boolean {
@@ -98,13 +131,15 @@ function hasPrivacySignal(description: string, locale: Locale): boolean {
 }
 
 export function createPrivacySeoDescription(description: string, locale: Locale): string {
-  if (hasPrivacySignal(description, locale)) return description.trim();
+  if (hasPrivacySignal(description, locale)) {
+    return truncatePlainText(description, SEO_DESCRIPTION_LIMIT[locale], locale);
+  }
 
   const suffix = locale === 'zh'
     ? (hasLocalProcessingSignal(description, locale) ? '更安心保护隐私。' : '优先在浏览器本地处理，减少上传，更安心保护隐私。')
     : (hasLocalProcessingSignal(description, locale) ? 'Built for privacy-friendly local workflows.' : 'Browser-local workflows reduce uploads and help protect privacy.');
 
-  return appendSeoSentence(description, suffix, locale);
+  return fitDescriptionWithSuffix(description, suffix, locale);
 }
 
 export function createToolSeoDescription(description: string, locale: Locale): string {
@@ -112,14 +147,17 @@ export function createToolSeoDescription(description: string, locale: Locale): s
     ? /浏览器|本地/u.test(description)
     : /browser|locally|local/i.test(description);
   const suffix = locale === 'zh'
-    ? (hasLocalSignal ? '无需上传，无需登录，更安心保护隐私。' : '所有处理在浏览器本地完成，无需上传，无需登录，更安心保护隐私。')
-    : (hasLocalSignal ? 'No upload or sign-in required, helping keep sensitive data private.' : 'Runs locally in your browser with no upload or sign-in required, helping keep sensitive data private.');
+    ? (hasLocalSignal ? '无需上传。' : '浏览器本地处理，无需上传。')
+    : (hasLocalSignal ? 'No upload required.' : 'Browser-local with no upload required.');
 
-  return appendSeoSentence(description, suffix, locale);
+  return fitDescriptionWithSuffix(description, suffix, locale);
 }
 
 export function toJsonLd(data: unknown): string {
-  return stringifyJSONValue(data);
+  return stringifyJSONValue(data)
+    .replace(/</gu, '\\u003c')
+    .replace(/\u2028/gu, '\\u2028')
+    .replace(/\u2029/gu, '\\u2029');
 }
 
 // ── 消息无关的 JSON-LD 构造器（接受 messages 结构作为参数） ─────────

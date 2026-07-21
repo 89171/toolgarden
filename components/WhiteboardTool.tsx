@@ -21,24 +21,31 @@ export function WhiteboardTool() {
   const fullscreenRef = useRef<HTMLDivElement | null>(null);
   const [Tldraw, setTldraw] = useState<TldrawComponent | null>(null);
   const [DefaultToolbar, setDefaultToolbar] = useState<DefaultToolbarComponent | null>(null);
+  const [loadError, setLoadError] = useState(false);
+  const [loadAttempt, setLoadAttempt] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isFullscreenFallback, setIsFullscreenFallback] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
+    setLoadError(false);
 
-    void import('tldraw').then((module) => {
-      if (isMounted) {
-        setTldraw(() => module.Tldraw);
-        setDefaultToolbar(() => module.DefaultToolbar);
-        window.setTimeout(() => window.dispatchEvent(new Event('resize')), 0);
-      }
-    });
+    void import('tldraw')
+      .then((module) => {
+        if (isMounted) {
+          setTldraw(() => module.Tldraw);
+          setDefaultToolbar(() => module.DefaultToolbar);
+          window.setTimeout(() => window.dispatchEvent(new Event('resize')), 0);
+        }
+      })
+      .catch(() => {
+        if (isMounted) setLoadError(true);
+      });
 
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [loadAttempt]);
 
   useEffect(() => {
     const syncFullscreenState = () => {
@@ -153,7 +160,14 @@ export function WhiteboardTool() {
             }`}
           >
             <div className="tldraw-left-toolbar relative h-full w-full" onWheelCapture={scrollPageFromCanvas}>
-              {Tldraw ? (
+              {loadError ? (
+                <div className="flex h-full flex-col items-center justify-center gap-4 p-6 text-center">
+                  <p className="max-w-md text-sm leading-6 text-content-muted">{t('load_error')}</p>
+                  <Button type="button" variant="secondary" onClick={() => setLoadAttempt((attempt) => attempt + 1)}>
+                    {t('retry')}
+                  </Button>
+                </div>
+              ) : Tldraw ? (
                 <Tldraw
                   autoFocus
                   colorScheme="light"

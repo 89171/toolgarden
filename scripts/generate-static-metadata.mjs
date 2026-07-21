@@ -15,6 +15,8 @@ const localeLabels = {
 };
 const llmsToolsMarker = 'registry-tools';
 const llmsBlogTopicsMarker = 'blog-topic-clusters';
+const llmsBlogArticlesMarker = 'blog-articles';
+const generatedBlogIndexPath = path.join(scriptDir, '.blog-index.generated.json');
 
 function cleanBuildArtifacts() {
   for (const dir of ['.next', 'out']) {
@@ -37,9 +39,9 @@ function generateRobots() {
 function generateManifest() {
   return `${JSON.stringify(
     {
-      name: 'JSON Toolkit',
-      short_name: 'JSON Toolkit',
-      description: 'Free online JSON tools to format, convert, validate, and decode JSON locally in the browser with no uploads for better privacy.',
+      name: 'ToolGarden',
+      short_name: 'ToolGarden',
+      description: 'Free browser-local tools for JSON, images, PDFs, audio, text, QR codes, subtitles, and documents with no file upload required.',
       start_url: `/${defaultLocale}`,
       scope: '/',
       display: 'standalone',
@@ -277,6 +279,27 @@ function renderGeneratedBlogTopicClusters(topics) {
   return lines.join('\n').trim();
 }
 
+function renderGeneratedBlogArticleIndex(articles) {
+  const lines = [
+    '## Complete Blog Article Index',
+    '',
+    '> Generated from the complete `blogArticles` registry during `npm run build`.',
+    '',
+  ];
+
+  for (const article of articles) {
+    lines.push(`### ${article.en.title}`);
+    lines.push(`- English: ${BASE_URL}/en/blog/${article.slug}`);
+    lines.push(`- Chinese: ${BASE_URL}/zh/blog/${article.slug}`);
+    lines.push(`- Chinese title: ${article.zh.title}`);
+    lines.push(`- Summary: ${article.en.excerpt}`);
+    lines.push(`- Published: ${article.publishedAt}; updated: ${article.updatedAt}`);
+    lines.push('');
+  }
+
+  return lines.join('\n').trim();
+}
+
 function replaceGeneratedSection(content, marker, generatedSection, insertBeforeHeading) {
   const start = `<!-- ${marker}:start -->`;
   const end = `<!-- ${marker}:end -->`;
@@ -299,6 +322,7 @@ function replaceGeneratedSection(content, marker, generatedSection, insertBefore
 function generateLlmsFiles() {
   const tools = readToolRegistry();
   const blogTopics = readJson('lib/blog/topics.json');
+  const blogArticles = JSON.parse(fs.readFileSync(generatedBlogIndexPath, 'utf8'));
   const messagesByLocale = {
     en: readJson('messages/en.json'),
     zh: readJson('messages/zh.json'),
@@ -320,7 +344,7 @@ function generateLlmsFiles() {
     '',
   ].join('\n');
   const llmsFullFallback = [
-    '# JSON Toolkit — Full Reference for AI Systems',
+    '# ToolGarden — Full Reference for AI Systems',
     '',
     '> Complete technical reference for toolgarden.xyz. ToolGarden emphasizes browser-local, no-upload workflows.',
     '',
@@ -347,14 +371,29 @@ function generateLlmsFiles() {
     '\n## Blog Reference'
   );
 
+  const llmsWithBlogTopics = replaceGeneratedSection(
+    llmsWithTools,
+    llmsBlogTopicsMarker,
+    renderGeneratedBlogTopicClusters(blogTopics),
+    '\n## Available Tools'
+  );
+  const llmsFullWithBlogTopics = replaceGeneratedSection(
+    llmsFullWithTools,
+    llmsBlogTopicsMarker,
+    renderGeneratedBlogTopicClusters(blogTopics),
+    '\n## Blog Reference'
+  );
+
   fs.writeFileSync(
     llmsPath,
-    `${replaceGeneratedSection(llmsWithTools, llmsBlogTopicsMarker, renderGeneratedBlogTopicClusters(blogTopics), '\n## Available Tools').trimEnd()}\n`
+    `${replaceGeneratedSection(llmsWithBlogTopics, llmsBlogArticlesMarker, renderGeneratedBlogArticleIndex(blogArticles), '\n## Available Tools').trimEnd()}\n`
   );
   fs.writeFileSync(
     llmsFullPath,
-    `${replaceGeneratedSection(llmsFullWithTools, llmsBlogTopicsMarker, renderGeneratedBlogTopicClusters(blogTopics), '\n## Blog Reference').trimEnd()}\n`
+    `${replaceGeneratedSection(llmsFullWithBlogTopics, llmsBlogArticlesMarker, renderGeneratedBlogArticleIndex(blogArticles), '\n## Blog Reference').trimEnd()}\n`
   );
+
+  fs.rmSync(generatedBlogIndexPath, { force: true });
 }
 
 cleanBuildArtifacts();

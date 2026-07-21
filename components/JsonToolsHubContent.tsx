@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import Link from '@/components/ui/AppLink';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { ToolDirectory } from '@/components/ToolDirectory';

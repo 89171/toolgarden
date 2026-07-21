@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import Link from '@/components/ui/AppLink';
 import { useMemo, useState } from 'react';
 import type { ToolCategory } from '@/lib/tools/types';
 
