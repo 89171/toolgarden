@@ -355,6 +355,34 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 
 > Generated from the complete `blogArticles` registry during `npm run build`.
 
+### How to Build an Online Font Subsetter with fonteditor-core
+- English: https://toolgarden.xyz/en/blog/build-online-font-subsetter-fonteditor-core
+- Chinese: https://toolgarden.xyz/zh/blog/build-online-font-subsetter-fonteditor-core
+- Chinese title: 怎么实现在线字体裁剪？基于 fonteditor-core 的浏览器方案
+- Summary: A practical browser-only implementation for extracting used characters from TTF or WOFF files, previewing the result, and exporting a smaller web font.
+- Published: 2026-07-22; updated: 2026-07-22
+
+### How to Wrap tldraw into a Production React Whiteboard
+- English: https://toolgarden.xyz/en/blog/wrap-tldraw-react-whiteboard
+- Chinese: https://toolgarden.xyz/zh/blog/wrap-tldraw-react-whiteboard
+- Chinese title: 怎么封装 tldraw 实现在线白板：从动态加载到本地持久化
+- Summary: A practical tldraw integration for Next.js covering client-only loading, self-hosted assets, persistence, toolbar layout, page scrolling, fullscreen, and cleanup.
+- Published: 2026-07-22; updated: 2026-07-22
+
+### How to Embed Excalidraw in Next.js without Asset or SSR Problems
+- English: https://toolgarden.xyz/en/blog/wrap-excalidraw-nextjs
+- Chinese: https://toolgarden.xyz/zh/blog/wrap-excalidraw-nextjs
+- Chinese title: 怎么封装 Excalidraw：解决 Next.js SSR、资源路径与全屏问题
+- Summary: A focused Excalidraw wrapper for Next.js covering dynamic import, local asset paths, editor options, localization, fullscreen fallback, export, and persistence choices.
+- Published: 2026-07-22; updated: 2026-07-22
+
+### How to Build an Online Mind Map with MindElixir and Markdown
+- English: https://toolgarden.xyz/en/blog/build-online-mind-map-with-mind-elixir
+- Chinese: https://toolgarden.xyz/zh/blog/build-online-mind-map-with-mind-elixir
+- Chinese title: 怎么使用 MindElixir 实现在线思维导图：Markdown、交互与导出
+- Summary: Build a browser-local MindElixir editor with a Markdown outline, lifecycle cleanup, selection synchronization, keyboard behavior, panning, fullscreen, and multi-format export.
+- Published: 2026-07-22; updated: 2026-07-22
+
 ### The Complete Guide to Browser-Local Data Processing
 - English: https://toolgarden.xyz/en/blog/complete-guide-browser-local-data-processing
 - Chinese: https://toolgarden.xyz/zh/blog/complete-guide-browser-local-data-processing

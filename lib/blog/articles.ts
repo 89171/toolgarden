@@ -1,4 +1,5 @@
 import { routing } from '@/i18n/routing';
+import { creativeToolEngineeringArticles } from './creative-tool-engineering-articles';
 import { topicClusterBlogArticles } from './topic-cluster-articles';
 import { growthSeoBlogArticles } from './growth-seo-articles';
 import {
@@ -170,6 +171,7 @@ const json5Snippet = `{
 }`;
 
 export const blogArticles: BlogArticle[] = [
+  ...creativeToolEngineeringArticles,
   ...topicClusterBlogArticles,
   ...growthSeoBlogArticles,
   ...workflowSeoBlogArticles,
