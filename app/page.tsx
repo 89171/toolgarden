@@ -3,6 +3,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { Analytics } from '@/components/Analytics';
 import { FeedbackButton } from '@/components/FeedbackButton';
+import { GoogleAdSense } from '@/components/GoogleAdSense';
 import { HomePageContent } from '@/components/HomePageContent';
 import { PwaRegistration } from '@/components/PwaRegistration';
 import { SiteProtection } from '@/components/SiteProtection';
@@ -59,6 +60,7 @@ export default function RootHomePage() {
     <html lang={defaultLocale}>
       <head>
         <meta name="baidu-site-verification" content="codeva-zyi03tAgf4" />
+        <GoogleAdSense />
         {googleEnabled ? (
           <>
             <script

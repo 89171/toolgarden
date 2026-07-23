@@ -13,6 +13,7 @@ import {
 import { analyticsConfig } from '@/lib/analytics';
 import { Analytics } from '@/components/Analytics';
 import { FeedbackButton } from '@/components/FeedbackButton';
+import { GoogleAdSense } from '@/components/GoogleAdSense';
 import { PwaRegistration } from '@/components/PwaRegistration';
 import { SiteProtection } from '@/components/SiteProtection';
 import '../globals.css';
@@ -81,6 +82,7 @@ export default async function LocaleLayout({
     <html lang={normalizedLocale}>
       <head>
         <meta name="baidu-site-verification" content="codeva-zyi03tAgf4" />
+        <GoogleAdSense />
         {googleEnabled ? (
           <>
             <script
