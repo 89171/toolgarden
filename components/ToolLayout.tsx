@@ -46,6 +46,7 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
     text_hub: { breadcrumb: t('text_hub.breadcrumb') },
     other_hub: { breadcrumb: otherHubLabel },
     tools: { [toolId]: { name: toolName, description: toolDesc } },
+    organic_keywords: tool ? { [toolId]: t(`organic_keywords.${toolId}`) } : {},
   };
   const toolJsonLd = tool ? buildToolJsonLd(toolId, locale, jsonLdMessages) : null;
   const breadcrumbJsonLd = tool ? buildBreadcrumbJsonLd(toolId, locale, jsonLdMessages) : null;

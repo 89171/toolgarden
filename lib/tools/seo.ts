@@ -26,6 +26,7 @@ import {
   type Locale,
 } from './jsonld';
 import { SITE_CONTACT_EMAIL, getSitePage, type SitePageId } from '@/lib/site/registry';
+import { formatPrimaryOrganicKeyword, parseOrganicKeywords } from '@/lib/utils/seo';
 import {
   getAudioTools,
   getFileMergeTools,
@@ -346,12 +347,15 @@ export function createToolMetadata(toolId: ToolMessageId, locale: string): Metad
   const registryTool = getToolById(toolId);
   const path = registryTool?.path ?? `/${toolId}`;
   const tool = m.tools[toolId];
-  const seoTitle = createToolSeoTitle(tool.name, tool.description, normalizedLocale);
+  const organicKeywords = parseOrganicKeywords(m.organic_keywords[toolId]);
+  const primaryKeyword = formatPrimaryOrganicKeyword(organicKeywords[0] ?? tool.name);
+  const seoTitle = createToolSeoTitle(primaryKeyword, tool.description, normalizedLocale);
   const seoDescription = createToolSeoDescription(tool.description, normalizedLocale);
 
   return {
     title: seoTitle,
     description: seoDescription,
+    keywords: organicKeywords,
     alternates: {
       canonical: getLocalizedPath(normalizedLocale, path),
       languages: getLanguageAlternates(path),

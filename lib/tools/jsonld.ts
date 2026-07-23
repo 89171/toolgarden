@@ -1,6 +1,7 @@
 import { routing } from '@/i18n/routing';
 import { getPillarSlugForToolPath } from '@/lib/blog/topics';
 import { stringifyJSONValue } from '@/lib/utils/json';
+import { parseOrganicKeywords } from '@/lib/utils/seo';
 import { getToolById } from './registry';
 
 const DEFAULT_BASE_URL = 'https://toolgarden.xyz';
@@ -176,6 +177,7 @@ export interface JsonLdMessages {
   text_hub?: { breadcrumb: string };
   other_hub?: { breadcrumb: string };
   tools: Record<string, LocalizedTool>;
+  organic_keywords?: Record<string, string>;
   tool_faq?: Record<string, { items?: Array<{ question: string; answer: string }> }>;
 }
 
@@ -183,6 +185,7 @@ export function buildToolJsonLd(toolId: string, locale: string, messages: JsonLd
   const normalizedLocale = normalizeLocale(locale);
   const tool = getToolById(toolId);
   const localizedTool = messages.tools[toolId];
+  const organicKeywords = parseOrganicKeywords(messages.organic_keywords?.[toolId]);
 
   if (!tool || !localizedTool) return null;
 
@@ -191,6 +194,7 @@ export function buildToolJsonLd(toolId: string, locale: string, messages: JsonLd
     '@type': 'WebApplication',
     name: localizedTool.name,
     description: createToolSeoDescription(localizedTool.description, normalizedLocale),
+    ...(organicKeywords.length > 0 ? { keywords: organicKeywords.join(', ') } : {}),
     url: getLocalizedUrl(normalizedLocale, tool.path),
     applicationCategory: 'DeveloperApplication',
     operatingSystem: 'Any',
