@@ -950,6 +950,48 @@ Canonical examples:
 
 > Generated from the complete `blogArticles` registry during `npm run build`.
 
+### How to Build Browser Audio Tools with FFmpeg.wasm
+- English: https://toolgarden.xyz/en/blog/build-browser-audio-tools-with-ffmpeg-wasm
+- Chinese: https://toolgarden.xyz/zh/blog/build-browser-audio-tools-with-ffmpeg-wasm
+- Chinese title: 怎么用 FFmpeg.wasm 实现浏览器在线音频处理工具
+- Summary: An engineering guide to loading FFmpeg WebAssembly, managing its virtual file system, building audio commands, reporting progress, and cleaning up browser memory.
+- Published: 2026-07-22; updated: 2026-07-22
+
+### How to Run Whisper Speech-to-Text in the Browser
+- English: https://toolgarden.xyz/en/blog/run-whisper-speech-to-text-in-browser
+- Chinese: https://toolgarden.xyz/zh/blog/run-whisper-speech-to-text-in-browser
+- Chinese title: 怎么在浏览器运行 Whisper 实现语音转文字
+- Summary: Build browser speech recognition with Transformers.js, ONNX WebAssembly, model caching, chunked decoding, microphone snapshots, and honest privacy boundaries.
+- Published: 2026-07-22; updated: 2026-07-22
+
+### How to Build Browser OCR with ONNX Runtime Web
+- English: https://toolgarden.xyz/en/blog/build-browser-ocr-with-onnx-runtime-web
+- Chinese: https://toolgarden.xyz/zh/blog/build-browser-ocr-with-onnx-runtime-web
+- Chinese title: 怎么用 ONNX Runtime Web 实现浏览器本地 OCR
+- Summary: A complete browser OCR pipeline using a Web Worker, ONNX WASM, text detection, orientation classification, recognition, language-aware decoding, and reading-order merging.
+- Published: 2026-07-22; updated: 2026-07-22
+
+### How to Merge Word and PowerPoint Files in the Browser with Open XML
+- English: https://toolgarden.xyz/en/blog/merge-word-ppt-in-browser-openxml
+- Chinese: https://toolgarden.xyz/zh/blog/merge-word-ppt-in-browser-openxml
+- Chinese title: 怎么在浏览器合并 Word 和 PPT：Open XML 实现原理
+- Summary: Merge DOCX and PPTX without Office automation by unpacking Open XML ZIP packages, copying relationship graphs, resolving part collisions, and rebuilding valid documents.
+- Published: 2026-07-22; updated: 2026-07-22
+
+### How to Convert PDF to Word in the Browser with pdf.js and Open XML
+- English: https://toolgarden.xyz/en/blog/convert-pdf-to-word-in-browser
+- Chinese: https://toolgarden.xyz/zh/blog/convert-pdf-to-word-in-browser
+- Chinese title: 怎么用 pdf.js 在浏览器把 PDF 转成 Word
+- Summary: Extract positioned PDF text with pdf.js, rebuild readable lines, preserve page breaks, and generate a minimal editable DOCX package entirely in the browser.
+- Published: 2026-07-22; updated: 2026-07-22
+
+### How to Generate ICO and ICNS Files in the Browser
+- English: https://toolgarden.xyz/en/blog/generate-ico-icns-in-browser
+- Chinese: https://toolgarden.xyz/zh/blog/generate-ico-icns-in-browser
+- Chinese title: 怎么在浏览器生成 ICO 和 ICNS 图标文件
+- Summary: Render a source image at multiple sizes, write ICO directory and DIB bytes, build big-endian ICNS chunks, and export portable icon packages without a server.
+- Published: 2026-07-22; updated: 2026-07-22
+
 ### How to Build an Online Font Subsetter with fonteditor-core
 - English: https://toolgarden.xyz/en/blog/build-online-font-subsetter-fonteditor-core
 - Chinese: https://toolgarden.xyz/zh/blog/build-online-font-subsetter-fonteditor-core
