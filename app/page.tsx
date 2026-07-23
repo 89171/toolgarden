@@ -12,7 +12,7 @@ import { analyticsConfig } from '@/lib/analytics';
 import {
   createLocaleMetadata,
   createSiteJsonLd,
-  getLocaleMessages,
+  getClientMessages,
   toJsonLd,
 } from '@/lib/tools/seo';
 import './globals.css';
@@ -49,7 +49,6 @@ export const viewport: Viewport = {
 
 export default function RootHomePage() {
   setRequestLocale(defaultLocale);
-  const m = getLocaleMessages(defaultLocale);
   const googleMeasurementId = analyticsConfig.google.measurementId;
   const googleEnabled = analyticsConfig.google.enabled && googleMeasurementId.length > 0;
   const escapedGoogleMeasurementId = googleMeasurementId
@@ -86,11 +85,11 @@ export default function RootHomePage() {
         />
       </head>
       <body className="antialiased">
-        <NextIntlClientProvider locale={defaultLocale} messages={m}>
+        <NextIntlClientProvider locale={defaultLocale} messages={getClientMessages(defaultLocale)}>
           <HomePageContent locale={defaultLocale} />
           <FeedbackButton />
         </NextIntlClientProvider>
-        <Analytics />
+        <Analytics locale={defaultLocale} />
         <PwaRegistration />
         <SiteProtection />
       </body>

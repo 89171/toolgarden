@@ -1,47 +1,25 @@
-'use client';
-
-import { useEffect } from 'react';
 import Link from '@/components/ui/AppLink';
-import { usePathname } from 'next/navigation';
-import { routing } from '@/i18n/routing';
-import { getLocalizedToolPath, toolRegistry } from '@/lib/tools/registry';
-import zhMessages from '@/messages/zh.json';
-import enMessages from '@/messages/en.json';
-
-const messages = { zh: zhMessages, en: enMessages } as const;
-type Locale = (typeof routing.locales)[number];
-type ToolMessageId = keyof typeof zhMessages.tools;
+import {
+  getFeaturedTools,
+  getLocaleMessages,
+  getLocalizedToolCards,
+  normalizeLocale,
+} from '@/lib/tools/seo';
 
 interface NotFoundContentProps {
-  locale?: string;
-}
-
-function normalizeLocale(locale?: string, pathname?: string | null): Locale {
-  if (routing.locales.includes(locale as Locale)) return locale as Locale;
-
-  const pathLocale = pathname?.split('/').filter(Boolean)[0];
-  if (routing.locales.includes(pathLocale as Locale)) return pathLocale as Locale;
-
-  return routing.defaultLocale;
+  locale: string;
 }
 
 export function NotFoundContent({ locale }: NotFoundContentProps) {
-  const pathname = usePathname();
-  const normalizedLocale = normalizeLocale(locale, pathname);
-  const m = messages[normalizedLocale];
-  const featuredTools = toolRegistry.filter((tool) => tool.featured).slice(0, 4);
-
-  useEffect(() => {
-    document.title = `${m.not_found.title} | ${m.home.title}`;
-    document.documentElement.lang = normalizedLocale;
-  }, [m.home.title, m.not_found.title, normalizedLocale]);
+  const normalizedLocale = normalizeLocale(locale);
+  const m = getLocaleMessages(normalizedLocale);
+  const featuredIds = new Set(getFeaturedTools().map((tool) => tool.id));
+  const featuredTools = getLocalizedToolCards(normalizedLocale)
+    .filter((tool) => featuredIds.has(tool.id))
+    .slice(0, 4);
 
   return (
-    <>
-      <title>{`${m.not_found.title} | ${m.home.title}`}</title>
-      <meta name="description" content={m.not_found.description} />
-      <meta name="robots" content="noindex,follow" />
-      <div className="flex min-h-[100dvh] flex-col bg-background text-foreground">
+    <div className="flex min-h-[100dvh] flex-col bg-background text-foreground">
       <main className="mx-auto flex w-full max-w-[1100px] flex-grow flex-col justify-center px-4 py-10 sm:px-6 lg:px-8">
         <section className="border-b border-border-subtle pb-8">
           <p className="font-mono text-sm font-semibold text-content-faint">404</p>
@@ -73,12 +51,10 @@ export function NotFoundContent({ locale }: NotFoundContentProps) {
           </h2>
           <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
             {featuredTools.map((tool) => {
-              const localizedTool = m.tools[tool.id as ToolMessageId];
-
               return (
                 <Link
                   key={tool.id}
-                  href={getLocalizedToolPath(tool, normalizedLocale)}
+                  href={tool.localizedPath}
                   className="rounded-lg border border-border-base bg-surface p-4 transition-colors hover:border-border-strong hover:bg-surface-hover"
                 >
                   <div className="flex items-start gap-3">
@@ -89,9 +65,9 @@ export function NotFoundContent({ locale }: NotFoundContentProps) {
                       {tool.icon}
                     </span>
                     <span>
-                      <span className="block font-semibold text-content">{localizedTool.name}</span>
+                      <span className="block font-semibold text-content">{tool.name}</span>
                       <span className="mt-1 block text-sm leading-relaxed text-content-muted">
-                        {localizedTool.description}
+                        {tool.description}
                       </span>
                     </span>
                   </div>
@@ -105,7 +81,6 @@ export function NotFoundContent({ locale }: NotFoundContentProps) {
       <footer className="px-4 pb-6 text-center text-sm text-content-muted">
         {m.footer.text} © {new Date().getFullYear()}
       </footer>
-      </div>
-    </>
+    </div>
   );
 }

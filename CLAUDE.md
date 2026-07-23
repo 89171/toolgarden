@@ -26,7 +26,7 @@ npm run clean    # 清除 .next 缓存并重启开发服务器
 3. 在 `lib/utils/` 中实现纯函数逻辑
 4. 创建 `app/[locale]/<tool-id>/page.tsx`，用 `<ToolLayout toolId="<tool-id>">` 包裹内容
 5. 创建 `app/[locale]/<tool-id>/layout.tsx`，调用 `createToolMetadata(TOOL_ID, locale)`
-6. 创建 `app/<tool-id>/page.tsx`，调用 `redirectToolToDefaultLocale('<tool-id>')`
+6. 不创建 `app/<tool-id>/page.tsx`；无 locale 前缀的工具路径应返回真实 404
 
 完成以上步骤后，首页卡片、面包屑、分类分组、Sitemap 条目、JSON-LD、hreflang、404 推荐列表**全部自动出现**，无需修改其他任何文件。
 
@@ -37,7 +37,6 @@ npm run clean    # 清除 .next 缓存并重启开发服务器
 | `lib/tools/types.ts` | `ToolMeta` 接口——工具的唯一标准契约 |
 | `lib/tools/registry.ts` | 工具注册表，驱动首页、导航、SEO |
 | `lib/tools/seo.ts` | SEO 工具函数：createToolMetadata、createBreadcrumbJsonLd、getLocalizedToolCards 等 |
-| `lib/tools/routing.ts` | 路由工具函数：redirectToDefaultLocale / redirectToolToDefaultLocale |
 | `lib/utils/json.ts` | **纯函数**工具库，无副作用，不得 import React |
 | `lib/utils/*.ts` | 各工具的纯函数逻辑（yaml/xml/csv/diff/schema/repair/flatten 等） |
 | `components/ToolLayout.tsx` | 所有工具页面必须使用的骨架（面包屑 + 标题 + JSON-LD） |
@@ -50,7 +49,6 @@ npm run clean    # 清除 .next 缓存并重启开发服务器
 | `app/[locale]/page.tsx` | 首页 Server Component，直接读 messages，无需 getTranslations |
 | `app/[locale]/<tool-id>/page.tsx` | 工具页面，只管 UI 状态，逻辑委托给 `lib/utils/` |
 | `app/[locale]/<tool-id>/layout.tsx` | 工具页元数据，调用 `createToolMetadata(TOOL_ID, locale)` |
-| `app/<tool-id>/page.tsx` | 根路径兼容入口，调用 `redirectToolToDefaultLocale` |
 | `messages/zh.json` | 中文文案唯一来源 |
 | `messages/en.json` | 英文文案唯一来源 |
 
@@ -188,7 +186,7 @@ Layer 2  @theme inline { --color-surface: var(--surface); }    ← 注册为 Tai
 [ ] lib/utils/<id>.ts 已实现纯函数
 [ ] app/[locale]/<id>/page.tsx 已创建（使用 ToolLayout）
 [ ] app/[locale]/<id>/layout.tsx 已创建（使用 createToolMetadata）
-[ ] app/<id>/page.tsx 已创建（使用 redirectToolToDefaultLocale）
+[ ] 未创建 app/<id>/page.tsx，无 locale 前缀路径返回真实 404
 [ ] 没有在组件中硬编码工具名称/描述
 [ ] 没有页面内复杂 JSON 逻辑
 [ ] 没有原始 Tailwind 颜色类

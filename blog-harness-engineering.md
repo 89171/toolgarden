@@ -90,7 +90,6 @@ lib/tools/          ← 工具元数据 + 跨切面逻辑
   types.ts          ← ToolMeta 接口
   registry.ts       ← 注册中心
   seo.ts            ← SEO 工具函数（metadata、JSON-LD、hreflang）
-  routing.ts        ← 路由工具（redirectToDefaultLocale）
 
 components/ui/      ← 无业务逻辑的原子组件
   Button.tsx / Panel.tsx
@@ -105,14 +104,12 @@ app/[locale]/       ← 页面层（只管 UI 状态）
   page.tsx          ← 首页 Server Component
   [tool]/page.tsx   ← 工具页：useState + useEffect + 调用 lib/utils/
   [tool]/layout.tsx ← generateMetadata → createToolMetadata(id, locale)
-
-app/[tool]/         ← 根路径兼容层（SEO 友好重定向）
-  page.tsx          ← redirectToolToDefaultLocale
 ```
 
 **核心约束**：
 - `lib/utils/` 里**禁止** import React，**禁止**抛异常，只返回值
-- `app/<tool>/page.tsx` 里**禁止**直接写 `JSON.parse`，必须调用 `lib/utils/`
+- `app/[locale]/<tool>/page.tsx` 里**禁止**直接写 `JSON.parse`，必须调用 `lib/utils/`
+- 不创建 `app/<tool>/page.tsx`；无 locale 前缀的工具路径返回真实 404
 - 所有函数返回判别联合类型 `{ ok: true, output } | { ok: false, message }`
 
 ---
@@ -271,15 +268,14 @@ app/globals.css           ← 双层主题 token
 
 首页、面包屑、Sitemap、JSON-LD、404 推荐——一切「发现」逻辑只从 `registry.ts` 读取，禁止在任何其他地方硬编码工具列表。
 
-**准则二：新增工具只改 6 处，其余自动派生**
+**准则二：新增工具只改 5 处，其余自动派生**
 
 ```
 registry.ts 追加记录 → messages/zh+en.json 追加文案 → lib/utils/<id>.ts 实现逻辑
 → app/[locale]/<id>/page.tsx 实现 UI → app/[locale]/<id>/layout.tsx 接入 createToolMetadata
-→ app/<id>/page.tsx 设置重定向
 ```
 
-如果需要改第 7 处，说明违反了 Harness 约束，需要把那处逻辑收回到框架中。
+如果需要改第 6 处，说明违反了 Harness 约束，需要把那处逻辑收回到框架中。
 
 **准则三：分层禁止越层**
 

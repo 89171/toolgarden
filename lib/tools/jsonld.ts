@@ -42,7 +42,7 @@ export function getLanguageAlternates(path = ''): Record<string, string> {
 }
 
 function trimTrailingPunctuation(value: string): string {
-  return value.replace(/[\s,.，。;；:：、]+$/u, '');
+  return value.replace(/[\s,.，。;；:：、/|\\–—-]+$/u, '');
 }
 
 function truncatePlainText(value: string, limit: number, locale: Locale): string {
@@ -57,6 +57,8 @@ function truncatePlainText(value: string, limit: number, locale: Locale): string
     truncated.lastIndexOf(','),
     truncated.lastIndexOf(';'),
     truncated.lastIndexOf('；'),
+    truncated.lastIndexOf('/'),
+    truncated.lastIndexOf('|'),
     truncated.lastIndexOf(' ')
   );
   const phrase = separatorIndex >= Math.floor(limit * 0.55)
@@ -64,9 +66,11 @@ function truncatePlainText(value: string, limit: number, locale: Locale): string
     : truncated;
 
   const cleanPhrase = trimTrailingPunctuation(phrase);
-  return locale === 'en'
-    ? cleanPhrase.replace(/\s+(?:a|an|and|for|in|of|on|or|the|to|with)$/iu, '')
-    : cleanPhrase;
+  if (locale !== 'en') return cleanPhrase;
+
+  return trimTrailingPunctuation(
+    cleanPhrase.replace(/\s+(?:a|an|and|for|in|of|on|or|the|to|with)$/iu, '')
+  );
 }
 
 function truncateSeoPhrase(value: string, locale: Locale, limit: number): string {

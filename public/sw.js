@@ -10,7 +10,7 @@
  * 版本号更新 CACHE_NAME 即可清除旧缓存。
  */
 
-const CACHE_NAME = 'json-toolkit-v3';
+const CACHE_NAME = 'json-toolkit-v4';
 const NO_CACHE_WRITE = Promise.resolve();
 
 /**
@@ -84,6 +84,24 @@ self.addEventListener('fetch', (event) => {
       event,
       task,
       () => new Response('Asset unavailable', { status: 503 })
+    );
+    return;
+  }
+
+  // ── Cache-First：按需下载的大型模型、编解码器与 Worker ─────
+  if (
+    url.pathname.startsWith('/models/') ||
+    url.pathname.startsWith('/vendor/') ||
+    url.pathname.startsWith('/workers/')
+  ) {
+    const task = caches.match(request).then((cached) => {
+      if (cached) return { response: cached, cacheWrite: NO_CACHE_WRITE };
+      return fetchWithCacheWrite(request, (response) => response.ok);
+    });
+    respondAndKeepCacheWriteAlive(
+      event,
+      task,
+      () => new Response('Tool asset unavailable', { status: 503 })
     );
     return;
   }

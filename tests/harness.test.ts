@@ -37,10 +37,10 @@ describe('registry and localization harness', () => {
     }
   });
 
-  it('does not serialize server-only content into the global client provider', () => {
+  it('keeps private policy copy server-only while exposing visible tool FAQs', () => {
     const clientMessages = getClientMessages('en') as Record<string, unknown>;
-    expect(clientMessages).not.toHaveProperty('tool_faq');
     expect(clientMessages).not.toHaveProperty('site_pages');
+    expect(clientMessages).toHaveProperty('tool_faq');
     expect(clientMessages).toHaveProperty('common');
     expect(clientMessages).toHaveProperty('tools');
   });
@@ -74,6 +74,7 @@ describe('SEO helpers', () => {
         const description = createToolSeoDescription(copy.description, locale);
         expect(title.length).toBeLessThanOrEqual(titleLimit);
         expect(title).not.toContain('...');
+        expect(title).not.toMatch(/[\s,.，。;；:：、/|\\–—-]$/u);
         expect(description.length).toBeLessThanOrEqual(descriptionLimit);
         expect(description).toMatch(locale === 'zh' ? /。$/u : /\.$/u);
       }

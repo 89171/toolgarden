@@ -69,11 +69,9 @@ export function getLocaleMessages(locale: string) {
 
 export function getClientMessages(locale: string) {
   const {
-    tool_faq: _toolFaq,
     site_pages: _sitePages,
     ...clientMessages
   } = getLocaleMessages(locale);
-  void _toolFaq;
   void _sitePages;
   return clientMessages;
 }
@@ -743,6 +741,7 @@ export function createBlogArticleJsonLd(slug: string, locale: string) {
     '@type': 'BlogPosting',
     headline: article.title,
     description: createPrivacySeoDescription(article.metaDescription, normalizedLocale),
+    image: [DEFAULT_OPEN_GRAPH_IMAGE.url],
     datePublished: article.publishedAt,
     dateModified: article.updatedAt,
     inLanguage: normalizedLocale === 'zh' ? 'zh-CN' : 'en',

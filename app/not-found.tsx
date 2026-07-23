@@ -17,8 +17,8 @@ export default function RootNotFound() {
         <meta name="robots" content="noindex,follow" />
       </head>
       <body className="antialiased">
-        <NotFoundContent />
-        <Analytics />
+        <NotFoundContent locale={locale} />
+        <Analytics locale={locale} />
         <SiteProtection />
       </body>
     </html>

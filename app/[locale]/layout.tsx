@@ -112,7 +112,7 @@ export default async function LocaleLayout({
           {children}
           <FeedbackButton />
         </NextIntlClientProvider>
-        <Analytics />
+        <Analytics locale={normalizedLocale} />
         <PwaRegistration />
         <SiteProtection />
       </body>

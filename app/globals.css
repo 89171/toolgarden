@@ -29,7 +29,7 @@
   --content:           #111827;   /* gray-900，标题 */
   --content-secondary: #1f2937;   /* gray-800，正文 */
   --content-muted:     #6b7280;   /* gray-500，辅助说明 */
-  --content-faint:     #9ca3af;   /* gray-400，占位符 / 注释 */
+  --content-faint:     #64748b;   /* slate-500，占位符 / 注释，满足普通文本对比度 */
 
   /* Brand */
   --brand-bg:          #111827;
@@ -81,7 +81,7 @@
     --content:           #f9fafb;
     --content-secondary: #e5e7eb;
     --content-muted:     #9ca3af;
-    --content-faint:     #6b7280;
+    --content-faint:     #9ca3af;
 
     --brand-bg:          #000000;
     --brand-bg-hover:    #171717;

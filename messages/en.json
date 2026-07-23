@@ -1837,7 +1837,7 @@
         {
           "title": "Analytics and page telemetry",
           "paragraphs": [
-            "ToolGarden uses Google Analytics, Baidu Analytics, and Microsoft Clarity across the site. These services may receive page URLs and titles, approximate location, browser and device information, identifiers, performance diagnostics, and interaction events such as clicks, scrolling, and page navigation.",
+            "ToolGarden uses Google Analytics and Microsoft Clarity across the site, and Baidu Analytics on Chinese-language routes. These services may receive page URLs and titles, approximate location, browser and device information, identifiers, performance diagnostics, and interaction events such as clicks, scrolling, and page navigation.",
             "Analytics data is handled under each provider's terms, controls, and retention settings. Do not place personal data or secrets in page URLs. ToolGarden does not intentionally send filenames, tool input values, or generated output values as custom analytics events."
           ],
           "links": [
@@ -1847,9 +1847,20 @@
           ]
         },
         {
+          "title": "Advertising and consent",
+          "paragraphs": [
+            "ToolGarden uses Google AdSense to fund the public service. Google and its advertising partners may use cookies or similar storage to deliver and measure ads, limit repeated ads, detect invalid traffic, and, where permitted by your choices and applicable law, personalize advertising.",
+            "Ad requests can include the page URL, IP address, browser and device information, advertising or consent identifiers, and interaction data related to an ad. ToolGarden does not intentionally send the text, files, images, audio, or generated output you process inside a tool as advertising data. Where a consent message is shown, you can accept, reject, or adjust the available advertising choices."
+          ],
+          "links": [
+            { "label": "How Google uses information for advertising", "href": "https://policies.google.com/technologies/ads" },
+            { "label": "Google Ads settings", "href": "https://adssettings.google.com/" }
+          ]
+        },
+        {
           "title": "Browser storage and caching",
           "paragraphs": [
-            "The site may use browser cache, service-worker storage, cookies, or local storage for language routing, offline assets, preferences, and tool-specific persistence such as whiteboard state. These items remain under your browser profile and can be removed through your browser's site-data controls."
+            "The site may use browser cache, service-worker storage, cookies, or local storage for offline assets, preferences, tool-specific persistence such as whiteboard state, and strictly necessary security functions such as abuse prevention and traffic routing at the CDN edge. These items remain under your browser profile and can be removed through your browser's site-data controls, although removing required security data may cause it to be set again on a later request."
           ]
         },
         {

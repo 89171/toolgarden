@@ -25,8 +25,8 @@ npm run lint     # ESLint 检查
 3. 在 `lib/utils/` 中实现纯函数逻辑，页面不得直接写复杂解析/转换逻辑
 4. 创建 `app/[locale]/<tool-id>/page.tsx`，用 `<ToolLayout toolId="<tool-id>">` 包裹内容
 5. 创建 `app/[locale]/<tool-id>/layout.tsx`，复用工具 metadata 生成逻辑
-6. 创建 `app/<tool-id>/page.tsx`，跳转到默认 locale 路由
-7. 跑 `npm run lint`、`npx tsc --noEmit`、`npm run build`，并用浏览器验证页面可用
+6. 不创建 `app/<tool-id>/page.tsx`；无 locale 前缀的工具路径应返回真实 404
+7. 跑 `npm run lint`、`npx tsc --noEmit`、`npm run build`，并用浏览器验证本地化页面可用、无前缀路径返回 404
 
 完成以上步骤后，首页卡片、面包屑、分类分组、SEO 发现入口应自动出现，不得再手动维护重复入口。
 
@@ -43,14 +43,13 @@ npm run lint     # ESLint 检查
 | `components/JsonNode.tsx` | JSON 树形展示组件 |
 | `app/page.tsx` | 首页，纯展示，从 registry 读数据，不含业务逻辑 |
 | `app/[locale]/<tool-id>/page.tsx` | 工具页面，只管 UI 状态，逻辑委托给 `lib/utils/` |
-| `app/<tool-id>/page.tsx` | 根路径兼容入口，只负责跳转到默认 locale |
 
 ### 分层规则
 
 - **`lib/utils/`** → 纯函数，返回值而不是操作 state，便于测试
 - **`lib/tools/`** → 工具元数据，不含渲染代码
 - **`components/ui/`** → 无业务逻辑的原子组件
-- **`app/<tool>/page.tsx`** → 只负责 `useState` / `useEffect`，调用 `lib/utils/` 取结果
+- **`app/[locale]/<tool>/page.tsx`** → 只负责 `useState` / `useEffect`，调用 `lib/utils/` 取结果
 
 工具页面中**禁止**直接写 `JSON.parse` / `JSON.stringify` 等逻辑——应在 `lib/utils/json.ts` 中定义函数后调用。
 

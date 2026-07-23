@@ -6,6 +6,7 @@ import { getToolById } from '@/lib/tools/registry';
 import { getPillarSlugForToolPath } from '@/lib/blog/topics';
 import {
   buildBreadcrumbJsonLd,
+  buildToolFaqJsonLd,
   buildToolJsonLd,
   toJsonLd,
   type JsonLdMessages,
@@ -16,6 +17,11 @@ import Header from './Header';
 interface ToolLayoutProps {
   toolId: string;
   children: React.ReactNode;
+}
+
+interface ToolFaqItem {
+  question: string;
+  answer: string;
 }
 
 export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
@@ -37,6 +43,17 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
   const pdfHubLabel = t('pdf_hub.breadcrumb');
   const fileMergeHubLabel = t('file_merge_hub.breadcrumb');
   const otherHubLabel = t('other_hub.breadcrumb');
+  const faqKey = `tool_faq.${toolId}.items`;
+  const rawFaqItems = tool && t.has(faqKey) ? t.raw(faqKey) : [];
+  const faqItems = Array.isArray(rawFaqItems)
+    ? rawFaqItems.filter(
+        (item): item is ToolFaqItem =>
+          typeof item === 'object' &&
+          item !== null &&
+          typeof item.question === 'string' &&
+          typeof item.answer === 'string'
+      )
+    : [];
   const jsonLdMessages: JsonLdMessages = {
     home: { title: t('home.title'), breadcrumb: homeLabel },
     image_hub: { breadcrumb: imageHubLabel },
@@ -47,10 +64,13 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
     other_hub: { breadcrumb: otherHubLabel },
     tools: { [toolId]: { name: toolName, description: toolDesc } },
     organic_keywords: tool ? { [toolId]: t(`organic_keywords.${toolId}`) } : {},
+    tool_faq: faqItems.length > 0 ? { [toolId]: { items: faqItems } } : {},
   };
   const toolJsonLd = tool ? buildToolJsonLd(toolId, locale, jsonLdMessages) : null;
   const breadcrumbJsonLd = tool ? buildBreadcrumbJsonLd(toolId, locale, jsonLdMessages) : null;
+  const faqJsonLd = tool ? buildToolFaqJsonLd(toolId, jsonLdMessages) : null;
   const relatedGuideSlug = tool ? getPillarSlugForToolPath(tool.path) : null;
+  const faqTitleId = `${toolId}-faq-title`;
 
   return (
     <>
@@ -64,6 +84,12 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: toJsonLd(breadcrumbJsonLd) }}
+        />
+      )}
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: toJsonLd(faqJsonLd) }}
         />
       )}
       <div className="flex min-h-[100dvh] flex-col bg-background text-foreground">
@@ -149,21 +175,38 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
           </div>
         )}
 
-        <div data-clarity-mask="true" className="flex flex-1 flex-col lg:min-h-0">{children}</div>
-        {relatedGuideSlug ? (
-          <aside className="mt-6 flex flex-col gap-3 rounded-lg border border-border-subtle bg-surface px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="text-xs font-semibold text-content-faint">{t('blog.related_guide')}</p>
-              <p className="mt-1 text-sm leading-6 text-content-secondary">{t('blog.privacy_note')}</p>
-            </div>
-            <Link
-              href={`/${locale}/blog/${relatedGuideSlug}`}
-              className="inline-flex shrink-0 items-center justify-center rounded border border-border-strong bg-surface-raised px-3 py-2 text-sm font-semibold text-content transition-colors hover:bg-surface-hover"
-            >
-              {t('blog.related_guide_action')}
-            </Link>
-          </aside>
-        ) : null}
+        <main className="flex flex-1 flex-col lg:min-h-0">
+          <div data-clarity-mask="true" className="flex flex-1 flex-col lg:min-h-0">{children}</div>
+          {relatedGuideSlug ? (
+            <aside className="mt-6 flex flex-col gap-3 rounded-lg border border-border-subtle bg-surface px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-xs font-semibold text-content-faint">{t('blog.related_guide')}</p>
+                <p className="mt-1 text-sm leading-6 text-content-secondary">{t('blog.privacy_note')}</p>
+              </div>
+              <Link
+                href={`/${locale}/blog/${relatedGuideSlug}`}
+                className="inline-flex shrink-0 items-center justify-center rounded border border-border-strong bg-surface-raised px-3 py-2 text-sm font-semibold text-content transition-colors hover:bg-surface-hover"
+              >
+                {t('blog.related_guide_action')}
+              </Link>
+            </aside>
+          ) : null}
+          {faqItems.length > 0 ? (
+            <section className="mt-8 border-t border-border-subtle pt-6" aria-labelledby={faqTitleId}>
+              <h2 id={faqTitleId} className="text-xl font-bold text-content">
+                {t('blog.faq_title')}
+              </h2>
+              <dl className="mt-4 grid gap-3 lg:grid-cols-2">
+                {faqItems.map((item) => (
+                  <div key={item.question} className="rounded-lg border border-border-base bg-surface px-4 py-4">
+                    <dt className="font-semibold leading-6 text-content">{item.question}</dt>
+                    <dd className="mt-2 text-sm leading-6 text-content-muted">{item.answer}</dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+          ) : null}
+        </main>
         <Footer />
       </div>
       </div>

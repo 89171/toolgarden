@@ -5,14 +5,18 @@ import { usePathname } from 'next/navigation';
 import Script from 'next/script';
 import { analyticsConfig } from '@/lib/analytics';
 
-export function Analytics() {
+interface AnalyticsProps {
+  locale: string;
+}
+
+export function Analytics({ locale }: AnalyticsProps) {
   const pathname = usePathname();
   const isFirstPageView = useRef(true);
   const googleMeasurementId = analyticsConfig.google.measurementId;
   const googleEnabled = analyticsConfig.google.enabled && googleMeasurementId.length > 0;
 
   useEffect(() => {
-    if (!analyticsConfig.baidu.enabled || typeof window === 'undefined') return;
+    if (locale !== 'zh' || !analyticsConfig.baidu.enabled || typeof window === 'undefined') return;
 
     const analyticsWindow = window as Window & { _hmt?: unknown[] };
     analyticsWindow._hmt = analyticsWindow._hmt ?? [];
@@ -23,7 +27,7 @@ export function Analytics() {
     script.async = true;
     script.src = analyticsConfig.baidu.src;
     document.head.appendChild(script);
-  }, []);
+  }, [locale]);
 
   useEffect(() => {
     if (!googleEnabled || typeof window === 'undefined') return;

@@ -341,7 +341,7 @@ function Header({ compact = false }: HeaderProps) {
           >
             <span className="truncate whitespace-nowrap text-base font-semibold leading-none text-brand-fg sm:text-lg">
               <span>{t('nav.brand')}</span>
-              <span className="px-1 text-brand-dot">·</span>
+              <span className="px-1 text-brand-dot">.</span>
               <span className="text-brand-tld">{t('nav.tld')}</span>
             </span>
           </Link>
@@ -407,7 +407,7 @@ function Header({ compact = false }: HeaderProps) {
               >
                 <span className="truncate whitespace-nowrap text-base font-semibold leading-none">
                   <span>{t('nav.brand')}</span>
-                  <span className="px-1 text-brand-dot">·</span>
+                  <span className="px-1 text-brand-dot">.</span>
                   <span className="text-brand-tld">{t('nav.tld')}</span>
                 </span>
               </Link>
