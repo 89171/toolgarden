@@ -3,6 +3,7 @@ import { implementationEngineeringArticles } from './implementation-engineering-
 import { creativeToolEngineeringArticles } from './creative-tool-engineering-articles';
 import { topicClusterBlogArticles } from './topic-cluster-articles';
 import { growthSeoBlogArticles } from './growth-seo-articles';
+import { seoOptimizationGuideArticles } from './seo-optimization-guide-articles';
 import {
   blogTopics,
   getBlogTopicByArticleSlug,
@@ -172,6 +173,7 @@ const json5Snippet = `{
 }`;
 
 export const blogArticles: BlogArticle[] = [
+  ...seoOptimizationGuideArticles,
   ...implementationEngineeringArticles,
   ...creativeToolEngineeringArticles,
   ...topicClusterBlogArticles,

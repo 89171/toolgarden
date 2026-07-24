@@ -487,8 +487,8 @@ export const growthSeoBlogArticles: BlogArticle[] = [
       readingTime: '11 min read',
       tags: ['developer privacy toolkit', 'privacy-first tools', 'local processing', 'data minimization', '2026'],
       relatedTools: [
-        { label: 'JSON tools', href: '/json', description: 'Format, compare, query, validate, and convert structured data locally.' },
-        { label: 'JWT Decoder', href: '/jwt-decode', description: 'Inspect JWT header and payload fields locally before sharing or debugging.' },
+        { label: 'JSON tools', href: '/json-tools', description: 'Format, compare, query, validate, and convert structured data locally.' },
+        { label: 'JWT Decoder', href: '/jwt', description: 'Inspect JWT header and payload fields locally before sharing or debugging.' },
         localImageToolsEn,
         { label: 'PDF tools', href: '/pdf', description: 'Organize and extract PDF content through browser-local workflows.' },
       ],
@@ -573,7 +573,7 @@ export const growthSeoBlogArticles: BlogArticle[] = [
           ],
         },
       ],
-      callout: { type: 'callout', title: 'Begin with the data you inspect most', text: 'Use the JSON tools for a synthetic sample, then verify that formatting, comparison, and queries stay inside the browser workflow.', href: '/json', linkLabel: 'Open JSON tools' },
+      callout: { type: 'callout', title: 'Begin with the data you inspect most', text: 'Use the JSON tools for a synthetic sample, then verify that formatting, comparison, and queries stay inside the browser workflow.', href: '/json-tools', linkLabel: 'Open JSON tools' },
       conclusion: 'The strongest developer privacy toolkit combines data minimization, browser-local processing, observable behavior, careful output inspection, and a response plan for mistakes. Tools reduce friction; classification and workflow discipline determine whether sensitive data is actually protected.',
       faq: [
         { question: 'Are browser-local tools enough for regulated data?', answer: 'Not by themselves. Local processing can reduce data transfer, but regulated data may require approved devices, access controls, audit records, contracts, retention rules, or tools selected by your organization.' },
@@ -590,8 +590,8 @@ export const growthSeoBlogArticles: BlogArticle[] = [
       readingTime: '约 11 分钟阅读',
       tags: ['开发者隐私工具箱', '隐私优先工具', '本地处理', '数据最小化', '2026'],
       relatedTools: [
-        { label: 'JSON 工具', href: '/json', description: '在本地格式化、对比、查询、校验和转换结构化数据。' },
-        { label: 'JWT 解码', href: '/jwt-decode', description: '分享或调试前，在本地检查 JWT Header 和 Payload 字段。' },
+        { label: 'JSON 工具', href: '/json-tools', description: '在本地格式化、对比、查询、校验和转换结构化数据。' },
+        { label: 'JWT 解码', href: '/jwt', description: '分享或调试前，在本地检查 JWT Header 和 Payload 字段。' },
         localImageToolsZh,
         { label: 'PDF 工具', href: '/pdf', description: '通过浏览器本地流程整理 PDF 并提取内容。' },
       ],
@@ -676,7 +676,7 @@ export const growthSeoBlogArticles: BlogArticle[] = [
           ],
         },
       ],
-      callout: { type: 'callout', title: '从最常检查的数据开始', text: '先用合成样本体验 JSON 工具，再验证格式化、对比和查询都留在浏览器流程中。', href: '/json', linkLabel: '打开 JSON 工具' },
+      callout: { type: 'callout', title: '从最常检查的数据开始', text: '先用合成样本体验 JSON 工具，再验证格式化、对比和查询都留在浏览器流程中。', href: '/json-tools', linkLabel: '打开 JSON 工具' },
       conclusion: '可靠的开发者隐私工具箱，需要把数据最小化、浏览器本地处理、可观察行为、输出检查和事故响应结合起来。工具能降低操作成本，但真正保护敏感数据的是分类和流程纪律。',
       faq: [
         { question: '浏览器本地工具足以处理受监管数据吗？', answer: '不能一概而论。本地处理可以减少数据传输，但受监管数据还可能要求批准设备、访问控制、审计记录、合同、保留规则或组织指定工具。' },
