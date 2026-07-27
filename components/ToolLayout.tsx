@@ -36,12 +36,14 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
   const isAudioTool = Boolean(tool?.path.startsWith('/audio/'));
   const isPdfTool = Boolean(tool?.path.startsWith('/pdf/'));
   const isFileMergeTool = Boolean(tool?.path.startsWith('/file-merge/'));
+  const isTextTool = Boolean(tool?.path.startsWith('/text/'));
   const isOtherTool = Boolean(tool?.path.startsWith('/other/'));
   const homeLabel = t('home.breadcrumb');
   const imageHubLabel = t('image_hub.breadcrumb');
   const audioHubLabel = t('audio_hub.breadcrumb');
   const pdfHubLabel = t('pdf_hub.breadcrumb');
   const fileMergeHubLabel = t('file_merge_hub.breadcrumb');
+  const textHubLabel = t('text_hub.breadcrumb');
   const otherHubLabel = t('other_hub.breadcrumb');
   const faqKey = `tool_faq.${toolId}.items`;
   const rawFaqItems = tool && t.has(faqKey) ? t.raw(faqKey) : [];
@@ -60,7 +62,7 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
     audio_hub: { breadcrumb: audioHubLabel },
     pdf_hub: { breadcrumb: pdfHubLabel },
     file_merge_hub: { breadcrumb: fileMergeHubLabel },
-    text_hub: { breadcrumb: t('text_hub.breadcrumb') },
+    text_hub: { breadcrumb: textHubLabel },
     other_hub: { breadcrumb: otherHubLabel },
     tools: { [toolId]: { name: toolName, description: toolDesc } },
     organic_keywords: tool ? { [toolId]: t(`organic_keywords.${toolId}`) } : {},
@@ -140,6 +142,16 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
               <span className="font-medium text-content-secondary">{toolName}</span>
             </>
           )}
+          {tool && isTextTool && (
+            <>
+              <span className="shrink-0">/</span>
+              <Link href={`/${locale}/text`} className="shrink-0 font-medium text-content-secondary hover:text-content">
+                {textHubLabel}
+              </Link>
+              <span className="shrink-0">/</span>
+              <span className="font-medium text-content-secondary">{toolName}</span>
+            </>
+          )}
           {tool && isOtherTool && (
             <>
               <span className="shrink-0">/</span>
@@ -150,7 +162,7 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
               <span className="font-medium text-content-secondary">{toolName}</span>
             </>
           )}
-          {tool && !isImageTool && !isAudioTool && !isPdfTool && !isFileMergeTool && !isOtherTool && (
+          {tool && !isImageTool && !isAudioTool && !isPdfTool && !isFileMergeTool && !isTextTool && !isOtherTool && (
             <>
               <span className="shrink-0">/</span>
               <span className="shrink-0 rounded bg-surface-hover px-1 py-0.5 text-xs text-content-faint">

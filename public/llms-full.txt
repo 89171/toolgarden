@@ -626,6 +626,26 @@ Canonical examples:
 - English URL: https://toolgarden.xyz/en/audio/tts
 - Chinese URL: https://toolgarden.xyz/zh/audio/tts
 
+#### Markdown to PDF / Markdown 转 PDF (/text/markdown-to-pdf)
+- ID: `text-markdown-to-pdf`
+- Category: Convert / 转换
+- Icon label: `PDF`
+- Featured: yes
+- English description: Create a clean PDF locally, with CJK text and automatic pagination
+- Chinese description: 本地生成可下载的 PDF，支持中英文与自动分页
+- English URL: https://toolgarden.xyz/en/text/markdown-to-pdf
+- Chinese URL: https://toolgarden.xyz/zh/text/markdown-to-pdf
+
+#### Markdown to HTML / Markdown 转 HTML (/text/markdown-to-html)
+- ID: `text-markdown-to-html`
+- Category: Convert / 转换
+- Icon label: `HTML`
+- Featured: yes
+- English description: Create complete HTML locally, ready to preview, copy, and download
+- Chinese description: 本地生成完整 HTML，可预览、复制和下载
+- English URL: https://toolgarden.xyz/en/text/markdown-to-html
+- Chinese URL: https://toolgarden.xyz/zh/text/markdown-to-html
+
 #### Image EXIF Viewer & Cleaner / 图片 EXIF 查看 / 清除 (/image/exif)
 - ID: `image-exif`
 - Category: Convert / 转换

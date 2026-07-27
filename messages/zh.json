@@ -16,6 +16,37 @@
     "error_placeholder": "输入 JSON 后自动处理",
     "download_json": "下载 JSON"
   },
+  "markdown_converter": {
+    "switch_label": "切换 Markdown 转换工具",
+    "to_pdf": "Markdown 转 PDF",
+    "to_html": "Markdown 转 HTML",
+    "input_title": "Markdown",
+    "preview_title": "文档预览",
+    "code_title": "HTML 代码",
+    "placeholder": "输入或粘贴 Markdown 内容...",
+    "fallback_title": "Markdown 文档",
+    "supports": "支持标题、列表、表格、引用、链接与代码块",
+    "characters": "{count} 个字符",
+    "preview": "预览",
+    "html_code": "HTML 代码",
+    "copy_html": "复制 HTML",
+    "download_html": "下载 HTML",
+    "download_pdf": "下载 PDF",
+    "generating": "生成中",
+    "generating_pdf": "正在本地生成 PDF...",
+    "copied_html": "HTML 代码已复制。",
+    "copy_error": "复制失败，请在代码区手动复制。",
+    "downloaded_html": "HTML 文件已开始下载。",
+    "downloaded_pdf": "PDF 已生成，共 {count} 页。",
+    "empty_error": "请先输入 Markdown 内容。",
+    "pdf_error": "PDF 生成失败，请检查内容后重试。",
+    "empty_title": "等待 Markdown 内容",
+    "empty_body": "输入 Markdown 后，右侧会立即显示排版结果。",
+    "preview_frame_title": "Markdown 文档预览",
+    "pdf_local_note": "内容仅在当前浏览器处理，PDF 生成后直接保存到本地。",
+    "html_local_note": "输出为带基础样式的完整 HTML 文档，可直接复制或下载。",
+    "sample": "# 产品发布说明\n\n这份文档展示 Markdown 转换后的排版效果。\n\n## 本次更新\n\n- 更清晰的文档结构\n- 支持表格与代码块\n- 所有转换都在浏览器本地完成\n\n| 功能 | 状态 |\n| --- | --- |\n| HTML 导出 | 已支持 |\n| PDF 下载 | 已支持 |\n\n> 写好内容，然后选择需要的输出格式。\n\n```text\nnpm run build\n```"
+  },
   "pdf_converter": {
     "settings_title": "转为 PDF",
     "results_title": "PDF 结果",
@@ -1158,6 +1189,8 @@
     "audio-tts": "文字转语音,在线TTS,文本朗读,语音合成,文字转声音",
     "text-word-count": "在线字数统计,字符统计,文本长度统计,句子统计,段落统计,阅读时间计算",
     "text-diff": "文本对比,在线比较文本,文字差异对比,找出文本差异,按行对比,按词对比",
+    "text-markdown-to-pdf": "Markdown转PDF,MD转PDF,在线Markdown转PDF,Markdown导出PDF,文档转PDF",
+    "text-markdown-to-html": "Markdown转HTML,MD转HTML,在线Markdown转换,复制HTML代码,下载HTML文件",
     "image-exif": "EXIF查看,图片元数据查看,清除EXIF,删除图片元数据,照片EXIF读取",
     "image-ocr": "图片转文字,在线OCR,提取图片文字,截图转文字,照片文字识别,OCR扫描",
     "image-rotate": "图片旋转,在线翻转图片,图片旋转90度,图片镜像,调整图片方向",
@@ -1734,6 +1767,30 @@
         }
       ]
     },
+    "text-markdown-to-pdf": {
+      "items": [
+        {
+          "question": "Markdown 转 PDF 会上传内容吗？",
+          "answer": "不会。Markdown 解析、排版与 PDF 生成都在浏览器本地完成。"
+        },
+        {
+          "question": "PDF 支持中文和多页文档吗？",
+          "answer": "支持。工具使用浏览器字体绘制中英文内容，并在内容超出一页时自动分页。"
+        }
+      ]
+    },
+    "text-markdown-to-html": {
+      "items": [
+        {
+          "question": "导出的 HTML 是完整文件吗？",
+          "answer": "是。结果包含 doctype、标题、响应式视口和基础文章样式，可以直接保存并在浏览器打开。"
+        },
+        {
+          "question": "Markdown 中的原始 HTML 会执行吗？",
+          "answer": "不会。原始 HTML 会被转义，危险链接协议会被移除，预览也运行在受限环境中。"
+        }
+      ]
+    },
     "subtitle-maker": {
       "items": [
         {
@@ -2164,8 +2221,8 @@
   },
   "text_hub": {
     "title": "文本工具",
-    "meta_title": "文本工具 - 字数统计、文本对比",
-    "description": "处理文本内容，支持字数统计、词数统计、行数统计、段落统计和两段文本差异对比。所有处理都在浏览器本地完成，无需上传。",
+    "meta_title": "文本工具 - Markdown 转 PDF、HTML、字数统计与对比",
+    "description": "处理文本与 Markdown，支持导出 PDF、生成并复制 HTML、字数统计和文本差异对比。所有处理都在浏览器本地完成，无需上传。",
     "all_tools": "文本工具",
     "breadcrumb": "文本工具",
     "privacy_note": "文本仅在本地浏览器处理，不会上传到服务器。"
@@ -2617,6 +2674,14 @@
       "unchanged": "未变行",
       "identical": "两段文本完全相同",
       "empty_result": "输入两段文本后会显示差异"
+    },
+    "text-markdown-to-pdf": {
+      "name": "Markdown 转 PDF",
+      "description": "本地生成可下载的 PDF，支持中英文与自动分页"
+    },
+    "text-markdown-to-html": {
+      "name": "Markdown 转 HTML",
+      "description": "本地生成完整 HTML，可预览、复制和下载"
     },
     "subtitle-maker": {
       "name": "字幕编辑器",

@@ -498,6 +498,24 @@ export const toolRegistry: ToolMeta[] = [
     category: 'format',
     featured: true,
   },
+  {
+    id: 'text-markdown-to-pdf',
+    name: 'Markdown 转 PDF',
+    description: '本地生成可下载的 PDF，支持中英文与自动分页',
+    path: '/text/markdown-to-pdf',
+    icon: 'PDF',
+    category: 'convert',
+    featured: true,
+  },
+  {
+    id: 'text-markdown-to-html',
+    name: 'Markdown 转 HTML',
+    description: '本地生成完整 HTML，可预览、复制和下载',
+    path: '/text/markdown-to-html',
+    icon: 'HTML',
+    category: 'convert',
+    featured: true,
+  },
 
   {
     id: 'image-exif',

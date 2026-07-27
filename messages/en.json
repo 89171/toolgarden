@@ -16,6 +16,37 @@
     "error_placeholder": "Enter JSON to start",
     "download_json": "Download JSON"
   },
+  "markdown_converter": {
+    "switch_label": "Switch Markdown conversion tool",
+    "to_pdf": "Markdown to PDF",
+    "to_html": "Markdown to HTML",
+    "input_title": "Markdown",
+    "preview_title": "Document preview",
+    "code_title": "HTML code",
+    "placeholder": "Type or paste Markdown content...",
+    "fallback_title": "Markdown document",
+    "supports": "Supports headings, lists, tables, quotes, links, and code blocks",
+    "characters": "{count} characters",
+    "preview": "Preview",
+    "html_code": "HTML code",
+    "copy_html": "Copy HTML",
+    "download_html": "Download HTML",
+    "download_pdf": "Download PDF",
+    "generating": "Generating",
+    "generating_pdf": "Generating the PDF locally...",
+    "copied_html": "HTML code copied.",
+    "copy_error": "Copy failed. Copy the content from the code panel instead.",
+    "downloaded_html": "The HTML download has started.",
+    "downloaded_pdf": "PDF generated with {count} pages.",
+    "empty_error": "Enter Markdown content first.",
+    "pdf_error": "PDF generation failed. Check the content and try again.",
+    "empty_title": "Waiting for Markdown",
+    "empty_body": "Enter Markdown to see the formatted document on the right.",
+    "preview_frame_title": "Markdown document preview",
+    "pdf_local_note": "Content stays in this browser, and the generated PDF is saved directly to your device.",
+    "html_local_note": "Exports a complete HTML document with clean base styles, ready to copy or download.",
+    "sample": "# Product release notes\n\nThis document shows how Markdown looks after conversion.\n\n## What changed\n\n- A clearer document structure\n- Tables and code blocks\n- Browser-local conversion\n\n| Feature | Status |\n| --- | --- |\n| HTML export | Ready |\n| PDF download | Ready |\n\n> Write the content once, then choose the output you need.\n\n```text\nnpm run build\n```"
+  },
   "pdf_converter": {
     "settings_title": "Convert to PDF",
     "results_title": "PDF results",
@@ -1158,6 +1189,8 @@
     "audio-tts": "text to speech online, TTS tool, text reader, browser speech synthesis, convert text to voice",
     "text-word-count": "word counter online, character counter, text length counter, sentence counter, paragraph counter, reading time calculator",
     "text-diff": "text diff tool, compare text online, text comparison, find differences between texts, line diff, word diff",
+    "text-markdown-to-pdf": "Markdown to PDF, convert MD to PDF, online Markdown PDF converter, export Markdown as PDF, browser PDF generator",
+    "text-markdown-to-html": "Markdown to HTML, convert MD to HTML, online Markdown converter, copy HTML code, download HTML file",
     "image-exif": "EXIF viewer online, image metadata viewer, remove EXIF data, strip image metadata, photo EXIF reader",
     "image-ocr": "image to text converter, online OCR, extract text from image, screenshot to text, photo text recognition, OCR scanner",
     "image-rotate": "rotate image online, flip image online, rotate photo 90 degrees, mirror image, image orientation changer",
@@ -1734,6 +1767,30 @@
         }
       ]
     },
+    "text-markdown-to-pdf": {
+      "items": [
+        {
+          "question": "Does Markdown to PDF upload my content?",
+          "answer": "No. Markdown parsing, layout, and PDF generation all run locally in your browser."
+        },
+        {
+          "question": "Does the PDF support CJK text and multiple pages?",
+          "answer": "Yes. The tool draws text with browser fonts and creates additional pages when the content exceeds one page."
+        }
+      ]
+    },
+    "text-markdown-to-html": {
+      "items": [
+        {
+          "question": "Is the exported HTML a complete file?",
+          "answer": "Yes. It includes a doctype, title, responsive viewport, and clean article styles, so it can be opened directly in a browser."
+        },
+        {
+          "question": "Will raw HTML inside Markdown execute?",
+          "answer": "No. Raw HTML is escaped, unsafe link protocols are removed, and the preview runs in a restricted environment."
+        }
+      ]
+    },
     "subtitle-maker": {
       "items": [
         {
@@ -2164,8 +2221,8 @@
   },
   "text_hub": {
     "title": "Text tools",
-    "meta_title": "Free Online Text Tools - Word Count and Text Diff",
-    "description": "Free online text tools for character count, word count, line count, paragraph count, and visual text diff comparison. All processing runs locally in your browser with no upload required.",
+    "meta_title": "Text Tools - Markdown to PDF, HTML, Count, Diff",
+    "description": "Convert Markdown to PDF or complete HTML, copy HTML code, count text, and compare text differences. Everything runs locally in your browser with no upload required.",
     "all_tools": "Text tools",
     "breadcrumb": "Text tools",
     "privacy_note": "Text is processed locally in your browser and is not uploaded to a server."
@@ -2617,6 +2674,14 @@
       "unchanged": "unchanged lines",
       "identical": "The two texts are identical",
       "empty_result": "Enter two texts to see differences"
+    },
+    "text-markdown-to-pdf": {
+      "name": "Markdown to PDF",
+      "description": "Create a clean PDF locally, with CJK text and automatic pagination"
+    },
+    "text-markdown-to-html": {
+      "name": "Markdown to HTML",
+      "description": "Create complete HTML locally, ready to preview, copy, and download"
     },
     "subtitle-maker": {
       "name": "Subtitle Maker",

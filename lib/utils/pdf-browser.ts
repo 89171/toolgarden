@@ -303,7 +303,12 @@ function rtfToBlocks(title: string, text: string): TextBlock[] {
 
 function markdownToBlocks(title: string, text: string): TextBlock[] {
   const lines = normalizeText(text).split('\n');
-  const blocks: TextBlock[] = [{ kind: 'title', text: title }];
+  const firstTitleIndex = lines.findIndex((line) => /^\s{0,3}#\s+.+$/u.test(line));
+  const markdownTitle = firstTitleIndex >= 0
+    ? lines[firstTitleIndex].replace(/^\s{0,3}#\s+/u, '').replace(/\s+#+\s*$/u, '').trim()
+    : '';
+  const documentTitle = markdownTitle || title.replace(/\.(?:md|markdown)$/iu, '');
+  const blocks: TextBlock[] = [{ kind: 'title', text: documentTitle }];
   let paragraph: string[] = [];
   let inCode = false;
   let codeLines: string[] = [];
@@ -320,7 +325,7 @@ function markdownToBlocks(title: string, text: string): TextBlock[] {
     codeLines = [];
   }
 
-  for (const line of lines) {
+  for (const [lineIndex, line] of lines.entries()) {
     if (/^\s*```/.test(line)) {
       if (inCode) {
         flushCode();
@@ -340,6 +345,7 @@ function markdownToBlocks(title: string, text: string): TextBlock[] {
     const heading = line.match(/^\s{0,3}#{1,6}\s+(.+)$/);
     if (heading) {
       flushParagraph();
+      if (lineIndex === firstTitleIndex) continue;
       blocks.push({ kind: 'heading', text: heading[1].trim() });
       continue;
     }

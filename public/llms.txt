@@ -196,6 +196,12 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - **Text to speech / 文字转语音** (`/audio/tts`): Free online tool to read text aloud with browser-local speech synthesis
   - English: https://toolgarden.xyz/en/audio/tts
   - Chinese: https://toolgarden.xyz/zh/audio/tts
+- **Markdown to PDF / Markdown 转 PDF** (`/text/markdown-to-pdf`): Create a clean PDF locally, with CJK text and automatic pagination
+  - English: https://toolgarden.xyz/en/text/markdown-to-pdf
+  - Chinese: https://toolgarden.xyz/zh/text/markdown-to-pdf
+- **Markdown to HTML / Markdown 转 HTML** (`/text/markdown-to-html`): Create complete HTML locally, ready to preview, copy, and download
+  - English: https://toolgarden.xyz/en/text/markdown-to-html
+  - Chinese: https://toolgarden.xyz/zh/text/markdown-to-html
 - **Image EXIF Viewer & Cleaner / 图片 EXIF 查看 / 清除** (`/image/exif`): Free online image EXIF metadata viewer, or strip metadata with one click and download the cleaned image
   - English: https://toolgarden.xyz/en/image/exif
   - Chinese: https://toolgarden.xyz/zh/image/exif

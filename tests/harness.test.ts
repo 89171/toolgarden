@@ -10,6 +10,11 @@ import {
 } from '../lib/tools/jsonld';
 import { getClientMessages } from '../lib/tools/seo';
 import { toolRegistry } from '../lib/tools/registry';
+import {
+  createSafeFilenameStem,
+  extractMarkdownTitle,
+  markdownToHtml,
+} from '../lib/utils/markdown';
 import { jsonToXml, xmlToJson } from '../lib/utils/xml';
 
 describe('registry and localization harness', () => {
@@ -103,5 +108,45 @@ describe('conversion compatibility', () => {
     if (json.ok) {
       expect(json.parsed).toEqual({ root: { name: 'ToolGarden', '@_id': 1 } });
     }
+  });
+});
+
+describe('Markdown conversion', () => {
+  it('creates a complete styled HTML document with GFM content', () => {
+    const outcome = markdownToHtml(
+      '# Release notes\n\n| Item | Status |\n| --- | --- |\n| HTML | Ready |',
+      { fallbackTitle: 'Document', lang: 'en' }
+    );
+
+    expect(outcome.ok).toBe(true);
+    if (outcome.ok) {
+      expect(outcome.title).toBe('Release notes');
+      expect(outcome.filenameStem).toBe('Release notes');
+      expect(outcome.fragment).toContain('<table>');
+      expect(outcome.document).toContain('<!doctype html>');
+      expect(outcome.document).toContain('<title>Release notes</title>');
+    }
+  });
+
+  it('escapes raw HTML and removes unsafe link protocols', () => {
+    const outcome = markdownToHtml(
+      '# Safe\n\n<script>alert(1)</script>\n\n[Open](javascript:alert(1))',
+      { fallbackTitle: 'Document', lang: 'en' }
+    );
+
+    expect(outcome.ok).toBe(true);
+    if (outcome.ok) {
+      expect(outcome.fragment).not.toContain('<script>');
+      expect(outcome.fragment).not.toContain('href="javascript:');
+      expect(outcome.fragment).toContain('&lt;script&gt;');
+      expect(outcome.fragment).toContain('>Open<');
+    }
+  });
+
+  it('derives portable document titles and filenames', () => {
+    expect(extractMarkdownTitle('## Section', 'Fallback')).toBe('Fallback');
+    expect(extractMarkdownTitle('# **Quarterly** [report](https://example.com)', 'Fallback'))
+      .toBe('Quarterly report');
+    expect(createSafeFilenameStem('Report: Q3 / West?')).toBe('Report Q3 West');
   });
 });
