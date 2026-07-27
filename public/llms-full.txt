@@ -927,6 +927,8 @@ Canonical examples:
     - Chinese: https://toolgarden.xyz/zh/blog/format-and-validate-json-in-browser
   - JSON syntax error fix: https://toolgarden.xyz/en/blog/common-json-errors-and-fixes
     - Chinese: https://toolgarden.xyz/zh/blog/common-json-errors-and-fixes
+  - JSON to TypeScript interface: https://toolgarden.xyz/en/blog/json-to-typescript-interface-guide
+    - Chinese: https://toolgarden.xyz/zh/blog/json-to-typescript-interface-guide
 
 ### image-processing
 
@@ -951,6 +953,8 @@ Canonical examples:
     - Chinese: https://toolgarden.xyz/zh/blog/merge-multiple-pdf-files-keep-order-bookmarks
   - PDF text extractor local: https://toolgarden.xyz/en/blog/extract-text-from-pdf-in-browser
     - Chinese: https://toolgarden.xyz/zh/blog/extract-text-from-pdf-in-browser
+  - password protect PDF without upload: https://toolgarden.xyz/en/blog/password-protect-pdf-without-upload
+    - Chinese: https://toolgarden.xyz/zh/blog/password-protect-pdf-without-upload
 
 ### qr-subtitle-tools
 
@@ -1347,6 +1351,20 @@ Canonical examples:
 - Chinese title: 字数、词数、字符数、字节数有什么区别？
 - Summary: Word count, character count, and byte count measure different things. Language, spaces, emoji, line breaks, and UTF-8 encoding all affect the result.
 - Published: 2026-07-02; updated: 2026-07-03
+
+### How to Convert JSON to a TypeScript Interface
+- English: https://toolgarden.xyz/en/blog/json-to-typescript-interface-guide
+- Chinese: https://toolgarden.xyz/zh/blog/json-to-typescript-interface-guide
+- Chinese title: 如何把 JSON 转成 TypeScript 接口（interface）
+- Summary: Hand-writing TypeScript types for an API response is slow and error-prone. Infer an interface from a real JSON sample and get usable types in seconds.
+- Published: 2026-07-27; updated: 2026-07-27
+
+### How to Password-Protect a PDF Without Uploading It
+- English: https://toolgarden.xyz/en/blog/password-protect-pdf-without-upload
+- Chinese: https://toolgarden.xyz/zh/blog/password-protect-pdf-without-upload
+- Chinese title: 如何给 PDF 加密码保护（不上传文件）
+- Summary: The PDFs that most need a password — contracts, IDs, financial statements — are the ones you should least upload to an unknown server. Encrypt and decrypt them locally so the file never leaves your computer.
+- Published: 2026-07-27; updated: 2026-07-27
 
 ### Why Do Images Look Blurry After Compression? How to Keep Them Sharp
 - English: https://toolgarden.xyz/en/blog/why-image-compression-looks-blurry

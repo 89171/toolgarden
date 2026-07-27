@@ -11,6 +11,7 @@ import {
 } from './topics';
 import { workflowSeoBlogArticles } from './workflow-seo-articles';
 import { seoBlogArticles } from './seo-articles';
+import { longTailBlogArticles } from './long-tail-articles';
 
 export const BLOG_INDEX_PATH = '/blog';
 
@@ -180,6 +181,7 @@ export const blogArticles: BlogArticle[] = [
   ...growthSeoBlogArticles,
   ...workflowSeoBlogArticles,
   ...seoBlogArticles,
+  ...longTailBlogArticles,
   {
     slug: 'why-image-compression-looks-blurry',
     publishedAt: '2026-07-01',

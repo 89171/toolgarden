@@ -28,12 +28,14 @@
     "clusterSlugs": [
       "json-json5-jsonc-differences",
       "format-and-validate-json-in-browser",
-      "common-json-errors-and-fixes"
+      "common-json-errors-and-fixes",
+      "json-to-typescript-interface-guide"
     ],
     "targetKeywords": [
       "JSONC vs JSON5",
       "JSON formatter online",
-      "JSON syntax error fix"
+      "JSON syntax error fix",
+      "JSON to TypeScript interface"
     ],
     "toolPathPrefixes": ["/json", "/excel-to-json", "/jwt"]
   },
@@ -59,11 +61,13 @@
     "pillarSlug": "pdf-tools-guide",
     "clusterSlugs": [
       "merge-multiple-pdf-files-keep-order-bookmarks",
-      "extract-text-from-pdf-in-browser"
+      "extract-text-from-pdf-in-browser",
+      "password-protect-pdf-without-upload"
     ],
     "targetKeywords": [
       "merge PDFs offline",
-      "PDF text extractor local"
+      "PDF text extractor local",
+      "password protect PDF without upload"
     ],
     "toolPathPrefixes": ["/pdf/"]
   },

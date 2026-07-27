@@ -1131,20 +1131,20 @@
     }
   },
   "organic_keywords": {
-    "json-format": "JSON格式化,在线JSON格式化,JSON美化,JSON校验,JSON压缩,JSON5格式化",
+    "json-format": "JSON格式化,在线JSON格式化,JSON美化,JSON校验,JSON压缩,JSON5格式化,JSON在线格式化工具,JSON树形查看器,免费JSON格式化,JSON格式检查在线,JSON一键美化",
     "json-escape": "JSON转义,JSON反转义,JSON字符串转义,JSON压缩转义,在线JSON转义",
-    "json-repair": "JSON修复,JSON错误修复,JSONC转JSON,JSON5转JSON,JSON清洗",
+    "json-repair": "JSON修复,JSON错误修复,JSONC转JSON,JSON5转JSON,JSON清洗,修复损坏的JSON,去掉JSON注释,修复JSON尾逗号,单引号转双引号JSON,修复AI返回的JSON",
     "json-diff": "JSON对比,JSON差异对比,在线比较JSON,JSON Diff,JSONC对比",
-    "json-yaml": "JSON转YAML,YAML转JSON,JSON YAML转换,在线JSON转YAML,YAML解析",
+    "json-yaml": "JSON转YAML,YAML转JSON,JSON YAML转换,在线JSON转YAML,YAML解析,JSON转YAML在线,YAML转JSON在线,配置文件JSON YAML互转,docker-compose转JSON,YAML格式化工具",
     "json-xml": "JSON转XML,XML转JSON,JSON XML转换,在线XML转JSON,XML解析",
     "json-to-csv": "JSON转CSV,在线JSON转CSV,JSON数组转CSV,导出JSON为CSV,JSONC转CSV",
     "json-to-excel": "JSON转Excel,JSON转XLSX,JSON数组转Excel,导出JSON为Excel,JSON转表格",
     "excel-to-json": "Excel转JSON,XLSX转JSON,XLS转JSON,表格转JSON,Excel工作表转JSON",
-    "json-to-ts": "JSON转TypeScript,JSON转Interface,JSON生成TypeScript接口,JSON转TS,TypeScript类型生成",
+    "json-to-ts": "JSON转TypeScript,JSON转Interface,JSON生成TypeScript接口,JSON转TS,TypeScript类型生成,API响应转TS类型,JSON转interface在线,JSON推断TS类型,JSON转type",
     "json-flatten": "JSON扁平化,JSON Flatten,JSON反扁平化,嵌套JSON转平铺,JSON路径键",
     "pdf-to-pdf": "文件转PDF,在线转PDF,Word转PDF,Excel转PDF,PPT转PDF,图片转PDF",
     "pdf-to-word": "PDF转Word,PDF转DOCX,PDF转可编辑Word,提取PDF文字,PDF转Word在线",
-    "pdf-merge": "PDF合并,在线合并PDF,PDF合并工具,多个PDF合成一个,拼接PDF",
+    "pdf-merge": "PDF合并,在线合并PDF,PDF合并工具,多个PDF合成一个,拼接PDF,免费合并PDF,在线PDF合并不上传,多个PDF合并成一个,PDF拖动排序合并,手机合并PDF",
     "pdf-split": "PDF拆分,在线拆分PDF,PDF分割,按页拆分PDF,PDF分页",
     "pdf-extract-pages": "提取PDF页面,PDF页面提取,保存PDF指定页,在线提取PDF页,复制PDF页面",
     "pdf-organize": "PDF页面整理,PDF页面排序,删除PDF页面,复制PDF页面,PDF页面管理",
@@ -1173,14 +1173,14 @@
     "image-crop": "图片裁剪,在线裁剪图片,照片裁剪,自定义裁图,图片裁切工具",
     "image-resize": "修改图片尺寸,图片缩放,在线调整图片大小,按宽度缩放图片,等比例缩放图片",
     "subtitle-maker": "在线字幕编辑器,SRT编辑器,字幕制作,VTT编辑,LRC编辑,字幕格式转换",
-    "audio-to-mp3": "音频转MP3,WAV转MP3,M4A转MP3,FLAC转MP3,OGG转MP3,WebM转MP3",
+    "audio-to-mp3": "音频转MP3,WAV转MP3,M4A转MP3,FLAC转MP3,OGG转MP3,WebM转MP3,WAV转MP3在线,M4A转MP3免费,OGG转MP3在线,音频转MP3不上传",
     "audio-to-wav": "音频转WAV,MP3转WAV,M4A转WAV,FLAC转WAV,OGG转WAV,WebM转WAV",
-    "audio-extract": "视频提取音频,视频转MP3,MP4转MP3,MOV转MP3,音频提取器,MKV转MP3",
+    "audio-extract": "视频提取音频,视频转MP3,MP4转MP3,MOV转MP3,音频提取器,MKV转MP3,视频提取音频在线,MP4提取音频MP3,从视频中提取音乐,视频背景音乐提取",
     "audio-merge": "音频合并,合并MP3,多个音频合成一个,在线拼接音频,音频连接",
     "audio-trim": "音频剪辑,在线剪音频,MP3剪切,音频裁剪,MP3截取",
     "audio-compress": "音频压缩,在线压缩音频,减小MP3大小,降低音频码率,MP3压缩",
     "audio-recorder": "在线录音,网页录音,麦克风录音,浏览器录音,MP3录音",
-    "audio-to-text": "音频转文字,语音转文字,在线音频转文本,Whisper转写,MP3转文字,音频转录",
+    "audio-to-text": "音频转文字,语音转文字,在线音频转文本,Whisper转写,MP3转文字,音频转录,音频转文字在线免费,本地语音转文字,会议录音转文字,播客转文字,MP3转文字不上传",
     "audio-volume": "增大音频音量,降低音频音量,音频音量调整,MP3音量放大,在线修改音量",
     "audio-speed": "修改音频速度,音频变速,MP3加速,音频减速,调整播放速度",
     "audio-sample-rate": "音频采样率转换,修改音频采样率,音频重采样,转44100Hz,转48000Hz",
@@ -1192,22 +1192,22 @@
     "text-markdown-to-pdf": "Markdown转PDF,MD转PDF,在线Markdown转PDF,Markdown导出PDF,文档转PDF",
     "text-markdown-to-html": "Markdown转HTML,MD转HTML,在线Markdown转换,复制HTML代码,下载HTML文件",
     "image-exif": "EXIF查看,图片元数据查看,清除EXIF,删除图片元数据,照片EXIF读取",
-    "image-ocr": "图片转文字,在线OCR,提取图片文字,截图转文字,照片文字识别,OCR扫描",
+    "image-ocr": "图片转文字,在线OCR,提取图片文字,截图转文字,照片文字识别,OCR扫描,图片文字提取在线,截图转文字免费,图片转文字不上传,中文OCR在线",
     "image-rotate": "图片旋转,在线翻转图片,图片旋转90度,图片镜像,调整图片方向",
     "image-color-picker": "图片取色器,从图片提取颜色,图片HEX取色,像素取色器,照片颜色提取",
     "image-gif": "GIF分帧,GIF拆帧,图片合成GIF,GIF制作,动图制作,GIF帧提取",
-    "pdf-encrypt": "PDF加密,PDF设置密码,PDF解密,移除PDF密码,PDF权限设置",
-    "pdf-watermark": "PDF加水印,PDF水印工具,PDF文字水印,在线盖章PDF,PDF平铺水印",
-    "pdf-to-image": "PDF转图片,PDF转PNG,PDF转JPG,PDF每页转图片,高清导出PDF",
+    "pdf-encrypt": "PDF加密,PDF设置密码,PDF解密,移除PDF密码,PDF权限设置,给PDF加密码,PDF设置打开密码,在线PDF解密,移除PDF密码免费,PDF加密不上传",
+    "pdf-watermark": "PDF加水印,PDF水印工具,PDF文字水印,在线盖章PDF,PDF平铺水印,PDF添加水印在线,PDF加文字水印免费,PDF批量水印,PDF盖章",
+    "pdf-to-image": "PDF转图片,PDF转PNG,PDF转JPG,PDF每页转图片,高清导出PDF,PDF转图片在线,PDF转PNG免费,PDF转JPG高清,PDF每页导出图片,PDF转图片不上传",
     "json-schema": "JSON Schema生成,JSON生成Schema,JSON转JSON Schema,推断JSON Schema,Schema生成器",
     "json-schema-validate": "JSON Schema校验,JSON按Schema验证,在线JSON验证,JSON Schema检查,JSON错误路径",
     "json-path": "JSONPath测试,JSONPath查询,在线查询JSON,提取JSON字段,JSON路径查找",
     "json-stats": "JSON统计分析,分析JSON结构,JSON Key统计,JSON深度分析,JSON大小分析",
-    "regex": "正则表达式测试,在线正则测试,正则调试,正则匹配,JavaScript正则测试",
+    "regex": "正则表达式测试,在线正则测试,正则调试,正则匹配,JavaScript正则测试,正则表达式在线测试,JavaScript正则测试器,正则匹配高亮,正则命名分组测试,正则表达式在线调试",
     "cron": "Cron表达式解析,Cron表达式测试,Cron生成器,Cron下次执行时间,Cron表达式说明",
-    "timestamp": "时间戳转换,Unix时间戳转换,时间戳转日期,日期转时间戳,毫秒时间戳转换",
-    "uuid": "UUID生成器,UUID v4生成,UUID v7生成,批量UUID生成,NanoID生成",
-    "color-converter": "颜色转换,HEX转RGB,RGB转HEX,HSL转HEX,CMYK转RGB,在线取色",
+    "timestamp": "时间戳转换,Unix时间戳转换,时间戳转日期,日期转时间戳,毫秒时间戳转换,Unix时间戳转换在线,时间戳转日期工具,当前时间戳,批量时间戳转换",
+    "uuid": "UUID生成器,UUID v4生成,UUID v7生成,批量UUID生成,NanoID生成,在线UUID生成器,UUID v4在线生成,UUID v7生成器,批量生成UUID,NanoID在线生成",
+    "color-converter": "颜色转换,HEX转RGB,RGB转HEX,HSL转HEX,CMYK转RGB,在线取色,颜色格式转换器,HEX转RGB在线,RGB转HEX工具,HSL转RGB",
     "url-builder": "URL构造器,Query String生成,URL解析,查询参数编辑,URL编码工具",
     "info-codec": "在线编码解码,Base64编码解码,URL编码解码,Unicode转换,哈希生成,Gzip解码",
     "qr-code-generator": "二维码生成,在线生成二维码,网址转二维码,WiFi二维码生成,文本转二维码",
@@ -1216,9 +1216,285 @@
     "whiteboard": "在线白板,网页白板,浏览器画板,tldraw白板,数字画布",
     "excalidraw-board": "在线Excalidraw,手绘风画板,在线绘图板,网页草图工具,Excalidraw编辑器",
     "mind-map": "在线思维导图,思维导图制作,脑图工具,Markdown思维导图,网页脑图编辑器",
-    "jwt": "JWT解析,JWT解码,JWT Token解析,JWT签名验证,查看JWT Payload,HS256校验"
+    "jwt": "JWT解析,JWT解码,JWT Token解析,JWT签名验证,查看JWT Payload,HS256校验,JWT在线解析,JWT Token解码,HS256签名验证,JWT调试工具"
   },
   "tool_faq": {
+    "json-format": {
+      "items": [
+        {
+          "question": "JSON 格式化会把数据上传到服务器吗？",
+          "answer": "不会。格式化、压缩和校验都在浏览器本地完成，粘贴的 JSON 不会离开你的设备，适合处理包含敏感字段的数据。"
+        },
+        {
+          "question": "支持 JSONC 和 JSON5 吗？",
+          "answer": "支持。工具可以解析带注释、尾逗号、单引号的 JSONC / JSON5，并按标准 JSON 重新输出。"
+        },
+        {
+          "question": "如何一键把 JSON 压缩成一行？",
+          "answer": "粘贴 JSON 后点击压缩，即可去掉所有空白与换行，得到最小化的单行 JSON，方便嵌入代码或接口。"
+        },
+        {
+          "question": "格式化后可以折叠查看层级吗？",
+          "answer": "可以。输出支持树形展示，能逐层展开或折叠节点，快速定位深层嵌套结构中的字段。"
+        }
+      ]
+    },
+    "json-repair": {
+      "items": [
+        {
+          "question": "可以修复哪些常见的 JSON 错误？",
+          "answer": "支持去除注释和尾逗号、把单引号和未加引号的 key 转成标准双引号，并把 JSONC / JSON5 还原成合法 JSON。"
+        },
+        {
+          "question": "能清洗大模型（AI）返回的 JSON 吗？",
+          "answer": "可以。AI 输出常见的尾逗号、注释、单引号等问题都能自动修复为合法 JSON，方便直接解析。"
+        },
+        {
+          "question": "修复过程安全吗？",
+          "answer": "修复完全在浏览器本地进行，数据不会上传，适合处理包含密钥或个人信息的配置文件。"
+        }
+      ]
+    },
+    "json-yaml": {
+      "items": [
+        {
+          "question": "JSON 和 YAML 可以双向互转吗？",
+          "answer": "可以。工具支持 JSON → YAML 与 YAML → JSON 两个方向，粘贴任意一种格式即可实时转换。"
+        },
+        {
+          "question": "转换会上传我的配置文件吗？",
+          "answer": "不会。转换在浏览器本地完成，Kubernetes、docker-compose 等敏感配置不会离开你的电脑。"
+        },
+        {
+          "question": "适合哪些场景？",
+          "answer": "常用于在 API 数据（JSON）和 CI / 云原生配置（YAML）之间快速切换，或把接口返回整理成可读的 YAML。"
+        }
+      ]
+    },
+    "json-to-ts": {
+      "items": [
+        {
+          "question": "如何从 JSON 生成 TypeScript 类型？",
+          "answer": "粘贴 JSON 样本，工具会自动推断字段类型并生成对应的 TypeScript interface，可直接复制到项目中使用。"
+        },
+        {
+          "question": "支持嵌套对象和数组吗？",
+          "answer": "支持。嵌套对象会拆分成独立 interface，数组会推断元素类型，混合类型会生成联合类型。"
+        },
+        {
+          "question": "会上传我的接口数据吗？",
+          "answer": "不会。类型推断在浏览器本地完成，接口返回样本不会上传到服务器。"
+        }
+      ]
+    },
+    "pdf-merge": {
+      "items": [
+        {
+          "question": "合并 PDF 会上传文件吗？",
+          "answer": "不会。多个 PDF 在浏览器本地合并，文件不会上传到服务器，合同、证件等敏感文档也能放心处理。"
+        },
+        {
+          "question": "可以调整合并顺序吗？",
+          "answer": "可以。上传后支持拖放重新排序，最终 PDF 会严格按照你排列的顺序拼接。"
+        },
+        {
+          "question": "合并的文件数量或大小有限制吗？",
+          "answer": "没有固定上限，主要受本机内存影响；超大文件建议分批合并以保证流畅。"
+        }
+      ]
+    },
+    "audio-to-mp3": {
+      "items": [
+        {
+          "question": "音频转 MP3 会上传文件吗？",
+          "answer": "不会。WAV、M4A、FLAC 等音频在浏览器本地解码并重新编码为 MP3，文件不会上传到服务器。"
+        },
+        {
+          "question": "支持哪些输入格式？",
+          "answer": "支持 WAV、M4A、OGG、FLAC、WebM 等常见音频，统一输出为 MP3。"
+        },
+        {
+          "question": "可以批量转换吗？",
+          "answer": "可以。选择多个音频后依次转换，转换完成即可逐个下载 MP3。"
+        }
+      ]
+    },
+    "audio-extract": {
+      "items": [
+        {
+          "question": "从视频提取音频会上传视频吗？",
+          "answer": "不会。MP4、MOV、WebM、MKV 等视频在浏览器本地解析并提取音轨，视频不会上传到服务器。"
+        },
+        {
+          "question": "提取后是什么格式？",
+          "answer": "音轨会导出为 MP3，可直接下载用于剪辑、转写或收听。"
+        },
+        {
+          "question": "视频时长有限制吗？",
+          "answer": "没有固定限制，主要受本机内存影响；较长的视频提取会需要更多时间和内存。"
+        }
+      ]
+    },
+    "audio-to-text": {
+      "items": [
+        {
+          "question": "音频转文字会上传我的录音吗？",
+          "answer": "不会。工具在浏览器本地加载开源 Whisper 模型完成转写，录音不会上传到任何服务器。"
+        },
+        {
+          "question": "支持中文和其他语言吗？",
+          "answer": "支持。Whisper 模型可识别中文、英文等多种语言，也能处理中英混合的音频。"
+        },
+        {
+          "question": "为什么第一次使用会比较慢？",
+          "answer": "首次转写需要在浏览器下载 Whisper 模型文件，之后会缓存复用，速度会明显加快。"
+        }
+      ]
+    },
+    "image-ocr": {
+      "items": [
+        {
+          "question": "图片 OCR 会上传我的图片吗？",
+          "answer": "不会。文字识别在浏览器本地完成，截图和照片不会上传到服务器。"
+        },
+        {
+          "question": "支持中文识别吗？",
+          "answer": "支持。工具可识别中文和英文等文字，适合截图、扫描件和照片中的文本提取。"
+        },
+        {
+          "question": "识别准确率受什么影响？",
+          "answer": "清晰、对比度高、排版规整的图片识别效果更好；模糊或手写内容准确率会下降。"
+        }
+      ]
+    },
+    "pdf-encrypt": {
+      "items": [
+        {
+          "question": "给 PDF 加密码会上传文件吗？",
+          "answer": "不会。加密和解密都在浏览器本地完成，文件不会上传到服务器，适合处理合同和证件。"
+        },
+        {
+          "question": "可以移除 PDF 的打开密码吗？",
+          "answer": "可以，但需要你先输入正确的原密码，验证通过后才能生成去密码的 PDF。"
+        },
+        {
+          "question": "加密支持哪些权限限制？",
+          "answer": "除了设置打开密码，还可以限制打印、复制等权限，控制文档的使用方式。"
+        }
+      ]
+    },
+    "pdf-watermark": {
+      "items": [
+        {
+          "question": "给 PDF 加水印会上传文件吗？",
+          "answer": "不会。水印在浏览器本地绘制并写入 PDF，文件不会上传到服务器。"
+        },
+        {
+          "question": "支持哪些水印样式？",
+          "answer": "支持九宫格定位、平铺和对角线平铺，可调整文字内容、透明度、旋转角度和间距。"
+        },
+        {
+          "question": "水印会加到所有页面吗？",
+          "answer": "会。文字水印会应用到 PDF 的每一页，适合批量给整份文档加版权或“机密”标识。"
+        }
+      ]
+    },
+    "pdf-to-image": {
+      "items": [
+        {
+          "question": "PDF 转图片会上传文件吗？",
+          "answer": "不会。每一页在浏览器本地渲染为图片，PDF 不会上传到服务器。"
+        },
+        {
+          "question": "可以导出 PNG 和 JPG 吗？",
+          "answer": "可以。工具支持把每页导出为高清 PNG 或 JPG，PNG 保留透明、JPG 体积更小。"
+        },
+        {
+          "question": "会导出所有页面吗？",
+          "answer": "会。默认把 PDF 的每一页各导出为一张图片，方便逐页保存或再编辑。"
+        }
+      ]
+    },
+    "regex": {
+      "items": [
+        {
+          "question": "正则测试会上传我的文本吗？",
+          "answer": "不会。匹配在浏览器本地进行，测试文本不会上传到服务器。"
+        },
+        {
+          "question": "支持哪些标志（flags）和分组？",
+          "answer": "支持 g、i、m、s 等常用 flags，以及命名捕获分组，匹配结果会在文本中高亮显示。"
+        },
+        {
+          "question": "有常用正则模板吗？",
+          "answer": "有。工具内置邮箱、URL、手机号等常用模板，可一键套用后再按需修改。"
+        }
+      ]
+    },
+    "timestamp": {
+      "items": [
+        {
+          "question": "支持秒和毫秒时间戳吗？",
+          "answer": "支持。工具可处理秒、毫秒、微秒精度的 Unix 时间戳，并与日期双向转换。"
+        },
+        {
+          "question": "可以按时区转换吗？",
+          "answer": "可以。支持多时区显示，能把同一个时间戳换算到本地时间或指定时区。"
+        },
+        {
+          "question": "可以批量转换时间戳吗？",
+          "answer": "可以。粘贴多行时间戳即可一次性批量转换为对应日期，方便处理日志。"
+        }
+      ]
+    },
+    "uuid": {
+      "items": [
+        {
+          "question": "支持哪些 UUID 版本？",
+          "answer": "支持 UUID v1、v4、v7 以及 NanoID，可根据需要选择时间有序或随机的标识符。"
+        },
+        {
+          "question": "可以一次生成多个吗？",
+          "answer": "可以。支持批量生成，并能选择大小写、去掉连字符，方便直接用作数据库主键。"
+        },
+        {
+          "question": "生成的 UUID 会上传吗？",
+          "answer": "不会。所有 UUID 在浏览器本地随机生成，不会发送到服务器，也不会被记录。"
+        }
+      ]
+    },
+    "color-converter": {
+      "items": [
+        {
+          "question": "支持哪些颜色格式互转？",
+          "answer": "支持 HEX、RGB、HSL、HSV、CMYK 之间的相互转换，输入任意一种即可实时得到其他格式。"
+        },
+        {
+          "question": "可以实时预览颜色吗？",
+          "answer": "可以。转换时会同步显示色板预览，方便直观确认最终颜色。"
+        },
+        {
+          "question": "CMYK 转换准确吗？",
+          "answer": "CMYK 采用通用近似算法换算，适合快速预览；印刷精确色值请以专业色彩管理为准。"
+        }
+      ]
+    },
+    "jwt": {
+      "items": [
+        {
+          "question": "解析 JWT 会上传我的 Token 吗？",
+          "answer": "不会。JWT 的 Header 和 Payload 在浏览器本地解码，Token 不会上传到服务器，避免泄露凭证。"
+        },
+        {
+          "question": "可以验证 JWT 签名吗？",
+          "answer": "可以。支持输入密钥对 HS256 签名进行本地校验，确认 Token 是否被篡改。"
+        },
+        {
+          "question": "能看到 Token 的过期时间吗？",
+          "answer": "能。解码后可查看 Payload 中的 exp、iat 等标准声明，判断 Token 是否已过期。"
+        }
+      ]
+    },
     "font-subset": {
       "items": [
         {

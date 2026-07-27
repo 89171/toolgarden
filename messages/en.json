@@ -1131,20 +1131,20 @@
     }
   },
   "organic_keywords": {
-    "json-format": "online JSON formatter, JSON formatter, JSON beautifier, JSON validator, JSON minifier, JSON5 formatter",
+    "json-format": "online JSON formatter,JSON formatter,JSON beautifier,JSON validator,JSON minifier,JSON5 formatter,format JSON online free,JSON tree viewer,prettify JSON online,JSON viewer with syntax highlight,beautify and validate JSON",
     "json-escape": "JSON escape tool, JSON string escape, JSON unescape, escape JSON online, JSON minify and escape, JSON special character escape",
-    "json-repair": "JSON repair tool, fix invalid JSON, JSON error fixer, JSONC to JSON, JSON5 to JSON, clean JSON online",
+    "json-repair": "JSON repair tool,fix invalid JSON,JSON error fixer,JSONC to JSON,JSON5 to JSON,clean JSON online,fix broken JSON online,remove trailing comma JSON,single quotes to double quotes JSON,fix unquoted keys JSON,repair AI generated JSON",
     "json-diff": "JSON diff tool, compare JSON online, JSON comparison, JSON difference checker, JSONC diff, JSON5 diff",
-    "json-yaml": "JSON to YAML converter, YAML to JSON converter, JSON YAML converter, convert JSON to YAML online, YAML parser online",
+    "json-yaml": "JSON to YAML converter,YAML to JSON converter,JSON YAML converter,convert JSON to YAML online,YAML parser online,JSON to YAML online,convert config JSON YAML,docker-compose to JSON,YAML formatter online",
     "json-xml": "JSON to XML converter, XML to JSON converter, JSON XML converter, convert XML to JSON online, XML parser online",
     "json-to-csv": "JSON to CSV converter, convert JSON to CSV, JSON array to CSV, export JSON to CSV, JSONC to CSV",
     "json-to-excel": "JSON to Excel converter, convert JSON to XLSX, JSON array to Excel, export JSON to Excel, JSON to spreadsheet",
     "excel-to-json": "Excel to JSON converter, XLSX to JSON, XLS to JSON, convert spreadsheet to JSON, Excel sheet to JSON",
-    "json-to-ts": "JSON to TypeScript converter, JSON to interface, generate TypeScript interface from JSON, JSON to TS, TypeScript type generator",
+    "json-to-ts": "JSON to TypeScript converter,JSON to interface,generate TypeScript interface from JSON,JSON to TS,TypeScript type generator,JSON to TypeScript interface,API response to TypeScript,generate TS types from JSON,JSON to type online,infer TypeScript from JSON",
     "json-flatten": "JSON flatten tool, flatten JSON online, unflatten JSON, nested JSON to flat JSON, JSON path keys",
     "pdf-to-pdf": "file to PDF converter, convert to PDF online, Word to PDF, Excel to PDF, PowerPoint to PDF, image to PDF",
     "pdf-to-word": "PDF to Word converter, convert PDF to DOCX, PDF to editable Word, extract PDF text to Word, online PDF to Word",
-    "pdf-merge": "merge PDF online, PDF merger, combine PDF files, join PDF documents, merge multiple PDFs",
+    "pdf-merge": "merge PDF online,PDF merger,combine PDF files,join PDF documents,merge multiple PDFs,merge PDF online free,combine PDF without upload,merge multiple PDF into one,reorder pages merge PDF,join PDF files offline",
     "pdf-split": "split PDF online, PDF splitter, separate PDF pages, split PDF by page range, divide PDF file",
     "pdf-extract-pages": "extract PDF pages, PDF page extractor, save selected PDF pages, extract pages from PDF online, copy PDF pages",
     "pdf-organize": "organize PDF pages, reorder PDF pages, delete PDF pages, duplicate PDF pages, PDF page organizer",
@@ -1173,14 +1173,14 @@
     "image-crop": "crop image online, image cropper, crop photo online, custom image crop, browser image crop tool",
     "image-resize": "resize image online, image resizer, change image dimensions, resize photo by width, scale image proportionally",
     "subtitle-maker": "online subtitle editor, SRT editor, subtitle maker, VTT editor, LRC editor, subtitle converter",
-    "audio-to-mp3": "audio to MP3 converter, WAV to MP3, M4A to MP3, FLAC to MP3, OGG to MP3, WebM to MP3",
+    "audio-to-mp3": "audio to MP3 converter,WAV to MP3,M4A to MP3,FLAC to MP3,OGG to MP3,WebM to MP3,WAV to MP3 online free,M4A to MP3 converter,OGG to MP3 online,convert audio to MP3 no upload",
     "audio-to-wav": "audio to WAV converter, MP3 to WAV, M4A to WAV, FLAC to WAV, OGG to WAV, WebM to WAV",
-    "audio-extract": "extract audio from video, video to MP3 converter, MP4 to MP3, MOV to MP3, video audio extractor, MKV to MP3",
+    "audio-extract": "extract audio from video,video to MP3 converter,MP4 to MP3,MOV to MP3,video audio extractor,MKV to MP3,extract audio from video online,MP4 to MP3 extract,get audio from MP4,rip audio from video free",
     "audio-merge": "merge audio files, audio merger, combine MP3 files, join audio online, concatenate audio tracks",
     "audio-trim": "trim audio online, audio cutter, cut MP3 online, crop audio file, MP3 trimmer",
     "audio-compress": "compress audio online, audio compressor, reduce MP3 file size, lower audio bitrate, MP3 compressor",
     "audio-recorder": "online voice recorder, microphone recorder, record audio online, browser audio recorder, MP3 voice recorder",
-    "audio-to-text": "audio to text converter, transcribe audio online, speech to text, Whisper transcription, MP3 to text, audio transcription",
+    "audio-to-text": "audio to text converter,transcribe audio online,speech to text,Whisper transcription,MP3 to text,audio transcription,audio to text free online,local speech to text,transcribe meeting audio,podcast to text,MP3 to text no upload",
     "audio-volume": "increase audio volume, decrease audio volume, audio volume changer, make MP3 louder, adjust audio volume online",
     "audio-speed": "change audio speed, audio speed changer, speed up MP3, slow down audio, audio playback speed editor",
     "audio-sample-rate": "audio sample rate converter, change audio sample rate, resample audio online, convert audio to 44100 Hz, convert audio to 48000 Hz",
@@ -1192,22 +1192,22 @@
     "text-markdown-to-pdf": "Markdown to PDF, convert MD to PDF, online Markdown PDF converter, export Markdown as PDF, browser PDF generator",
     "text-markdown-to-html": "Markdown to HTML, convert MD to HTML, online Markdown converter, copy HTML code, download HTML file",
     "image-exif": "EXIF viewer online, image metadata viewer, remove EXIF data, strip image metadata, photo EXIF reader",
-    "image-ocr": "image to text converter, online OCR, extract text from image, screenshot to text, photo text recognition, OCR scanner",
+    "image-ocr": "image to text converter,online OCR,extract text from image,screenshot to text,photo text recognition,OCR scanner,image to text OCR online,extract text from image free,OCR online no upload",
     "image-rotate": "rotate image online, flip image online, rotate photo 90 degrees, mirror image, image orientation changer",
     "image-color-picker": "image color picker, pick color from image, HEX color picker from image, pixel color picker, photo color extractor",
     "image-gif": "GIF frame extractor, split GIF into frames, images to GIF, GIF maker, animated GIF creator, GIF splitter",
-    "pdf-encrypt": "password protect PDF, encrypt PDF online, unlock PDF, remove PDF password, PDF permissions editor",
-    "pdf-watermark": "add watermark to PDF, PDF watermark tool, text watermark PDF, stamp PDF online, tile watermark PDF",
-    "pdf-to-image": "PDF to image converter, PDF to PNG, PDF to JPG, convert PDF pages to images, high resolution PDF export",
+    "pdf-encrypt": "password protect PDF,encrypt PDF online,unlock PDF,remove PDF password,PDF permissions editor,password protect PDF online,encrypt PDF free,unlock PDF online,secure PDF no upload",
+    "pdf-watermark": "add watermark to PDF,PDF watermark tool,text watermark PDF,stamp PDF online,tile watermark PDF,add watermark to PDF online,PDF text watermark free,batch watermark PDF,stamp PDF no upload",
+    "pdf-to-image": "PDF to image converter,PDF to PNG,PDF to JPG,convert PDF pages to images,high resolution PDF export,PDF to image online,PDF to PNG free,PDF to JPG high quality,convert each PDF page to image,PDF to picture no upload",
     "json-schema": "JSON Schema generator, generate schema from JSON, JSON to JSON Schema, infer JSON Schema, JSON schema maker",
     "json-schema-validate": "JSON Schema validator, validate JSON against schema, online JSON validation, JSON schema checker, JSON validation errors",
     "json-path": "JSONPath tester, JSONPath query tool, query JSON online, extract JSON fields, JSON path finder",
     "json-stats": "JSON statistics tool, analyze JSON structure, JSON key counter, JSON depth checker, JSON size analyzer",
-    "regex": "regex tester online, regular expression tester, regex debugger, regex matcher, JavaScript regex tester",
+    "regex": "regex tester online,regular expression tester,regex debugger,regex matcher,JavaScript regex tester,regex match highlighter,named group regex test,regex debugger online",
     "cron": "Cron expression parser, Cron expression tester, Cron schedule generator, next Cron run time, explain Cron expression",
-    "timestamp": "Unix timestamp converter, epoch converter, timestamp to date, date to timestamp, milliseconds timestamp converter",
-    "uuid": "UUID generator, UUID v4 generator, UUID v7 generator, bulk UUID generator, NanoID generator",
-    "color-converter": "color converter, HEX to RGB, RGB to HEX, HSL to HEX, CMYK to RGB, online color picker",
+    "timestamp": "Unix timestamp converter,epoch converter,timestamp to date,date to timestamp,milliseconds timestamp converter,unix timestamp converter online,epoch to date converter,millisecond timestamp converter,current unix timestamp,batch timestamp conversion",
+    "uuid": "UUID generator,UUID v4 generator,UUID v7 generator,bulk UUID generator,NanoID generator,online UUID generator,NanoID generator online",
+    "color-converter": "color converter,HEX to RGB,RGB to HEX,HSL to HEX,CMYK to RGB,online color picker,color format converter,HEX to RGB online,RGB to HEX tool,HSL to RGB converter",
     "url-builder": "URL builder, query string builder, URL parser, query parameter editor, URL encoder tool",
     "info-codec": "online encoder decoder, Base64 encoder decoder, URL encoder decoder, Unicode converter, hash generator, Gzip decoder",
     "qr-code-generator": "QR code generator, create QR code online, URL to QR code, WiFi QR code generator, text to QR code",
@@ -1216,9 +1216,285 @@
     "whiteboard": "online whiteboard, collaborative drawing board, browser whiteboard, tldraw whiteboard, digital canvas",
     "excalidraw-board": "Excalidraw online, online drawing board, hand drawn diagram tool, browser sketch board, Excalidraw editor",
     "mind-map": "online mind map, mind map maker, mind mapping tool, Markdown mind map, browser mind map editor",
-    "jwt": "JWT decoder, JWT parser, decode JWT token, JWT signature verifier, inspect JWT payload, HS256 validator"
+    "jwt": "JWT decoder,JWT parser,decode JWT token,JWT signature verifier,inspect JWT payload,HS256 validator,JWT decoder online,view JWT payload,HS256 signature verify,debug JWT online"
   },
   "tool_faq": {
+    "json-format": {
+      "items": [
+        {
+          "question": "Does the JSON formatter upload my data?",
+          "answer": "No. Formatting, minifying and validation all run locally in your browser, so the JSON you paste never leaves your device — safe for sensitive payloads."
+        },
+        {
+          "question": "Does it support JSONC and JSON5?",
+          "answer": "Yes. It parses JSONC / JSON5 with comments, trailing commas and single quotes, then re-emits standard JSON."
+        },
+        {
+          "question": "How do I minify JSON to a single line?",
+          "answer": "Paste your JSON and click minify to strip all whitespace and line breaks, producing compact single-line JSON for code or API payloads."
+        },
+        {
+          "question": "Can I collapse nested levels after formatting?",
+          "answer": "Yes. The output offers a tree view so you can expand or collapse nodes and quickly find fields inside deeply nested structures."
+        }
+      ]
+    },
+    "json-repair": {
+      "items": [
+        {
+          "question": "Which common JSON errors can it fix?",
+          "answer": "It removes comments and trailing commas, converts single-quoted and unquoted keys to standard double quotes, and turns JSONC / JSON5 into valid JSON."
+        },
+        {
+          "question": "Can it clean up JSON returned by an LLM?",
+          "answer": "Yes. Typical AI output issues like trailing commas, comments and single quotes are repaired automatically into valid, parseable JSON."
+        },
+        {
+          "question": "Is the repair process private?",
+          "answer": "Repair runs entirely in your browser and nothing is uploaded, so it is safe for config files containing keys or personal data."
+        }
+      ]
+    },
+    "json-yaml": {
+      "items": [
+        {
+          "question": "Can it convert both JSON to YAML and YAML to JSON?",
+          "answer": "Yes. It supports both directions — paste either format and the other is generated instantly."
+        },
+        {
+          "question": "Does converting upload my config files?",
+          "answer": "No. Conversion runs locally in the browser, so sensitive Kubernetes or docker-compose configs never leave your machine."
+        },
+        {
+          "question": "What is this useful for?",
+          "answer": "It is handy for switching between API data (JSON) and CI / cloud-native config (YAML), or turning an API response into readable YAML."
+        }
+      ]
+    },
+    "json-to-ts": {
+      "items": [
+        {
+          "question": "How do I generate TypeScript types from JSON?",
+          "answer": "Paste a JSON sample and the tool infers each field's type and emits a matching TypeScript interface you can copy straight into your project."
+        },
+        {
+          "question": "Does it handle nested objects and arrays?",
+          "answer": "Yes. Nested objects become separate interfaces, arrays infer their element type, and mixed values become union types."
+        },
+        {
+          "question": "Does it upload my API data?",
+          "answer": "No. Type inference runs locally in your browser, so the sample response is never uploaded."
+        }
+      ]
+    },
+    "pdf-merge": {
+      "items": [
+        {
+          "question": "Does merging PDFs upload my files?",
+          "answer": "No. Multiple PDFs are merged locally in your browser and never uploaded, so contracts and IDs stay private."
+        },
+        {
+          "question": "Can I change the merge order?",
+          "answer": "Yes. After uploading you can drag to reorder, and the final PDF is stitched together exactly in the order you set."
+        },
+        {
+          "question": "Is there a limit on file count or size?",
+          "answer": "There is no fixed cap; it depends on your device memory, so very large files are best merged in smaller batches."
+        }
+      ]
+    },
+    "audio-to-mp3": {
+      "items": [
+        {
+          "question": "Does converting to MP3 upload my file?",
+          "answer": "No. WAV, M4A, FLAC and other audio are decoded and re-encoded to MP3 locally in your browser, with no upload to any server."
+        },
+        {
+          "question": "Which input formats are supported?",
+          "answer": "It accepts common formats such as WAV, M4A, OGG, FLAC and WebM, all exported as MP3."
+        },
+        {
+          "question": "Can I convert files in batch?",
+          "answer": "Yes. Select several files and convert them one after another, then download each MP3 when it is ready."
+        }
+      ]
+    },
+    "audio-extract": {
+      "items": [
+        {
+          "question": "Does extracting audio upload my video?",
+          "answer": "No. MP4, MOV, WebM and MKV files are parsed locally in your browser to pull out the audio track, with nothing uploaded."
+        },
+        {
+          "question": "What format is the extracted audio?",
+          "answer": "The track is exported as MP3, ready to download for editing, transcription or listening."
+        },
+        {
+          "question": "Is there a limit on video length?",
+          "answer": "There is no fixed limit; it depends on your device memory, so longer videos take more time and RAM to process."
+        }
+      ]
+    },
+    "audio-to-text": {
+      "items": [
+        {
+          "question": "Does audio-to-text upload my recording?",
+          "answer": "No. Transcription uses an open-source Whisper model loaded locally in your browser, so recordings are never uploaded."
+        },
+        {
+          "question": "Does it support Chinese and other languages?",
+          "answer": "Yes. The Whisper model recognises many languages including Chinese and English, and handles mixed-language audio."
+        },
+        {
+          "question": "Why is the first run slower?",
+          "answer": "The first transcription downloads the Whisper model in your browser; it is then cached and reused, so later runs are much faster."
+        }
+      ]
+    },
+    "image-ocr": {
+      "items": [
+        {
+          "question": "Does image OCR upload my picture?",
+          "answer": "No. Text recognition runs locally in your browser, so screenshots and photos are never uploaded to a server."
+        },
+        {
+          "question": "Does it recognise Chinese text?",
+          "answer": "Yes. It reads languages such as Chinese and English, making it useful for text in screenshots, scans and photos."
+        },
+        {
+          "question": "What affects recognition accuracy?",
+          "answer": "Sharp, high-contrast, well-aligned images work best; blurry or handwritten content lowers accuracy."
+        }
+      ]
+    },
+    "pdf-encrypt": {
+      "items": [
+        {
+          "question": "Does encrypting a PDF upload my file?",
+          "answer": "No. Both encryption and decryption run locally in your browser, so contracts and IDs are never uploaded."
+        },
+        {
+          "question": "Can it remove an existing open password?",
+          "answer": "Yes, but you must enter the correct original password first; only after it is verified can a password-free PDF be produced."
+        },
+        {
+          "question": "What permission restrictions are supported?",
+          "answer": "Besides an open password, you can restrict actions like printing and copying to control how the document is used."
+        }
+      ]
+    },
+    "pdf-watermark": {
+      "items": [
+        {
+          "question": "Does adding a watermark upload my PDF?",
+          "answer": "No. The watermark is drawn and written into the PDF locally in your browser, with no upload to any server."
+        },
+        {
+          "question": "What watermark styles are available?",
+          "answer": "You can position with a 3x3 grid, tile or diagonally tile the mark, and adjust text, opacity, rotation and spacing."
+        },
+        {
+          "question": "Is the watermark applied to every page?",
+          "answer": "Yes. The text watermark is added to every page, ideal for stamping a whole document with copyright or a “confidential” mark."
+        }
+      ]
+    },
+    "pdf-to-image": {
+      "items": [
+        {
+          "question": "Does PDF-to-image upload my file?",
+          "answer": "No. Each page is rendered to an image locally in your browser, so the PDF is never uploaded."
+        },
+        {
+          "question": "Can I export both PNG and JPG?",
+          "answer": "Yes. You can export each page as high-resolution PNG or JPG — PNG keeps transparency while JPG is smaller."
+        },
+        {
+          "question": "Does it export every page?",
+          "answer": "Yes. By default every page of the PDF is exported as its own image, so you can save or re-edit them one by one."
+        }
+      ]
+    },
+    "regex": {
+      "items": [
+        {
+          "question": "Does the regex tester upload my text?",
+          "answer": "No. Matching runs locally in your browser, so your test text is never uploaded."
+        },
+        {
+          "question": "Which flags and groups are supported?",
+          "answer": "It supports common flags like g, i, m and s plus named capture groups, and highlights every match in your text."
+        },
+        {
+          "question": "Are there ready-made regex templates?",
+          "answer": "Yes. Built-in templates for email, URL, phone numbers and more can be applied in one click and then tweaked."
+        }
+      ]
+    },
+    "timestamp": {
+      "items": [
+        {
+          "question": "Does it support seconds and milliseconds?",
+          "answer": "Yes. It handles Unix timestamps at second, millisecond and microsecond precision and converts to and from dates."
+        },
+        {
+          "question": "Can I convert across time zones?",
+          "answer": "Yes. Multiple time zones are supported, so the same timestamp can be shown in your local time or a chosen zone."
+        },
+        {
+          "question": "Can I convert timestamps in bulk?",
+          "answer": "Yes. Paste multiple lines of timestamps to convert them all to dates at once, which is handy for log data."
+        }
+      ]
+    },
+    "uuid": {
+      "items": [
+        {
+          "question": "Which UUID versions are supported?",
+          "answer": "It generates UUID v1, v4 and v7 as well as NanoID, so you can pick time-ordered or fully random identifiers."
+        },
+        {
+          "question": "Can I generate many at once?",
+          "answer": "Yes. Bulk generation is supported, with options for case and hyphen removal, ready to use as database keys."
+        },
+        {
+          "question": "Are the generated UUIDs uploaded?",
+          "answer": "No. Every UUID is generated randomly in your browser and is never sent to a server or logged."
+        }
+      ]
+    },
+    "color-converter": {
+      "items": [
+        {
+          "question": "Which color formats can it convert between?",
+          "answer": "It converts between HEX, RGB, HSL, HSV and CMYK — enter any one and the others update instantly."
+        },
+        {
+          "question": "Can I preview the color live?",
+          "answer": "Yes. A swatch preview updates as you convert so you can confirm the final color at a glance."
+        },
+        {
+          "question": "Is the CMYK conversion accurate?",
+          "answer": "CMYK uses a common approximate formula that is fine for previews; for exact print values rely on professional color management."
+        }
+      ]
+    },
+    "jwt": {
+      "items": [
+        {
+          "question": "Does decoding a JWT upload my token?",
+          "answer": "No. The header and payload are decoded locally in your browser, so the token is never uploaded and your credentials stay private."
+        },
+        {
+          "question": "Can it verify the JWT signature?",
+          "answer": "Yes. You can supply a secret to verify an HS256 signature locally and confirm the token has not been tampered with."
+        },
+        {
+          "question": "Can I see the token's expiry?",
+          "answer": "Yes. After decoding you can read standard claims like exp and iat in the payload to tell whether the token has expired."
+        }
+      ]
+    },
     "font-subset": {
       "items": [
         {
