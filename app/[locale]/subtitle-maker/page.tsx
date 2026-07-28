@@ -228,6 +228,23 @@ export default function SubtitleMakerPage() {
           {status && <span className="text-sm text-content-muted">{status}</span>}
         </div>
 
+        <aside className="flex flex-col gap-3 rounded-lg border border-border-subtle bg-surface-raised px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-content">{t('ai_project_title')}</p>
+            <p className="mt-1 max-w-4xl text-sm leading-6 text-content-muted">
+              {t('ai_project_description')}
+            </p>
+          </div>
+          <a
+            href="https://github.com/89171/subtitle-maker/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-9 shrink-0 items-center justify-center self-start whitespace-nowrap rounded border border-border-strong bg-surface px-3 py-1.5 text-sm font-medium text-content transition-colors hover:bg-surface-hover active:translate-y-px sm:self-center"
+          >
+            {t('ai_project_action')}
+          </a>
+        </aside>
+
         <div className="grid min-h-0 flex-grow grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(440px,520px)]">
           <section className="flex min-h-[32rem] flex-col overflow-hidden rounded-lg border border-border-base bg-surface">
             <div className="flex min-h-0 flex-grow flex-col bg-surface-raised">
