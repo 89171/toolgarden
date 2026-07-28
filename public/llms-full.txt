@@ -1303,12 +1303,12 @@ Canonical examples:
 - Summary: Converting a JSON sample into TypeScript interfaces saves repetitive typing and gives frontend code better autocomplete and safer API handling.
 - Published: 2026-07-02; updated: 2026-07-03
 
-### How to Fix JSON Unexpected token Errors
+### Unexpected token in JSON at position 0: Causes and Fixes
 - English: https://toolgarden.xyz/en/blog/fix-json-unexpected-token-error
 - Chinese: https://toolgarden.xyz/zh/blog/fix-json-unexpected-token-error
-- Chinese title: JSON 报错 Unexpected token 怎么修复？常见 JSON 错误排查
-- Summary: Unexpected token usually means the JSON parser found a character that is not valid at that position, such as a trailing comma, comment, single quote, or HTML response.
-- Published: 2026-07-02; updated: 2026-07-03
+- Chinese title: Unexpected token in JSON at position 0：原因、定位与修复
+- Summary: Trace raw responses, error positions, missing commas, invalid JSON, and decode errors, then verify the repaired result with the ToolGarden online JSON Validator.
+- Published: 2026-07-02; updated: 2026-07-28
 
 ### What Is JSON Schema and How Do You Validate API Data?
 - English: https://toolgarden.xyz/en/blog/what-is-json-schema-api-validation
@@ -1387,12 +1387,12 @@ Canonical examples:
 - Summary: A blurry favicon is usually caused by the source image, missing icon sizes, transparency issues, or browser scaling rather than the browser itself.
 - Published: 2026-07-01; updated: 2026-07-03
 
-### How to Convert an Image to ICO: Complete PNG, JPG, and WebP to ICO Guide
+### What Is an ICO File? Favicon Formats and Image to ICO Guide
 - English: https://toolgarden.xyz/en/blog/convert-image-to-ico
 - Chinese: https://toolgarden.xyz/zh/blog/convert-image-to-ico
-- Chinese title: 如何把图片转换成 ICO 图标？PNG/JPG/WebP 转 ICO 完整教程
-- Summary: Converting an image to ICO is not just changing the extension. A useful ICO file should contain multiple icon sizes and handle transparency correctly.
-- Published: 2026-07-01; updated: 2026-07-03
+- Chinese title: ICO 文件是什么？favicon 格式选择与图片转 ICO 教程
+- Summary: Learn why ICO files contain multiple sizes, compare favicon.ico with SVG and PNG favicons, and convert PNG, JPG, WebP, or SVG images with ToolGarden.
+- Published: 2026-07-01; updated: 2026-07-28
 
 ### ICO vs ICNS vs PNG Icons: Which Format Should You Use for Web, Windows, and macOS?
 - English: https://toolgarden.xyz/en/blog/ico-vs-icns-vs-png-icons

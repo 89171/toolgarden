@@ -2,8 +2,11 @@ import type { Metadata } from 'next';
 import Link from '@/components/ui/AppLink';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
+import HubFaqSection from '@/components/HubFaqSection';
 import { getOtherTools } from '@/lib/tools/registry';
 import {
+  createHubFaqJsonLd,
+  getHubFaqItems,
   createOtherHubMetadata,
   createOtherToolItemListJsonLd,
   getLocaleMessages,
@@ -37,6 +40,10 @@ export default async function OtherHubPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: toJsonLd(createOtherToolItemListJsonLd(normalizedLocale)) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: toJsonLd(createHubFaqJsonLd('other_hub', normalizedLocale)) }}
       />
       <div className="flex w-full flex-grow flex-col px-3 py-3 sm:px-6 sm:py-4 lg:px-10 xl:px-14 2xl:px-20">
         <Header compact />
@@ -80,6 +87,7 @@ export default async function OtherHubPage({
             ))}
           </div>
         </section>
+        <HubFaqSection items={getHubFaqItems('other_hub', normalizedLocale)} title={m.blog.faq_title} />
       </div>
       <Footer />
     </div>

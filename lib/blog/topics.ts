@@ -37,10 +37,12 @@ export function getBlogTopicByArticleSlug(slug: string): BlogTopicMembership | n
   return null;
 }
 
-export function getPillarSlugForToolPath(toolPath: string): string {
+export function getPillarSlugForToolPath(toolPath: string): string | null {
   const topic = blogTopics.find((candidate) =>
     candidate.toolPathPrefixes.some((prefix) => toolPath.startsWith(prefix))
   );
 
-  return topic?.pillarSlug ?? blogTopics[0].pillarSlug;
+  // Return null when no topic matches, so callers can omit the related-guide
+  // link / subjectOf rather than pointing to an unrelated pillar article.
+  return topic?.pillarSlug ?? null;
 }

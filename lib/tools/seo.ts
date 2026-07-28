@@ -677,27 +677,55 @@ export function createBlogTopicCollectionJsonLd(locale: string) {
   };
 }
 
-export function createFaqJsonLd(locale: string) {
-  const m = getLocaleMessages(locale);
-  const faq = m.json_hub.faq;
+export type HubFaqKey =
+  | 'json_hub'
+  | 'image_hub'
+  | 'pdf_hub'
+  | 'audio_hub'
+  | 'file_merge_hub'
+  | 'text_hub'
+  | 'other_hub';
 
+/**
+ * 从某个 hub 的 messages.faq 中提取问答对。约定：所有以 `_q` 结尾的键是问题，
+ * 对应同名 `_a` 键是答案，按出现顺序返回。可见 FAQ 与 FAQPage 结构化数据共用此函数，
+ * 确保二者内容一致（Google 要求 FAQPage 内容在页面上可见）。
+ */
+export function getHubFaqItems(
+  hubKey: HubFaqKey,
+  locale: string
+): Array<{ question: string; answer: string }> {
+  const m = getLocaleMessages(locale) as unknown as Record<
+    string,
+    { faq?: Record<string, string> }
+  >;
+  const faq = m[hubKey]?.faq ?? {};
+  return Object.keys(faq)
+    .filter((key) => key.endsWith('_q'))
+    .map((questionKey) => ({
+      question: faq[questionKey],
+      answer: faq[`${questionKey.slice(0, -2)}_a`],
+    }))
+    .filter((item) => Boolean(item.question) && Boolean(item.answer));
+}
+
+export function createHubFaqJsonLd(hubKey: HubFaqKey, locale: string) {
   return {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: [
-      ['privacy_q', 'privacy_a'],
-      ['formats_q', 'formats_a'],
-      ['free_q', 'free_a'],
-      ['loose_q', 'loose_a'],
-    ].map(([questionKey, answerKey]) => ({
+    mainEntity: getHubFaqItems(hubKey, normalizeLocale(locale)).map((item) => ({
       '@type': 'Question',
-      name: faq[questionKey as keyof typeof faq],
+      name: item.question,
       acceptedAnswer: {
         '@type': 'Answer',
-        text: faq[answerKey as keyof typeof faq],
+        text: item.answer,
       },
     })),
   };
+}
+
+export function createFaqJsonLd(locale: string) {
+  return createHubFaqJsonLd('json_hub', locale);
 }
 
 export function createToolFaqJsonLd(toolId: string, locale: string) {

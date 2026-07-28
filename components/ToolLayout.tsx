@@ -2,7 +2,7 @@
 import React from 'react';
 import Link from '@/components/ui/AppLink';
 import { useTranslations, useLocale } from 'next-intl';
-import { getToolById } from '@/lib/tools/registry';
+import { getRelatedTools, getToolById } from '@/lib/tools/registry';
 import { getPillarSlugForToolPath } from '@/lib/blog/topics';
 import {
   buildBreadcrumbJsonLd,
@@ -72,7 +72,9 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
   const breadcrumbJsonLd = tool ? buildBreadcrumbJsonLd(toolId, locale, jsonLdMessages) : null;
   const faqJsonLd = tool ? buildToolFaqJsonLd(toolId, jsonLdMessages) : null;
   const relatedGuideSlug = tool ? getPillarSlugForToolPath(tool.path) : null;
+  const relatedTools = tool ? getRelatedTools(tool.id) : [];
   const faqTitleId = `${toolId}-faq-title`;
+  const relatedToolsTitleId = `${toolId}-related-tools-title`;
 
   return (
     <>
@@ -216,6 +218,33 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
                   </div>
                 ))}
               </dl>
+            </section>
+          ) : null}
+          {relatedTools.length > 0 ? (
+            <section className="mt-8 border-t border-border-subtle pt-6" aria-labelledby={relatedToolsTitleId}>
+              <h2 id={relatedToolsTitleId} className="text-xl font-bold text-content">
+                {t('blog.related_tools')}
+              </h2>
+              <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {relatedTools.map((related) => (
+                  <li key={related.id}>
+                    <Link
+                      href={`/${locale}${related.path}`}
+                      className="flex h-full items-start gap-2 rounded-lg border border-border-base bg-surface px-4 py-3 transition-colors hover:border-border-strong hover:bg-surface-hover"
+                    >
+                      <span aria-hidden="true" className="mt-0.5 shrink-0 font-mono text-xs text-content-faint">
+                        {related.icon}
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block font-medium text-content">{t(`tools.${related.id}.name`)}</span>
+                        <span className="mt-0.5 block text-xs leading-5 text-content-muted line-clamp-2">
+                          {t(`tools.${related.id}.description`)}
+                        </span>
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </section>
           ) : null}
         </main>

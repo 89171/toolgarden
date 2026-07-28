@@ -1219,6 +1219,550 @@
     "jwt": "JWT decoder,JWT parser,decode JWT token,JWT signature verifier,inspect JWT payload,HS256 validator,JWT decoder online,view JWT payload,HS256 signature verify,debug JWT online"
   },
   "tool_faq": {
+    "json-escape": {
+      "items": [
+        {
+          "question": "What is the difference between escaping and unescaping JSON?",
+          "answer": "Escaping minifies the JSON to one line and backslash-escapes quotes, newlines and other special characters so it can be embedded in a string; unescaping restores an escaped string back to readable JSON."
+        },
+        {
+          "question": "When do I need to escape JSON?",
+          "answer": "When you want to place a piece of JSON as a string value inside another JSON document, code or database field, escape it first so quotes and newlines don't break the structure."
+        },
+        {
+          "question": "Does escaping upload my data?",
+          "answer": "No. Both escaping and unescaping run locally in your browser and nothing is uploaded to a server."
+        }
+      ]
+    },
+    "json-diff": {
+      "items": [
+        {
+          "question": "What differences can the JSON diff detect?",
+          "answer": "It compares two JSON documents structurally and highlights added, removed and changed fields, so you can quickly spot changes in configs or API responses."
+        },
+        {
+          "question": "Does it support diffing JSONC / JSON5 with comments?",
+          "answer": "Yes. It can compare JSONC / JSON5 with comments and trailing commas by parsing them into standard structures first."
+        },
+        {
+          "question": "Does comparing upload my data?",
+          "answer": "No. Both JSON documents are parsed and compared locally in your browser, with nothing uploaded."
+        }
+      ]
+    },
+    "json-xml": {
+      "items": [
+        {
+          "question": "Can it convert both JSON to XML and XML to JSON?",
+          "answer": "Yes. It supports both directions — paste either JSON or XML and the other format is produced."
+        },
+        {
+          "question": "How are attributes and nested nodes handled?",
+          "answer": "XML elements map to JSON keys and nested structures keep their hierarchy; converting back to XML rebuilds tags from the object levels."
+        },
+        {
+          "question": "Does converting upload my data?",
+          "answer": "No. JSON ↔ XML conversion runs locally in your browser and nothing is uploaded."
+        }
+      ]
+    },
+    "json-to-csv": {
+      "items": [
+        {
+          "question": "What kind of JSON can be turned into CSV?",
+          "answer": "An array of objects works best: each object becomes a row and the field names become the header. The tool collects the keys across all objects to build complete columns."
+        },
+        {
+          "question": "How are nested objects or arrays handled?",
+          "answer": "Nested fields are expanded sensibly or serialized into a cell; for deeply nested data, flatten it first with JSON Flatten before exporting."
+        },
+        {
+          "question": "Does converting upload my data?",
+          "answer": "No. JSON-to-CSV conversion runs locally in your browser and data is never uploaded."
+        }
+      ]
+    },
+    "json-to-excel": {
+      "items": [
+        {
+          "question": "What format is the exported Excel file?",
+          "answer": "It exports a standard .xlsx file that opens directly in Excel, WPS or Google Sheets."
+        },
+        {
+          "question": "How does a JSON array map to the spreadsheet?",
+          "answer": "Each object in the array becomes a row and field names become header columns; fields across objects are merged into a complete set of columns."
+        },
+        {
+          "question": "Does generating Excel upload my data?",
+          "answer": "No. The whole conversion happens locally in your browser and the JSON is never uploaded."
+        }
+      ]
+    },
+    "excel-to-json": {
+      "items": [
+        {
+          "question": "Which Excel formats are supported?",
+          "answer": "It reads .xlsx and .xls files, parsing the worksheet into a JSON array of objects."
+        },
+        {
+          "question": "What happens to the header row?",
+          "answer": "The first row is used as the field names (keys) and each remaining row becomes a JSON object, ready for an API or program."
+        },
+        {
+          "question": "Is my uploaded spreadsheet stored?",
+          "answer": "No. The Excel file is parsed locally in your browser; its contents are never uploaded or stored."
+        }
+      ]
+    },
+    "json-flatten": {
+      "items": [
+        {
+          "question": "What do flatten and unflatten each do?",
+          "answer": "Flatten turns nested JSON into a single level of path keys like a.b.c; unflatten rebuilds those path keys back into nested objects."
+        },
+        {
+          "question": "What do the flattened keys look like?",
+          "answer": "Nested objects are joined with dots and arrays use indexes, e.g. user.tags.0, which is handy for config entries, i18n keys or table columns."
+        },
+        {
+          "question": "Does processing upload my data?",
+          "answer": "No. Both flatten and unflatten run locally in your browser and data is never uploaded."
+        }
+      ]
+    },
+    "json-schema": {
+      "items": [
+        {
+          "question": "How is the JSON Schema generated?",
+          "answer": "The tool analyzes the JSON sample you provide, infers each field's type and structure, and produces a matching JSON Schema definition."
+        },
+        {
+          "question": "Do I need to tweak the generated schema?",
+          "answer": "Usually yes. A sample can't express optional fields, value ranges or the real type behind null, so add constraints like required and enum as needed."
+        },
+        {
+          "question": "Does generating upload my data?",
+          "answer": "No. Schema inference runs locally in your browser and the sample is never uploaded."
+        }
+      ]
+    },
+    "json-schema-validate": {
+      "items": [
+        {
+          "question": "Can I see why validation failed?",
+          "answer": "Yes. The tool reports the path and reason for each error, so you can quickly tell whether it is a type mismatch, a missing required field or an out-of-range value."
+        },
+        {
+          "question": "Which JSON Schema spec is supported?",
+          "answer": "It supports common JSON Schema Draft versions, useful for validating API responses, config files and other data against an agreed structure."
+        },
+        {
+          "question": "Does validating upload my data?",
+          "answer": "No. Both the schema and the data are validated locally in your browser and nothing is uploaded."
+        }
+      ]
+    },
+    "json-path": {
+      "items": [
+        {
+          "question": "What can JSONPath do?",
+          "answer": "A JSONPath expression (such as $.store.book[*].title) lets you extract specific fields or array elements from nested JSON."
+        },
+        {
+          "question": "Are wildcards and filters supported?",
+          "answer": "Yes. You can use wildcards, recursive descent and filter expressions to pick out the data you need from complex structures."
+        },
+        {
+          "question": "Does querying upload my data?",
+          "answer": "No. JSONPath queries run locally in your browser and data is never uploaded."
+        }
+      ]
+    },
+    "json-stats": {
+      "items": [
+        {
+          "question": "What does JSON stats show?",
+          "answer": "It shows nesting depth, total key count, the distribution of types (string/number/object, etc.) and the data size, among other structural metrics."
+        },
+        {
+          "question": "What are these stats useful for?",
+          "answer": "They help you judge whether an API response is too bloated or poorly structured, or compare size and complexity before and after optimization."
+        },
+        {
+          "question": "Does analysis upload my data?",
+          "answer": "No. All statistics are computed locally in your browser and data is never uploaded."
+        }
+      ]
+    },
+    "pdf-split": {
+      "items": [
+        {
+          "question": "Does splitting a PDF upload my file?",
+          "answer": "No. Splitting runs locally in your browser, so the PDF is never uploaded — safe for contracts and IDs."
+        },
+        {
+          "question": "Can I split by page ranges?",
+          "answer": "Yes. You can split one PDF into several documents by page range, for example separating pages 1-3 and 4-6 into two files."
+        },
+        {
+          "question": "Is the original file modified after splitting?",
+          "answer": "No. The tool only reads the source PDF and produces new split files; the original stays unchanged."
+        }
+      ]
+    },
+    "pdf-extract-pages": {
+      "items": [
+        {
+          "question": "Does extracting pages upload my PDF?",
+          "answer": "No. Page extraction runs locally in your browser and the PDF is never uploaded."
+        },
+        {
+          "question": "Can I keep only certain pages?",
+          "answer": "Yes. After selecting the pages you want, the tool extracts them into a new PDF document and leaves the rest out."
+        },
+        {
+          "question": "Does extracting affect the original file?",
+          "answer": "No. The source PDF is only read; the result is saved as a new file and the original is unchanged."
+        }
+      ]
+    },
+    "pdf-organize": {
+      "items": [
+        {
+          "question": "What can PDF organize do?",
+          "answer": "It lets you reorder, duplicate and delete pages, then export a tidied-up new PDF once you are happy with the arrangement."
+        },
+        {
+          "question": "Does organizing a PDF upload my file?",
+          "answer": "No. All page operations run locally in your browser and the PDF is never uploaded."
+        },
+        {
+          "question": "Is the original changed after organizing?",
+          "answer": "No. The result is saved as a new file and the original PDF stays intact."
+        }
+      ]
+    },
+    "audio-to-wav": {
+      "items": [
+        {
+          "question": "Does converting to WAV upload my file?",
+          "answer": "No. MP3, M4A, FLAC and other audio are decoded and exported to WAV locally in your browser, with no upload."
+        },
+        {
+          "question": "Why convert to WAV?",
+          "answer": "WAV is a lossless, uncompressed format, ideal for further editing, mixing or any workflow that needs high fidelity."
+        },
+        {
+          "question": "Which input formats are supported?",
+          "answer": "It accepts common formats like MP3, M4A, OGG, FLAC and WebM, all exported as WAV."
+        }
+      ]
+    },
+    "audio-merge": {
+      "items": [
+        {
+          "question": "Does merging audio upload my files?",
+          "answer": "No. Multiple files are joined in order and exported as a single MP3 locally in your browser, with nothing uploaded."
+        },
+        {
+          "question": "Can I merge audio of different formats?",
+          "answer": "Yes. The tool decodes the different formats first and then merges them in order into one MP3 file."
+        },
+        {
+          "question": "Can I change the merge order?",
+          "answer": "Yes. Files are joined in the order you arrange them, handy for combining several recordings or clips into one track."
+        }
+      ]
+    },
+    "audio-trim": {
+      "items": [
+        {
+          "question": "Does trimming audio upload my file?",
+          "answer": "No. Cutting and trimming run locally in your browser and the audio is never uploaded."
+        },
+        {
+          "question": "How do I cut out the part I want?",
+          "answer": "Set a start and end time to keep the middle segment, or trim off the beginning and end, then export as MP3."
+        },
+        {
+          "question": "Does trimming reduce audio quality?",
+          "answer": "Re-encoding to MP3 involves slight lossy compression, but at normal bitrates the difference is usually hard to notice."
+        }
+      ]
+    },
+    "audio-compress": {
+      "items": [
+        {
+          "question": "How does audio compression reduce size?",
+          "answer": "It lowers the MP3 bitrate to shrink the file — the lower the bitrate the smaller the file, with a matching drop in quality."
+        },
+        {
+          "question": "Does compressing upload my file?",
+          "answer": "No. Compression runs locally in your browser and the audio is never uploaded."
+        },
+        {
+          "question": "How do I balance size and quality?",
+          "answer": "Use a lower bitrate for speech and keep a higher bitrate for music; listen back before settling on a level."
+        }
+      ]
+    },
+    "audio-recorder": {
+      "items": [
+        {
+          "question": "Does the web recorder upload my voice?",
+          "answer": "No. Audio is captured from your microphone and exported to MP3 locally in your browser, with nothing uploaded."
+        },
+        {
+          "question": "Do I need to install software to record?",
+          "answer": "No. Just open the page, allow microphone access, record, then preview and download the MP3."
+        },
+        {
+          "question": "Why can't I start recording?",
+          "answer": "Usually the browser hasn't been granted microphone permission — allow this site to use the microphone in the address bar or system settings."
+        }
+      ]
+    },
+    "audio-volume": {
+      "items": [
+        {
+          "question": "Can I both increase and decrease the volume?",
+          "answer": "Yes. You can boost a too-quiet recording or bring down audio that is too loud, then export as MP3."
+        },
+        {
+          "question": "Does adjusting volume upload my file?",
+          "answer": "No. Volume adjustment runs locally in your browser and the audio is never uploaded."
+        },
+        {
+          "question": "Is turning the volume up too far a problem?",
+          "answer": "Boosting too much can cause clipping or distortion, so adjust gradually and listen back to stay within the audio's dynamic range."
+        }
+      ]
+    },
+    "audio-speed": {
+      "items": [
+        {
+          "question": "Does changing speed also change the pitch?",
+          "answer": "Speeding up or slowing down changes the duration; the tool focuses on speed, so listen back after export to check the pitch result."
+        },
+        {
+          "question": "Does changing speed upload my file?",
+          "answer": "No. Speed processing runs locally in your browser and the audio is never uploaded."
+        },
+        {
+          "question": "What is this commonly used for?",
+          "answer": "Often to speed up lectures and podcasts to save time, or slow down teaching and dictation material for easier following."
+        }
+      ]
+    },
+    "audio-sample-rate": {
+      "items": [
+        {
+          "question": "What is sample-rate conversion for?",
+          "answer": "It resamples audio to a target rate (such as 44100Hz or 48000Hz) to meet the requirements of different platforms or devices."
+        },
+        {
+          "question": "Does resampling upload my file?",
+          "answer": "No. Resampling runs locally in your browser and the audio is never uploaded."
+        },
+        {
+          "question": "Does raising the sample rate improve quality?",
+          "answer": "It can't add information out of nothing. Upsampling won't restore lost detail; resampling is mainly for format compatibility."
+        }
+      ]
+    },
+    "audio-bitrate": {
+      "items": [
+        {
+          "question": "How does changing bitrate affect the file?",
+          "answer": "A higher bitrate means better quality and a larger file; a lower one means a smaller file and reduced quality. The tool re-encodes the MP3 at your chosen bitrate."
+        },
+        {
+          "question": "Does changing bitrate upload my file?",
+          "answer": "No. Re-encoding runs locally in your browser and the audio is never uploaded."
+        },
+        {
+          "question": "How do I pick a common bitrate?",
+          "answer": "Speech works at 64-128kbps and music commonly uses 192-320kbps; balance size and quality for your use case."
+        }
+      ]
+    },
+    "audio-remove-silence": {
+      "items": [
+        {
+          "question": "How does silence removal work?",
+          "answer": "The tool automatically detects silent and blank segments in the audio and trims them, making the content more compact, then exports MP3."
+        },
+        {
+          "question": "Does removing silence upload my file?",
+          "answer": "No. Detection and trimming run locally in your browser and the audio is never uploaded."
+        },
+        {
+          "question": "Might it cut useful pauses?",
+          "answer": "Very short or very quiet gaps can be treated as silence. If the result feels too tight, adjust the sensitivity and process again."
+        }
+      ]
+    },
+    "audio-tts": {
+      "items": [
+        {
+          "question": "Does text-to-speech upload my text?",
+          "answer": "The tool uses your browser's built-in speech synthesis to read the text; the reading happens locally and the text is not sent to our servers."
+        },
+        {
+          "question": "What voices are available?",
+          "answer": "The available voices come from your operating system and browser, so the languages and timbres differ from device to device."
+        },
+        {
+          "question": "Can I export the speech to a file?",
+          "answer": "This tool is mainly for instant read-aloud preview; whether audio can be saved depends on your browser's speech synthesis capabilities."
+        }
+      ]
+    },
+    "cron": {
+      "items": [
+        {
+          "question": "What does the cron parser show?",
+          "answer": "It translates a cron expression into a human-readable description and previews the next several run times, so you can confirm it behaves as expected."
+        },
+        {
+          "question": "Which cron formats are supported?",
+          "answer": "It supports standard five-field cron plus the seconds extension, useful for checking the schedule of a cron job."
+        },
+        {
+          "question": "Does parsing upload my data?",
+          "answer": "No. The cron expression is parsed locally in your browser and nothing is uploaded."
+        }
+      ]
+    },
+    "url-builder": {
+      "items": [
+        {
+          "question": "What can the URL builder do?",
+          "answer": "It breaks a URL's query string into individual parameters you can add, edit and delete, with a live preview of the assembled URL."
+        },
+        {
+          "question": "Does it handle encoding automatically?",
+          "answer": "Yes. Special characters in parameter values are URL-encoded as needed, avoiding hand-written encoding mistakes."
+        },
+        {
+          "question": "Does it upload my data?",
+          "answer": "No. Parsing and building the URL both run locally in your browser and nothing is uploaded."
+        }
+      ]
+    },
+    "image-exif": {
+      "items": [
+        {
+          "question": "What is usually in EXIF data?",
+          "answer": "A photo's EXIF can include the capture time, camera model, settings and even GPS location, which is privacy-sensitive."
+        },
+        {
+          "question": "Does clearing EXIF upload my image?",
+          "answer": "No. Reading and stripping EXIF both run locally in your browser and the image is never uploaded."
+        },
+        {
+          "question": "Does clearing EXIF affect image quality?",
+          "answer": "Not noticeably. The tool only removes metadata; the image's pixel content stays the same."
+        }
+      ]
+    },
+    "image-rotate": {
+      "items": [
+        {
+          "question": "Which rotations and flips are supported?",
+          "answer": "It supports 90°, 180° and 270° clockwise rotation, plus horizontal and vertical flips (mirroring)."
+        },
+        {
+          "question": "Does rotating upload my image?",
+          "answer": "No. Rotation and flipping run locally in your browser and the image is never uploaded."
+        },
+        {
+          "question": "Does rotating reduce quality?",
+          "answer": "Right-angle rotations are lossless; exporting to a lossy format like JPG may add slight re-encoding loss."
+        }
+      ]
+    },
+    "image-color-picker": {
+      "items": [
+        {
+          "question": "How do I use the color picker?",
+          "answer": "Upload an image, then click anywhere on it to read that pixel's HEX, RGB and HSL color values."
+        },
+        {
+          "question": "Does picking colors upload my image?",
+          "answer": "No. Color picking happens entirely in your browser and the image is never uploaded."
+        },
+        {
+          "question": "Can I pull brand colors from a screenshot?",
+          "answer": "Yes. Upload a mockup or screenshot and click points to sample colors, handy for recreating a UI palette or extracting brand values."
+        }
+      ]
+    },
+    "image-gif": {
+      "items": [
+        {
+          "question": "What two directions does this tool support?",
+          "answer": "It can split a GIF into individual PNG frames, and also combine several PNG / JPG images into a single animated GIF."
+        },
+        {
+          "question": "Does processing a GIF upload my file?",
+          "answer": "No. Both splitting into frames and building a GIF run locally in your browser, with nothing uploaded."
+        },
+        {
+          "question": "Can I control playback when building a GIF?",
+          "answer": "You compose the animation from the image order, and that order determines playback, so arrange the frames before generating."
+        }
+      ]
+    },
+    "whiteboard": {
+      "items": [
+        {
+          "question": "Is my whiteboard content uploaded?",
+          "answer": "No. The whiteboard is built on tldraw and runs locally in your browser; shapes, notes and images stay on your device and are never uploaded."
+        },
+        {
+          "question": "What elements are supported?",
+          "answer": "It supports shapes, freehand pen, sticky notes, text and images, which you can arrange freely and export as an image."
+        },
+        {
+          "question": "Do I need to sign up or install anything?",
+          "answer": "No. Just open the page — no login and no software installation required."
+        }
+      ]
+    },
+    "excalidraw-board": {
+      "items": [
+        {
+          "question": "Is my Excalidraw board uploaded?",
+          "answer": "No. The board is built on open-source Excalidraw and runs locally in your browser; your drawings are never uploaded."
+        },
+        {
+          "question": "What is its style?",
+          "answer": "It is known for a hand-drawn look, great for quick sketches, flow diagrams and architecture drawings, and can be exported as an image."
+        },
+        {
+          "question": "Do I need to be online to use it?",
+          "answer": "After the initial load, the core drawing features work locally and your content stays on your device."
+        }
+      ]
+    },
+    "mind-map": {
+      "items": [
+        {
+          "question": "Can I export the mind map?",
+          "answer": "Yes. Built on open-source Mind Elixir, it can export to a Markdown outline for reuse in documents or notes."
+        },
+        {
+          "question": "Is my mind map uploaded?",
+          "answer": "No. Editing happens locally in your browser and the mind map content is never uploaded."
+        },
+        {
+          "question": "What is it good for?",
+          "answer": "It suits outlining, breaking down tasks, reading notes and brainstorming, expressing structured ideas through node hierarchy."
+        }
+      ]
+    },
     "json-format": {
       "items": [
         {
@@ -1540,26 +2084,6 @@
         {
           "question": "Which Gzip inputs are supported?",
           "answer": "The tool accepts gzip data in Base64 or hex form and shows the decompressed result directly on the page for easy copying or follow-up processing."
-        }
-      ]
-    },
-    "file-merge": {
-      "items": [
-        {
-          "question": "Does File Merge upload my files?",
-          "answer": "No. PDF, Word, PPT, text, Excel, and image merging all run locally in your browser, so files are not uploaded to a server."
-        },
-        {
-          "question": "What does each file type export?",
-          "answer": "Each type exports its native format: PDF to PDF, Word to DOCX, PPT to PPTX, TXT to TXT, Markdown to MD, CSV to CSV, and RTF to RTF."
-        },
-        {
-          "question": "How can Excel sheets be merged?",
-          "answer": "You can merge everything into one Sheet so all source tables end up in a single grid, or keep each source Sheet and output them into different Sheets in the same workbook."
-        },
-        {
-          "question": "What output formats are available for image merging?",
-          "answer": "You can merge images into one PDF or stitch multiple images into a long PNG, which is useful for archiving and sharing."
         }
       ]
     },
@@ -2469,7 +2993,17 @@
     "description": "Free online image tools for batch editing, compression, merging, background removal, watermark removal, Base64 encode/decode, conversion, cropping, and resizing locally in your browser, with shapes, text, mosaic, blur, AI selection repair, smart compression, image-to-PDF or long-image output, transparent PNG, JPG, PNG, WebP, AVIF output, preview comparison, and ZIP batch download.",
     "all_tools": "Image conversion tools",
     "breadcrumb": "Image tools",
-    "privacy_note": "Images are processed locally in your browser and are not uploaded to a server."
+    "privacy_note": "Images are processed locally in your browser and are not uploaded to a server.",
+    "faq": {
+      "privacy_q": "Do the image tools upload my pictures?",
+      "privacy_a": "No. Compression, format conversion, background removal, OCR and more all run locally in your browser, so images are never uploaded.",
+      "formats_q": "Which image formats are supported?",
+      "formats_a": "They convert and process common formats including JPG, PNG, WebP, AVIF, GIF, BMP and SVG.",
+      "free_q": "Are the image tools free?",
+      "free_a": "Yes. Every image tool is free to use without an account and runs directly in your browser.",
+      "mobile_q": "Do they work in a mobile browser?",
+      "mobile_a": "Yes. The tools are web-based and work on phones with a modern browser, with processing still done locally."
+    }
   },
   "audio_hub": {
     "title": "Audio tools",
@@ -2477,7 +3011,17 @@
     "description": "Free online audio tools for MP3 conversion, WAV conversion, extracting audio from video, audio merge, audio trim, audio compression, microphone recording, audio-to-text transcription, volume changes, playback speed changes, sample rate changes, bitrate adjustment, silence removal, and text to speech. Conversion, trimming, merging, compression, and audio editing run locally in your browser, while transcription can load an open-source Whisper model in the browser.",
     "all_tools": "Audio tools",
     "breadcrumb": "Audio tools",
-    "privacy_note": "Audio and video are processed locally in your browser first; FFmpeg WASM and transcription model files are downloaded only when needed."
+    "privacy_note": "Audio and video are processed locally in your browser first; FFmpeg WASM and transcription model files are downloaded only when needed.",
+    "faq": {
+      "privacy_q": "Do the audio tools upload my files?",
+      "privacy_a": "No. Format conversion, trimming, compression, transcription and more all run locally in your browser, so audio is never uploaded.",
+      "formats_q": "Which audio formats are supported?",
+      "formats_a": "They convert and process common formats including MP3, WAV, M4A, OGG, FLAC and WebM.",
+      "free_q": "Are the audio tools free?",
+      "free_a": "Yes. Every audio tool is free to use without an account and runs directly in your browser.",
+      "extract_q": "Can I extract audio from a video?",
+      "extract_a": "Yes. The audio extract tool pulls the audio track from videos like MP4 and MOV and exports it as MP3."
+    }
   },
   "pdf_hub": {
     "title": "PDF tools",
@@ -2485,7 +3029,17 @@
     "description": "Free online PDF tools for PDF to Word, Word/Excel/PowerPoint/EPUB/MOBI/image to PDF, merge, split, page extraction, and page organization. First-release PDF operations run locally in the browser.",
     "all_tools": "PDF tools",
     "breadcrumb": "PDF tools",
-    "privacy_note": "The first PDF converter runs locally in your browser, so files are not uploaded to a server."
+    "privacy_note": "The first PDF converter runs locally in your browser, so files are not uploaded to a server.",
+    "faq": {
+      "privacy_q": "Do the PDF tools upload my files?",
+      "privacy_a": "No. Merging, splitting, encrypting, watermarking and converting all run locally in your browser, so PDFs are never uploaded.",
+      "formats_q": "What PDF features are available?",
+      "formats_a": "Merge, split, extract pages, organize pages, encrypt/decrypt, watermark, convert to images, and convert Word/Excel/images to PDF.",
+      "free_q": "Are the PDF tools free?",
+      "free_a": "Yes. Every PDF tool is free to use without an account and runs directly in your browser.",
+      "size_q": "Is there a limit on PDF file size?",
+      "size_a": "There is no fixed cap; it depends on your device memory, so very large files are best processed in smaller batches."
+    }
   },
   "file_merge_hub": {
     "title": "File merge tools",
@@ -2493,7 +3047,17 @@
     "description": "Free online tools to merge PDF, Word, PPT, TXT, Markdown, CSV, RTF, Excel, and images while exporting native formats: PDF to PDF, Word to DOCX, PPT to PPTX, and images to PDF or a long image. All processing runs locally in your browser.",
     "all_tools": "File merge tools",
     "breadcrumb": "File merge tools",
-    "privacy_note": "Files are processed locally in your browser and are not uploaded to a server."
+    "privacy_note": "Files are processed locally in your browser and are not uploaded to a server.",
+    "faq": {
+      "privacy_q": "Does file merging upload my files?",
+      "privacy_a": "No. All merge operations run locally in your browser, so files are never uploaded.",
+      "formats_q": "Which file types can I merge?",
+      "formats_a": "It merges many types including PDF, Word, PPT, Excel, CSV, TXT, Markdown, RTF and images.",
+      "free_q": "Are the merge tools free?",
+      "free_a": "Yes. Every merge tool is free to use without an account and runs directly in your browser.",
+      "order_q": "Can I change the merge order?",
+      "order_a": "Yes. After uploading you can drag to reorder, and the final file is merged exactly in the order you set."
+    }
   },
   "text_hub": {
     "title": "Text tools",
@@ -2501,7 +3065,17 @@
     "description": "Convert Markdown to PDF or complete HTML, copy HTML code, count text, and compare text differences. Everything runs locally in your browser with no upload required.",
     "all_tools": "Text tools",
     "breadcrumb": "Text tools",
-    "privacy_note": "Text is processed locally in your browser and is not uploaded to a server."
+    "privacy_note": "Text is processed locally in your browser and is not uploaded to a server.",
+    "faq": {
+      "privacy_q": "Do the text tools upload my content?",
+      "privacy_a": "No. Word counting, text diff, Markdown conversion and OCR all run locally in your browser, so content is never uploaded.",
+      "formats_q": "What text tools are available?",
+      "formats_a": "Word count, text diff, Markdown to PDF, Markdown to HTML, and image OCR text recognition.",
+      "free_q": "Are the text tools free?",
+      "free_a": "Yes. Every text tool is free to use without an account and runs directly in your browser.",
+      "cjk_q": "Does Markdown to PDF support Chinese?",
+      "cjk_a": "Yes. It renders both Chinese and English correctly with automatic pagination, generating a downloadable PDF locally."
+    }
   },
   "other_hub": {
     "title": "Other tools",
@@ -2509,7 +3083,17 @@
     "description": "A simple collection of online tools for font subsetting, local tldraw whiteboards, Excalidraw boards, and Markdown mind maps, built with mature libraries and running in your browser.",
     "all_tools": "Other tools",
     "breadcrumb": "Other tools",
-    "privacy_note": "Fonts, whiteboards, boards, and mind maps are processed locally in your browser and are not uploaded to a server."
+    "privacy_note": "Fonts, whiteboards, boards, and mind maps are processed locally in your browser and are not uploaded to a server.",
+    "faq": {
+      "privacy_q": "Do these tools upload my content?",
+      "privacy_a": "No. The whiteboard, mind map, font subsetting and more all run locally in your browser, so content is never uploaded.",
+      "formats_q": "What tools are included?",
+      "formats_a": "A whiteboard, an Excalidraw hand-drawn board, a mind map and a font subsetting tool, among others.",
+      "free_q": "Are these tools free?",
+      "free_a": "Yes. Every tool is free to use without an account and runs directly in your browser.",
+      "storage_q": "Are whiteboard and mind map contents saved to the cloud?",
+      "storage_a": "No. Content is edited and kept locally in your browser and never uploaded to the cloud; export it yourself to keep it long-term."
+    }
   },
   "json_hub": {
     "title": "JSON Toolkit",

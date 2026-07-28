@@ -833,6 +833,54 @@ export function getToolById(id: string): ToolMeta | undefined {
   return toolRegistry.find((t) => t.id === id);
 }
 
+/** 工具页“相关工具”分组使用的 hub 路径前缀 */
+const RELATED_HUB_PREFIXES = [
+  '/image/',
+  '/pdf/',
+  '/file-merge/',
+  '/audio/',
+  '/text/',
+  '/qr-code/',
+  '/other/',
+] as const;
+
+/**
+ * 获取与某工具相关的工具，用于工具页内部相互链接（SEO 内链 + 回流）。
+ * 优先取同一 hub（相同路径前缀）的兄弟工具；无 hub 的 JSON / 开发类工具取其它 JSON 工具；
+ * 数量不足时用 featured 工具补齐。结果不含自身，按注册顺序返回。
+ */
+export function getRelatedTools(id: string, limit = 6): ToolMeta[] {
+  const tool = getToolById(id);
+  if (!tool) return [];
+
+  const prefix = RELATED_HUB_PREFIXES.find((p) => tool.path.startsWith(p));
+  const pool = prefix
+    ? toolRegistry.filter((t) => t.path.startsWith(prefix))
+    : getJsonTools();
+
+  const seen = new Set<string>([id]);
+  const related: ToolMeta[] = [];
+  const push = (candidates: ToolMeta[]) => {
+    for (const candidate of candidates) {
+      if (related.length >= limit) break;
+      if (seen.has(candidate.id)) continue;
+      seen.add(candidate.id);
+      related.push(candidate);
+    }
+  };
+
+  push(pool);
+  // 兄弟工具不足时，用 featured 工具补齐，保证模块有足够内容
+  if (related.length < limit) push(getFeaturedToolsList());
+
+  return related;
+}
+
+/** featured 工具列表（供内部派生使用，避免与 seo.ts 循环依赖） */
+function getFeaturedToolsList(): ToolMeta[] {
+  return toolRegistry.filter((t) => t.featured);
+}
+
 /** 获取所有分类（去重，按首次出现顺序） */
 export function getAllCategories(): ToolCategory[] {
   return [...new Set(toolRegistry.map((t) => t.category))];

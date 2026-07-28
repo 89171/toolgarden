@@ -193,6 +193,8 @@ export function buildToolJsonLd(toolId: string, locale: string, messages: JsonLd
 
   if (!tool || !localizedTool) return null;
 
+  const pillarSlug = getPillarSlugForToolPath(tool.path);
+
   return {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
@@ -210,13 +212,16 @@ export function buildToolJsonLd(toolId: string, locale: string, messages: JsonLd
       name: messages.home.title,
       url: getLocalizedUrl(normalizedLocale),
     },
-    subjectOf: {
-      '@type': 'WebPage',
-      url: getLocalizedUrl(
-        normalizedLocale,
-        `/blog/${getPillarSlugForToolPath(tool.path)}`
-      ),
-    },
+    // Only assert subjectOf when the tool actually maps to a related pillar
+    // article — otherwise the structured data would link to an unrelated page.
+    ...(pillarSlug
+      ? {
+          subjectOf: {
+            '@type': 'WebPage',
+            url: getLocalizedUrl(normalizedLocale, `/blog/${pillarSlug}`),
+          },
+        }
+      : {}),
   };
 }
 

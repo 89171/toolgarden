@@ -34,6 +34,36 @@ const fixedUnexpectedTokenJson = `{
   "age": 18
 }`;
 
+const missingCommaJson = `{
+  "name": "Tom"
+  "age": 18
+}`;
+
+const invalidQuotesJson = `{
+  name: 'Tom',
+  "message": "He said "hello""
+}`;
+
+const inspectJsonResponseSnippet = `const response = await fetch("/api/data");
+const contentType = response.headers.get("content-type") ?? "";
+const raw = await response.text();
+
+console.log({
+  status: response.status,
+  contentType,
+  firstChars: raw.slice(0, 80)
+});
+
+if (!response.ok) {
+  throw new Error("HTTP " + response.status);
+}
+
+if (!contentType.includes("application/json")) {
+  throw new Error("Expected JSON, received " + contentType);
+}
+
+const data = JSON.parse(raw.replace(/^\\uFEFF/, ""));`;
+
 const jsonSchemaInput = `{
   "id": 1001,
   "email": "user@example.com",
@@ -548,205 +578,379 @@ export const seoBlogArticles = [
   {
     slug: 'fix-json-unexpected-token-error',
     publishedAt: '2026-07-02',
-    updatedAt: '2026-07-03',
+    updatedAt: '2026-07-28',
     translations: {
       zh: {
-        title: 'JSON 报错 Unexpected token 怎么修复？常见 JSON 错误排查',
-        excerpt: 'Unexpected token 通常说明 JSON 解析器遇到了不符合标准 JSON 语法的字符，比如尾逗号、注释、单引号或未加引号的 key。',
-        metaTitle: 'JSON Unexpected token 怎么修复？常见 JSON 报错原因',
-        metaDescription: '整理 JSON Unexpected token 常见原因，包括尾逗号、注释、单引号、未加引号 key、智能引号和 [object Object]，并给出修复方法。',
-        readingTime: '约 7 分钟阅读',
-        tags: ['JSON 报错', 'Unexpected token', 'JSON 修复', 'JSON 校验'],
+        title: 'Unexpected token in JSON at position 0：原因、定位与修复',
+        excerpt: '从原始响应、错误位置和 JSON 语法入手，定位 Unexpected token、Missing comma、Invalid JSON Format 和 JSON Decode Error，并用 ToolGarden 在线 Validator 验证修复结果。',
+        metaTitle: 'Unexpected token position 0 修复',
+        metaDescription: '排查 Unexpected token position 0、缺少逗号和无效 JSON，使用 ToolGarden 隐私友好的在线 Validator 修复。',
+        readingTime: '约 10 分钟阅读',
+        tags: ['JSON Parse Error', 'Unexpected token', 'Invalid JSON', 'JSON Validator'],
         relatedTools: [
+          {
+            label: 'ToolGarden 在线 JSON Validator',
+            href: '/json-format',
+            description: '在浏览器中格式化并验证 JSON，快速检查语法和错误位置。',
+          },
           {
             label: 'JSON 修复清洗',
             href: '/json-repair',
-            description: '修复注释、尾逗号、单引号、未加引号 key 等常见 JSON 问题。',
+            description: '清理注释、尾逗号、单引号、未加引号 key 等常见非标准语法。',
           },
           {
-            label: 'JSON 格式化',
-            href: '/json-format',
-            description: '格式化并验证 JSON，快速定位语法问题。',
-          },
-          {
-            label: "正则表达式测试",
-            href: "/regex",
-            description: "手动排查坏字符时，用正则快速定位控制字符、BOM、全角标点等。",
+            label: 'JSON Schema 校验',
+            href: '/json-schema',
+            description: '语法修复后继续检查必填字段、数据类型和嵌套结构。',
           },
         ],
         blocks: [
           {
             type: 'lead',
-            text: 'Unexpected token 的意思是：解析器读到某个字符时，发现它不应该出现在当前位置。',
+            text: '看到 Unexpected token in JSON at position 0、JSON Parse Error 或 Invalid JSON Format，不代表解析器坏了。它们都在说明同一件事：程序读到的内容不是一段完整、合法的标准 JSON。',
           },
           {
             type: 'paragraph',
-            text: '这个错误经常出现在 JSON.parse、接口调试、配置文件导入和在线校验时。错误提示有时会写 Unexpected token }、Unexpected token o、Unexpected token <，不同字符对应的原因也不一样。',
+            text: '问题可能只是少了一个逗号，也可能是接口返回了 HTML 登录页、空字符串或带 BOM 的文本。下面按“为什么出现、如何定位、如何修复”的顺序排查，并介绍怎样使用 ToolGarden 在线 JSON Validator 快速确认结果。',
           },
-          { type: 'heading', level: 2, text: '最常见原因：尾逗号' },
+          { type: 'heading', level: 2, text: '为什么会出现 JSON Parse Error？' },
+          { type: 'heading', level: 3, text: '1. position 0 收到的根本不是 JSON' },
+          {
+            type: 'paragraph',
+            text: 'position 0 表示解析器在第一个字符就失败了。接口本应返回以 { 或 [ 开头的 JSON，却可能实际返回以 < 开头的 HTML 错误页、登录页或反向代理提示。此时修改 JSON 语法没有用，应该先检查请求地址、HTTP 状态码和响应正文。',
+          },
+          {
+            type: 'paragraph',
+            text: '文件开头的 UTF-8 BOM 也是常见原因。这个隐藏字符肉眼看不见，但部分运行时会把它当作 position 0 的非法 token。空响应更常见的提示是 Unexpected end of JSON input，同样需要从数据来源而不是业务字段开始排查。',
+          },
+          { type: 'heading', level: 3, text: '2. JSON 使用了错误的引号或属性名' },
+          { type: 'code', language: 'json', code: invalidQuotesJson },
+          {
+            type: 'paragraph',
+            text: '标准 JSON 不是 JavaScript 对象字面量。属性名和字符串都必须使用双引号，字符串内部的双引号必须写成转义形式。单引号、智能引号、未加引号的 key 和未转义换行都会触发 JSON Syntax Error。',
+          },
+          { type: 'heading', level: 3, text: '3. Missing comma in JSON' },
+          { type: 'code', language: 'json', code: missingCommaJson },
+          {
+            type: 'paragraph',
+            text: '相邻属性或数组元素之间缺少逗号时，解析器通常在第二个属性附近报错。错误位置指向的是“无法继续读取”的字符，真正缺失的逗号往往位于它前一行。',
+          },
+          { type: 'heading', level: 3, text: '4. 末尾多了逗号' },
           { type: 'code', language: 'json', code: invalidUnexpectedTokenJson },
           {
             type: 'paragraph',
-            text: '标准 JSON 不允许对象或数组最后一个元素后面保留逗号。删除最后一个逗号后才是合法 JSON。',
+            text: '部分 JavaScript 写法允许尾随逗号，但严格 JSON 不允许。删除最后一个字段后的逗号即可。',
           },
           { type: 'code', language: 'json', code: fixedUnexpectedTokenJson },
-          { type: 'heading', level: 2, text: '不同 token 通常代表什么？' },
+          { type: 'heading', level: 3, text: '5. JSON 被截断或括号没有闭合' },
+          {
+            type: 'paragraph',
+            text: '下载中断、流式输出未结束、复制内容不完整，都会让 JSON 在字符串、对象或数组尚未闭合时结束。这类问题通常显示 Unexpected end of JSON input 或 JSON Decode Error。重点检查最后一个字符以及 {、[、引号是否成对。',
+          },
+          { type: 'heading', level: 3, text: '6. 把已经解析的对象再次传给 JSON.parse' },
+          {
+            type: 'paragraph',
+            text: 'JSON.parse 需要接收字符串。如果变量已经是 JavaScript 对象，再次解析时可能先被转换成 [object Object]，随后出现 Unexpected token o。先用 typeof 检查输入类型，只有字符串才需要 JSON.parse。',
+          },
+          { type: 'heading', level: 2, text: '常见错误提示分别代表什么？' },
           {
             type: 'table',
-            headers: ['错误提示', '常见原因', '修复思路'],
+            headers: ['错误提示', '最可能的原因', '先检查什么'],
             rows: [
-              ['Unexpected token }', '尾逗号或缺少值', '检查对象和数组结尾'],
-              ['Unexpected token o', '把对象当字符串再次 JSON.parse', '确认传入的是 JSON 字符串而不是对象'],
-              ['Unexpected token <', '拿到的是 HTML 错误页', '检查接口地址、登录状态或服务端错误'],
-              ['Unexpected token /', 'JSON 中包含注释', '移除 // 或 /* */ 注释'],
-              ['Unexpected token n', 'Python 风格 None', '改成 JSON 的 null'],
+              ['Unexpected token in JSON at position 0', '首字符不是合法 JSON，常见于 HTML、BOM 或普通文本', '查看原始内容的前 80 个字符'],
+              ['Unexpected token <', '服务端返回了 HTML 页面', '检查状态码、重定向和登录状态'],
+              ['Unexpected token o', '对 JavaScript 对象重复执行 JSON.parse', '检查 typeof input'],
+              ['Missing comma in JSON', '属性或数组元素之间少了逗号', '检查报错位置之前的字段'],
+              ['Invalid JSON Format', '引号、逗号、括号或值不符合标准', '使用 Validator 检查最早错误'],
+              ['JSON Decode Error', '内容截断、编码异常或语法不完整', '检查文件编码和结尾'],
+              ['JSON Syntax Error', '解析器遇到非法 token', '查看 line、column 或 position'],
             ],
           },
-          { type: 'heading', level: 2, text: '排查顺序' },
+          { type: 'heading', level: 2, text: '如何定位 JSON 错误？' },
           {
             type: 'list',
             ordered: true,
             items: [
-              '先确认内容是不是 JSON，而不是 HTML、日志或普通文本。',
-              '检查是否存在注释、尾逗号、单引号、未加引号 key。',
-              '检查 True、False、None 是否来自 Python 风格数据。',
-              '如果来自接口，先看 HTTP 状态码和响应头。',
-              '修复后再格式化一次，确认结构完整。',
+              '保留原始文本。不要一开始就 trim、替换字符或吞掉异常，否则会丢失定位线索。',
+              '检查数据类型。确认传给 JSON.parse 的值是 string，而不是 object、undefined 或 null。',
+              '查看首字符和结尾。开头应通常是 { 或 [，结尾应与之对应为 } 或 ]。',
+              '检查 HTTP 信息。接口数据要同时查看状态码、Content-Type、重定向和原始响应。',
+              '跳到错误位置。position 是从字符串开头计算的字符偏移量，line 和 column 则是行列位置。',
+              '先修复第一个错误。后续错误可能只是前一个缺失引号或括号造成的连锁反应。',
+            ],
+          },
+          { type: 'code', language: 'javascript', code: inspectJsonResponseSnippet },
+          {
+            type: 'paragraph',
+            text: '上面的代码先读取原始文本，再验证状态码和 Content-Type，最后移除可能存在的 BOM 并解析。这样可以把网络响应问题和真正的 JSON 语法问题分开。',
+          },
+          {
+            type: 'paragraph',
+            text: '错误提示中的 position 往往指向解析器停止的位置，而不是错误开始的位置。例如 Missing comma 可能在下一行字段名处报错，真正需要补逗号的位置却在上一行末尾。定位时要向前检查几个字符。',
+          },
+          { type: 'heading', level: 2, text: '如何修复 Invalid JSON Format？' },
+          { type: 'heading', level: 3, text: '先把内容恢复成严格 JSON' },
+          {
+            type: 'list',
+            items: [
+              '属性名和字符串统一使用双引号。',
+              '在相邻属性和数组元素之间补上逗号。',
+              '删除对象或数组末尾的尾随逗号。',
+              '补全缺失的引号、右花括号和右方括号。',
+              '把 Python 的 True、False、None 改为 true、false、null。',
+              '删除标准 JSON 不支持的注释、undefined、NaN 和 Infinity。',
+              '转义字符串内部的双引号、反斜杠、换行和控制字符。',
+            ],
+          },
+          { type: 'heading', level: 3, text: '接口返回 HTML 时修复源头' },
+          {
+            type: 'paragraph',
+            text: '如果原始响应以 <!DOCTYPE 或 <html 开头，不要用字符串替换把它“改成 JSON”。应该修正接口地址、认证、代理配置或服务端异常，并确保成功和失败响应都返回明确的状态码与正确 Content-Type。',
+          },
+          { type: 'heading', level: 3, text: '不要手工拼接 JSON 字符串' },
+          {
+            type: 'paragraph',
+            text: '动态生成 JSON 时使用 JSON.stringify，而不是用加号拼接字符串。JSON.stringify 会正确处理引号、反斜杠和换行，能从源头减少 Missing comma 和未转义字符。',
+          },
+          { type: 'heading', level: 3, text: '自动修复后还要验证结构' },
+          {
+            type: 'paragraph',
+            text: '自动修复适合处理尾逗号、单引号、注释和未加引号的 key，但无法可靠猜测缺失字段或错误嵌套的真实意图。修复后应重新格式化，并抽查关键字段；如果数据有业务约束，再使用 JSON Schema 验证字段类型和必填项。',
+          },
+          { type: 'heading', level: 2, text: '推荐在线 JSON Validator：ToolGarden' },
+          {
+            type: 'paragraph',
+            text: '不确定是哪一个字符导致 JSON Parse Error 时，可以使用 ToolGarden（toolgarden.xyz）的在线 JSON Validator。粘贴内容后即可验证语法并格式化结构，比在一整行压缩 JSON 中手工数 position 更快。',
+          },
+          {
+            type: 'list',
+            items: [
+              '快速判断内容是不是有效 JSON。',
+              '格式化嵌套对象和数组，方便检查逗号与括号。',
+              'JSON 校验和格式化在浏览器本地完成，输入内容无需作为文件上传处理。',
+              '遇到非标准 JSON 时，可继续使用 ToolGarden JSON 修复清洗转换为严格 JSON。',
             ],
           },
           {
             type: 'callout',
-            title: 'ToolGarden JSON 修复清洗',
-            text: '粘贴报错 JSON 后，可以自动清理常见非标准语法，并输出标准格式化 JSON，适合快速处理配置和接口样本。',
-            href: '/json-repair',
-            linkLabel: '打开 JSON 修复清洗',
+            title: '用 ToolGarden 验证并格式化 JSON',
+            text: '把报错内容粘贴到在线 JSON Validator，先定位第一个语法错误，再将修复后的结果格式化，确认对象、数组和字段结构完整。',
+            href: '/json-format',
+            linkLabel: '打开在线 JSON Validator',
           },
           { type: 'heading', level: 2, text: '总结' },
           {
             type: 'paragraph',
-            text: 'Unexpected token 不是一个具体错误，而是一类语法错误的入口提示。先看 token 字符，再结合数据来源排查，通常很快就能定位问题。',
+            text: '遇到 Unexpected token in JSON at position 0 时，先看原始响应，不要急着改字段。遇到 Missing comma、Invalid JSON Format 或 JSON Syntax Error 时，从最早的错误位置向前检查引号、逗号和括号。修复后再用 ToolGarden 在线 JSON Validator 验证一次，可以避免把仍然损坏的数据带回程序。',
           },
         ],
         faq: [
           {
-            question: "为什么本地跑 JSON.parse 没问题，部署到线上就报 Unexpected token？",
-            answer: "线上和本地拿到的字符串往往不一样。常见原因有：CDN 或反向代理在响应里插入了 HTML 错误页，导致解析器看到 < 就报错；接口返回带 BOM 的 UTF-8，本地编辑器隐藏了 BOM 而运行时没有；或者服务端拼接 JSON 时把 undefined 写了进去。定位方法是先打印 typeof 和 length，再用 charCodeAt(0) 查是否为 0xFEFF，最后确认返回状态码是 200 且 Content-Type 是 application/json，不要盲目改代码。",
+            question: 'Unexpected token in JSON at position 0 最常见的原因是什么？',
+            answer: '最常见的原因是输入第一个字符就不是合法 JSON。接口可能返回了 HTML 登录页、404 页面、代理错误文本或带 BOM 的文件。先读取原始响应并查看前几十个字符，同时检查 HTTP 状态码和 Content-Type。只有确认内容确实是 JSON 后，才需要继续检查字段语法。',
           },
           {
-            question: "JSON 里能用单引号吗？为什么复制到工具里就报错？",
-            answer: "标准 JSON 只允许双引号，单引号会立即触发 Unexpected token。它常出现在从 Python dict、JavaScript 对象字面量、日志、YAML 里直接复制过来的场景。修复方式有两种：如果只是零星几处，手工把 ' 替换为 \"；如果是大段代码，可以用 JSON5 或宽松解析器先解析再输出为严格 JSON。长期来说建议在源头约定统一格式：接口和配置文件必须是严格 JSON，示例代码里再用编程语言原生语法，避免混用。",
+            question: 'Missing comma in JSON 为什么经常指向下一行？',
+            answer: '解析器只有在读到下一个属性名或数组元素时，才会发现前一个值后面缺少分隔符。因此报错位置通常是下一行的开头，真正需要补逗号的位置在上一行末尾。使用格式化后的多行视图，并从错误位置向前检查一个字段，通常就能找到。',
           },
           {
-            question: "报错说位置是 position 42，怎么快速定位到具体哪一行？",
-            answer: "position 指的是从字符串开头算起的第 42 个字符，不是行号。可以把 JSON 字符串放进能显示光标位置的编辑器（VS Code 状态栏、在线工具都可），跳到该偏移量即可。如果 JSON 已经压缩成一行，先用格式化工具展开再定位。经验上，报错位置往往指向的是错误的下一位，比如提示 position 42 报 Unexpected token }，真正问题通常是 41 位的多余逗号或缺失引号，务必往前看一两个字符。",
+            question: 'JSON Parse Error、JSON Decode Error 和 JSON Syntax Error 有什么区别？',
+            answer: '它们通常是不同语言或工具对同一类问题的命名。JavaScript 常说 parse error 或 Unexpected token，Python 常抛出 JSONDecodeError，在线工具可能显示 syntax error 或 invalid format。排查方法相同：确认输入类型和原始内容，再根据 line、column 或 position 检查最早的非法字符。',
           },
           {
-            question: "把 JSON 修好后能自动帮我修复所有错误吗？",
-            answer: "自动修复工具擅长处理常见小错：尾随逗号、注释、单引号、未加引号的 key。但遇到语义型错误时，比如字符串中间缺了一个结束引号导致后面的字段都被当成同一个字符串，或者数组和对象嵌套错位，机器就无法猜测原始意图，可能修出来的仍然不是你要的结构。建议先跑一次自动修复解决语法层面的问题，再用格式化工具展开，肉眼扫一遍关键字段，最后配合 JSON Schema 校验业务字段是否齐全。",
+            question: '在线 JSON Validator 能自动修复所有 Invalid JSON Format 吗？',
+            answer: '不能。Validator 的首要工作是确认语法并定位错误。ToolGarden JSON 修复清洗可以处理尾逗号、注释、单引号和未加引号 key 等常见问题，但无法确定缺失字段、错误嵌套或被截断内容原本应该是什么。自动修复后仍要检查关键数据，并在需要时使用 JSON Schema 验证业务规则。',
           },
           {
-            question: "报 Unexpected end of JSON input 和 Unexpected token 有什么区别？",
-            answer: "Unexpected token 表示解析器看到了一个不该出现的字符，比如多余的逗号、丢引号；Unexpected end of JSON input 则表示解析器还没读到期望的结束符就走到了字符串末尾，通常意味着 JSON 被截断了。前者多因手写错误或拼接问题；后者常见于网络请求被中断、后端流式输出没结束、大文件读取只读了一半。排查时前者关注错误位置附近的字符，后者关注整体长度和最后一个字符是否为 } 或 ]。",
+            question: '可以把包含敏感信息的 JSON 放进 ToolGarden Validator 吗？',
+            answer: 'ToolGarden 的 JSON 格式化和校验在浏览器本地执行，JSON 内容无需作为文件上传处理。不过在处理生产数据时仍建议先删除访问令牌、密码、身份证号和其他敏感字段，并避免在共享设备上保留剪贴板或浏览器历史中的机密内容。',
           },
         ],
       },
       en: {
-        title: 'How to Fix JSON Unexpected token Errors',
-        excerpt: 'Unexpected token usually means the JSON parser found a character that is not valid at that position, such as a trailing comma, comment, single quote, or HTML response.',
-        metaTitle: 'How to Fix JSON Unexpected token Errors',
-        metaDescription: 'Learn common causes of JSON Unexpected token errors, including trailing commas, comments, single quotes, unquoted keys, [object Object], and HTML responses.',
-        readingTime: '7 min read',
-        tags: ['JSON error', 'Unexpected token', 'JSON repair', 'JSON validation'],
+        title: 'Unexpected token in JSON at position 0: Causes and Fixes',
+        excerpt: 'Trace raw responses, error positions, missing commas, invalid JSON, and decode errors, then verify the repaired result with the ToolGarden online JSON Validator.',
+        metaTitle: 'Fix Unexpected token at JSON position 0',
+        metaDescription: 'Fix Unexpected token at position 0, missing commas, invalid JSON, decode errors, and syntax errors with the privacy-friendly ToolGarden JSON Validator.',
+        readingTime: '10 min read',
+        tags: ['JSON Parse Error', 'Unexpected token', 'Invalid JSON', 'JSON Validator'],
         relatedTools: [
+          {
+            label: 'ToolGarden Online JSON Validator',
+            href: '/json-format',
+            description: 'Format and validate JSON in the browser to find syntax problems quickly.',
+          },
           {
             label: 'JSON Repair',
             href: '/json-repair',
-            description: 'Clean comments, trailing commas, single quotes, unquoted keys, and other common JSON issues.',
+            description: 'Clean comments, trailing commas, single quotes, unquoted keys, and other non-standard syntax.',
           },
           {
-            label: 'JSON Formatter',
-            href: '/json-format',
-            description: 'Format and validate JSON to locate syntax problems quickly.',
-          },
-          {
-            label: "Regex Tester",
-            href: "/regex",
-            description: "When hand-fixing broken JSON, use a regex to locate control characters, BOMs, or fullwidth punctuation.",
+            label: 'JSON Schema Validator',
+            href: '/json-schema',
+            description: 'Check required fields, data types, and nested structures after syntax repair.',
           },
         ],
         blocks: [
           {
             type: 'lead',
-            text: 'Unexpected token means the parser reached a character that should not appear at that point in valid JSON.',
+            text: 'Unexpected token in JSON at position 0, JSON Parse Error, and Invalid JSON Format all mean that the parser did not receive complete, valid standard JSON.',
           },
           {
             type: 'paragraph',
-            text: 'You may see this in JSON.parse, API debugging, config imports, or validation tools. The character in the message matters: Unexpected token }, Unexpected token o, and Unexpected token < usually point to different root causes.',
+            text: 'The cause may be one missing comma, but it may also be an HTML login page, an empty response, or text that begins with a hidden BOM. This guide follows a practical sequence: understand the cause, locate the first failure, repair it, and verify the result with the ToolGarden online JSON Validator.',
           },
-          { type: 'heading', level: 2, text: 'The Most Common Cause: A Trailing Comma' },
+          { type: 'heading', level: 2, text: 'Why Do JSON Parse Errors Happen?' },
+          { type: 'heading', level: 3, text: '1. The response at position 0 is not JSON' },
+          {
+            type: 'paragraph',
+            text: 'Position 0 means the parser failed on the first character. An API expected to return JSON may instead return an HTML error page, login form, or proxy message beginning with <. Fix the URL, authentication, or server response before changing JSON fields.',
+          },
+          {
+            type: 'paragraph',
+            text: 'A UTF-8 BOM can cause the same problem because the invisible character appears before the opening brace. An empty body more often produces Unexpected end of JSON input, which also points back to the data source.',
+          },
+          { type: 'heading', level: 3, text: '2. Invalid quotes or property names' },
+          { type: 'code', language: 'json', code: invalidQuotesJson },
+          {
+            type: 'paragraph',
+            text: 'Standard JSON is stricter than a JavaScript object literal. Property names and strings require double quotes, while quotes inside a string must be escaped. Single quotes, smart quotes, unquoted keys, and raw line breaks trigger a JSON Syntax Error.',
+          },
+          { type: 'heading', level: 3, text: '3. Missing comma in JSON' },
+          { type: 'code', language: 'json', code: missingCommaJson },
+          {
+            type: 'paragraph',
+            text: 'When a comma is missing between object properties or array items, the parser usually fails near the next item. The reported position marks where parsing became impossible, while the missing comma is often at the end of the previous line.',
+          },
+          { type: 'heading', level: 3, text: '4. A trailing comma' },
           { type: 'code', language: 'json', code: invalidUnexpectedTokenJson },
           {
             type: 'paragraph',
-            text: 'Standard JSON does not allow a comma after the final object property or array item.',
+            text: 'Some JavaScript syntax accepts a trailing comma, but strict JSON does not. Remove the comma after the last property or item.',
           },
           { type: 'code', language: 'json', code: fixedUnexpectedTokenJson },
-          { type: 'heading', level: 2, text: 'What Different Tokens Often Mean' },
+          { type: 'heading', level: 3, text: '5. Truncated JSON or unclosed delimiters' },
+          {
+            type: 'paragraph',
+            text: 'An interrupted download, unfinished stream, or incomplete copy can end while a string, object, or array is still open. These cases often appear as Unexpected end of JSON input or JSON Decode Error. Inspect the final character and match every brace, bracket, and quote.',
+          },
+          { type: 'heading', level: 3, text: '6. Parsing an object twice' },
+          {
+            type: 'paragraph',
+            text: 'JSON.parse expects a string. Passing an existing JavaScript object may coerce it to [object Object] and produce Unexpected token o. Check typeof first and only parse strings.',
+          },
+          { type: 'heading', level: 2, text: 'What Do Common JSON Errors Mean?' },
           {
             type: 'table',
-            headers: ['Error message', 'Common cause', 'How to fix it'],
+            headers: ['Error message', 'Likely cause', 'Check first'],
             rows: [
-              ['Unexpected token }', 'Trailing comma or missing value', 'Check object and array endings'],
-              ['Unexpected token o', 'Parsing an object again as JSON text', 'Make sure JSON.parse receives a string'],
-              ['Unexpected token <', 'The response is HTML', 'Check the API URL, auth state, or server error page'],
-              ['Unexpected token /', 'The JSON contains comments', 'Remove line or block comments'],
-              ['Unexpected token n', 'Python-style None', 'Use JSON null instead'],
+              ['Unexpected token in JSON at position 0', 'The first character is HTML, a BOM, or plain text', 'Inspect the first 80 raw characters'],
+              ['Unexpected token <', 'The server returned HTML', 'Check status, redirects, and authentication'],
+              ['Unexpected token o', 'JSON.parse received an object', 'Check typeof input'],
+              ['Missing comma in JSON', 'Properties or items lack a separator', 'Inspect the field before the error'],
+              ['Invalid JSON Format', 'Quotes, commas, brackets, or values are invalid', 'Validate the earliest error'],
+              ['JSON Decode Error', 'Truncation, encoding, or incomplete syntax', 'Check encoding and the final character'],
+              ['JSON Syntax Error', 'The parser found an illegal token', 'Use line, column, or position'],
             ],
           },
-          { type: 'heading', level: 2, text: 'A Practical Debugging Order' },
+          { type: 'heading', level: 2, text: 'How to Locate a JSON Error' },
           {
             type: 'list',
             ordered: true,
             items: [
-              'Confirm the content is JSON, not HTML, logs, or plain text.',
-              'Check for comments, trailing commas, single quotes, and unquoted keys.',
-              'Look for Python-style True, False, or None values.',
-              'If it came from an API, inspect the HTTP status code and response headers.',
-              'Format the fixed JSON to confirm the structure is complete.',
+              'Preserve the raw text. Do not trim, replace characters, or swallow the original exception yet.',
+              'Check the input type. JSON.parse should receive a string, not an object, undefined, or null.',
+              'Inspect the first and final characters. JSON usually starts with { or [ and ends with the matching } or ].',
+              'Inspect HTTP details. Check the status, Content-Type, redirects, and unmodified response body.',
+              'Jump to the error offset. Position is a character offset, while line and column identify a row and column.',
+              'Fix the first error first. Later failures may be a cascade from one missing quote or bracket.',
+            ],
+          },
+          { type: 'code', language: 'javascript', code: inspectJsonResponseSnippet },
+          {
+            type: 'paragraph',
+            text: 'This code reads the raw text before validating the status and Content-Type. It then removes a possible BOM before parsing, which separates response failures from genuine JSON syntax failures.',
+          },
+          {
+            type: 'paragraph',
+            text: 'The reported position often marks where the parser stopped rather than where the mistake started. A missing comma may be reported at the next property name even though the correction belongs at the end of the previous line.',
+          },
+          { type: 'heading', level: 2, text: 'How to Fix Invalid JSON Format' },
+          { type: 'heading', level: 3, text: 'Restore strict JSON syntax' },
+          {
+            type: 'list',
+            items: [
+              'Use double quotes for property names and strings.',
+              'Add commas between adjacent properties and array items.',
+              'Remove trailing commas from objects and arrays.',
+              'Close every quote, brace, and bracket.',
+              'Convert Python True, False, and None to true, false, and null.',
+              'Remove comments, undefined, NaN, and Infinity from strict JSON.',
+              'Escape quotes, backslashes, newlines, and control characters inside strings.',
+            ],
+          },
+          { type: 'heading', level: 3, text: 'Fix HTML responses at the source' },
+          {
+            type: 'paragraph',
+            text: 'If the body begins with <!DOCTYPE or <html, do not replace characters to make it look like JSON. Correct the endpoint, authentication, proxy, or server exception, and return accurate status codes and Content-Type headers for both success and failure responses.',
+          },
+          { type: 'heading', level: 3, text: 'Do not concatenate JSON by hand' },
+          {
+            type: 'paragraph',
+            text: 'Use JSON.stringify when generating JSON dynamically. It escapes quotes, backslashes, and line breaks correctly and prevents many missing-comma and invalid-string bugs.',
+          },
+          { type: 'heading', level: 3, text: 'Validate structure after automatic repair' },
+          {
+            type: 'paragraph',
+            text: 'Automatic repair works well for trailing commas, comments, single quotes, and unquoted keys. It cannot reliably infer missing fields or the intended nesting of truncated data. Format the repaired result, inspect critical values, and use JSON Schema when the payload has business constraints.',
+          },
+          { type: 'heading', level: 2, text: 'Recommended Online JSON Validator: ToolGarden' },
+          {
+            type: 'paragraph',
+            text: 'When the failing character is unclear, paste the content into the ToolGarden online JSON Validator at toolgarden.xyz. It validates and formats the structure, which is faster than counting a position inside one minified line.',
+          },
+          {
+            type: 'list',
+            items: [
+              'Confirm whether the input is valid JSON.',
+              'Format nested objects and arrays so commas and brackets are easy to inspect.',
+              'Run JSON validation and formatting locally in the browser without uploading the input as a file.',
+              'Continue to ToolGarden JSON Repair when the source uses non-standard JSON syntax.',
             ],
           },
           {
             type: 'callout',
-            title: 'ToolGarden JSON Repair',
-            text: 'Paste broken JSON-like text, clean common non-standard syntax, and output formatted standard JSON.',
-            href: '/json-repair',
-            linkLabel: 'Open JSON Repair',
+            title: 'Validate and format JSON with ToolGarden',
+            text: 'Paste the failing input into the online JSON Validator, locate the first syntax error, then format the repaired result to confirm the complete structure.',
+            href: '/json-format',
+            linkLabel: 'Open Online JSON Validator',
           },
           { type: 'heading', level: 2, text: 'Summary' },
           {
             type: 'paragraph',
-            text: 'Unexpected token is not one single bug. It is a parser signal. Start with the reported character, then verify the source data and syntax rules.',
+            text: 'For Unexpected token in JSON at position 0, inspect the raw response before editing fields. For Missing comma, Invalid JSON Format, or JSON Syntax Error, work backward from the earliest error and check quotes, commas, and brackets. Verify the repaired result once more with the ToolGarden online JSON Validator before returning it to your application.',
           },
         ],
         faq: [
           {
-            question: "Why does JSON.parse work locally but throw Unexpected token in production?",
-            answer: "The string you receive in production is often not the string you tested. A CDN or reverse proxy may inject an HTML error page, so the parser hits < and fails. UTF-8 with a BOM is another classic: your editor hides the invisible 0xFEFF while the runtime does not. Server code may also stringify undefined into the output. Before changing parser logic, log typeof and length, check charCodeAt(0), and confirm the response is really 200 with Content-Type application/json. Fix the pipeline, not the parser.",
+            question: 'What is the most common cause of Unexpected token in JSON at position 0?',
+            answer: 'The first input character is not valid JSON. The endpoint may have returned an HTML login page, a 404 document, a proxy message, or a file with a BOM. Read the raw response, inspect its first characters, and check the HTTP status and Content-Type before editing JSON fields.',
           },
           {
-            question: "Can JSON use single quotes? Why does pasting fail immediately?",
-            answer: "Strict JSON only allows double quotes, so single quotes trigger Unexpected token right away. This usually happens when you copy from a Python dict, a JavaScript object literal, a log line, or a YAML snippet. For small fixes replace ' with \" manually. For larger blobs, parse with a lenient library such as JSON5 and re-serialize as strict JSON. Long term, agree on one contract: APIs and config files stay strict JSON, while examples use each language's native syntax. Mixing the two is what causes recurring incidents.",
+            question: 'Why does Missing comma in JSON point to the next line?',
+            answer: 'The parser discovers the missing separator only when it reaches the next property name or array item. The reported position therefore appears at the next line even though the comma belongs at the end of the previous line. Format the input and inspect one field before the reported character.',
           },
           {
-            question: "The error says position 42. How do I map that to a line and column?",
-            answer: "Position 42 is the 42nd character from the start of the string, not the 42nd line. Paste the JSON into an editor that shows the caret offset, such as VS Code, then jump to that offset. If the JSON is minified into a single line, format it first. Also remember that the error location usually points to the character just after the real mistake, so when position 42 says Unexpected token }, the real culprit is often a stray comma or missing quote one or two characters earlier.",
+            question: 'How are JSON Parse Error, JSON Decode Error, and JSON Syntax Error different?',
+            answer: 'They are usually different names for the same class of failure. JavaScript often reports parse errors or Unexpected token, Python raises JSONDecodeError, and validators may say syntax error or invalid format. Use the same workflow for all of them: confirm the input type and raw content, then inspect the earliest line, column, or position.',
           },
           {
-            question: "Can auto-repair fix every JSON error for me?",
-            answer: "Auto-repair reliably fixes shallow issues like trailing commas, comments, single quotes and unquoted keys. It struggles with semantic problems, for example a missing closing quote that swallows the next few fields into one giant string, or a bracket that closes the wrong container. In those cases the tool has to guess and may produce something that parses but is not what you meant. Run repair, format the result, eyeball the structure, and validate business fields with a JSON Schema before trusting the output.",
+            question: 'Can an online JSON Validator repair every Invalid JSON Format?',
+            answer: 'No. A validator confirms syntax and identifies the failure. ToolGarden JSON Repair can clean common issues such as trailing commas, comments, single quotes, and unquoted keys, but it cannot know the intended value of missing fields or truncated content. Inspect important data after repair and validate business rules with JSON Schema when needed.',
           },
           {
-            question: "What is the difference between Unexpected end of JSON input and Unexpected token?",
-            answer: "Unexpected token means the parser saw a character where it did not belong, such as a stray comma or an unterminated string. Unexpected end of JSON input means the parser ran out of characters before the structure was complete, so the payload was truncated. The first is usually a hand-editing or concatenation bug near the reported offset. The second is typically a network abort, a streaming response that was cut off, or a file read that stopped early. Check the offending character for the first, and the total length and final character for the second.",
+            question: 'Can I paste sensitive JSON into the ToolGarden Validator?',
+            answer: 'ToolGarden performs JSON formatting and validation locally in the browser, so the JSON does not need to be uploaded as a file for processing. For production data, still remove access tokens, passwords, identity numbers, and other secrets, especially on shared devices or when clipboard history is enabled.',
           },
         ],
       },
