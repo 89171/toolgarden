@@ -1181,6 +1181,7 @@
     "audio-compress": "compress audio online, audio compressor, reduce MP3 file size, lower audio bitrate, MP3 compressor",
     "audio-recorder": "online voice recorder, microphone recorder, record audio online, browser audio recorder, MP3 voice recorder",
     "audio-to-text": "audio to text converter,transcribe audio online,speech to text,Whisper transcription,MP3 to text,audio transcription,audio to text free online,local speech to text,transcribe meeting audio,podcast to text,MP3 to text no upload",
+    "audio-split-stems": "stem separation,split song into stems,vocal remover,extract vocals,extract instrumental,acapella extractor,karaoke maker,isolate drums,isolate bass,isolate guitar,isolate piano,music source separation,Demucs online,free stem splitter no upload",
     "audio-volume": "increase audio volume, decrease audio volume, audio volume changer, make MP3 louder, adjust audio volume online",
     "audio-speed": "change audio speed, audio speed changer, speed up MP3, slow down audio, audio playback speed editor",
     "audio-sample-rate": "audio sample rate converter, change audio sample rate, resample audio online, convert audio to 44100 Hz, convert audio to 48000 Hz",
@@ -2915,6 +2916,76 @@
       "model_failed": "Audio transcription failed."
     }
   },
+  "stem_splitter": {
+    "upload_title": "Upload a song",
+    "model_title": "Choose a model",
+    "models": {
+      "htdemucs": {
+        "name": "4 stems (vocals / drums / bass / other)",
+        "hint": "Cleaner vocals and a stronger \"other\" stem, since guitar and piano stay mixed into it. Pick this if you just need an instrumental."
+      },
+      "htdemucs_6s": {
+        "name": "6 stems (adds guitar / piano)",
+        "hint": "Also outputs guitar and piano, at the cost of a weaker \"other\" stem. Pick this when you need guitar or piano on their own."
+      }
+    },
+    "stems_title": "Choose stems to export",
+    "output_title": "Separated stems",
+    "drop_title": "Click or drag an audio file here",
+    "drop_hint": "Supports MP3, WAV, M4A, FLAC, OGG, and OPUS. Audio is resampled to 44.1 kHz stereo automatically.",
+    "action_separate": "Separate stems",
+    "needs_file": "Pick an audio file first.",
+    "needs_stem": "Check at least one stem to export.",
+    "download_all": "Download all as ZIP",
+    "download_one": "Download",
+    "stems": {
+      "vocals": "Vocals",
+      "drums": "Drums",
+      "bass": "Bass",
+      "guitar": "Guitar",
+      "piano": "Piano",
+      "other": "Other"
+    },
+    "stem_hint": {
+      "vocals": "Lead and backing vocals",
+      "drums": "Kick, snare, cymbals, and other percussion",
+      "bass": "Bass guitar and low-end lines",
+      "guitar": "Electric and acoustic guitar (not separated from each other)",
+      "piano": "Piano and keyboards",
+      "other": "Synths, strings, winds, and everything else"
+    },
+    "select_all": "Select all",
+    "select_none": "Clear",
+    "selected_count": "{count} stems selected",
+    "stage": {
+      "model": "Downloading the separation model",
+      "decode": "Decoding audio",
+      "separating": "Separating (segment {current}/{total})",
+      "encode": "Encoding WAV",
+      "done": "Done"
+    },
+    "model_download_note": "Each model is downloaded the first time you use it (open-source HT-Demucs, MIT licensed; sizes shown above) over 4 parallel connections with a progress bar, then cached in your browser so later runs skip the download. The two models are cached separately.",
+    "privacy_note": "Your audio is never uploaded. Decoding and separation both run locally in your browser; only the model file comes from a public CDN.",
+    "backend_webgpu": "Running with WebGPU acceleration.",
+    "backend_wasm": "No WebGPU detected, falling back to single-threaded WASM. Expect it to be much slower (roughly 6-12 minutes for a 4-minute song).",
+    "unsupported_title": "This device cannot run stem separation",
+    "unsupported_hint": "The model needs roughly 1.5 GB of memory. Use desktop Chrome or Edge; mobile browsers usually cap memory below what the inference requires.",
+    "elapsed": "Took {seconds}s",
+    "errors": {
+      "empty_file": "That file is empty. Pick another one.",
+      "unsupported_input": "That file format is not supported. Upload a common audio format.",
+      "file_too_large": "That file is too large. Upload audio smaller than 128 MB.",
+      "decode_failed": "Could not decode the audio. Try another file, or convert it to MP3/WAV first.",
+      "no_stems_selected": "Select at least one stem to export.",
+      "audio_too_long": "This audio is too long to fit in memory with the stems you selected. Shorten the audio or select fewer stems.",
+      "webgpu_and_wasm_unavailable": "This browser cannot run the separation model. Use desktop Chrome or Edge.",
+      "model_download_failed": "Could not download the model. Check your connection and retry \u2014 it is hosted on HuggingFace, which some networks block.",
+      "session_failed": "Could not load the model, most likely out of GPU or system memory. Close other tabs and retry.",
+      "inference_failed": "Separation failed partway through, usually from running out of memory. Try shorter audio or fewer stems.",
+      "model_failed": "Separation failed, most likely out of memory. Try shorter audio or fewer stems.",
+      "cancelled": "Cancelled."
+    }
+  },
   "whiteboard_tool": {
     "canvas_title": "Whiteboard",
     "draw": "Draw",
@@ -3476,6 +3547,10 @@
     "audio-to-text": {
       "name": "Audio to text",
       "description": "Free online audio transcription tool that loads an open-source Whisper model in the browser and converts speech to text"
+    },
+    "audio-split-stems": {
+      "name": "Stem splitter",
+      "description": "Free online stem separation that loads the open-source HT-Demucs model in your browser and splits a song into vocals, drums, bass, guitar, piano, and other"
     },
     "audio-volume": {
       "name": "Change volume",

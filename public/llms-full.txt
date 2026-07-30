@@ -566,6 +566,16 @@ Canonical examples:
 - English URL: https://toolgarden.xyz/en/audio/to-text
 - Chinese URL: https://toolgarden.xyz/zh/audio/to-text
 
+#### Stem splitter / 音频分轨 (/audio/split-stems)
+- ID: `audio-split-stems`
+- Category: Convert / 转换
+- Icon label: `STM`
+- Featured: yes
+- English description: Free online stem separation that loads the open-source HT-Demucs model in your browser and splits a song into vocals, drums, bass, guitar, piano, and other
+- Chinese description: 在浏览器本地加载开源 HT-Demucs 模型，把歌曲拆分为人声、鼓、贝斯、吉他、钢琴和其他六条轨道
+- English URL: https://toolgarden.xyz/en/audio/split-stems
+- Chinese URL: https://toolgarden.xyz/zh/audio/split-stems
+
 #### Change volume / 修改音量 (/audio/volume)
 - ID: `audio-volume`
 - Category: Convert / 转换

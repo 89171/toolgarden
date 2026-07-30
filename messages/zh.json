@@ -1181,6 +1181,7 @@
     "audio-compress": "音频压缩,在线压缩音频,减小MP3大小,降低音频码率,MP3压缩",
     "audio-recorder": "在线录音,网页录音,麦克风录音,浏览器录音,MP3录音",
     "audio-to-text": "音频转文字,语音转文字,在线音频转文本,Whisper转写,MP3转文字,音频转录,音频转文字在线免费,本地语音转文字,会议录音转文字,播客转文字,MP3转文字不上传",
+    "audio-split-stems": "音频分轨,歌曲分轨,人声分离,提取伴奏,提取人声,消除人声,伴奏提取,鼓组分离,贝斯分离,吉他分离,钢琴分离,在线分轨,Demucs分轨,音乐源分离,卡拉OK伴奏制作,免费分轨不上传",
     "audio-volume": "增大音频音量,降低音频音量,音频音量调整,MP3音量放大,在线修改音量",
     "audio-speed": "修改音频速度,音频变速,MP3加速,音频减速,调整播放速度",
     "audio-sample-rate": "音频采样率转换,修改音频采样率,音频重采样,转44100Hz,转48000Hz",
@@ -2915,6 +2916,76 @@
       "model_failed": "音频转文本失败。"
     }
   },
+  "stem_splitter": {
+    "upload_title": "上传歌曲",
+    "model_title": "选择模型",
+    "models": {
+      "htdemucs": {
+        "name": "4 轨（人声 / 鼓 / 贝斯 / 其他）",
+        "hint": "人声和「其他」更干净，因为不再分出吉他和钢琴。只要伴奏时选这个。"
+      },
+      "htdemucs_6s": {
+        "name": "6 轨（多吉他 / 钢琴）",
+        "hint": "额外输出吉他和钢琴，代价是「其他」轨会变弱。需要单独拿吉他或钢琴时选这个。"
+      }
+    },
+    "stems_title": "选择要导出的轨道",
+    "output_title": "分轨结果",
+    "drop_title": "点击或拖拽音频文件到这里",
+    "drop_hint": "支持 MP3、WAV、M4A、FLAC、OGG、OPUS 等格式，会自动重采样为 44.1kHz 立体声。",
+    "action_separate": "开始分轨",
+    "needs_file": "请先选择一个音频文件。",
+    "needs_stem": "请至少勾选一条要导出的轨道。",
+    "download_all": "打包下载全部",
+    "download_one": "下载",
+    "stems": {
+      "vocals": "人声",
+      "drums": "鼓",
+      "bass": "贝斯",
+      "guitar": "吉他",
+      "piano": "钢琴",
+      "other": "其他"
+    },
+    "stem_hint": {
+      "vocals": "主唱与和声",
+      "drums": "军鼓、底鼓、镲片等打击乐",
+      "bass": "贝斯与低频线条",
+      "guitar": "电吉他与木吉他（不区分两者）",
+      "piano": "钢琴与键盘",
+      "other": "合成器、弦乐、管乐等其余声部"
+    },
+    "select_all": "全选",
+    "select_none": "全不选",
+    "selected_count": "已选 {count} 条轨道",
+    "stage": {
+      "model": "正在下载分轨模型",
+      "decode": "正在解码音频",
+      "separating": "正在分轨（第 {current}/{total} 段）",
+      "encode": "正在编码 WAV",
+      "done": "完成"
+    },
+    "model_download_note": "每个模型首次使用时才下载（开源 HT-Demucs，MIT 许可，体积见上方），采用 4 条连接并行分段下载并显示进度，完成后缓存在浏览器中，之后无需重复下载。两个模型分别缓存。",
+    "privacy_note": "音频不会上传：解码与分轨全部在你的浏览器本地完成，只有模型文件来自公开 CDN。",
+    "backend_webgpu": "正在使用 WebGPU 加速。",
+    "backend_wasm": "未检测到 WebGPU，正在使用单线程 WASM，速度会明显偏慢（4 分钟歌曲约需 6–12 分钟）。",
+    "unsupported_title": "当前设备无法运行分轨",
+    "unsupported_hint": "分轨模型需要约 1.5GB 内存，建议使用桌面版 Chrome 或 Edge。移动端浏览器的内存上限通常不足以完成推理。",
+    "elapsed": "耗时 {seconds} 秒",
+    "errors": {
+      "empty_file": "文件为空，请重新选择。",
+      "unsupported_input": "不支持该文件格式，请上传常见音频格式。",
+      "file_too_large": "文件过大，请上传小于 128MB 的音频。",
+      "decode_failed": "音频解码失败，请换一个文件或先转换为 MP3/WAV。",
+      "no_stems_selected": "请至少选择一条要导出的轨道。",
+      "audio_too_long": "音频过长，当前选择的轨道数下内存不足。请缩短音频或减少选中的轨道。",
+      "webgpu_and_wasm_unavailable": "当前浏览器不支持运行分轨模型，请改用桌面版 Chrome 或 Edge。",
+      "model_download_failed": "模型下载失败，请检查网络后重试。模型来自 HuggingFace，网络受限时可能无法访问。",
+      "session_failed": "模型加载失败，可能是显存或内存不足。请关闭其他标签页后重试。",
+      "inference_failed": "分轨中途失败，通常是内存不足。请缩短音频或减少选中的轨道。",
+      "model_failed": "分轨失败，可能是内存不足。请缩短音频、减少选中轨道后重试。",
+      "cancelled": "已取消。"
+    }
+  },
   "whiteboard_tool": {
     "canvas_title": "白板",
     "draw": "画笔",
@@ -3476,6 +3547,10 @@
     "audio-to-text": {
       "name": "音频转文本",
       "description": "上传音频后在浏览器本地加载开源 Whisper 模型，将语音转写为文本"
+    },
+    "audio-split-stems": {
+      "name": "音频分轨",
+      "description": "在浏览器本地加载开源 HT-Demucs 模型，把歌曲拆分为人声、鼓、贝斯、吉他、钢琴和其他六条轨道"
     },
     "audio-volume": {
       "name": "修改音量",

@@ -178,6 +178,9 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - **Audio to text / 音频转文本** (`/audio/to-text`): Free online audio transcription tool that loads an open-source Whisper model in the browser and converts speech to text
   - English: https://toolgarden.xyz/en/audio/to-text
   - Chinese: https://toolgarden.xyz/zh/audio/to-text
+- **Stem splitter / 音频分轨** (`/audio/split-stems`): Free online stem separation that loads the open-source HT-Demucs model in your browser and splits a song into vocals, drums, bass, guitar, piano, and other
+  - English: https://toolgarden.xyz/en/audio/split-stems
+  - Chinese: https://toolgarden.xyz/zh/audio/split-stems
 - **Change volume / 修改音量** (`/audio/volume`): Free online tool to adjust audio volume and export MP3 locally in your browser
   - English: https://toolgarden.xyz/en/audio/volume
   - Chinese: https://toolgarden.xyz/zh/audio/volume

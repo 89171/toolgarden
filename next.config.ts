@@ -6,9 +6,24 @@ const nextIntlRequestConfig = './i18n/request.ts';
 const onnxRuntimeWasmEntry = 'onnxruntime-web/wasm';
 const sharedSecurityHeaders = securityHeaders as Array<{ key: string; value: string }>;
 
+/**
+ * Dev headers minus the CSP.
+ *
+ * The shared policy uses `'strict-dynamic'`, which disables host-based
+ * allowlisting — `'self'` stops applying and only nonce/hash-tagged scripts
+ * load. A static export cannot mint per-request nonces, so under that policy
+ * every first-party bundle (including Turbopack's HMR client) is blocked and
+ * no client component ever hydrates, which makes the dev server useless for
+ * testing interactive tools. Production is unaffected: it serves headers from
+ * out/_headers, not from here.
+ */
+const developmentHeaders = sharedSecurityHeaders.filter(
+  (header) => header.key !== 'Content-Security-Policy',
+);
+
 // Static exports cannot apply Next.js response headers. Production headers are
 // emitted as out/_headers by scripts/harden-static-export.mjs instead, while
-// the development server still receives the same policy here.
+// the development server receives the same policy minus the CSP (see above).
 const developmentHeaderConfig = process.env.NODE_ENV === 'production'
   ? {}
   : {
@@ -17,12 +32,12 @@ const developmentHeaderConfig = process.env.NODE_ENV === 'production'
         return [
           {
             source: '/:path*',
-            headers: sharedSecurityHeaders,
+            headers: developmentHeaders,
           },
           {
             source: '/sw.js',
             headers: [
-              ...sharedSecurityHeaders,
+              ...developmentHeaders,
               { key: 'Service-Worker-Allowed', value: '/' },
               { key: 'Cache-Control', value: 'no-cache, no-store, must-revalidate' },
             ],
@@ -30,7 +45,7 @@ const developmentHeaderConfig = process.env.NODE_ENV === 'production'
           {
             source: '/manifest.webmanifest',
             headers: [
-              ...sharedSecurityHeaders,
+              ...developmentHeaders,
               { key: 'Cache-Control', value: 'public, max-age=86400' },
             ],
           },

@@ -433,6 +433,15 @@ export const toolRegistry: ToolMeta[] = [
     featured: true,
   },
   {
+    id: 'audio-split-stems',
+    name: '音频分轨',
+    description: '在浏览器本地把歌曲拆分为人声、鼓、贝斯、吉他、钢琴和其他六条轨道',
+    path: '/audio/split-stems',
+    icon: 'STM',
+    category: 'convert',
+    featured: true,
+  },
+  {
     id: 'audio-volume',
     name: '修改音量',
     description: '调整音频音量大小并在浏览器本地导出 MP3',
