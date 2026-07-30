@@ -7,15 +7,19 @@ import {
   STEM_SAMPLE_RATE,
   STEM_SEGMENT_SAMPLES,
   STEM_STRIDE_SAMPLES,
+  STEM_WAVEFORM_BUCKETS,
   accumulateWeight,
   accumulateWindowed,
   buildStemFilename,
+  buildWaveformPath,
   clampSelection,
+  computeWaveformPeaks,
   createFadeWindow,
   defaultStemSelection,
   encodeWavPcm16,
   estimateStemMemoryBytes,
   fitsMemoryBudget,
+  formatClock,
   looksLikeOnnxModel,
   maxDurationSecondsFor,
   normalizeByWeight,
@@ -332,6 +336,85 @@ describe('encodeWavPcm16', () => {
   });
 });
 
+describe('computeWaveformPeaks', () => {
+  it('returns one peak per bucket', () => {
+    const samples = new Float32Array(1000).fill(0.5);
+    expect(computeWaveformPeaks([samples], 64)).toHaveLength(64);
+    expect(computeWaveformPeaks([samples])).toHaveLength(STEM_WAVEFORM_BUCKETS);
+  });
+
+  it('scales full-scale audio to 255 and silence to 0', () => {
+    expect(computeWaveformPeaks([new Float32Array(100).fill(1)], 4)).toEqual(
+      Uint8Array.from([255, 255, 255, 255]),
+    );
+    expect(computeWaveformPeaks([new Float32Array(100)], 4)).toEqual(
+      Uint8Array.from([0, 0, 0, 0]),
+    );
+  });
+
+  it('takes the absolute peak, so negative-only content still shows', () => {
+    const negative = new Float32Array(100).fill(-1);
+    expect(computeWaveformPeaks([negative], 2)).toEqual(Uint8Array.from([255, 255]));
+  });
+
+  it('takes the max across channels so one-sided stereo content survives', () => {
+    const loud = new Float32Array(100).fill(1);
+    const silent = new Float32Array(100);
+    expect(computeWaveformPeaks([silent, loud], 2)).toEqual(Uint8Array.from([255, 255]));
+  });
+
+  it('localises peaks to their own bucket', () => {
+    const samples = new Float32Array(100);
+    // 只在后四分之一放满量程，前面三个桶必须仍为 0。
+    samples.fill(1, 75);
+    const peaks = computeWaveformPeaks([samples], 4);
+    expect(Array.from(peaks)).toEqual([0, 0, 0, 255]);
+  });
+
+  it('handles empty input without throwing', () => {
+    expect(computeWaveformPeaks([], 8)).toEqual(new Uint8Array(8));
+    expect(computeWaveformPeaks([new Float32Array(0)], 8)).toEqual(new Uint8Array(8));
+  });
+});
+
+describe('buildWaveformPath', () => {
+  it('produces a closed path covering both envelopes', () => {
+    const d = buildWaveformPath(Uint8Array.from([255, 0, 255]), 100);
+    expect(d.startsWith('M')).toBe(true);
+    expect(d.endsWith('Z')).toBe(true);
+    // 每个桶在上下包络各有一个点。
+    expect(d.split('L')).toHaveLength(6);
+  });
+
+  it('spans the full height at full scale and stays centred at silence', () => {
+    expect(buildWaveformPath(Uint8Array.from([255]), 100)).toContain('0 0.00');
+    // 静音也要留 0.5 半高，否则轨道看起来是空的。
+    const silent = buildWaveformPath(Uint8Array.from([0]), 100);
+    expect(silent).toContain('0 49.50');
+    expect(silent).toContain('0 50.50');
+  });
+
+  it('returns an empty string for no peaks', () => {
+    expect(buildWaveformPath(new Uint8Array(0))).toBe('');
+  });
+});
+
+describe('formatClock', () => {
+  it('formats as mm:ss.d', () => {
+    expect(formatClock(2.24)).toBe('00:02.2');
+    expect(formatClock(0)).toBe('00:00.0');
+    expect(formatClock(65.7)).toBe('01:05.7');
+    expect(formatClock(600)).toBe('10:00.0');
+  });
+
+  it('treats invalid or negative input as zero', () => {
+    // audio.duration 在元数据就绪前是 NaN，必须不能渲染出 "NaN:NaN"。
+    expect(formatClock(Number.NaN)).toBe('00:00.0');
+    expect(formatClock(Number.POSITIVE_INFINITY)).toBe('00:00.0');
+    expect(formatClock(-5)).toBe('00:00.0');
+  });
+});
+
 describe('memory budgeting', () => {
   it('grows with both duration and stem count', () => {
     const oneStem = estimateStemMemoryBytes(44_100 * 60, 1);
@@ -419,6 +502,12 @@ describe('stem splitter copy coverage', () => {
     'download_all',
     'clear_cache',
     'download_one',
+    'play_all',
+    'pause_all',
+    'stop',
+    'volume',
+    'mute',
+    'unmute',
     'select_all',
     'select_none',
     'selected_count',

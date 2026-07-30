@@ -25,6 +25,7 @@ import {
 interface WorkerTrack {
   source: StemSource;
   wav: Uint8Array<ArrayBuffer>;
+  peaks: Uint8Array<ArrayBuffer>;
 }
 
 type WorkerResponse =
@@ -322,6 +323,7 @@ function runSeparation(
       const tracks: StemTrack[] = message.tracks.map((track) => ({
         source: track.source,
         wav: track.wav,
+        peaks: track.peaks,
         filename: buildStemFilename(file.name, track.source),
       }));
 

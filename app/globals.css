@@ -58,6 +58,12 @@
   --syntax-key:        #1f2937;   /* gray-800 */
   --syntax-bracket:    #1f2937;   /* gray-800 */
   --syntax-comment:    #9ca3af;   /* gray-400 */
+
+  /* 波形（音频分轨多轨播放器） */
+  --waveform-track:    #111827;   /* gray-900，轨道底色，深底更易读波形 */
+  --waveform-fill:     #34d399;   /* emerald-400，波形主体 */
+  --waveform-dim:      #4b5563;   /* gray-600，静音轨道的波形 */
+  --waveform-playhead: #f9fafb;   /* gray-50，播放头 */
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -106,6 +112,12 @@
     --syntax-key:        #e5e7eb;
     --syntax-bracket:    #e5e7eb;
     --syntax-comment:    #6b7280;
+
+    /* 深色下轨道底色压暗一档，与页面背景区分而不刺眼 */
+    --waveform-track:    #0f172a;
+    --waveform-fill:     #34d399;
+    --waveform-dim:      #4b5563;
+    --waveform-playhead: #f9fafb;
   }
 }
 
@@ -165,6 +177,11 @@
   --color-syntax-key:          var(--syntax-key);
   --color-syntax-bracket:      var(--syntax-bracket);
   --color-syntax-comment:      var(--syntax-comment);
+
+  --color-waveform-track:      var(--waveform-track);
+  --color-waveform-fill:       var(--waveform-fill);
+  --color-waveform-dim:        var(--waveform-dim);
+  --color-waveform-playhead:   var(--waveform-playhead);
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

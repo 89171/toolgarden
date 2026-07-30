@@ -64,7 +64,7 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - **Convert to PDF / 转为 PDF** (`/pdf/to-pdf`): Free online tool to convert Word, Excel, PowerPoint, EPUB, MOBI, JPG, PNG, WebP, TXT, Markdown, and HTML to PDF
   - English: https://toolgarden.xyz/en/pdf/to-pdf
   - Chinese: https://toolgarden.xyz/zh/pdf/to-pdf
-- **PDF to Word / PDF 转 Word** (`/pdf/to-word`): Free online tool to extract text from PDF files and generate editable Word DOCX documents
+- **PDF to Word / PDF 转 Word** (`/pdf/to-word`): Free online tool to preserve PDF text sizes, basic styling, and images in editable Word DOCX documents
   - English: https://toolgarden.xyz/en/pdf/to-word
   - Chinese: https://toolgarden.xyz/zh/pdf/to-word
 - **Merge PDF / 合并 PDF** (`/pdf/merge`): Free online PDF merger that combines multiple PDF files into one document with drag-and-drop reordering

@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
+import { StemPlayer, type StemPlayerTrack } from '@/components/StemPlayer';
 import { formatAudioFileSize, getAudioAcceptValue } from '@/lib/utils/audio';
 import { createZipArchive } from '@/lib/utils/zip';
 import {
@@ -31,18 +32,13 @@ interface StemSplitterProps {
 }
 
 /**
- * 分轨结果的可播放形态。
+ * 分轨结果的可播放形态，形状由 StemPlayer 定义。
  *
- * 只保留 Blob 而丢掉原始 Uint8Array：Blob 构造时已拷贝一份数据，
- * 两者同时持有会让 6 轨 4 分钟歌多占约 250MB。
+ * 只保留 Blob 而丢掉原始 WAV Uint8Array：Blob 构造时已拷贝一份数据，
+ * 两者同时持有会让 6 轨 4 分钟歌多占约 250MB。峰值数组要留着给波形用，
+ * 但它只有 1.2KB/轨，可以忽略。
  */
-interface ReadyTrack {
-  source: StemSource;
-  filename: string;
-  blob: Blob;
-  url: string;
-  size: number;
-}
+type ReadyTrack = StemPlayerTrack;
 
 function downloadBlob(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob);
@@ -165,6 +161,7 @@ export function AudioStemSplitter({ toolId }: StemSplitterProps) {
         blob,
         url: URL.createObjectURL(blob),
         size: blob.size,
+        peaks: track.peaks,
       };
     });
 
@@ -431,28 +428,23 @@ export function AudioStemSplitter({ toolId }: StemSplitterProps) {
                   </p>
                 )}
 
-                {tracks.map((track) => (
-                  <div
-                    key={track.source}
-                    className="rounded-lg border border-border-base bg-surface p-3"
-                  >
-                    <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                      <span className="text-sm font-medium text-content">
-                        {t(`stems.${track.source}`)}
-                        <span className="ml-2 text-xs font-normal text-content-faint">
-                          {formatAudioFileSize(track.size)}
-                        </span>
-                      </span>
-                      <Button
-                        variant="secondary"
-                        onClick={() => downloadBlob(track.blob, track.filename)}
-                      >
-                        {t('download_one')}
-                      </Button>
-                    </div>
-                    <audio controls preload="none" src={track.url} className="w-full" />
-                  </div>
-                ))}
+                <StemPlayer
+                  // 每次分轨产生新的 object URL，用它当 key 让播放器重新挂载，
+                  // 播放头和音量自然重置，无需在 effect 里 setState。
+                  key={tracks[0]?.url}
+                  tracks={tracks}
+                  labelOf={(source) => t(`stems.${source}`)}
+                  labels={{
+                    playAll: t('play_all'),
+                    pauseAll: t('pause_all'),
+                    stop: t('stop'),
+                    volume: t('volume'),
+                    mute: t('mute'),
+                    unmute: t('unmute'),
+                    download: t('download_one'),
+                  }}
+                  onDownload={(track) => downloadBlob(track.blob, track.filename)}
+                />
               </div>
             )}
           </div>

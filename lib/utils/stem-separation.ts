@@ -187,6 +187,8 @@ export interface StemTrack {
    */
   wav: Uint8Array<ArrayBuffer>;
   filename: string;
+  /** 每桶一个峰值（0–255），由 Worker 从归一化后的 PCM 直接算出。 */
+  peaks: Uint8Array<ArrayBuffer>;
 }
 
 export interface StemSuccess {
@@ -386,6 +388,91 @@ export function encodeWavPcm16(
   }
 
   return new Uint8Array(buffer);
+}
+
+// ── 波形 ────────────────────────────────────────────────────────
+
+/**
+ * 波形取样桶数。
+ *
+ * 1200 个桶在常见宽度下已超过像素密度，再多只是徒增传输和 DOM 开销。
+ * 峰值在 Worker 里直接从归一化后的 f32 缓冲算出（那份数据本来就在手上），
+ * 所以不需要在 UI 里重新解码 WAV。
+ */
+export const STEM_WAVEFORM_BUCKETS = 1200;
+
+/** 波形 SVG 的 viewBox 高度，路径坐标以此为基准，宽度按桶数。 */
+export const STEM_WAVEFORM_HEIGHT = 100;
+
+/**
+ * 把多声道 PCM 压成每桶一个峰值（0–255）。
+ *
+ * 取各声道绝对值的最大值：波形是给人看的，取最大比取平均更能反映响度轮廓，
+ * 也不会让立体声里单边的内容消失。用 Uint8Array 是因为显示精度够用，
+ * 且比 f32 小四倍，postMessage 转移更便宜。
+ */
+export function computeWaveformPeaks(
+  channels: Float32Array[],
+  buckets = STEM_WAVEFORM_BUCKETS,
+): Uint8Array<ArrayBuffer> {
+  const peaks = new Uint8Array(new ArrayBuffer(buckets));
+  const length = channels.length > 0 ? channels[0].length : 0;
+  if (length === 0 || buckets <= 0) return peaks;
+
+  for (let bucket = 0; bucket < buckets; bucket += 1) {
+    const start = Math.floor((bucket * length) / buckets);
+    const end = Math.max(start + 1, Math.floor(((bucket + 1) * length) / buckets));
+
+    let peak = 0;
+    for (const channel of channels) {
+      for (let i = start; i < end && i < channel.length; i += 1) {
+        const value = channel[i] < 0 ? -channel[i] : channel[i];
+        if (value > peak) peak = value;
+      }
+    }
+
+    peaks[bucket] = Math.min(255, Math.round(peak * 255));
+  }
+
+  return peaks;
+}
+
+/**
+ * 把峰值数组转成一个填充闭合路径的 SVG `d`。
+ *
+ * 用单个填充路径而不是上千个 rect 或描边：DOM 只有一个节点，且配合
+ * preserveAspectRatio="none" 拉伸时不会出现描边宽度被非等比缩放的问题。
+ * 路径先沿上包络从左到右，再沿下包络折回，形成上下对称的实心波形。
+ */
+export function buildWaveformPath(
+  peaks: Uint8Array,
+  height = STEM_WAVEFORM_HEIGHT,
+): string {
+  if (peaks.length === 0) return '';
+
+  const mid = height / 2;
+  const top: string[] = [];
+  const bottom: string[] = [];
+
+  for (let i = 0; i < peaks.length; i += 1) {
+    // 至少留 0.5 的半高，否则静音段会完全消失、看不出轨道存在。
+    const amplitude = Math.max(0.5, (peaks[i] / 255) * mid);
+    top.push(`${i} ${(mid - amplitude).toFixed(2)}`);
+    bottom.push(`${i} ${(mid + amplitude).toFixed(2)}`);
+  }
+
+  bottom.reverse();
+  return `M${top.join('L')}L${bottom.join('L')}Z`;
+}
+
+/** 按参考样式格式化播放时间：mm:ss.d。 */
+export function formatClock(seconds: number): string {
+  const safe = Number.isFinite(seconds) && seconds > 0 ? seconds : 0;
+  const minutes = Math.floor(safe / 60);
+  const rest = safe - minutes * 60;
+  const whole = Math.floor(rest);
+  const tenth = Math.floor((rest - whole) * 10);
+  return `${String(minutes).padStart(2, '0')}:${String(whole).padStart(2, '0')}.${tenth}`;
 }
 
 // ── 文件名 ──────────────────────────────────────────────────────

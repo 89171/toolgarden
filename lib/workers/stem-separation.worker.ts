@@ -27,6 +27,7 @@ import {
   accumulateWindowed,
   createFadeWindow,
   encodeWavPcm16,
+  computeWaveformPeaks,
   normalizeByWeight,
   looksLikeOnnxModel,
   planStemChunks,
@@ -63,6 +64,7 @@ type WorkerRequest = InitRequest | SeparateRequest;
 interface WorkerTrack {
   source: StemSource;
   wav: Uint8Array<ArrayBuffer>;
+  peaks: Uint8Array<ArrayBuffer>;
 }
 
 type WorkerResponse =
@@ -533,9 +535,11 @@ async function separate(request: SeparateRequest): Promise<void> {
     normalizeByWeight(channels[0], weight);
     normalizeByWeight(channels[1], weight);
 
+    // 必须在编码前算：此时归一化后的 f32 还在手上，UI 就不用再解码一遍 WAV。
+    const peaks = computeWaveformPeaks(channels);
     const wav = encodeWavPcm16(channels);
-    tracks.push({ source: selected[s], wav });
-    transfer.push(wav.buffer);
+    tracks.push({ source: selected[s], wav, peaks });
+    transfer.push(wav.buffer, peaks.buffer);
 
     // 编码完立刻断开引用，让 GC 能在下一轨编码前回收这条的 f32 缓冲。
     accumulators[s] = [new Float32Array(0), new Float32Array(0)];

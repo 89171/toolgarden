@@ -17,6 +17,7 @@ interface WordResult {
   filename: string;
   pageCount: number;
   paragraphCount: number;
+  imageCount: number;
   outputSize: number;
   durationMs: number;
 }
@@ -93,6 +94,7 @@ export function PdfToWordConverter() {
         filename: outcome.filename,
         pageCount: outcome.pageCount,
         paragraphCount: outcome.paragraphCount,
+        imageCount: outcome.imageCount,
         outputSize: outcome.outputSize,
         durationMs: outcome.durationMs,
       });
@@ -233,12 +235,13 @@ export function PdfToWordConverter() {
                     {t('result_summary', {
                       pages: result.pageCount,
                       paragraphs: result.paragraphCount,
+                      images: result.imageCount,
                       size: formatFileSize(result.outputSize),
                       duration: result.durationMs,
                     })}
                   </p>
                 </div>
-                <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                <div className="mt-4 grid gap-3 sm:grid-cols-2 2xl:grid-cols-4">
                   <div className="rounded-lg border border-border-subtle bg-surface p-3">
                     <span className="block text-xs text-content-faint">{t('summary_pages')}</span>
                     <span className="mt-1 block font-semibold text-content">{result.pageCount}</span>
@@ -246,6 +249,10 @@ export function PdfToWordConverter() {
                   <div className="rounded-lg border border-border-subtle bg-surface p-3">
                     <span className="block text-xs text-content-faint">{t('summary_paragraphs')}</span>
                     <span className="mt-1 block font-semibold text-content">{result.paragraphCount}</span>
+                  </div>
+                  <div className="rounded-lg border border-border-subtle bg-surface p-3">
+                    <span className="block text-xs text-content-faint">{t('summary_images')}</span>
+                    <span className="mt-1 block font-semibold text-content">{result.imageCount}</span>
                   </div>
                   <div className="rounded-lg border border-border-subtle bg-surface p-3">
                     <span className="block text-xs text-content-faint">{t('summary_size')}</span>

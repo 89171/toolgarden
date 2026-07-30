@@ -117,7 +117,7 @@ export const toolRegistry: ToolMeta[] = [
   {
     id: 'pdf-to-word',
     name: 'PDF 转 Word',
-    description: '从 PDF 中提取文本并生成可编辑的 Word DOCX 文档',
+    description: '保留 PDF 文字字号、基础样式和图片并生成可编辑的 Word DOCX 文档',
     path: '/pdf/to-word',
     icon: 'DOC',
     category: 'convert',

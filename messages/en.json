@@ -101,26 +101,27 @@
     "settings_title": "PDF to Word",
     "result_title": "Word result",
     "drop_title": "Click or drag a PDF here",
-    "drop_hint": "Extract text from text-based PDFs and generate an editable DOCX file",
+    "drop_hint": "Extract PDF text, font sizes, basic styling, and images into an editable DOCX file",
     "drop_action": "Choose PDF",
     "input_format": "Input format",
     "selected_file": "Selected file",
     "empty_title": "Waiting for a PDF",
-    "empty_body": "Upload a PDF to extract text locally in your browser and generate a Word DOCX file.",
+    "empty_body": "Upload a PDF to extract text, basic formatting, and images locally and generate a Word DOCX file.",
     "status_converting": "Converting",
-    "converting_body": "Reading PDF text and generating a DOCX file.",
+    "converting_body": "Reading PDF text, formatting, and images and generating a DOCX file.",
     "status_error": "Conversion failed",
     "ready_label": "DOCX ready",
-    "result_summary": "{pages} pages · {paragraphs} paragraphs · {size} · {duration}ms",
+    "result_summary": "{pages} pages · {paragraphs} paragraphs · {images} images · {size} · {duration}ms",
     "summary_pages": "Pages",
     "summary_paragraphs": "Paragraphs",
+    "summary_images": "Images",
     "summary_size": "Size",
     "errors": {
       "empty_file": "The file is empty. Choose a valid PDF.",
       "unsupported_input": "Upload a PDF file only.",
       "file_too_large": "The file is too large. Maximum size is {maxSize}.",
       "load_failed": "The PDF could not be read. It may be damaged, encrypted, or unsupported by this browser.",
-      "empty_text": "No convertible text was found. Scanned or image-only PDFs need OCR before they can become editable Word files.",
+      "empty_text": "No convertible text or images were found. Run OCR first if you need editable text from a scanned PDF.",
       "render_failed": "DOCX generation failed. Try another PDF."
     }
   },
@@ -2540,7 +2541,7 @@
         },
         {
           "question": "Will the DOCX keep the original PDF layout?",
-          "answer": "The first version keeps extracted text by page and line, which is useful for quick editing and copying. Complex layout, tables, and image reconstruction need future enhancements."
+          "answer": "The converter keeps page boundaries, text sizes, and raster images, preserves basic bold and italic styling when the PDF font data exposes it, and approximates the original spacing. Complex tables, text wrapping, vector graphics, and specialized fonts may still differ."
         }
       ]
     },
@@ -2939,6 +2940,12 @@
     "clear_cache": "Clear the cached model and retry",
     "download_all": "Download all as ZIP",
     "download_one": "Download",
+    "play_all": "Play all together",
+    "pause_all": "Pause",
+    "stop": "Stop",
+    "volume": "Volume",
+    "mute": "Mute",
+    "unmute": "Unmute",
     "stems": {
       "vocals": "Vocals",
       "drums": "Drums",
@@ -3468,7 +3475,7 @@
     },
     "pdf-to-word": {
       "name": "PDF to Word",
-      "description": "Free online tool to extract text from PDF files and generate editable Word DOCX documents"
+      "description": "Free online tool to preserve PDF text sizes, basic styling, and images in editable Word DOCX documents"
     },
     "pdf-merge": {
       "name": "Merge PDF",

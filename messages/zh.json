@@ -101,26 +101,27 @@
     "settings_title": "PDF 转 Word",
     "result_title": "Word 结果",
     "drop_title": "点击或拖拽 PDF 上传",
-    "drop_hint": "从文本型 PDF 中提取文字，生成可编辑的 DOCX 文件",
+    "drop_hint": "提取 PDF 文字、字号、基础样式和图片，生成可编辑的 DOCX 文件",
     "drop_action": "选择 PDF",
     "input_format": "输入格式",
     "selected_file": "已选择文件",
     "empty_title": "等待 PDF 文件",
-    "empty_body": "上传 PDF 后会在浏览器本地提取文本，并生成 Word DOCX 文件。",
+    "empty_body": "上传 PDF 后会在浏览器本地提取文字、基础格式和图片，并生成 Word DOCX 文件。",
     "status_converting": "转换中",
-    "converting_body": "正在读取 PDF 文本并生成 DOCX 文件。",
+    "converting_body": "正在读取 PDF 文字、格式与图片并生成 DOCX 文件。",
     "status_error": "转换失败",
     "ready_label": "DOCX 已生成",
-    "result_summary": "{pages} 页 · {paragraphs} 段 · {size} · {duration}ms",
+    "result_summary": "{pages} 页 · {paragraphs} 段 · {images} 张图片 · {size} · {duration}ms",
     "summary_pages": "页数",
     "summary_paragraphs": "段落",
+    "summary_images": "图片",
     "summary_size": "体积",
     "errors": {
       "empty_file": "文件为空，请选择有效 PDF。",
       "unsupported_input": "请上传 PDF 文件。",
       "file_too_large": "文件过大，最大支持 {maxSize}。",
       "load_failed": "PDF 读取失败，文件可能已损坏、加密或当前浏览器不支持。",
-      "empty_text": "没有读取到可转换文本。扫描版或图片型 PDF 需要 OCR 后才能转为可编辑 Word。",
+      "empty_text": "没有读取到可转换的文字或图片。扫描版 PDF 如需可编辑文字，请先进行 OCR。",
       "render_failed": "DOCX 生成失败，请换一个 PDF 重试。"
     }
   },
@@ -2540,7 +2541,7 @@
         },
         {
           "question": "转换后会保留原 PDF 版式吗？",
-          "answer": "首版会保留按页和按行提取的文字内容，适合快速编辑和复制；复杂排版、表格和图片还原需要后续增强。"
+          "answer": "工具会保留分页、文字字号和 PDF 中的位图，并在字体信息可识别时保留粗体/斜体等基础样式，同时按原位置近似还原间距。复杂表格、文字环绕、矢量图形和特殊字体仍可能与原稿有差异。"
         }
       ]
     },
@@ -2939,6 +2940,12 @@
     "clear_cache": "清除已缓存的模型并重试",
     "download_all": "打包下载全部",
     "download_one": "下载",
+    "play_all": "同时播放全部",
+    "pause_all": "暂停",
+    "stop": "停止",
+    "volume": "音量",
+    "mute": "静音",
+    "unmute": "取消静音",
     "stems": {
       "vocals": "人声",
       "drums": "鼓",
@@ -3468,7 +3475,7 @@
     },
     "pdf-to-word": {
       "name": "PDF 转 Word",
-      "description": "从 PDF 中提取文本并生成可编辑的 Word DOCX 文档"
+      "description": "保留 PDF 文字字号、基础样式和图片并生成可编辑的 Word DOCX 文档"
     },
     "pdf-merge": {
       "name": "合并 PDF",

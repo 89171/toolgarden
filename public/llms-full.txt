@@ -191,8 +191,8 @@ Canonical examples:
 - Category: Convert / 转换
 - Icon label: `DOC`
 - Featured: yes
-- English description: Free online tool to extract text from PDF files and generate editable Word DOCX documents
-- Chinese description: 从 PDF 中提取文本并生成可编辑的 Word DOCX 文档
+- English description: Free online tool to preserve PDF text sizes, basic styling, and images in editable Word DOCX documents
+- Chinese description: 保留 PDF 文字字号、基础样式和图片并生成可编辑的 Word DOCX 文档
 - English URL: https://toolgarden.xyz/en/pdf/to-word
 - Chinese URL: https://toolgarden.xyz/zh/pdf/to-word
 
