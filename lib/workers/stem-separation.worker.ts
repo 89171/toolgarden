@@ -5,10 +5,18 @@
  * 本 Worker 负责模型下载与缓存、分段推理、overlap-add、WAV 编码，
  * 再把编码好的字节转移回主线程。
  *
- * 用 `onnxruntime-web/wasm`（不含 JSEP）而非主入口，理由是这是本仓库唯一
- * 经生产验证的组合——OCR 工具用的就是它。含 JSEP 的主入口能额外支持
- * WebGPU，但在本项目的浏览器环境下未能建立 session（Node 同配置可以），
- * 而 WebGPU 本身我无法在 Node 中验证，所以先走已验证的路径。
+ * 用 `onnxruntime-web/wasm`（不含 JSEP）而非主入口，因为 WebGPU 跑不了这个
+ * 模型，带上 JSEP 只会让 wasm 产物从 12.7MB 涨到 23.9MB 而没有任何收益。
+ *
+ * WebGPU 已在真实浏览器（Apple Metal-3，maxStorageBufferBindingSize 4GiB）
+ * 实测过 5 种配置，全部在同一处失败：
+ *   ORT 1.21 / 1.27 × EP=['webgpu'] 或 ['webgpu','wasm'] × opt=disabled 或 basic
+ * 1.27 给出了可读原因：
+ *   transformer_memcpy.cc:254 IsNodeCompatibleWithProvider —
+ *   Provider type for ConstantOfShape node '/real_istft/ConstantOfShape' is not set.
+ * 即模型逆 STFT 段里的那个 ConstantOfShape 节点既不被 WebGPU EP 接管、也没落到
+ * CPU，图分区因此崩掉。显式加 wasm 回退和开常量折叠都无效，属上游问题。
+ * 对照：同一个 JSEP 包改用 wasm EP 可以正常建 session，所以问题只在 WebGPU EP。
  */
 import * as ort from 'onnxruntime-web/wasm';
 import {

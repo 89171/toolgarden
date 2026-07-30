@@ -169,12 +169,14 @@ export async function separateStems(
   onProgress?.({ stage: 'decode', percent: toOverallPercent('decode', 1) });
 
   /*
-   * 只用 wasm。
+   * 只用 wasm：WebGPU 跑不了这个模型，不是能力或配置问题。
    *
-   * WebGPU 需要含 JSEP 的 onnxruntime-web 主入口，但那条路径在本项目的
-   * 浏览器环境下建不起 session（同样的模型和配置在 Node 里可以），而
-   * WebGPU 无法在 Node 中验证，所以先只走本仓库已在生产验证过的
-   * `onnxruntime-web/wasm`。等 wasm 路径稳定后再单独评估 WebGPU。
+   * 已在真实浏览器实测 ORT 1.21 与 1.27、EP 组合 ['webgpu'] 与
+   * ['webgpu','wasm']、优化级别 disabled 与 basic，共 5 种配置全部失败于
+   * ORT 的 MemcpyTransformer：模型逆 STFT 段的 `/real_istft/ConstantOfShape`
+   * 节点拿不到 provider 归属，图分区直接崩。属上游限制，详见 worker 顶部注释。
+   *
+   * 保留数组结构是为了将来 ORT 修好后能直接加回 'webgpu'。
    */
   const candidates: StemBackend[] = ['wasm'];
 
