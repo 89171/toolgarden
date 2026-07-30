@@ -48,6 +48,11 @@ export interface StemModelMeta {
   url: string;
   /** 精确字节数，用于下载进度显示与缓存完整性校验。 */
   bytes: number;
+  /**
+   * 文件 sha256（与 HuggingFace 的 x-linked-etag 一致，已本地实测核对）。
+   * 长度相同但内容损坏的情况只有摘要能查出来。
+   */
+  sha256: string;
   /** 输出轨道顺序——必须与该模型 ONNX 输出第 1 维的顺序完全一致。 */
   sources: readonly StemSource[];
 }
@@ -64,12 +69,14 @@ export const stemModels: Record<StemModelId, StemModelMeta> = {
     id: 'htdemucs',
     url: 'https://huggingface.co/StemSplitio/htdemucs-onnx/resolve/main/htdemucs_fp16weights.onnx',
     bytes: 165_612_636,
+    sha256: 'd05c269d0178d2a72ad484b10b11dd370193fc923201c3b27a99f848745db70a',
     sources: ['drums', 'bass', 'other', 'vocals'],
   },
   htdemucs_6s: {
     id: 'htdemucs_6s',
     url: 'https://huggingface.co/StemSplitio/htdemucs-6s-onnx/resolve/main/htdemucs_6s_fp16weights.onnx',
     bytes: 136_428_532,
+    sha256: '7ce55792e2231c93fbf92de95f5fd5b3a5e6c89f7db690dfd693e8f1dce56869',
     sources: ['drums', 'bass', 'other', 'vocals', 'guitar', 'piano'],
   },
 };
@@ -133,9 +140,11 @@ export function looksLikeOnnxModel(bytes: Uint8Array): boolean {
 
 // ── 类型 ────────────────────────────────────────────────────────
 
+/** 阶段按真实发生顺序排列：解码 → 下载模型 → 建 session → 分轨 → 编码。 */
 export type StemStage =
-  | 'model'
   | 'decode'
+  | 'model'
+  | 'session'
   | 'separating'
   | 'encode'
   | 'done';
@@ -397,16 +406,21 @@ export function buildStemArchiveName(originalName: string): string {
 // ── 进度换算 ────────────────────────────────────────────────────
 
 /**
- * 把各阶段进度映射到统一的 0–100。
- * 模型下载 0–30、解码 30–35、推理 35–95、编码 95–100。
+ * 把各阶段进度映射到统一的 0–100，区间顺序与真实执行顺序一致：
+ * 解码 0–5、下载模型 5–28、建 session 28–35、分轨 35–95、编码 95–100。
+ *
+ * session 单独占一段是因为它实测要 8–9 秒（图优化被禁用后仍需加载 13138 个
+ * 节点的初始张量），没有独立阶段的话这段时间界面看起来是卡住的。
  */
 export function toOverallPercent(stage: StemStage, stageRatio: number): number {
   const clamped = stageRatio < 0 ? 0 : stageRatio > 1 ? 1 : stageRatio;
   switch (stage) {
-    case 'model':
-      return Math.round(clamped * 30);
     case 'decode':
-      return 30 + Math.round(clamped * 5);
+      return Math.round(clamped * 5);
+    case 'model':
+      return 5 + Math.round(clamped * 23);
+    case 'session':
+      return 28 + Math.round(clamped * 7);
     case 'separating':
       return 35 + Math.round(clamped * 60);
     case 'encode':

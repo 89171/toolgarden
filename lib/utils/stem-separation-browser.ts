@@ -7,6 +7,7 @@
 import {
   MAX_STEM_FILE_SIZE,
   STEM_CHANNELS,
+  STEM_MODEL_CACHE,
   STEM_SAMPLE_RATE,
   buildStemFilename,
   fitsMemoryBudget,
@@ -167,8 +168,15 @@ export async function separateStems(
 
   onProgress?.({ stage: 'decode', percent: toOverallPercent('decode', 1) });
 
-  const { webgpu } = await detectStemCapability();
-  const candidates: StemBackend[] = webgpu ? ['webgpu', 'wasm'] : ['wasm'];
+  /*
+   * 只用 wasm。
+   *
+   * WebGPU 需要含 JSEP 的 onnxruntime-web 主入口，但那条路径在本项目的
+   * 浏览器环境下建不起 session（同样的模型和配置在 Node 里可以），而
+   * WebGPU 无法在 Node 中验证，所以先只走本仓库已在生产验证过的
+   * `onnxruntime-web/wasm`。等 wasm 路径稳定后再单独评估 WebGPU。
+   */
+  const candidates: StemBackend[] = ['wasm'];
 
   /*
    * 先只做「下载模型 + 建 session」的探测，成功后才把 PCM 转移进去。
@@ -347,6 +355,23 @@ function runSeparation(
       [decoded.left.buffer, decoded.right.buffer],
     );
   });
+}
+
+/**
+ * 删除已缓存的模型并丢弃 Worker。
+ *
+ * 缓存读取虽然已有完整校验能自愈，但仍保留手动清理：用户遇到疑似
+ * 模型损坏时不必去开 DevTools 才能恢复。
+ */
+export async function clearStemModelCache(): Promise<void> {
+  disposeStemWorker();
+  if (typeof caches === 'undefined') return;
+
+  try {
+    await caches.delete(STEM_MODEL_CACHE);
+  } catch {
+    // 清不掉也不影响下一次运行，校验逻辑仍会拦下坏字节。
+  }
 }
 
 // ── 能力检测 ────────────────────────────────────────────────────

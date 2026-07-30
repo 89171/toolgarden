@@ -2936,6 +2936,7 @@
     "action_separate": "开始分轨",
     "needs_file": "请先选择一个音频文件。",
     "needs_stem": "请至少勾选一条要导出的轨道。",
+    "clear_cache": "清除已缓存的模型并重试",
     "download_all": "打包下载全部",
     "download_one": "下载",
     "stems": {
@@ -2959,6 +2960,7 @@
     "selected_count": "已选 {count} 条轨道",
     "stage": {
       "model": "正在下载分轨模型",
+      "session": "正在加载模型（约需 10–15 秒）",
       "decode": "正在解码音频",
       "separating": "正在分轨（第 {current}/{total} 段）",
       "encode": "正在编码 WAV",
@@ -2980,7 +2982,7 @@
       "audio_too_long": "音频过长，当前选择的轨道数下内存不足。请缩短音频或减少选中的轨道。",
       "webgpu_and_wasm_unavailable": "当前浏览器不支持运行分轨模型，请改用桌面版 Chrome 或 Edge。",
       "model_download_failed": "模型下载失败，请检查网络后重试。模型来自 HuggingFace，网络受限时可能无法访问。",
-      "session_failed": "模型加载失败，可能是显存或内存不足。请关闭其他标签页后重试。",
+      "session_failed": "模型加载失败。请重试；若持续失败，请改用桌面版 Chrome 或 Edge 并保证可用内存充足。",
       "inference_failed": "分轨中途失败，通常是内存不足。请缩短音频或减少选中的轨道。",
       "model_failed": "分轨失败，可能是内存不足。请缩短音频、减少选中轨道后重试。",
       "cancelled": "已取消。"

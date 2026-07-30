@@ -368,6 +368,41 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 
 > Generated from the complete `blogArticles` registry during `npm run build`.
 
+### How to Split a Song into Vocals, Drums, Bass, Guitar, Piano, and Instrumental Stems
+- English: https://toolgarden.xyz/en/blog/split-song-into-vocals-instrumental-stems-browser
+- Chinese: https://toolgarden.xyz/zh/blog/split-song-into-vocals-instrumental-stems-browser
+- Chinese title: 在线音频分轨怎么用？本地分离人声、伴奏、鼓、贝斯、吉他和钢琴
+- Summary: Learn how browser-local stem separation works, when to choose the four- or six-stem model, and how to export vocals, drums, bass, guitar, piano, and other parts as WAV files.
+- Published: 2026-07-30; updated: 2026-07-30
+
+### 5 Best Online Audio Stem Splitter Websites for Vocals and Instruments
+- English: https://toolgarden.xyz/en/blog/best-online-audio-stem-splitter-websites
+- Chinese: https://toolgarden.xyz/zh/blog/best-online-audio-stem-splitter-websites
+- Chinese title: 在线音频分轨网站推荐：5 款人声、伴奏与乐器分离工具对比
+- Summary: Compare ToolGarden, Moises, BandLab Splitter, VocalRemover.org, and LALAL.AI by free access, local or cloud processing, output stems, privacy, and workflow.
+- Published: 2026-07-30; updated: 2026-07-30
+
+### How to Remove Vocals and Extract an Instrumental Online
+- English: https://toolgarden.xyz/en/blog/remove-vocals-extract-instrumental-online
+- Chinese: https://toolgarden.xyz/zh/blog/remove-vocals-extract-instrumental-online
+- Chinese title: 在线提取伴奏教程：如何去除歌曲人声
+- Summary: Use browser-local stem separation to remove vocals, export drums, bass, and other parts, and recombine them into an instrumental for practice, karaoke, or editing.
+- Published: 2026-07-30; updated: 2026-07-30
+
+### How to Extract Vocals and Make an Acapella Online
+- English: https://toolgarden.xyz/en/blog/extract-vocals-make-acapella-online
+- Chinese: https://toolgarden.xyz/zh/blog/extract-vocals-make-acapella-online
+- Chinese title: 在线提取人声教程：如何制作 Acapella
+- Summary: Separate lead vocals from a song and export a vocal WAV while learning how to choose a model, judge quality, reduce bleed, clean the result, and respect usage rights.
+- Published: 2026-07-30; updated: 2026-07-30
+
+### Why Do Separated Audio Stems Still Have Noise and Bleed?
+- English: https://toolgarden.xyz/en/blog/why-separated-audio-stems-have-noise-and-bleed
+- Chinese: https://toolgarden.xyz/zh/blog/why-separated-audio-stems-have-noise-and-bleed
+- Chinese title: 为什么音频分轨后还有杂音和串音？
+- Summary: Learn where vocal residue, instrument bleed, metallic artifacts, watery sound, dropouts, and missing bass come from, and how source quality, model choice, and cleanup can help.
+- Published: 2026-07-30; updated: 2026-07-30
+
 ### 2026 SEO Optimization Guide: Technical SEO, Content, AEO, and GEO
 - English: https://toolgarden.xyz/en/blog/2026-seo-optimization-guide
 - Chinese: https://toolgarden.xyz/zh/blog/2026-seo-optimization-guide

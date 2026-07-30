@@ -362,10 +362,12 @@ describe('memory budgeting', () => {
 
 describe('toOverallPercent', () => {
   it('increases monotonically across stages', () => {
+    // 顺序必须与真实执行顺序一致，否则进度条会回退。
     const points = [
-      toOverallPercent('model', 0),
-      toOverallPercent('model', 1),
+      toOverallPercent('decode', 0),
       toOverallPercent('decode', 1),
+      toOverallPercent('model', 1),
+      toOverallPercent('session', 1),
       toOverallPercent('separating', 1),
       toOverallPercent('encode', 1),
       toOverallPercent('done', 1),
@@ -390,7 +392,7 @@ describe('stem splitter copy coverage', () => {
    * next-intl 取不到 key 会在渲染期抛错，表现为页面能显示但完全没有交互，
    * 所以这条覆盖测试直接防住那类故障。
    */
-  const stageKeys: StemStage[] = ['model', 'decode', 'separating', 'encode', 'done'];
+  const stageKeys: StemStage[] = ['decode', 'model', 'session', 'separating', 'encode', 'done'];
   const errorKeys: StemErrorCode[] = [
     'empty_file',
     'unsupported_input',
@@ -415,6 +417,7 @@ describe('stem splitter copy coverage', () => {
     'drop_hint',
     'action_separate',
     'download_all',
+    'clear_cache',
     'download_one',
     'select_all',
     'select_none',

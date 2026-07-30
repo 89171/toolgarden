@@ -1,14 +1,16 @@
 /**
- * 音频分轨 Worker：在浏览器本地跑 HT-Demucs 6-source ONNX 推理。
+ * 音频分轨 Worker：在浏览器本地跑 HT-Demucs ONNX 推理。
  *
  * 主线程负责解码/重采样到 44.1kHz 立体声，把裸 PCM 转移进来；
  * 本 Worker 负责模型下载与缓存、分段推理、overlap-add、WAV 编码，
  * 再把编码好的字节转移回主线程。
  *
- * 注意：这里 import 的是 onnxruntime-web 主入口（含 WebGPU/JSEP），
- * 而非 next.config.ts 中被别名到 wasm 的 `onnxruntime-web/webgpu` 子路径。
+ * 用 `onnxruntime-web/wasm`（不含 JSEP）而非主入口，理由是这是本仓库唯一
+ * 经生产验证的组合——OCR 工具用的就是它。含 JSEP 的主入口能额外支持
+ * WebGPU，但在本项目的浏览器环境下未能建立 session（Node 同配置可以），
+ * 而 WebGPU 本身我无法在 Node 中验证，所以先走已验证的路径。
  */
-import * as ort from 'onnxruntime-web';
+import * as ort from 'onnxruntime-web/wasm';
 import {
   STEM_MODEL_CACHE,
   STEM_SEGMENT_SAMPLES,
@@ -71,7 +73,10 @@ const workerScope = self as unknown as {
   ) => void;
 };
 
-const ONNX_WASM_PUBLIC_PATH = `${workerScope.location.origin}/models/onnxruntime-web/`;
+// 单独一份与已安装 onnxruntime-web 严格同版本的运行时。OCR 目录下那份
+// .mjs 与 1.21.0 不一致（历史遗留），版本错配的加载器本身就可能导致中止，
+// 所以这里不复用它。
+const ONNX_WASM_PUBLIC_PATH = `${workerScope.location.origin}/models/onnxruntime-web/1.21.0/`;
 
 interface LoadedSession {
   session: ort.InferenceSession;
@@ -81,10 +86,14 @@ interface LoadedSession {
 type SessionKey = `${StemModelId}:${StemBackend}`;
 
 /**
- * 按「模型 + EP」缓存 session。用户来回切换 4 轨 / 6 轨时不必重新下载和
- * 初始化，代价是两个模型都用过后常驻内存翻倍。
+ * 只保留当前这一个 session。
+ *
+ * 一开始按「模型 + EP」全部缓存，想省掉切换模型时的重新加载，但实测代价
+ * 太大：两个 session 各约 1.1GB 同时驻留后，第二个模型的 session 创建从
+ * 约 35 秒劣化到约 75 秒（内存压力导致）。换模型属于低频操作，宁可重新
+ * 加载也不要让常驻内存翻倍。
  */
-const sessionPromises = new Map<SessionKey, Promise<LoadedSession>>();
+let activeSession: { key: SessionKey; promise: Promise<LoadedSession> } | null = null;
 
 function post(message: WorkerResponse, transfer?: Transferable[]): void {
   workerScope.postMessage(message, transfer);
@@ -96,6 +105,43 @@ function reportProgress(id: string, progress: StemProgress): void {
 
 // ── 模型获取（带缓存与进度） ────────────────────────────────────
 
+/** 计算 sha256 十六进制摘要；非安全上下文下 crypto.subtle 不可用则返回 null。 */
+async function sha256Hex(bytes: Uint8Array<ArrayBuffer>): Promise<string | null> {
+  if (typeof crypto === 'undefined' || !crypto.subtle) return null;
+
+  try {
+    const digest = await crypto.subtle.digest('SHA-256', bytes);
+    return Array.from(new Uint8Array(digest))
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * 校验模型字节：长度 → 魔数 → sha256。
+ * 返回 null 表示通过，否则返回不通过的原因。
+ */
+async function checkModelBytes(
+  model: StemModelMeta,
+  bytes: Uint8Array<ArrayBuffer>,
+): Promise<string | null> {
+  if (bytes.byteLength !== model.bytes) {
+    return `size mismatch: ${bytes.byteLength} != ${model.bytes}`;
+  }
+  if (!looksLikeOnnxModel(bytes)) {
+    const head = [...bytes.subarray(0, 8)].map((b) => b.toString(16).padStart(2, '0')).join(' ');
+    return `not an ONNX model (head=${head})`;
+  }
+
+  const digest = await sha256Hex(bytes);
+  if (digest && digest !== model.sha256) {
+    return `sha256 mismatch: ${digest} != ${model.sha256}`;
+  }
+  return null;
+}
+
 async function readModelFromCache(model: StemModelMeta): Promise<Uint8Array<ArrayBuffer> | null> {
   if (typeof caches === 'undefined') return null;
 
@@ -105,11 +151,20 @@ async function readModelFromCache(model: StemModelMeta): Promise<Uint8Array<Arra
     if (!hit) return null;
 
     const bytes = new Uint8Array(await hit.arrayBuffer());
-    // 体积不符说明缓存被截断或上游换了文件，丢弃重下。
-    if (bytes.byteLength !== model.bytes) {
+
+    /*
+     * 缓存命中也必须完整校验。
+     *
+     * 之前只比长度，于是「长度正确但内容损坏」的模型一旦进了缓存就会
+     * 永久命中并永久失败，用户完全无法自行恢复。校验不过就删掉重下。
+     */
+    const problem = await checkModelBytes(model, bytes);
+    if (problem) {
+      console.warn(`[stem-separation] discarding cached model: ${problem}`);
       await cache.delete(model.url);
       return null;
     }
+
     return bytes;
   } catch {
     return null;
@@ -311,15 +366,23 @@ async function loadSession(
   backend: StemBackend,
 ): Promise<LoadedSession> {
   const key: SessionKey = `${modelId}:${backend}`;
-  const cached = sessionPromises.get(key);
-  if (cached) return cached;
+  if (activeSession?.key === key) return activeSession.promise;
+
+  // 切换模型/EP 前先释放上一个 session，避免两份 ~1.1GB 同时驻留。
+  if (activeSession) {
+    const previous = activeSession;
+    activeSession = null;
+    void previous.promise
+      .then(({ session }) => session.release?.())
+      .catch(() => undefined);
+  }
 
   const model = stemModels[modelId];
 
   const pending = (async (): Promise<LoadedSession> => {
     ort.env.wasm.wasmPaths = {
-      wasm: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.jsep.wasm`,
-      mjs: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.jsep.mjs`,
+      wasm: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.wasm`,
+      mjs: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.mjs`,
     };
     // 无 COOP/COEP，SharedArrayBuffer 不可用，只能单线程。
     ort.env.wasm.numThreads = 1;
@@ -337,15 +400,10 @@ async function loadSession(
     } else {
       bytes = await downloadModel(id, model);
 
-      // 长度对但内容是垃圾时（中间层错误页、分段拼错）必须在写缓存前拦下，
-      // 否则坏字节会被缓存并永久失败。
-      if (!looksLikeOnnxModel(bytes)) {
-        throw new StemStageError(
-          'model_download_failed',
-          new Error(
-            `downloaded bytes are not an ONNX model (len=${bytes.byteLength}, head=${[...bytes.subarray(0, 8)].map((b) => b.toString(16).padStart(2, '0')).join(' ')})`,
-          ),
-        );
+      // 写缓存前必须校验，否则坏字节会被缓存并永久失败。
+      const problem = await checkModelBytes(model, bytes);
+      if (problem) {
+        throw new StemStageError('model_download_failed', new Error(problem));
       }
 
       await writeModelToCache(model, bytes);
@@ -355,12 +413,23 @@ async function loadSession(
       `[stem-separation] creating session model=${modelId} backend=${backend} bytes=${bytes.byteLength}`,
     );
 
+    reportProgress(id, { stage: 'session', percent: toOverallPercent('session', 0) });
+
     try {
       const session = await ort.InferenceSession.create(bytes, {
         executionProviders: [backend],
-        // 'all' 会在加载期做更多图变换，峰值内存更高；这个模型本身就吃紧，
-        // 用 'basic' 换取能加载起来。
-        graphOptimizationLevel: 'basic',
+        /*
+         * 必须是 'disabled'。
+         *
+         * ORT-web 的图优化器在这个模型（13138 个节点）上会直接 abort()，
+         * 且 Emscripten 只给出一句裸的 `Aborted()`。已在 Node 里用同一个
+         * wasm 后端复现并逐级验证：
+         *   fp16 130MB → disabled OK(9.4s) / basic FAIL / extended FAIL / all FAIL
+         *   fp32 246MB → disabled OK(9.3s) / basic FAIL / extended FAIL / all FAIL
+         * 与精度无关，换 fp32 也一样。图优化发生在 EP 分区之前，所以 WebGPU
+         * 路径同样受影响，不能只对 wasm 禁用。
+         */
+        graphOptimizationLevel: 'disabled',
         logSeverityLevel: 2,
       });
       console.info(`[stem-separation] session ready backend=${backend}`);
@@ -369,12 +438,12 @@ async function loadSession(
       throw new StemStageError('session_failed', error);
     }
   })().catch((error) => {
-    // 失败的 promise 不能留在 Map 里，否则重试会一直拿到同一个 rejection。
-    sessionPromises.delete(key);
+    // 失败的 promise 不能留着，否则重试会一直拿到同一个 rejection。
+    if (activeSession?.key === key) activeSession = null;
     throw error;
   });
 
-  sessionPromises.set(key, pending);
+  activeSession = { key, promise: pending };
   return pending;
 }
 

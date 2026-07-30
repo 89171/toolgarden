@@ -20,7 +20,11 @@ import {
   type StemProgress,
   type StemSource,
 } from '@/lib/utils/stem-separation';
-import { detectStemCapability, separateStems } from '@/lib/utils/stem-separation-browser';
+import {
+  clearStemModelCache,
+  detectStemCapability,
+  separateStems,
+} from '@/lib/utils/stem-separation-browser';
 
 interface StemSplitterProps {
   toolId: string;
@@ -64,6 +68,8 @@ export function AudioStemSplitter({ toolId }: StemSplitterProps) {
   const [progress, setProgress] = useState<StemProgress | null>(null);
   const [tracks, setTracks] = useState<ReadyTrack[]>([]);
   const [error, setError] = useState<string | null>(null);
+  // 失败时的技术细节。工具坏掉的时候，真实原因比友好文案有用得多。
+  const [errorDetail, setErrorDetail] = useState<string | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState<number | null>(null);
   const [backend, setBackend] = useState<StemBackend | null>(null);
   const [capability, setCapability] = useState<{ supported: boolean; webgpu: boolean } | null>(null);
@@ -147,6 +153,7 @@ export function AudioStemSplitter({ toolId }: StemSplitterProps) {
 
     if (!outcome.ok) {
       setError(t(`errors.${outcome.code}`));
+      setErrorDetail(outcome.detail ?? null);
       return;
     }
 
@@ -393,7 +400,21 @@ export function AudioStemSplitter({ toolId }: StemSplitterProps) {
 
             {error && (
               <div className="rounded-lg border border-danger-content bg-danger-surface p-4 text-sm text-danger-content">
-                {error}
+                <p>{error}</p>
+                {errorDetail && (
+                  <p className="mt-2 font-mono text-xs break-all opacity-80">{errorDetail}</p>
+                )}
+                <Button
+                  variant="secondary"
+                  className="mt-3"
+                  onClick={async () => {
+                    await clearStemModelCache();
+                    setError(null);
+                    setErrorDetail(null);
+                  }}
+                >
+                  {t('clear_cache')}
+                </Button>
               </div>
             )}
 

@@ -2936,6 +2936,7 @@
     "action_separate": "Separate stems",
     "needs_file": "Pick an audio file first.",
     "needs_stem": "Check at least one stem to export.",
+    "clear_cache": "Clear the cached model and retry",
     "download_all": "Download all as ZIP",
     "download_one": "Download",
     "stems": {
@@ -2959,6 +2960,7 @@
     "selected_count": "{count} stems selected",
     "stage": {
       "model": "Downloading the separation model",
+      "session": "Loading the model (takes 10-15 seconds)",
       "decode": "Decoding audio",
       "separating": "Separating (segment {current}/{total})",
       "encode": "Encoding WAV",
@@ -2980,7 +2982,7 @@
       "audio_too_long": "This audio is too long to fit in memory with the stems you selected. Shorten the audio or select fewer stems.",
       "webgpu_and_wasm_unavailable": "This browser cannot run the separation model. Use desktop Chrome or Edge.",
       "model_download_failed": "Could not download the model. Check your connection and retry \u2014 it is hosted on HuggingFace, which some networks block.",
-      "session_failed": "Could not load the model, most likely out of GPU or system memory. Close other tabs and retry.",
+      "session_failed": "Could not load the model. Retry; if it keeps failing, use desktop Chrome or Edge with enough free memory.",
       "inference_failed": "Separation failed partway through, usually from running out of memory. Try shorter audio or fewer stems.",
       "model_failed": "Separation failed, most likely out of memory. Try shorter audio or fewer stems.",
       "cancelled": "Cancelled."
