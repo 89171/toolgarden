@@ -157,18 +157,6 @@ export async function separateStems(
   if (selected.length === 0) return { ok: false, code: 'no_stems_selected' };
   if (typeof Worker === 'undefined') return { ok: false, code: 'webgpu_and_wasm_unavailable' };
 
-  onProgress?.({ stage: 'decode', percent: toOverallPercent('decode', 0) });
-
-  const decoded = await decodeToStereo44k(file);
-  if (typeof decoded === 'string') return { ok: false, code: decoded };
-
-  // 内存注定不够时提前拒绝，而不是让用户等几分钟再看标签页崩溃。
-  if (!fitsMemoryBudget(decoded.totalSamples, selected.length)) {
-    return { ok: false, code: 'audio_too_long' };
-  }
-
-  onProgress?.({ stage: 'decode', percent: toOverallPercent('decode', 1) });
-
   /*
    * 只用 wasm：WebGPU 跑不了这个模型，不是能力或配置问题。
    *
@@ -218,6 +206,29 @@ export async function separateStems(
 
   const worker = getStemWorker();
   if (!worker) return { ok: false, code: 'webgpu_and_wasm_unavailable' };
+
+  /*
+   * 解码放在 session 建好之后。
+   *
+   * session 要一次性分配约 1.1GB，是整个流程的内存峰值时刻。原来先解码再建
+   * session，等于在那一刻还额外压着整首歌的 f32（4 分钟约 85MB）。实测：同一台
+   * 机器上 6 秒片段建 session 约 35 秒，换成 4 分钟音频后涨到约 100 秒；内存更
+   * 紧的机器则直接在这一步分配失败（表现为 ORT 抛出裸异常指针）。
+   *
+   * 代价：文件解不开时，要等模型就绪之后才会报错。模型只在首次下载，之后走
+   * 缓存，所以这个代价是一次性的；而分配失败是直接不可用，优先级更高。
+   */
+  onProgress?.({ stage: 'decode', percent: toOverallPercent('decode', 0) });
+
+  const decoded = await decodeToStereo44k(file);
+  if (typeof decoded === 'string') return { ok: false, code: decoded };
+
+  // 内存注定不够时提前拒绝，而不是让用户等几分钟再看标签页崩溃。
+  if (!fitsMemoryBudget(decoded.totalSamples, selected.length)) {
+    return { ok: false, code: 'audio_too_long' };
+  }
+
+  onProgress?.({ stage: 'decode', percent: toOverallPercent('decode', 1) });
 
   return runSeparation(worker, file, decoded, selected, modelId, chosen, onProgress);
 }

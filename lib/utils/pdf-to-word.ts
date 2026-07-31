@@ -1,5 +1,7 @@
 import { createPdfDerivedFilename, isPdfFile, MAX_PDF_INPUT_FILE_SIZE } from './pdf';
 import { formatFileSize } from './image';
+import type { OcrLanguage, OcrProgressStage } from './ocr';
+import { recognizeImageOcr } from './ocr-browser';
 import {
   createPdfToWordDocxBlob,
   type PdfWordImage,
@@ -7,6 +9,12 @@ import {
   type PdfWordTextLine,
   type PdfWordTextRun,
 } from './pdf-to-word-docx';
+import {
+  createPdfWordLinesFromOcr,
+  retainImagesForOcrPage,
+  shouldUseNativePdfText,
+  type PdfToWordPageRoute,
+} from './pdf-to-word-routing';
 
 const MAX_TEXT_ITEMS_PER_PAGE = 12000;
 const MAX_IMAGES_PER_PAGE = 80;
@@ -14,6 +22,8 @@ const MAX_IMAGE_PIXELS = 6_000_000;
 const MAX_TOTAL_IMAGE_PIXELS_PER_PAGE = 30_000_000;
 const MAX_SOURCE_IMAGE_PIXELS = 40_000_000;
 const MIN_IMAGE_SIZE_POINTS = 3;
+const OCR_RENDER_SCALE = 2;
+const MAX_OCR_PAGE_PIXELS = 12_000_000;
 
 type PdfToWordErrorCode =
   | 'empty_file'
@@ -36,12 +46,30 @@ export interface PdfToWordSuccess {
   pageCount: number;
   paragraphCount: number;
   imageCount: number;
+  nativePageCount: number;
+  ocrPageCount: number;
+  visualPageCount: number;
   originalSize: number;
   outputSize: number;
   durationMs: number;
 }
 
 export type PdfToWordOutcome = PdfToWordSuccess | PdfToWordError;
+
+export type PdfToWordProgressStage = 'loading' | 'analyzing' | 'ocr' | 'building';
+
+export interface PdfToWordProgress {
+  stage: PdfToWordProgressStage;
+  percent: number;
+  pageNumber?: number;
+  totalPages?: number;
+  ocrStage?: OcrProgressStage;
+}
+
+export interface ConvertPdfToWordOptions {
+  ocrLanguage?: OcrLanguage;
+  onProgress?: (progress: PdfToWordProgress) => void;
+}
 
 interface PdfTextStyleLike {
   fontFamily?: string;
@@ -63,6 +91,10 @@ interface PdfViewportLike {
   convertToViewportPoint(x: number, y: number): [number, number];
 }
 
+interface PdfRenderTaskLike {
+  promise: Promise<void>;
+}
+
 interface PdfImageDataLike {
   width: number;
   height: number;
@@ -79,6 +111,20 @@ interface PdfObjectPoolLike {
 interface PdfPageLike {
   objs: PdfObjectPoolLike;
   commonObjs: PdfObjectPoolLike;
+}
+
+interface PdfConversionPageLike extends PdfPageLike {
+  getViewport(options: { scale: number }): PdfViewportLike;
+  getTextContent(): Promise<{
+    items: unknown[];
+    styles: Record<string, PdfTextStyleLike>;
+  }>;
+  getOperatorList(): Promise<PdfOperatorListLike>;
+  render(options: {
+    canvas: HTMLCanvasElement;
+    canvasContext: CanvasRenderingContext2D;
+    viewport: PdfViewportLike;
+  }): PdfRenderTaskLike;
 }
 
 interface PdfOperatorListLike {
@@ -130,8 +176,24 @@ interface ImagePlacement {
   origin: [number, number];
 }
 
+interface RenderedOcrPage {
+  data: Uint8Array;
+  pixelWidth: number;
+  pixelHeight: number;
+}
+
 function now(): number {
   return typeof performance === 'undefined' ? Date.now() : performance.now();
+}
+
+function reportProgress(
+  options: ConvertPdfToWordOptions,
+  progress: PdfToWordProgress
+): void {
+  options.onProgress?.({
+    ...progress,
+    percent: Math.round(clamp(progress.percent, 0, 100)),
+  });
 }
 
 function clamp(value: number, minimum: number, maximum: number): number {
@@ -597,6 +659,95 @@ function canvasToPng(canvas: HTMLCanvasElement): Promise<Uint8Array> {
   });
 }
 
+async function renderPageForOcr(
+  page: PdfConversionPageLike,
+  pageViewport: PdfViewportLike
+): Promise<RenderedOcrPage | null> {
+  const desiredPixels =
+    pageViewport.width *
+    pageViewport.height *
+    OCR_RENDER_SCALE *
+    OCR_RENDER_SCALE;
+  const scale =
+    desiredPixels > MAX_OCR_PAGE_PIXELS
+      ? OCR_RENDER_SCALE * Math.sqrt(MAX_OCR_PAGE_PIXELS / desiredPixels)
+      : OCR_RENDER_SCALE;
+  const viewport = page.getViewport({ scale });
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.max(1, Math.ceil(viewport.width));
+  canvas.height = Math.max(1, Math.ceil(viewport.height));
+  const context = canvas.getContext('2d', { alpha: false });
+  if (!context) return null;
+
+  context.fillStyle = '#ffffff';
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  await page.render({ canvas, canvasContext: context, viewport }).promise;
+
+  return {
+    data: await canvasToPng(canvas),
+    pixelWidth: canvas.width,
+    pixelHeight: canvas.height,
+  };
+}
+
+function createVisualFallbackImage(
+  page: RenderedOcrPage,
+  viewport: PdfViewportLike,
+  pageNumber: number
+): PdfWordImage {
+  return {
+    kind: 'image',
+    x: 0,
+    y: 0,
+    width: viewport.width,
+    height: viewport.height,
+    data: page.data,
+    description: `Rendered PDF page ${pageNumber}`,
+  };
+}
+
+async function recognizeRenderedPdfPage(
+  renderedPage: RenderedOcrPage,
+  pageNumber: number,
+  viewport: PdfViewportLike,
+  language: OcrLanguage,
+  options: ConvertPdfToWordOptions,
+  totalPages: number
+): Promise<PdfWordTextLine[]> {
+  const imageFile = new File(
+    [renderedPage.data as BlobPart],
+    `pdf-page-${pageNumber}.png`,
+    { type: 'image/png' }
+  );
+  const pageBaseProgress = 5 + ((pageNumber - 1) / totalPages) * 88;
+  const pageProgressSpan = 88 / totalPages;
+  const outcome = await recognizeImageOcr(imageFile, {
+    language,
+    onProgress: (ocrProgress) => {
+      reportProgress(options, {
+        stage: 'ocr',
+        percent:
+          pageBaseProgress +
+          pageProgressSpan * (0.25 + (ocrProgress.percent / 100) * 0.7),
+        pageNumber,
+        totalPages,
+        ocrStage: ocrProgress.stage,
+      });
+    },
+  });
+
+  if (!outcome.ok) return [];
+
+  return createPdfWordLinesFromOcr(
+    outcome.blocks,
+    outcome.imageWidth,
+    outcome.imageHeight,
+    viewport.width,
+    viewport.height,
+    language
+  );
+}
+
 async function renderImagePlacement(
   placement: ImagePlacement,
   pageNumber: number,
@@ -716,8 +867,12 @@ async function extractPageImages(
   return images;
 }
 
-export async function convertPdfToWord(file: File): Promise<PdfToWordOutcome> {
+export async function convertPdfToWord(
+  file: File,
+  options: ConvertPdfToWordOptions = {}
+): Promise<PdfToWordOutcome> {
   const startedAt = now();
+  const ocrLanguage = options.ocrLanguage ?? 'eng';
 
   if (file.size === 0) return { ok: false, code: 'empty_file' };
   if (!isPdfFile(file)) return { ok: false, code: 'unsupported_input' };
@@ -730,6 +885,7 @@ export async function convertPdfToWord(file: File): Promise<PdfToWordOutcome> {
   }
 
   try {
+    reportProgress(options, { stage: 'loading', percent: 2 });
     const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
     pdfjs.GlobalWorkerOptions.workerSrc = new URL(
       'pdfjs-dist/legacy/build/pdf.worker.mjs',
@@ -739,29 +895,87 @@ export async function convertPdfToWord(file: File): Promise<PdfToWordOutcome> {
     const loadingTask = pdfjs.getDocument({ data, useSystemFonts: true });
     const pdf = await loadingTask.promise;
     const pages: PdfWordPage[] = [];
+    const pageRoutes: PdfToWordPageRoute[] = [];
 
     for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
-      const page = await pdf.getPage(pageNumber);
-      const viewport = page.getViewport({ scale: 1 }) as unknown as PdfViewportLike;
+      const page = (await pdf.getPage(pageNumber)) as unknown as PdfConversionPageLike;
+      const viewport = page.getViewport({ scale: 1 });
+      const pageBaseProgress = 5 + ((pageNumber - 1) / pdf.numPages) * 88;
+      const pageProgressSpan = 88 / pdf.numPages;
+      reportProgress(options, {
+        stage: 'analyzing',
+        percent: pageBaseProgress,
+        pageNumber,
+        totalPages: pdf.numPages,
+      });
       const textContent = await page.getTextContent();
       const positionedText = extractPositionedText(
         textContent.items,
         textContent.styles,
         viewport
       );
-      const lines = groupTextItemsIntoLines(positionedText);
-      const images = await extractPageImages(
-        page as unknown as Parameters<typeof extractPageImages>[0],
-        viewport,
-        pdfjs.OPS,
-        pageNumber
-      );
+      const nativeLines = groupTextItemsIntoLines(positionedText);
+      let extractedImages: PdfWordImage[] = [];
+      try {
+        extractedImages = await extractPageImages(page, viewport, pdfjs.OPS, pageNumber);
+      } catch {
+        // A malformed image operator list should not block text or OCR conversion.
+      }
+
+      let lines = nativeLines;
+      let images = extractedImages;
+      let route: PdfToWordPageRoute = 'native';
+
+      if (!shouldUseNativePdfText(positionedText, viewport.width, viewport.height)) {
+        let renderedPage: RenderedOcrPage | null = null;
+        try {
+          renderedPage = await renderPageForOcr(page, viewport);
+        } catch {
+          // Fall back to the sparse native content below when page rendering fails.
+        }
+
+        if (renderedPage) {
+          const ocrLines = await recognizeRenderedPdfPage(
+            renderedPage,
+            pageNumber,
+            viewport,
+            ocrLanguage,
+            options,
+            pdf.numPages
+          );
+
+          if (ocrLines.length > 0) {
+            lines = ocrLines;
+            images = retainImagesForOcrPage(
+              extractedImages,
+              viewport.width,
+              viewport.height
+            );
+            route = 'ocr';
+          } else {
+            lines = [];
+            images = [createVisualFallbackImage(renderedPage, viewport, pageNumber)];
+            route = 'visual';
+          }
+        } else if (nativeLines.length === 0 && extractedImages.length === 0) {
+          return { ok: false, code: 'render_failed' };
+        } else {
+          route = nativeLines.length > 0 ? 'native' : 'visual';
+        }
+      }
 
       pages.push({
         width: viewport.width,
         height: viewport.height,
         lines,
         images,
+      });
+      pageRoutes.push(route);
+      reportProgress(options, {
+        stage: 'analyzing',
+        percent: pageBaseProgress + pageProgressSpan,
+        pageNumber,
+        totalPages: pdf.numPages,
       });
     }
 
@@ -771,7 +985,9 @@ export async function convertPdfToWord(file: File): Promise<PdfToWordOutcome> {
       return { ok: false, code: 'empty_text' };
     }
 
+    reportProgress(options, { stage: 'building', percent: 95 });
     const blob = createPdfToWordDocxBlob(pages);
+    reportProgress(options, { stage: 'building', percent: 100 });
 
     return {
       ok: true,
@@ -780,6 +996,9 @@ export async function convertPdfToWord(file: File): Promise<PdfToWordOutcome> {
       pageCount: pdf.numPages,
       paragraphCount,
       imageCount,
+      nativePageCount: pageRoutes.filter((route) => route === 'native').length,
+      ocrPageCount: pageRoutes.filter((route) => route === 'ocr').length,
+      visualPageCount: pageRoutes.filter((route) => route === 'visual').length,
       originalSize: file.size,
       outputSize: blob.size,
       durationMs: Math.round(now() - startedAt),

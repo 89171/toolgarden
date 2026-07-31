@@ -4,6 +4,11 @@ import {
   createPdfToWordDocxBlob,
   type PdfWordPage,
 } from '../lib/utils/pdf-to-word-docx';
+import {
+  createPdfWordLinesFromOcr,
+  retainImagesForOcrPage,
+  shouldUseNativePdfText,
+} from '../lib/utils/pdf-to-word-routing';
 
 const ONE_PIXEL_PNG = Uint8Array.from(
   Buffer.from(
@@ -117,5 +122,77 @@ describe('PDF to Word DOCX builder', () => {
     expect(documentXml).toContain(
       '<w:pgMar w:top="0" w:right="0" w:bottom="0" w:left="0"'
     );
+  });
+});
+
+describe('PDF to Word hybrid page routing', () => {
+  it('uses OCR for a sparse page-number overlay but keeps a meaningful native text layer', () => {
+    expect(
+      shouldUseNativePdfText(
+        [{ text: '7', width: 8, height: 10 }],
+        612,
+        792
+      )
+    ).toBe(false);
+
+    expect(
+      shouldUseNativePdfText(
+        [
+          { text: 'Quarterly report', width: 180, height: 24 },
+          { text: 'Revenue increased during the period.', width: 260, height: 12 },
+        ],
+        612,
+        792
+      )
+    ).toBe(true);
+  });
+
+  it('maps local OCR blocks from rendered pixels back to Word page points', () => {
+    const lines = createPdfWordLinesFromOcr(
+      [
+        {
+          text: '扫描标题',
+          confidence: 0.96,
+          angle: 0,
+          box: { x: 200, y: 240, width: 800, height: 80 },
+        },
+      ],
+      1224,
+      1584,
+      612,
+      792,
+      'chi_sim'
+    );
+
+    expect(lines).toHaveLength(1);
+    expect(lines[0]).toMatchObject({
+      x: 100,
+      y: 120,
+      width: 400,
+      height: 40,
+    });
+    expect(lines[0].runs[0]).toMatchObject({
+      text: '扫描标题',
+      fontFamily: 'Microsoft YaHei',
+    });
+    expect(lines[0].runs[0].fontSize).toBeCloseTo(28.8);
+  });
+
+  it('drops a full-page scan image after successful OCR but keeps smaller figures', () => {
+    const page = createPage();
+    const fullPageImage = {
+      ...page.images[0],
+      x: 0,
+      y: 0,
+      width: page.width,
+      height: page.height,
+    };
+    const retained = retainImagesForOcrPage(
+      [fullPageImage, page.images[0]],
+      page.width,
+      page.height
+    );
+
+    expect(retained).toEqual([page.images[0]]);
   });
 });

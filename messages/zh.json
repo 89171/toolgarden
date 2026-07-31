@@ -104,14 +104,28 @@
     "drop_hint": "提取 PDF 文字、字号、基础样式和图片，生成可编辑的 DOCX 文件",
     "drop_action": "选择 PDF",
     "input_format": "输入格式",
+    "ocr_language_label": "扫描页识别语言",
+    "ocr_language_hint": "智能路由仅在页面没有可靠文字层时加载本地 OCR 模型，文件不会上传。",
+    "ocr_language_eng": "英文",
+    "ocr_language_chi_sim": "简体中文",
+    "ocr_language_chi_tra": "繁体中文",
+    "ocr_language_jpn": "日文",
     "selected_file": "已选择文件",
     "empty_title": "等待 PDF 文件",
-    "empty_body": "上传 PDF 后会在浏览器本地提取文字、基础格式和图片，并生成 Word DOCX 文件。",
+    "empty_body": "上传 PDF 后会自动选择原生文字提取、本地 OCR 或页面保真回退，并生成 Word DOCX 文件。",
     "status_converting": "转换中",
-    "converting_body": "正在读取 PDF 文字、格式与图片并生成 DOCX 文件。",
+    "converting_body": "正在分析 PDF 页面并生成 DOCX 文件。",
+    "progress_label": "{stage} · {progress}%",
+    "stages": {
+      "loading": "正在加载 PDF",
+      "analyzing": "正在分析页面",
+      "ocr": "正在本地 OCR",
+      "building": "正在生成 DOCX"
+    },
     "status_error": "转换失败",
     "ready_label": "DOCX 已生成",
     "result_summary": "{pages} 页 · {paragraphs} 段 · {images} 张图片 · {size} · {duration}ms",
+    "routing_summary": "智能路由：{native} 个原生文字页 · {ocr} 个 OCR 页 · {visual} 个保真回退页",
     "summary_pages": "页数",
     "summary_paragraphs": "段落",
     "summary_images": "图片",
@@ -121,7 +135,7 @@
       "unsupported_input": "请上传 PDF 文件。",
       "file_too_large": "文件过大，最大支持 {maxSize}。",
       "load_failed": "PDF 读取失败，文件可能已损坏、加密或当前浏览器不支持。",
-      "empty_text": "没有读取到可转换的文字或图片。扫描版 PDF 如需可编辑文字，请先进行 OCR。",
+      "empty_text": "没有读取到可转换的文字或页面内容。",
       "render_failed": "DOCX 生成失败，请换一个 PDF 重试。"
     }
   },
@@ -2533,15 +2547,15 @@
       "items": [
         {
           "question": "PDF 转 Word 会上传文件吗？",
-          "answer": "不会。PDF 文本抽取和 DOCX 生成都在浏览器本地完成，文件不会上传到服务器。"
+          "answer": "不会。PDF 文本抽取、本地 OCR 和 DOCX 生成都在浏览器内完成，文件不会上传到服务器。"
         },
         {
           "question": "扫描版 PDF 可以转成可编辑 Word 吗？",
-          "answer": "当前版本主要支持文本型 PDF。扫描版或图片型 PDF 需要 OCR 识别后才能转成可编辑文本。"
+          "answer": "可以。工具会逐页检测可靠文字层；扫描页会自动调用浏览器本地 OCR，并按识别到的位置和字号生成可编辑文字。OCR 没有结果时会保留整页图像，避免页面丢失。"
         },
         {
           "question": "转换后会保留原 PDF 版式吗？",
-          "answer": "工具会保留分页、文字字号和 PDF 中的位图，并在字体信息可识别时保留粗体/斜体等基础样式，同时按原位置近似还原间距。复杂表格、文字环绕、矢量图形和特殊字体仍可能与原稿有差异。"
+          "answer": "工具会保留分页、文字字号和 PDF 中的位图，并在字体信息可识别时保留粗体/斜体等基础样式，同时按原位置近似还原间距。扫描页的 OCR 版式属于近似重建；复杂表格、文字环绕、矢量图形和特殊字体仍可能与原稿有差异。"
         }
       ]
     },

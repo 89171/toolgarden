@@ -140,11 +140,16 @@ export function looksLikeOnnxModel(bytes: Uint8Array): boolean {
 
 // ── 类型 ────────────────────────────────────────────────────────
 
-/** 阶段按真实发生顺序排列：解码 → 下载模型 → 建 session → 分轨 → 编码。 */
+/**
+ * 阶段按真实发生顺序排列：下载模型 → 建 session → 解码 → 分轨 → 编码。
+ *
+ * 解码排在建 session 之后是刻意的——见 stem-separation-browser.ts 里
+ * separateStems 的说明：session 分配 1.1GB 时不该再压着整首歌的 PCM。
+ */
 export type StemStage =
-  | 'decode'
   | 'model'
   | 'session'
+  | 'decode'
   | 'separating'
   | 'encode'
   | 'done';
@@ -493,21 +498,22 @@ export function buildStemArchiveName(originalName: string): string {
 // ── 进度换算 ────────────────────────────────────────────────────
 
 /**
- * 把各阶段进度映射到统一的 0–100，区间顺序与真实执行顺序一致：
- * 解码 0–5、下载模型 5–28、建 session 28–35、分轨 35–95、编码 95–100。
+ * 把各阶段进度映射到统一的 0–100，区间顺序必须与真实执行顺序一致，
+ * 否则进度条会往回跳：下载模型 0–23、建 session 23–30、解码 30–35、
+ * 分轨 35–95、编码 95–100。
  *
- * session 单独占一段是因为它实测要 8–9 秒（图优化被禁用后仍需加载 13138 个
+ * session 单独占一段是因为它实测要 10–15 秒（图优化被禁用后仍需加载 13138 个
  * 节点的初始张量），没有独立阶段的话这段时间界面看起来是卡住的。
  */
 export function toOverallPercent(stage: StemStage, stageRatio: number): number {
   const clamped = stageRatio < 0 ? 0 : stageRatio > 1 ? 1 : stageRatio;
   switch (stage) {
-    case 'decode':
-      return Math.round(clamped * 5);
     case 'model':
-      return 5 + Math.round(clamped * 23);
+      return Math.round(clamped * 23);
     case 'session':
-      return 28 + Math.round(clamped * 7);
+      return 23 + Math.round(clamped * 7);
+    case 'decode':
+      return 30 + Math.round(clamped * 5);
     case 'separating':
       return 35 + Math.round(clamped * 60);
     case 'encode':

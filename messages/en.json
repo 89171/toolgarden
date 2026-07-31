@@ -104,14 +104,28 @@
     "drop_hint": "Extract PDF text, font sizes, basic styling, and images into an editable DOCX file",
     "drop_action": "Choose PDF",
     "input_format": "Input format",
+    "ocr_language_label": "Scanned-page language",
+    "ocr_language_hint": "Smart routing loads the local OCR model only when a page has no reliable text layer. The file is never uploaded.",
+    "ocr_language_eng": "English",
+    "ocr_language_chi_sim": "Simplified Chinese",
+    "ocr_language_chi_tra": "Traditional Chinese",
+    "ocr_language_jpn": "Japanese",
     "selected_file": "Selected file",
     "empty_title": "Waiting for a PDF",
-    "empty_body": "Upload a PDF to extract text, basic formatting, and images locally and generate a Word DOCX file.",
+    "empty_body": "Upload a PDF to automatically choose native text extraction, local OCR, or a visual page fallback and generate a Word DOCX file.",
     "status_converting": "Converting",
-    "converting_body": "Reading PDF text, formatting, and images and generating a DOCX file.",
+    "converting_body": "Analyzing PDF pages and generating a DOCX file.",
+    "progress_label": "{stage} · {progress}%",
+    "stages": {
+      "loading": "Loading PDF",
+      "analyzing": "Analyzing pages",
+      "ocr": "Running local OCR",
+      "building": "Building DOCX"
+    },
     "status_error": "Conversion failed",
     "ready_label": "DOCX ready",
     "result_summary": "{pages} pages · {paragraphs} paragraphs · {images} images · {size} · {duration}ms",
+    "routing_summary": "Smart routing: {native} native-text pages · {ocr} OCR pages · {visual} visual fallback pages",
     "summary_pages": "Pages",
     "summary_paragraphs": "Paragraphs",
     "summary_images": "Images",
@@ -121,7 +135,7 @@
       "unsupported_input": "Upload a PDF file only.",
       "file_too_large": "The file is too large. Maximum size is {maxSize}.",
       "load_failed": "The PDF could not be read. It may be damaged, encrypted, or unsupported by this browser.",
-      "empty_text": "No convertible text or images were found. Run OCR first if you need editable text from a scanned PDF.",
+      "empty_text": "No convertible text or page content was found.",
       "render_failed": "DOCX generation failed. Try another PDF."
     }
   },
@@ -2533,15 +2547,15 @@
       "items": [
         {
           "question": "Does PDF to Word upload files?",
-          "answer": "No. PDF text extraction and DOCX generation both run locally in your browser, so files are not uploaded to a server."
+          "answer": "No. PDF text extraction, local OCR, and DOCX generation all run in your browser, so files are not uploaded to a server."
         },
         {
           "question": "Can scanned PDFs become editable Word files?",
-          "answer": "This version is designed for text-based PDFs. Scanned or image-only PDFs need OCR before they can become editable text."
+          "answer": "Yes. Each page is checked for a reliable text layer. Scanned pages automatically run through browser-local OCR and become editable text with approximate position and size. If OCR finds no text, the full-page image is retained so the page is not lost."
         },
         {
           "question": "Will the DOCX keep the original PDF layout?",
-          "answer": "The converter keeps page boundaries, text sizes, and raster images, preserves basic bold and italic styling when the PDF font data exposes it, and approximates the original spacing. Complex tables, text wrapping, vector graphics, and specialized fonts may still differ."
+          "answer": "The converter keeps page boundaries, text sizes, and raster images, preserves basic bold and italic styling when the PDF font data exposes it, and approximates the original spacing. OCR pages are reconstructed approximately; complex tables, text wrapping, vector graphics, and specialized fonts may still differ."
         }
       ]
     },

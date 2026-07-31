@@ -1,15 +1,21 @@
 'use client';
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
 import { PDF_FILE_ACCEPT_VALUE } from '@/lib/utils/pdf';
-import { convertPdfToWord, type PdfToWordError } from '@/lib/utils/pdf-to-word';
+import {
+  convertPdfToWord,
+  type PdfToWordError,
+  type PdfToWordProgress,
+} from '@/lib/utils/pdf-to-word';
 import { formatFileSize } from '@/lib/utils/image';
+import type { OcrLanguage } from '@/lib/utils/ocr';
 
 type ConversionStatus = 'idle' | 'converting' | 'done' | 'error';
+const OCR_LANGUAGE_OPTIONS: OcrLanguage[] = ['eng', 'chi_sim', 'chi_tra', 'jpn'];
 
 interface WordResult {
   blob: Blob;
@@ -18,6 +24,9 @@ interface WordResult {
   pageCount: number;
   paragraphCount: number;
   imageCount: number;
+  nativePageCount: number;
+  ocrPageCount: number;
+  visualPageCount: number;
   outputSize: number;
   durationMs: number;
 }
@@ -33,6 +42,7 @@ function downloadUrl(url: string, filename: string) {
 }
 
 export function PdfToWordConverter() {
+  const locale = useLocale();
   const tc = useTranslations('common');
   const t = useTranslations('pdf_to_word');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -42,6 +52,10 @@ export function PdfToWordConverter() {
   const [error, setError] = useState<PdfToWordError | null>(null);
   const [result, setResult] = useState<WordResult | null>(null);
   const [dragging, setDragging] = useState(false);
+  const [ocrLanguage, setOcrLanguage] = useState<OcrLanguage>(
+    locale.startsWith('zh') ? 'chi_sim' : 'eng'
+  );
+  const [progress, setProgress] = useState<PdfToWordProgress | null>(null);
 
   useEffect(() => () => {
     if (resultUrlRef.current) URL.revokeObjectURL(resultUrlRef.current);
@@ -54,6 +68,7 @@ export function PdfToWordConverter() {
     setStatus('idle');
     setError(null);
     setResult(null);
+    setProgress(null);
     if (inputRef.current) inputRef.current.value = '';
   }, []);
 
@@ -82,8 +97,12 @@ export function PdfToWordConverter() {
     setStatus('converting');
     setError(null);
     setResult(null);
+    setProgress({ stage: 'loading', percent: 0 });
 
-    const outcome = await convertPdfToWord(selectedFile);
+    const outcome = await convertPdfToWord(selectedFile, {
+      ocrLanguage,
+      onProgress: setProgress,
+    });
 
     if (outcome.ok) {
       const url = URL.createObjectURL(outcome.blob);
@@ -95,15 +114,20 @@ export function PdfToWordConverter() {
         pageCount: outcome.pageCount,
         paragraphCount: outcome.paragraphCount,
         imageCount: outcome.imageCount,
+        nativePageCount: outcome.nativePageCount,
+        ocrPageCount: outcome.ocrPageCount,
+        visualPageCount: outcome.visualPageCount,
         outputSize: outcome.outputSize,
         durationMs: outcome.durationMs,
       });
       setStatus('done');
+      setProgress(null);
     } else {
       setError(outcome);
       setStatus('error');
+      setProgress(null);
     }
-  }, []);
+  }, [ocrLanguage]);
 
   const addFiles = useCallback((fileList: FileList | File[]) => {
     const selectedFile = Array.from(fileList)[0];
@@ -144,6 +168,31 @@ export function PdfToWordConverter() {
               <span className="rounded border border-border-subtle bg-surface px-2 py-1 font-mono text-xs text-content-muted">
                 PDF
               </span>
+            </div>
+
+            <div className="rounded-lg border border-border-base bg-surface-raised p-3 sm:p-4">
+              <label
+                htmlFor="pdf-to-word-ocr-language"
+                className="block text-xs font-semibold uppercase tracking-normal text-content-faint"
+              >
+                {t('ocr_language_label')}
+              </label>
+              <select
+                id="pdf-to-word-ocr-language"
+                value={ocrLanguage}
+                disabled={status === 'converting'}
+                onChange={(event) => setOcrLanguage(event.target.value as OcrLanguage)}
+                className="mt-2 w-full rounded border border-border-input bg-surface px-3 py-2 text-sm text-content disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {OCR_LANGUAGE_OPTIONS.map((option) => (
+                  <option key={option} value={option}>
+                    {t(`ocr_language_${option}`)}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-2 text-xs leading-relaxed text-content-muted">
+                {t('ocr_language_hint')}
+              </p>
             </div>
 
             <button
@@ -212,7 +261,14 @@ export function PdfToWordConverter() {
               <div className="flex flex-grow flex-col items-center justify-center p-8 text-center">
                 <span className="font-mono text-sm font-semibold text-content-faint">...</span>
                 <h3 className="mt-3 text-lg font-semibold text-content">{t('status_converting')}</h3>
-                <p className="mt-2 max-w-md text-sm leading-relaxed text-content-muted">{t('converting_body')}</p>
+                <p className="mt-2 max-w-md text-sm leading-relaxed text-content-muted">
+                  {progress
+                    ? t('progress_label', {
+                        stage: t(`stages.${progress.stage}`),
+                        progress: progress.percent,
+                      })
+                    : t('converting_body')}
+                </p>
               </div>
             ) : null}
 
@@ -238,6 +294,13 @@ export function PdfToWordConverter() {
                       images: result.imageCount,
                       size: formatFileSize(result.outputSize),
                       duration: result.durationMs,
+                    })}
+                  </p>
+                  <p className="mt-2 text-xs leading-relaxed text-content-faint">
+                    {t('routing_summary', {
+                      native: result.nativePageCount,
+                      ocr: result.ocrPageCount,
+                      visual: result.visualPageCount,
                     })}
                   </p>
                 </div>
