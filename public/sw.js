@@ -2,15 +2,28 @@
  * JSON Toolkit — Service Worker
  *
  * 策略：
- *  /_next/static/   → Cache-First（内容哈希命名，可永久缓存）
+ *  /_next/static/   → Cache-First（靠 CACHE_NAME 的构建指纹保证新鲜，见下）
  *  /pwa-*.svg       → Cache-First（图标静态资源）
  *  /(zh|en)/...     → Network-First，网络失败时降级到缓存
  *  其余 GET          → Network-First
  *
- * 版本号更新 CACHE_NAME 即可清除旧缓存。
+ * CACHE_NAME 由 scripts/harden-static-export.mjs 在构建时追加内容指纹，
+ * 因此每次内容变化都会换桶。必须这样做：Turbopack 在本项目产出的 chunk 名
+ * 按模块 id 生成、跨构建稳定，Cache-First 会让旧 JS 在同一 URL 上永久命中。
  */
 
 const CACHE_NAME = 'json-toolkit-v4';
+
+/**
+ * 清理旧缓存时只认自己这个前缀的桶。
+ *
+ * activate 里原来是「删掉所有名字不等于 CACHE_NAME 的缓存」。构建脚本给
+ * CACHE_NAME 追加了每次构建的指纹之后，这条规则会在每次部署时把**其它功能
+ * 的缓存也一起删掉**——包括音频分轨那个 130MB 的模型缓存
+ * （stem-separation-model-v1），用户每次上新版都要重下一遍模型。
+ * 所以这里按前缀限定清理范围。
+ */
+const CACHE_PREFIX = 'json-toolkit-';
 const NO_CACHE_WRITE = Promise.resolve();
 
 /**
@@ -53,7 +66,7 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((keys) =>
       Promise.all(
         keys
-          .filter((key) => key !== CACHE_NAME)
+          .filter((key) => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME)
           .map((key) => caches.delete(key))
       )
     ).then(() => self.clients.claim())

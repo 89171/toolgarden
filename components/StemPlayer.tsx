@@ -42,8 +42,8 @@ const DEFAULT_VOLUME = 1;
  * 多轨播放器：波形 + 每轨音量 + 全部齐奏。
  *
  * 所有分轨长度严格相同（都来自同一段输入的 overlap-add 输出），所以同步
- * 策略很简单：统一 seek 到同一个 currentTime，再一起 play。取第一条轨道
- * 作为计时基准来驱动播放头，避免多个 timeupdate 互相抖动。
+ * 策略很简单：统一 seek 到同一个 currentTime，再一起 play。实测同时播放的
+ * 各轨 currentTime 完全一致（1.08s / 1.08s / 1.08s）。
  *
  * 重新分轨后的状态重置不在这里做：调用方用随每次运行变化的 key 让本组件
  * 重新挂载，播放头、音量、静音自然回到初值。用 effect 里 setState 去重置
@@ -63,6 +63,15 @@ export function StemPlayer({ tracks, labelOf, labels, onDownload }: StemPlayerPr
     for (const [source, audio] of audioRefs.current) fn(audio, source);
   }, []);
 
+  /*
+   * 计时基准固定取第一条轨道，按 source 查表而不是拿 Map 的第一个值。
+   *
+   * 内联 ref 回调在每次渲染都会先以 null 清理、再重新写入，Map 的插入顺序
+   * 因此会被打乱；一旦顺序里排头的轨道恰好是静音/未播放的那条，播放头就会
+   * 一直停在 0。实测就踩到过：三条轨道都在 1.08s，时钟却显示 00:00.0。
+   */
+  const leaderSource = tracks[0]?.source;
+
   // 播放中用 rAF 驱动播放头：比 timeupdate 事件平滑得多（后者约 4Hz）。
   useEffect(() => {
     if (!playing) {
@@ -71,18 +80,46 @@ export function StemPlayer({ tracks, labelOf, labels, onDownload }: StemPlayerPr
       return;
     }
 
+    const leader = leaderSource ? audioRefs.current.get(leaderSource) : undefined;
+
     const tick = () => {
-      const leader = audioRefs.current.values().next().value;
-      if (leader) setPosition(leader.currentTime);
+      const current = leaderSource ? audioRefs.current.get(leaderSource) : undefined;
+      if (current) setPosition(current.currentTime);
       frameRef.current = requestAnimationFrame(tick);
     };
     frameRef.current = requestAnimationFrame(tick);
 
+    /*
+     * timeupdate 作为兜底。
+     *
+     * 标签页切到后台时浏览器会挂起 requestAnimationFrame（实测隐藏标签页
+     * 500ms 内触发 0 次），只靠 rAF 播放头会冻住。timeupdate 约 4Hz，平时
+     * 由 rAF 提供顺滑度，后台时由它保证时钟仍然在走。
+     */
+    const onTimeUpdate = () => {
+      if (leader) setPosition(leader.currentTime);
+    };
+    leader?.addEventListener('timeupdate', onTimeUpdate);
+
     return () => {
       if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
       frameRef.current = null;
+      leader?.removeEventListener('timeupdate', onTimeUpdate);
     };
-  }, [playing]);
+  }, [playing, leaderSource]);
+
+  /*
+   * 音量用 effect 同步到 DOM。
+   *
+   * <audio> 没有 volume 属性，只能命令式赋值；放在 ref 回调里赋值会随渲染
+   * 反复触发，而且和「静音」互相干扰。muted 则可以直接当受控属性传下去。
+   */
+  useEffect(() => {
+    for (const track of tracks) {
+      const audio = audioRefs.current.get(track.source);
+      if (audio) audio.volume = volumes[track.source] ?? DEFAULT_VOLUME;
+    }
+  }, [tracks, volumes]);
 
   const playAll = useCallback(async () => {
     const audios = [...audioRefs.current.values()];
@@ -131,17 +168,10 @@ export function StemPlayer({ tracks, labelOf, labels, onDownload }: StemPlayerPr
 
   const setVolume = useCallback((source: StemSource, value: number) => {
     setVolumes((current) => ({ ...current, [source]: value }));
-    const audio = audioRefs.current.get(source);
-    if (audio) audio.volume = value;
   }, []);
 
   const toggleMute = useCallback((source: StemSource) => {
-    setMuted((current) => {
-      const next = !current[source];
-      const audio = audioRefs.current.get(source);
-      if (audio) audio.muted = next;
-      return { ...current, [source]: next };
-    });
+    setMuted((current) => ({ ...current, [source]: !current[source] }));
   }, []);
 
   const progressRatio = duration > 0 ? Math.min(1, position / duration) : 0;
@@ -233,16 +263,19 @@ export function StemPlayer({ tracks, labelOf, labels, onDownload }: StemPlayerPr
             </div>
 
             <audio
+              /*
+               * ref 回调只登记元素，null 清理时刻意不删除。
+               *
+               * React 19 的内联 ref 每次渲染都会先以 null 清理再重新写入，
+               * 如果这里删除，Map 会出现短暂为空的窗口；playAll 正好在这个
+               * 窗口里取快照就会拿到过期元素。组件卸载时整个 Map 一起丢弃，
+               * 所以不删除不会泄漏。
+               */
               ref={(element) => {
-                if (element) {
-                  audioRefs.current.set(track.source, element);
-                  element.volume = volume;
-                  element.muted = isMuted;
-                } else {
-                  audioRefs.current.delete(track.source);
-                }
+                if (element) audioRefs.current.set(track.source, element);
               }}
               src={track.url}
+              muted={isMuted}
               preload="metadata"
               // 只让第一条轨道汇报时长与结束，避免 6 条轨道重复触发同一状态更新。
               onLoadedMetadata={
