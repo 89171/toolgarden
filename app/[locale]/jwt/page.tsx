@@ -6,6 +6,7 @@ import { Panel } from '@/components/ui/Panel';
 import { Button } from '@/components/ui/Button';
 import { decodeJwt, verifyJwtHs256 } from '@/lib/utils/jwt';
 import { stringifyJSONValue } from '@/lib/utils/json';
+import { jwtContent } from '@/lib/tools/content/jwt';
 
 const EXAMPLE_TOKEN =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IuW8gOS4iSIsImlhdCI6MTUxNjIzOTAyMiwiZXhwIjo5OTk5OTk5OTk5fQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
@@ -37,7 +38,7 @@ export default function JwtPage() {
   const ok = decoded?.ok ? decoded : null;
 
   return (
-    <ToolLayout toolId="jwt">
+    <ToolLayout toolId="jwt" content={jwtContent}>
       <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
         <div className="flex flex-col gap-4">
           <Panel title={t('token_title')}>

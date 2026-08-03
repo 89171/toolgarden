@@ -5,6 +5,7 @@ import { ToolLayout } from '@/components/ToolLayout';
 import { Panel } from '@/components/ui/Panel';
 import { Button } from '@/components/ui/Button';
 import { jsonToXml, xmlToJson } from '@/lib/utils/xml';
+import { jsonXmlContent } from '@/lib/tools/content/json-xml';
 
 export default function JsonXmlPage() {
   const t = useTranslations('tools.json-xml');
@@ -30,7 +31,7 @@ export default function JsonXmlPage() {
   };
 
   return (
-    <ToolLayout toolId="json-xml">
+    <ToolLayout toolId="json-xml" content={jsonXmlContent}>
       {error && <p className="mb-3 text-sm text-syntax-null bg-danger-surface border border-border-base rounded px-3 py-2">{error}</p>}
       <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
         <Panel title="JSON" actions={<>

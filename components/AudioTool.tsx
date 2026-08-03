@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
+import type { ToolContent } from '@/lib/tools/content';
 import {
   convertRecordedAudioToMp3,
   processAudioFiles,
@@ -22,6 +23,7 @@ import {
 interface AudioToolProps {
   toolId: string;
   mode: AudioToolMode;
+  content?: ToolContent;
 }
 
 interface OutputState {
@@ -68,7 +70,7 @@ function wait(ms: number): Promise<void> {
   });
 }
 
-export function AudioTool({ toolId, mode }: AudioToolProps) {
+export function AudioTool({ toolId, mode, content }: AudioToolProps) {
   const t = useTranslations('audio_tool');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -615,7 +617,7 @@ export function AudioTool({ toolId, mode }: AudioToolProps) {
   ) : null;
 
   return (
-    <ToolLayout toolId={toolId}>
+    <ToolLayout toolId={toolId} content={content}>
       <div className={[
         'grid min-h-0 flex-grow gap-4',
         isStandalone ? 'lg:grid-cols-1' : 'lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]',

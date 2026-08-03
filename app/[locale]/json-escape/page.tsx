@@ -5,6 +5,7 @@ import { ToolLayout } from '@/components/ToolLayout';
 import { Panel } from '@/components/ui/Panel';
 import { Button } from '@/components/ui/Button';
 import { escapeJson, unescapeJson } from '@/lib/utils/escape';
+import { jsonEscapeContent } from '@/lib/tools/content/json-escape';
 
 type EscapeMode = 'escape' | 'unescape';
 
@@ -32,7 +33,7 @@ export default function JsonEscapePage() {
   const copy = async () => { if (!output) return; await navigator.clipboard.writeText(output); setCopied(true); setTimeout(() => setCopied(false), 2000); };
 
   return (
-    <ToolLayout toolId="json-escape">
+    <ToolLayout toolId="json-escape" content={jsonEscapeContent}>
       <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
         <Panel title={t('input_title')} actions={<>
           <Button variant={mode === 'escape' ? 'primary' : 'secondary'} onClick={() => selectMode('escape')}>{t('escape')}</Button>

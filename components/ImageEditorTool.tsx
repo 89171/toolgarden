@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { ToolLayout } from '@/components/ToolLayout';
+import { imageEditorContent } from '@/lib/tools/content/image-editor';
 
 const ImageEditorToolImpl = dynamic(
   () => import('@/components/ImageEditorToolImpl').then((m) => m.ImageEditorToolImpl),
@@ -17,7 +18,7 @@ const ImageEditorToolImpl = dynamic(
 
 export function ImageEditorTool() {
   return (
-    <ToolLayout toolId="image-editor">
+    <ToolLayout toolId="image-editor" content={imageEditorContent}>
       <ImageEditorToolImpl />
     </ToolLayout>
   );

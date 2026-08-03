@@ -6,6 +6,7 @@ import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
 import { tldrawAssetUrls } from '@/lib/utils/tldrawAssets';
+import { whiteboardContent } from '@/lib/tools/content/whiteboard';
 
 const TLDRAW_LICENSE_KEY = 'tldraw-jimmy-zhu-2027-07-17/WyJsLUQ4RXlMciIsWyIqLnRvb2xnYXJkZW4ueHl6Il0sOSwiMjAyNy0wNy0xNyJd.ZurBhW4L3cSjEc1rW398Hlge8lHL2VvvnSlqsi3o+OGkieOP0Fhho30OqXaVXiE6m/nDEUe5PNvdIB1VJ5YDYw';
 const TLDRAW_PERSISTENCE_KEY = 'toolgarden-whiteboard-tldraw';
@@ -140,7 +141,7 @@ export function WhiteboardTool() {
   };
 
   return (
-    <ToolLayout toolId="whiteboard">
+    <ToolLayout toolId="whiteboard" content={whiteboardContent}>
       <div
         ref={fullscreenRef}
         className={`flex min-h-0 flex-1 flex-col bg-background ${isFullscreenActive ? 'fixed inset-0 z-50 h-screen overflow-hidden p-3' : ''}`}

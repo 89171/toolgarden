@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { generateUuids, type UuidVersion } from '@/lib/utils/uuid';
+import { uuidContent } from '@/lib/tools/content/uuid';
 
 export default function UuidPage() {
   const t = useTranslations('tools.uuid');
@@ -25,7 +26,7 @@ export default function UuidPage() {
   };
 
   return (
-    <ToolLayout toolId="uuid">
+    <ToolLayout toolId="uuid" content={uuidContent}>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <section className="flex flex-col gap-4 rounded-lg border border-border-base bg-surface p-4 shadow">
           <h2 className="text-lg font-semibold text-content">{t('settings_title')}</h2>

@@ -13,6 +13,7 @@ import {
   rgbToHsl,
   rgbToHsv,
 } from '@/lib/utils/color';
+import { colorConverterContent } from '@/lib/tools/content/color-converter';
 
 export default function ColorConverterPage() {
   const t = useTranslations('tools.color-converter');
@@ -42,7 +43,7 @@ export default function ColorConverterPage() {
   };
 
   return (
-    <ToolLayout toolId="color-converter">
+    <ToolLayout toolId="color-converter" content={colorConverterContent}>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
         <section className="flex flex-col gap-3 rounded-lg border border-border-base bg-surface p-4 shadow">
           <h2 className="text-lg font-semibold text-content">{t('preview_title')}</h2>

@@ -1,0 +1,22 @@
+import { defineToolContent } from './define';
+
+export const qrCodeGeneratorContent = defineToolContent({
+  zh: {
+    overview: ['二维码把文本、URL 或联系信息编码为可由相机读取的二维图案。容量取决于内容长度、字符类型和纠错级别；数据越多，模块越密，在小尺寸、低质量打印或复杂背景上越难扫描。', '生成二维码只负责编码输入，不验证链接是否安全、永久或适合公开。正式发布前应在不同手机、距离、光线和打印样张上测试，并为用户同时提供可读文字或短链接作为替代。'],
+    steps: [['输入最终内容', '检查 URL 协议、域名、参数和文本拼写，避免发布后无法更改。'], ['设置尺寸与纠错', '根据展示或印刷距离留出清晰模块和四周静区。'], ['多设备测试', '从屏幕和实际印刷品扫描，确认跳转内容和解析文本正确。']],
+    scenarios: [['分享网页入口', '把活动页、帮助文档或无线网络信息放到线下材料。'], ['连接实物与数字内容', '在包装、名片或展板上提供可扫描的补充信息。'], ["生成会议室的 Wi-Fi 接入码", "把网络名称和密码编成二维码贴在墙上，来访者用相机扫一下即可连接，不必口头念密码。"]],
+    notes: ['不要在二维码中直接编码密码、令牌或不应公开的个人数据。', '四周静区、深浅对比和不变形的方形模块对扫描可靠性很重要。', '静态二维码内容无法远程修改，若使用短链应考虑服务长期可用性和隐私。'],
+    specs: [["可编码内容", "网址、纯文本、联系信息、Wi-Fi 配置等任意文本"], ["Wi-Fi 格式", "遵循 WIFI:T:WPA;S:名称;P:密码;; 约定，多数手机相机可直接识别并连接"], ["容量上限", "取决于内容类型和纠错等级，长文本会让码点密度显著上升、更难扫"], ["纠错等级", "等级越高越耐污损，但同样内容需要更多码点。中间放 logo 时需要较高等级"], ["输出", "PNG 图片，可下载"], ["隐私提醒", "二维码内容是明文编码，不是加密。任何扫码的人都能读到里面的 Wi-Fi 密码"]],
+    faq: [{ question: "内容越长码越密，会影响扫描吗？", answer: "会。内容越长码点越密，对相机分辨率和打印精度的要求越高。长网址建议先用短链服务缩短。如果二维码要印在小尺寸标签上，内容更应该尽量精简。" }, { question: "中间放 logo 会导致扫不出来吗？", answer: "有可能。请提高纠错等级，让居中的 logo 尽量小，不要覆盖定位方块和静区，并在实际打印尺寸下用多台设备测试。" }],
+    reference: [['error correction', '二维码恢复部分遮挡或损坏数据的冗余能力。'], ['quiet zone', '二维码四周不含其它图形的空白边界。']],
+  },
+  en: {
+    overview: ['A QR code encodes text, a URL, or contact information as a two-dimensional pattern readable by cameras. Capacity depends on length, characters, and error correction. More data creates denser modules that are harder to scan when small, poorly printed, or placed on a complex background.', 'Generation only encodes the input and does not verify that a link is safe, permanent, or suitable for public access. Test final screen and print artwork across phones, distance, and lighting, and provide readable text or a short URL as an alternative.'],
+    steps: [['Enter final content', 'Check URL scheme, domain, parameters, and spelling because static output cannot be edited later.'], ['Set size and correction', 'Allow clear modules and an adequate quiet zone for viewing or printing distance.'], ['Test on multiple devices', 'Scan from screen and actual print and verify the destination or decoded text.']],
+    scenarios: [['Sharing a web destination', 'Place an event page, help document, or network setup on physical material.'], ['Connecting physical and digital content', 'Add scannable supporting information to packaging, a card, or signage.'], ["Making a Wi-Fi join code for a meeting room", "Encode the network name and password into a code on the wall so visitors join by pointing a camera, with no password read aloud."]],
+    notes: ['Do not directly encode passwords, tokens, or personal data that should remain private.', 'Quiet zone, strong contrast, and undistorted square modules are important to reliable scanning.', 'Static QR content cannot be changed remotely; a short-link service introduces longevity and privacy considerations.'],
+    specs: [["What it can encode", "URLs, plain text, contact details, Wi-Fi configuration; any text"], ["Wi-Fi format", "Follows the WIFI:T:WPA;S:name;P:password;; convention, which most phone cameras recognise and can join directly"], ["Capacity", "Depends on content type and error-correction level; long text raises module density sharply and gets harder to scan"], ["Error correction", "Higher levels survive more damage but need more modules for the same content. Placing a logo in the middle requires a higher level"], ["Output", "A downloadable PNG"], ["Privacy note", "QR content is plainly encoded, not encrypted. Anyone who scans it can read the Wi-Fi password inside"]],
+    faq: [{ question: "Does longer content make the code harder to scan?", answer: "Yes. More content means denser modules, which demands more camera resolution and print precision. Shorten long URLs with a link shortener first, and keep content especially lean when the code will be printed small." }, { question: "Will a logo in the middle break scanning?", answer: "It can. Raise the error-correction level, keep the centered logo as small as the design allows, preserve the finder patterns and quiet zone, and test the final printed size on several devices." }],
+    reference: [['error correction', 'Redundant QR data used to recover from partial obstruction or damage.'], ['quiet zone', 'The blank margin around a QR code, free of competing graphics.']],
+  },
+});

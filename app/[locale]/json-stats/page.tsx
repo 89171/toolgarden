@@ -5,6 +5,7 @@ import { ToolLayout } from '@/components/ToolLayout';
 import { Panel } from '@/components/ui/Panel';
 import { Button } from '@/components/ui/Button';
 import { analyzeJson, JsonStats } from '@/lib/utils/stats';
+import { jsonStatsContent } from '@/lib/tools/content/json-stats';
 
 function formatBytes(n: number): string {
   if (n < 1024) return `${n} B`;
@@ -44,7 +45,7 @@ export default function JsonStatsPage() {
     : [];
 
   return (
-    <ToolLayout toolId="json-stats">
+    <ToolLayout toolId="json-stats" content={jsonStatsContent}>
       <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
         <Panel
           title={t('input_title')}

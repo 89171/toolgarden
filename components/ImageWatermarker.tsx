@@ -30,6 +30,7 @@ import {
   type BasicImageTargetFormat,
   type ImageConversionError,
 } from '@/lib/utils/image';
+import { imageWatermarkContent } from '@/lib/tools/content/image-watermark';
 
 type WatermarkSuccess = Extract<WatermarkApplyOutcome, { ok: true }>;
 
@@ -468,7 +469,7 @@ export function ImageWatermarker() {
   }, [output, tw]);
 
   return (
-    <ToolLayout toolId="image-watermark">
+    <ToolLayout toolId="image-watermark" content={imageWatermarkContent}>
       <input
         ref={sourceInputRef}
         type="file"

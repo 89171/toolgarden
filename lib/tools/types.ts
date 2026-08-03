@@ -16,3 +16,22 @@ export interface ToolMeta {
   /** 是否在首页置顶展示 */
   featured?: boolean;
 }
+
+/**
+ * Hub 页分类正文。存放于 messages.hub_content.<hubKey>，只由服务端 hub 页读取，
+ * 不进客户端 messages（见 getClientMessages）。
+ */
+export interface HubArticleContent {
+  /** 导语，放在工具栅格上方，说明这一类工具解决什么问题。 */
+  lead: string[];
+  /** 怎么在这一类工具里选，放在栅格下方。 */
+  choosing: Array<{ title: string; detail: string }>;
+  /** 格式 / 能力对照表，用真表格承载。 */
+  comparison?: {
+    caption: string;
+    headers: string[];
+    rows: string[][];
+  };
+  /** 这一类工具共同的边界和注意事项。 */
+  notes: string[];
+}

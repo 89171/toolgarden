@@ -6,6 +6,7 @@ import { ToolSwitchLinks } from '@/components/ToolSwitchLinks';
 import { Panel } from '@/components/ui/Panel';
 import { Button } from '@/components/ui/Button';
 import { excelBufferToJson } from '@/lib/utils/excel';
+import { excelToJsonContent } from '@/lib/tools/content/excel-to-json';
 
 export default function ExcelToJsonPage() {
   const locale = useLocale();
@@ -52,7 +53,7 @@ export default function ExcelToJsonPage() {
   };
 
   return (
-    <ToolLayout toolId="excel-to-json">
+    <ToolLayout toolId="excel-to-json" content={excelToJsonContent}>
       <ToolSwitchLinks
         ariaLabel={t('switcher_label')}
         currentKey="excel-to-json"

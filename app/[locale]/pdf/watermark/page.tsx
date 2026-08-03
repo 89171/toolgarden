@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { addPdfWatermark } from '@/lib/utils/pdf-watermark';
+import { pdfWatermarkContent } from '@/lib/tools/content/pdf-watermark';
 
 type Layout = 'center' | 'tile' | 'diagonal';
 
@@ -35,7 +36,7 @@ export default function PdfWatermarkPage() {
   const baseName = file?.name.replace(/\.[^.]+$/, '') ?? 'pdf';
 
   return (
-    <ToolLayout toolId="pdf-watermark">
+    <ToolLayout toolId="pdf-watermark" content={pdfWatermarkContent}>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <section className="flex flex-col gap-3 rounded-lg border border-border-base bg-surface p-4 shadow">
           <h2 className="text-lg font-semibold text-content">{t('upload_title')}</h2>

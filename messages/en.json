@@ -174,7 +174,7 @@
     "preview_title": "Result preview",
     "upload_title": "Upload files",
     "upload_button": "Choose files",
-    "upload_hint": "Supports the file formats available in the current mode. Current accept: {accept}",
+    "upload_hint": "Add multiple files supported by this tool, then arrange their order before merging.",
     "file_list_title": "File list",
     "file_count": "{count} files",
     "empty_list": "Uploaded files will appear here.",
@@ -586,7 +586,7 @@
       "ai": {
         "label": "AI upscale",
         "hint": "Neural network model reconstructs detail. Best quality, slower, 2x/4x only.",
-        "detail": "Runs a Real-ESRGAN-style neural network locally in your browser to reconstruct sharper detail than traditional interpolation, especially for photos and portraits. The first use downloads a ~1MB model file, processing takes noticeably longer than the other modes, and only fixed 2x/4x scales are supported. The model does not support transparency — images with a transparent background will be flattened to opaque."
+        "detail": "Runs a Real-ESRGAN-style neural network locally in your browser to reconstruct sharper detail than traditional interpolation, especially for photos and portraits. The first use downloads a ~1MB model file, processing takes noticeably longer than the other modes, and only fixed 2x/4x scales are supported. The model does not support transparency; images with a transparent background will be flattened to opaque."
       }
     },
     "output_format": "Output format",
@@ -1271,7 +1271,7 @@
       "items": [
         {
           "question": "Can it convert both JSON to XML and XML to JSON?",
-          "answer": "Yes. It supports both directions — paste either JSON or XML and the other format is produced."
+          "answer": "Yes. It supports both directions; paste either JSON or XML and the other format is produced."
         },
         {
           "question": "How are attributes and nested nodes handled?",
@@ -1415,7 +1415,7 @@
       "items": [
         {
           "question": "Does splitting a PDF upload my file?",
-          "answer": "No. Splitting runs locally in your browser, so the PDF is never uploaded — safe for contracts and IDs."
+          "answer": "No. Splitting runs locally in your browser, so the PDF is never uploaded; safe for contracts and IDs."
         },
         {
           "question": "Can I split by page ranges?",
@@ -1511,7 +1511,7 @@
       "items": [
         {
           "question": "How does audio compression reduce size?",
-          "answer": "It lowers the MP3 bitrate to shrink the file — the lower the bitrate the smaller the file, with a matching drop in quality."
+          "answer": "It lowers the MP3 bitrate to shrink the file; the lower the bitrate the smaller the file, with a matching drop in quality."
         },
         {
           "question": "Does compressing upload my file?",
@@ -1535,7 +1535,7 @@
         },
         {
           "question": "Why can't I start recording?",
-          "answer": "Usually the browser hasn't been granted microphone permission — allow this site to use the microphone in the address bar or system settings."
+          "answer": "Usually the browser hasn't been granted microphone permission; allow this site to use the microphone in the address bar or system settings."
         }
       ]
     },
@@ -1743,7 +1743,7 @@
         },
         {
           "question": "Do I need to sign up or install anything?",
-          "answer": "No. Just open the page — no login and no software installation required."
+          "answer": "No. Just open the page; no login and no software installation required."
         }
       ]
     },
@@ -1783,7 +1783,7 @@
       "items": [
         {
           "question": "Does the JSON formatter upload my data?",
-          "answer": "No. Formatting, minifying and validation all run locally in your browser, so the JSON you paste never leaves your device — safe for sensitive payloads."
+          "answer": "No. Formatting, minifying and validation all run locally in your browser, so the JSON you paste never leaves your device; safe for sensitive payloads."
         },
         {
           "question": "Does it support JSONC and JSON5?",
@@ -1819,7 +1819,7 @@
       "items": [
         {
           "question": "Can it convert both JSON to YAML and YAML to JSON?",
-          "answer": "Yes. It supports both directions — paste either format and the other is generated instantly."
+          "answer": "Yes. It supports both directions; paste either format and the other is generated instantly."
         },
         {
           "question": "Does converting upload my config files?",
@@ -1967,7 +1967,7 @@
         },
         {
           "question": "Can I export both PNG and JPG?",
-          "answer": "Yes. You can export each page as high-resolution PNG or JPG — PNG keeps transparency while JPG is smaller."
+          "answer": "Yes. You can export each page as high-resolution PNG or JPG; PNG keeps transparency while JPG is smaller."
         },
         {
           "question": "Does it export every page?",
@@ -2027,7 +2027,7 @@
       "items": [
         {
           "question": "Which color formats can it convert between?",
-          "answer": "It converts between HEX, RGB, HSL, HSV and CMYK — enter any one and the others update instantly."
+          "answer": "It converts between HEX, RGB, HSL, HSV and CMYK; enter any one and the others update instantly."
         },
         {
           "question": "Can I preview the color live?",
@@ -2315,7 +2315,7 @@
         },
         {
           "question": "Which output formats can I choose?",
-          "answer": "PNG, JPG, or WebP. JPG and WebP also offer quality controls. JPG does not support transparency — transparent areas are filled with white."
+          "answer": "PNG, JPG, or WebP. JPG and WebP also offer quality controls. JPG does not support transparency; transparent areas are filled with white."
         }
       ]
     },
@@ -2660,7 +2660,7 @@
   "site_pages": {
     "eyebrow": "ToolGarden information",
     "updated_label": "Last updated",
-    "updated_at": "2026-07-21",
+    "updated_at": "2026-08-03",
     "about": {
       "title": "About ToolGarden",
       "meta_title": "About ToolGarden and Browser-Local Tools",
@@ -2691,6 +2691,32 @@
             "Privacy claims distinguish local tool input from page telemetry.",
             "Compliance articles explain limitations instead of promising automatic certification."
           ]
+        },
+        {
+          "title": "Who maintains this site",
+          "paragraphs": [
+            "ToolGarden is maintained by one developer. There is no company entity, no sales team and no support rota, and that should shape what you reasonably expect of it: features and fixes land as maintainer time allows, email usually gets a reply within a few working days, and no service level is promised.",
+            "Display advertising covers the domain and bandwidth; the tools themselves are free and need no account. Advertising and tool processing are independent of each other; ad scripts do not touch the files you put into a tool, and the privacy policy sets out exactly how the two data flows are separated."
+          ]
+        },
+        {
+          "title": "What gets added here",
+          "paragraphs": [
+            "There is one admission test: can this job be done end to end in the browser, with a result that is actually usable? If a feature needs server compute, a private API or a paid third-party service to reach usable quality, it does not ship here; rather than shipping a version that visibly is not good enough."
+          ],
+          "items": [
+            "Preference goes to single-task tools with a clear input and output that fit on one screen.",
+            "Tools involving model inference; background and watermark removal, upscaling, OCR, transcription, stem splitting; use only open-source models that run in-browser.",
+            "When one job has several format paths, each format gets its own tool rather than one universal entry point, because the edge cases differ per format.",
+            "Nothing that requires an account, requires an upload to work, or produces results you cannot verify locally."
+          ]
+        },
+        {
+          "title": "How the content is kept current",
+          "paragraphs": [
+            "Tool descriptions, format tables and stated limits are updated alongside the implementation. When browser capabilities, dependency versions or model behaviour change and make an earlier description inaccurate, the description currently on the page is the authoritative one.",
+            "If you find documentation that contradicts actual behaviour, a format claim that is wrong, or a conclusion that has gone stale, say so through the contact page with the page URL. Corrections take priority over new features."
+          ]
         }
       ]
     },
@@ -2714,9 +2740,18 @@
             "Analytics data is handled under each provider's terms, controls, and retention settings. Do not place personal data or secrets in page URLs. ToolGarden does not intentionally send filenames, tool input values, or generated output values as custom analytics events."
           ],
           "links": [
-            { "label": "Google Privacy Policy", "href": "https://policies.google.com/privacy" },
-            { "label": "Microsoft Privacy Statement", "href": "https://privacy.microsoft.com/privacystatement" },
-            { "label": "Baidu Privacy Policy", "href": "https://www.baidu.com/duty/yinsiquan-policy.html" }
+            {
+              "label": "Google Privacy Policy",
+              "href": "https://policies.google.com/privacy"
+            },
+            {
+              "label": "Microsoft Privacy Statement",
+              "href": "https://privacy.microsoft.com/privacystatement"
+            },
+            {
+              "label": "Baidu Privacy Policy",
+              "href": "https://www.baidu.com/duty/yinsiquan-policy.html"
+            }
           ]
         },
         {
@@ -2726,8 +2761,14 @@
             "Ad requests can include the page URL, IP address, browser and device information, advertising or consent identifiers, and interaction data related to an ad. ToolGarden does not intentionally send the text, files, images, audio, or generated output you process inside a tool as advertising data. Where a consent message is shown, you can accept, reject, or adjust the available advertising choices."
           ],
           "links": [
-            { "label": "How Google uses information for advertising", "href": "https://policies.google.com/technologies/ads" },
-            { "label": "Google Ads settings", "href": "https://adssettings.google.com/" }
+            {
+              "label": "How Google uses information for advertising",
+              "href": "https://policies.google.com/technologies/ads"
+            },
+            {
+              "label": "Google Ads settings",
+              "href": "https://adssettings.google.com/"
+            }
           ]
         },
         {
@@ -2772,6 +2813,33 @@
           "paragraphs": [
             "The service is provided as available without a guarantee that every tool, browser, file, model, or network environment will work without interruption or error. Features and these terms may change as the product evolves."
           ]
+        },
+        {
+          "title": "Your files and your rights",
+          "paragraphs": [
+            "The files you put into a tool remain yours. The site acquires no rights over them, claims none, and for the supported tools could not acquire them, because the content never leaves your device; the privacy policy identifies which tools those are.",
+            "In return, it is on you to confirm you are entitled to process the material. Font subsetting is bound by font licensing, watermark removal does not change who owns an image's copyright, and PDF decryption applies only to documents you already have the right to open. Technically possible is not the same as permitted, and that judgement is yours."
+          ]
+        },
+        {
+          "title": "Advertising and third-party components",
+          "paragraphs": [
+            "This site shows advertising supplied by Google AdSense to cover running costs. Ads are served by a third party and may use cookies or similar technologies; the privacy policy explains this and how to exercise your choices. Advertising revenue does not change how any tool processes data or where that data goes.",
+            "The site is built on a substantial amount of open-source software; including FFmpeg, pdf-lib, pdfjs, Excalidraw, tldraw, Mind Elixir and Transformers.js, plus the model files they depend on. Each remains under its own licence, unchanged by being used here."
+          ]
+        },
+        {
+          "title": "What is disclaimed",
+          "paragraphs": [
+            "Output is provided for your own judgement and use. The site accepts no liability for differences between a converted result and the original, for model output that does not match expectations, for processing that stalls or fails because of browser or device limits, or for any direct or indirect consequence of your use of a result.",
+            "The technical explanations, format comparisons and stated limits on these pages are engineering descriptions. They are not legal, security, medical, financial or compliance advice. Where contracts, identity documents, medical records or financial data are involved, defer to a qualified professional in that field."
+          ]
+        },
+        {
+          "title": "Changes and scope",
+          "paragraphs": [
+            "Features keep changing and these terms may change with them. A revised version applies from the date it is published, and the last-updated date is shown at the top of the page. If you do not accept a revision, simply stop using the site; there are no accounts, so there is nothing to close."
+          ]
         }
       ]
     },
@@ -2804,6 +2872,32 @@
           "paragraphs": [
             "Send a concise report with the affected URL, impact, reproduction steps, browser version, and any safe proof of concept. Do not include live credentials, private user files, or destructive test data. Please allow reasonable time for investigation before public disclosure."
           ]
+        },
+        {
+          "title": "What browser-local processing actually guarantees",
+          "paragraphs": [
+            "\"No upload\" means precisely this: content you supply through the file picker, by drag and drop, or by pasting is never sent to any ToolGarden endpoint. It does not mean the page makes no network requests; the page itself, its JavaScript, its fonts, and the model files some tools need all come down from the network.",
+            "Put differently, this boundary is verifiable. Open the network panel in your browser's developer tools and exercise any tool: you should see downloads of static assets and model files, and no request carrying your file's contents. That is more reliable than any written promise, and you are welcome to check it yourself."
+          ]
+        },
+        {
+          "title": "Where data can persist on your device",
+          "paragraphs": [
+            "Most tools process purely in memory and release everything when the tab closes. A few exceptions leave traces locally, and you should know about them:"
+          ],
+          "items": [
+            "Canvas tools; Whiteboard, Excalidraw Board, Mind Map; store their content in browser local storage so a refresh does not lose your work.",
+            "Model files are cached after first download to avoid fetching them again; these are public model weights and contain none of your data.",
+            "A Service Worker caches the pages and static assets that make offline use possible.",
+            "All of the above can be removed at once with your browser's \"clear site data\" control."
+          ]
+        },
+        {
+          "title": "Where this model does not help",
+          "paragraphs": [
+            "Local processing removes one class of risk; your file sitting on someone else's server. It does nothing about a device that is already compromised, a browser extension reading page content, residue on a shared or public machine, or somebody simply reading your screen.",
+            "If your threat model includes any of those, or your organisation requires specific data to be handled inside an audited environment, use offline software that meets that requirement rather than any web tool; this one included."
+          ]
         }
       ]
     },
@@ -2824,6 +2918,56 @@
           "title": "Protect sensitive information",
           "paragraphs": [
             "Do not email passwords, API keys, session cookies, identity documents, confidential files, or unredacted customer data. For a security report, provide the minimum safe proof needed to understand the issue."
+          ]
+        },
+        {
+          "title": "Response times and what to expect",
+          "paragraphs": [
+            "The site is maintained by one developer; there is no support team. Email usually gets a reply within a few working days. Security reports are handled first; feature suggestions are recorded without a promised delivery date. To be unambiguous: no service level is offered, and there is no phone or instant-messaging support."
+          ]
+        },
+        {
+          "title": "Sorting by type",
+          "paragraphs": [
+            "Putting the type in your subject line measurably speeds things up:"
+          ],
+          "items": [
+            "A tool errors or returns the wrong result; include the page URL, browser and OS version, steps to reproduce, and a sample file you are able to share.",
+            "A correction; documentation that contradicts behaviour, an incorrect format claim, a conclusion that has aged out. Name the page and the passage.",
+            "A privacy question; uncertainty about where a particular tool's data goes, or behaviour that looks inconsistent with the privacy policy.",
+            "Accessibility; keyboard navigation, screen readers, contrast or text size. Tell us which assistive technology you use.",
+            "A security report; read the reporting requirements on the security page first, and include only the minimum evidence needed to understand the issue."
+          ]
+        },
+        {
+          "title": "Check here first; most questions need no email",
+          "paragraphs": [
+            "The following already have answers on the site, and looking is usually faster than waiting for a reply:"
+          ],
+          "items": [
+            "\"Will my file be uploaded?\"; every tool page's Supported range and limits table has a Where it runs row stating that tool's data flow. The privacy policy and security page cover it in general.",
+            "\"Why is it slow, or failing?\"; the model-based tools (background and watermark removal, upscaling, OCR, transcription, stem splitting) download tens of megabytes on first use and run inference on your device. Each tool page's What to know before you start lists its real limits.",
+            "\"The output does not match the original\"; the comparison table on each tool page states whether an operation is lossless or lossy and what it discards. PDF to Word, image compression and audio transcoding are especially worth reading first.",
+            "\"Which formats are supported?\"; the limits table on each tool page enumerates accepted inputs and outputs, which beats guessing from search results."
+          ]
+        },
+        {
+          "title": "About feature suggestions",
+          "paragraphs": [
+            "Suggestions are welcome, but please say whether the job can be done end to end in the browser. That is the site's only admission test: anything needing server compute, a private API or a paid third-party service to reach usable quality will not ship, because it contradicts the premise that your files stay on your device.",
+            "Suggestions already under consideration get recorded, but with no promised date; there is one maintainer, and scheduling follows available time."
+          ]
+        },
+        {
+          "title": "What email cannot help with",
+          "paragraphs": [
+            "A few kinds of request cannot be answered, stated here so you are not left waiting:"
+          ],
+          "items": [
+            "Processing files on your behalf. Please do not attach files; the tools are for you to run, and doing it for you defeats the point of local processing.",
+            "Recovering passwords. A PDF whose open password is lost cannot be opened, which is what encryption is for.",
+            "Business partnerships, advertising placement, link exchanges and sponsored content; none of these receive a reply.",
+            "Requests for source code, deployment details or keys framed as a \"compliance check\" or \"security assessment\" are not answered."
           ]
         }
       ]
@@ -3002,7 +3146,7 @@
       "no_stems_selected": "Select at least one stem to export.",
       "audio_too_long": "This audio is too long to fit in memory with the stems you selected. Shorten the audio or select fewer stems.",
       "webgpu_and_wasm_unavailable": "This browser cannot run the separation model. Use desktop Chrome or Edge.",
-      "model_download_failed": "Could not download the model. Check your connection and retry \u2014 it is hosted on HuggingFace, which some networks block.",
+      "model_download_failed": "Could not download the model. Check your connection and retry; it is hosted on HuggingFace, which some networks block.",
       "session_failed": "Could not load the model. Retry; if it keeps failing, use desktop Chrome or Edge with enough free memory.",
       "inference_failed": "Separation failed partway through, usually from running out of memory. Try shorter audio or fewer stems.",
       "model_failed": "Separation failed, most likely out of memory. Try shorter audio or fewer stems.",
@@ -3237,13 +3381,18 @@
     "related_guide": "Related privacy-first guide",
     "related_guide_action": "Read the guide",
     "faq_title": "Frequently asked questions",
-    "toc_title": "Table of contents"
+    "toc_title": "Table of contents",
+    "consolidated_eyebrow": "Content consolidated",
+    "consolidated_title": "This article is now part of a more complete guide",
+    "consolidated_description": "The old address remains available, but its useful material has been organized into the primary article below. Read that guide for the current explanation, examples, and common questions.",
+    "consolidated_action": "Read the complete guide",
+    "consolidated_back": "Back to the blog"
   },
   "home": {
     "title": "ToolGarden",
     "breadcrumb": "Home",
     "meta_title": "ToolGarden Toolkit - Free Online JSON, Image, PDF, Text and QR Tools",
-    "subtitle": "Free online tools that run locally in your browser — JSON, images, PDFs, text, QR codes, and subtitles. No upload, no sign-in.",
+    "subtitle": "Free online tools that run locally in your browser; JSON, images, PDFs, text, QR codes, and subtitles. No upload, no sign-in.",
     "featured": "Popular tools",
     "all_tools": "All tools",
     "search_placeholder": "Search tools, formats, or tasks...",
@@ -3266,6 +3415,519 @@
     "home": "Back home",
     "browse_tools": "Browse all tools",
     "suggested": "Popular tools"
+  },
+  "home_content": {
+    "lead": [
+      "Every tool on ToolGarden starts from one premise: if the browser can do the work itself, the file does not go to a server. JSON parsing, image codecs, PDF page reassembly, audio transcoding, OCR and background-removal models all run in-page now, via Canvas, Web Workers, WebAssembly and local models.",
+      "The practical consequence is that you can drop an API response containing tokens, an unsigned contract, a scanned ID or an unpublished manuscript straight into a tool, because none of it leaves this device."
+    ],
+    "choosing": [
+      {
+        "title": "Find it by data type",
+        "detail": "The top navigation groups tools by JSON, image, audio, PDF, text, file merging, encoding, QR codes and subtitles. When you know what kind of file you are holding, the category page is the fastest way in."
+      },
+      {
+        "title": "Find it by action",
+        "detail": "Within a category, tools are named after the action; convert, compress, merge, split, diff, validate, extract. Search matches action words directly, so typing \"merge\" lists the merge tool for every format."
+      },
+      {
+        "title": "Not sure which one applies",
+        "detail": "Every category page carries a \"choosing between these tools\" section and a format comparison table, and every tool page has steps, a worked input/output example and its limits. Reading the category page first saves redoing the job after picking the wrong format."
+      },
+      {
+        "title": "Curious how it works",
+        "detail": "The blog covers in-browser media processing, model inference and format specifications, and tool pages link down to the relevant deep-dive guide."
+      }
+    ],
+    "comparison": {
+      "caption": "Local processing differs from upload-based tools in more than privacy; the capability limits differ too, which is what tells you when to reach for desktop software instead.",
+      "headers": [
+        "Dimension",
+        "Processed in the browser",
+        "Uploaded to a server"
+      ],
+      "rows": [
+        [
+          "Where data goes",
+          "The file stays on your device; only code and models come down the wire",
+          "The file must be uploaded, after which retention and deletion are the operator's policy"
+        ],
+        [
+          "File size",
+          "Bounded by browser memory; very large files can fail",
+          "Bounded by server limits, and usually handles more"
+        ],
+        [
+          "Speed",
+          "Depends on your device; transcoding is fast, model inference is slow",
+          "Depends on server capacity, and is usually more predictable"
+        ],
+        [
+          "Works offline",
+          "Most tools work offline once their assets are cached",
+          "Requires a connection"
+        ]
+      ]
+    },
+    "notes": [
+      "Every tool is free and needs no account. The site does count page visits to learn which tools get used; that is a separate data flow from what you put into a tool, and the privacy policy spells out the distinction.",
+      "The trade-off for local processing is that the compute and the memory are yours. Files up to tens of megabytes are generally fine, but very long media, PDFs with a great many pages, and AI tools that download tens of megabytes of model can be slow or fail outright on modest hardware or a weak connection. Desktop or command-line software is the better choice there.",
+      "Most conversions are lossy or not fully reversible. Always keep the original file, and check the output before a converted result goes into a real process."
+    ]
+  },
+  "hub_article": {
+    "overview": "What this category is for",
+    "choosing": "Choosing between these tools",
+    "comparison": "Formats and capabilities compared",
+    "notes": "Limits that apply across this category"
+  },
+  "hub_content": {
+    "json_hub": {
+      "lead": [
+        "These tools all serve one goal: turning JSON from machine-readable into something you can read, edit and verify. Debugging an API mostly means formatting and minifying; config files often need comments and trailing commas repaired; integration work means converting between JSON, YAML, XML, CSV and Excel; and diagnosing a production issue usually comes down to diffing two responses or pulling one field out with JSONPath.",
+        "All parsing happens in your browser, so you can paste a real response containing tokens, phone numbers or order IDs without redacting it first for some online service."
+      ],
+      "choosing": [
+        {
+          "title": "You just need to see the structure",
+          "detail": "Use JSON Formatter. It accepts strict JSON, commented JSONC and JSON5 alike, and renders a collapsible tree; the fastest way to find a field inside a single-line response."
+        },
+        {
+          "title": "The text will not parse at all",
+          "detail": "Start with JSON Repair. Comments, trailing commas, single quotes, unquoted keys and escape backslashes picked up from log lines are all its job. Fix it there, then hand the result to the other tools."
+        },
+        {
+          "title": "You need a different data format",
+          "detail": "JSON ↔ YAML suits config files, JSON ↔ XML suits legacy APIs, JSON → CSV / Excel hands an array to non-technical colleagues, and JSON → TypeScript freezes a response into a type."
+        },
+        {
+          "title": "You need to validate, not just view",
+          "detail": "JSON Schema Generator infers constraints from a sample, JSON Schema Validator checks data against those constraints and reports error paths, JSONPath Query extracts deep fields by expression, and JSON Stats reports depth, key count and type distribution."
+        }
+      ],
+      "comparison": {
+        "caption": "What the same document gains or loses in each target format; usually the deciding factor when picking a conversion tool.",
+        "headers": [
+          "Target format",
+          "Structure",
+          "Types",
+          "Typical use"
+        ],
+        "rows": [
+          [
+            "YAML",
+            "Nesting fully preserved",
+            "Preserved, plus comments and anchors",
+            "Service config, CI pipeline definitions"
+          ],
+          [
+            "XML",
+            "Preserved, but arrays need an agreed wrapper element",
+            "Everything becomes text; needs a schema to constrain",
+            "Integrating with legacy and SOAP systems"
+          ],
+          [
+            "CSV / Excel",
+            "One level only; nesting is flattened or dropped",
+            "Everything becomes cell text",
+            "Handing data to colleagues who filter and sort in a spreadsheet"
+          ],
+          [
+            "TypeScript interface",
+            "Structure becomes a type definition",
+            "Inferred; optionality needs a human check",
+            "Letting the compiler catch misspelled fields"
+          ]
+        ]
+      },
+      "notes": [
+        "JSON numbers parse as JavaScript numbers, which represent integers exactly only up to 2^53-1. Snowflake IDs, order numbers and account balances should travel as strings at the transport layer, otherwise any JavaScript-based parser loses the last digits. That is a property of the format and the language, not a defect in one tool.",
+        "Conversion is lossy. Comments, metadata beyond key order, XML attributes and namespaces, and CSV types do not necessarily survive a round trip. Keep the original file before you use a converted result in a real process."
+      ]
+    },
+    "image_hub": {
+      "lead": [
+        "Most image work does not actually need a server. Canvas and WebCodecs decode and re-encode the common formats, WebAssembly runs the compression algorithms, and WASM or WebGPU can run the models behind background removal, watermark removal, upscaling and OCR. That premise is what this whole category is built on.",
+        "So the photos, ID scans and screenshots you open never leave your device. Background and watermark removal do download open-source model files into the browser first; the model comes from the network, the image you picked does not."
+      ],
+      "choosing": [
+        {
+          "title": "You need a smaller file",
+          "detail": "Image Compress re-encodes at a chosen quality and keeps the original format by default. If the goal is page load speed, switching the output to WebP or AVIF usually saves over thirty percent against a JPG of the same visual quality."
+        },
+        {
+          "title": "You need different dimensions, not different quality",
+          "detail": "Image Resize scales proportionally, Image Crop takes a region by dragging a box, and Image Upscale is for cases where the result still has to look sharp. Scaling down loses little; scaling up has a model invent detail rather than recover real detail."
+        },
+        {
+          "title": "You need to change the content itself",
+          "detail": "Remove Background exports a transparent PNG, ID Photo Maker crops to standard sizes and swaps the backdrop after removing the background, Remove Watermark inpaints the region you mark, and Image Editor handles redaction, blur and annotation."
+        },
+        {
+          "title": "You need information out of an image",
+          "detail": "OCR extracts text, Color Picker reads HEX / RGB / HSL from any pixel, and EXIF Viewer shows capture settings and location data; and can strip all of it before you export."
+        }
+      ],
+      "comparison": {
+        "caption": "The output-format trade-off. Picking wrong can multiply the file size, or silently drop the transparency you needed.",
+        "headers": [
+          "Format",
+          "Transparency",
+          "Compression",
+          "Best for"
+        ],
+        "rows": [
+          [
+            "JPG",
+            "No",
+            "Lossy",
+            "Photographs and broad gradients; the most compatible option"
+          ],
+          [
+            "PNG",
+            "Yes",
+            "Lossless",
+            "Screenshots, line art, anything needing a transparent background"
+          ],
+          [
+            "WebP",
+            "Yes",
+            "Lossy and lossless",
+            "General web use; clearly smaller than JPG or PNG at equal quality"
+          ],
+          [
+            "AVIF",
+            "Yes",
+            "Lossy and lossless",
+            "Smallest files, but slow to encode and unsupported by older browsers"
+          ]
+        ]
+      },
+      "notes": [
+        "Re-encoding stacks losses. Compressing a JPG repeatedly, or converting out and back, discards a little more detail every round; always start from the original, never from the previous output.",
+        "Stripping EXIF removes location, device model and capture time together. That is what you want before publishing, but it also means the information is gone for good. Save a copy of the original first if you need it on file.",
+        "Background removal, watermark removal, upscaling and OCR depend on model files. The first run downloads tens of megabytes, which is noticeably slow; and sometimes fails; on low-end devices or weak connections."
+      ]
+    },
+    "audio_hub": {
+      "lead": [
+        "These tools run FFmpeg compiled to WebAssembly, so format conversion, trimming, merging, speed changes and resampling all happen in the browser instead of on a server. Audio-to-text runs an open-source Whisper model in-page, and stem splitting runs its separation model the same way.",
+        "The cost is that the compute is yours: transcribing or splitting a few minutes of audio can take a long wait, where the same file converts format in seconds."
+      ],
+      "choosing": [
+        {
+          "title": "You only need a different format",
+          "detail": "Audio to MP3 is the most compatible and the smallest; Audio to WAV gives you uncompressed PCM, which is what you want before further processing or import into a DAW. To pull sound out of a video, use Audio Extract."
+        },
+        {
+          "title": "You need to cut or join",
+          "detail": "Audio Trim takes a section by start and end time, Audio Merge joins several files of different formats into one MP3, and Remove Silence cuts the blank stretches automatically; useful on raw recordings."
+        },
+        {
+          "title": "You need to change how it sounds or how big it is",
+          "detail": "Change Volume and Change Speed alter playback directly. Audio Compress and Change Bitrate reduce size by lowering the bitrate. Change Sample Rate is for matching what a target device or application requires."
+        },
+        {
+          "title": "You need the sound turned into something else",
+          "detail": "Audio to Text produces a transcript, Split Stems separates a song into vocals, drums, bass, guitar, piano and other, Text to Speech reads text aloud with the browser's own synthesiser, and Voice Recorder captures straight from the microphone."
+        }
+      ],
+      "comparison": {
+        "caption": "Bitrate sets the balance between size and quality. Rough guidance for common MP3 settings; the real difference depends on your material and listening setup.",
+        "headers": [
+          "Bitrate",
+          "Per minute",
+          "How it sounds",
+          "Suits"
+        ],
+        "rows": [
+          [
+            "96 kbps",
+            "about 0.7 MB",
+            "Intelligible, but detail is clearly gone",
+            "Speech only, meeting recordings, podcast drafts"
+          ],
+          [
+            "128 kbps",
+            "about 0.9 MB",
+            "Good enough for most purposes",
+            "Spoken content and background music"
+          ],
+          [
+            "192 kbps",
+            "about 1.4 MB",
+            "Close to transparent on music",
+            "General music distribution"
+          ],
+          [
+            "320 kbps",
+            "about 2.3 MB",
+            "The practical ceiling for MP3",
+            "Music where you want maximum fidelity"
+          ]
+        ]
+      },
+      "notes": [
+        "MP3 is lossy, and re-encoding cannot bring back high frequencies that are already gone. Converting a 128 kbps file to 320 kbps only makes it bigger; for fidelity you have to start from a lossless source.",
+        "FFmpeg in the browser reads the whole file into memory, so large inputs; especially extracting audio from a long video; can fail for lack of memory. Cut the source shorter when that happens.",
+        "Audio-to-text and stem splitting download a model and then do heavy computation. Time scales with audio length and device speed, and phones may not finish longer material at all."
+      ]
+    },
+    "pdf_hub": {
+      "lead": [
+        "PDF was designed to look identical on every device, and the price of that is a file which records where each glyph sits on the page rather than what the document means. That explains exactly where this category's abilities end: page-level work; merging, splitting, extracting, reordering, watermarking, encrypting; is reliable and lossless, while converting to Word means reconstructing structure that was never stored.",
+        "Everything runs in the browser, so contracts, invoices and scanned documents never go to a third-party service."
+      ],
+      "choosing": [
+        {
+          "title": "Page-level organisation",
+          "detail": "Merge PDF joins documents with drag-to-reorder, Split PDF cuts by page range, Extract Pages pulls out the pages you want, and Organize PDF reorders, duplicates and deletes pages before export. None of these re-render content, so all are lossless."
+        },
+        {
+          "title": "Converting to another format",
+          "detail": "Convert to PDF accepts Word, Excel, PowerPoint, EPUB, images, Markdown and HTML. PDF to Word produces an editable DOCX. PDF to Image exports each page as PNG or JPG; handy for slides, or for people without a reader."
+        },
+        {
+          "title": "Controlling who can open it and do what",
+          "detail": "PDF Encrypt sets an open password and can restrict printing and copying, or remove a password you know. PDF Watermark overlays text with nine-point positioning, tiling, diagonal placement and adjustable opacity."
+        }
+      ],
+      "comparison": {
+        "caption": "How faithfully each operation preserves the original; worth checking before you pick one.",
+        "headers": [
+          "Operation",
+          "Lossless",
+          "What happens",
+          "Watch out for"
+        ],
+        "rows": [
+          [
+            "Merge / split / extract / reorder",
+            "Yes",
+            "Only the organisation of page objects changes",
+            "Bookmarks and some form fields may not follow the pages"
+          ],
+          [
+            "Watermark",
+            "Near-lossless",
+            "A layer is drawn over the original page",
+            "The watermark is an editable layer, so it is not tamper-proofing"
+          ],
+          [
+            "Encrypt / decrypt",
+            "Yes",
+            "Only permissions and encryption settings change",
+            "Permission flags rely on the reader honouring them"
+          ],
+          [
+            "PDF to Word",
+            "No",
+            "Paragraphs and styles are inferred from glyph positions",
+            "Complex layouts, tables and columns need a human pass"
+          ]
+        ]
+      },
+      "notes": [
+        "A scan is fundamentally an image. If the PDF came from a camera or scanner it has no text layer, so converting to Word or copying text returns nothing; run OCR first in that case.",
+        "PDF permission flags such as no-printing and no-copying are declarations addressed to the reader application, and they hold only as long as the reader honours them. Use an open password when the content genuinely needs protecting.",
+        "Local processing is bounded by browser memory. Files with very many pages, or lots of high-resolution images, can fail; split them first and process the parts."
+      ]
+    },
+    "file_merge_hub": {
+      "lead": [
+        "Joining several files of the same kind sounds trivial, but \"joining\" means something different in every format: PDF concatenates page objects, Word has to merge document streams and stylesheets, Excel must decide between one combined sheet and one sheet per source, CSV has to handle repeated headers, and images need a choice between one tall strip and one page each.",
+        "Each tool here implements the logic its format actually needs, all in the browser, so the files you are merging are never uploaded."
+      ],
+      "choosing": [
+        {
+          "title": "Documents",
+          "detail": "Merge PDF preserves the original layout most reliably. Word Merge outputs a single DOCX, resolving style conflicts in favour of the earlier document. PPT Merge joins slides from several decks. RTF Merge suits rich text exported from older editors."
+        },
+        {
+          "title": "Spreadsheets",
+          "detail": "Excel Merge lets you either pool all data into one sheet or give each source file its own sheet. CSV Merge appends rows, so check that the column order matches across your sources."
+        },
+        {
+          "title": "Plain text and images",
+          "detail": "TXT Merge and Markdown Merge concatenate in list order, which is how you reassemble a draft split by chapter. Image Merge stacks images into one tall PNG, or composes them into a PDF with one image per page."
+        }
+      ],
+      "comparison": {
+        "caption": "How ordering and structure are handled, format by format.",
+        "headers": [
+          "Format",
+          "Order comes from",
+          "Structure handling",
+          "Common pitfall"
+        ],
+        "rows": [
+          [
+            "PDF",
+            "List order, drag to change",
+            "Page objects concatenated directly",
+            "Bookmarks and form fields may not survive"
+          ],
+          [
+            "Word / RTF",
+            "List order",
+            "Document streams joined, stylesheets merged",
+            "Same-named styles resolve to the earlier document"
+          ],
+          [
+            "Excel / CSV",
+            "List order",
+            "Rows appended, or one sheet per source",
+            "Mismatched column order silently misaligns data"
+          ],
+          [
+            "Images",
+            "List order",
+            "Stacked vertically, or one per page",
+            "Differing widths leave blank margins in the strip"
+          ]
+        ]
+      },
+      "notes": [
+        "Check that your sources share the same structure before merging. CSV and Excel are the dangerous ones: one extra column, one missing column, or a different column order misaligns the result; and nothing reports an error, so you have to verify it yourself.",
+        "Merging is one-way; there is no unmerge. Keep the originals. PDFs can be cut apart again by page range with Split PDF, but for the other formats the boundary information no longer exists once merged."
+      ]
+    },
+    "text_hub": {
+      "lead": [
+        "This category works on plain text itself: counting how much of it there is, finding what changed between two drafts, turning Markdown into something deliverable, and lifting text back out of an image.",
+        "Nothing is uploaded; comparison and counting both run in the browser; so unpublished manuscripts, draft contracts and records containing personal data are all fair game."
+      ],
+      "choosing": [
+        {
+          "title": "You need to know the length",
+          "detail": "Word Count reports characters, words, lines, paragraphs, sentences and byte size at once. The gap between counting Chinese by character and English by word is visible here, and a submission limit almost always means one specific one of these numbers."
+        },
+        {
+          "title": "You need to see what changed",
+          "detail": "Text Diff highlights insertions, deletions and edits at both line and word level; for contract versions, translation review and manuscript revisions. If both sides are JSON, JSON Diff gives you differences by field instead of by line."
+        },
+        {
+          "title": "You need to ship the Markdown",
+          "detail": "Markdown to PDF generates a downloadable PDF locally with mixed-script text and automatic pagination. Markdown to HTML emits complete HTML you can preview, copy and download into a CMS or an email."
+        },
+        {
+          "title": "The text is inside an image",
+          "detail": "Run Image OCR first to extract it, then bring the result to the tools above for counting or comparison."
+        }
+      ],
+      "notes": [
+        "There is no single correct way to count words. CJK text is normally counted by character and English by whitespace-delimited word, and whether punctuation, spaces and numerals count varies by publisher. Follow whatever definition your target platform gives; the several figures here exist so you can match any of them.",
+        "Text Diff is a literal comparison by line and by word; it does not understand meaning. Paraphrases and reordered clauses show up as large differences, while a critical change to a number or a unit may show as a single character. Important documents still need a human read.",
+        "Markdown to PDF renders with the fonts available in your browser, so output depends on your system fonts. When the typography has to match across devices, treat the generated PDF as the authority rather than the on-screen preview."
+      ],
+      "comparison": {
+        "caption": "How a word count is defined causes more confusion in this category than anything else. The same text can differ by more than a factor of two between rules.",
+        "headers": [
+          "Definition",
+          "For CJK text",
+          "For Latin text",
+          "Who asks for it"
+        ],
+        "rows": [
+          [
+            "Characters, with spaces",
+            "Each character and punctuation mark counts as 1",
+            "Each letter, space and mark counts as 1",
+            "Publisher and journal length limits"
+          ],
+          [
+            "Characters, no spaces",
+            "Almost the same as with spaces",
+            "Clearly lower than the with-spaces figure",
+            "Some submission systems and ad-copy limits"
+          ],
+          [
+            "Words",
+            "Usually equals the character count, since CJK has no word spaces",
+            "Split on whitespace, roughly a sixth of the character count",
+            "English academic writing and per-word rates"
+          ],
+          [
+            "Byte size",
+            "A CJK character normally takes 3 bytes",
+            "An ASCII character takes 1 byte",
+            "Database column lengths and payload limits"
+          ]
+        ]
+      }
+    },
+    "other_hub": {
+      "lead": [
+        "What lands here does not fit the categories above but runs locally just the same: three canvas tools; a whiteboard, a hand-drawn-style board and a mind map; plus a font subsetting tool.",
+        "Canvas content is stored in your browser, and font subsetting reads the font file into memory and cuts a subset out of it. Neither uploads anything."
+      ],
+      "choosing": [
+        {
+          "title": "You want a board you can draw and stick notes on",
+          "detail": "Whiteboard is built on tldraw, with shapes, freehand drawing, sticky notes, images, multiple pages and export; good for working through a process or capturing a meeting as it happens."
+        },
+        {
+          "title": "You want the look of a sketch",
+          "detail": "Excalidraw Board produces hand-drawn strokes, which suits architecture sketches and explanatory diagrams: the deliberate roughness tells the reader this is a draft that will still change."
+        },
+        {
+          "title": "You want to organise a hierarchy",
+          "detail": "Mind Map is built on Mind Elixir, edits the node tree directly, and exports to a Markdown outline you can carry on writing in a document."
+        },
+        {
+          "title": "You want a smaller web font",
+          "detail": "Font Subset pulls only the characters you specify out of a TTF or WOFF, producing a far smaller font. CJK fonts run to several megabytes; embedding only the few dozen glyphs actually used typically brings that down to tens of kilobytes."
+        }
+      ],
+      "notes": [
+        "Canvas content lives in browser local storage, so clearing browsing data, switching browsers or moving to another device makes it disappear. Export anything you care about to a file.",
+        "Font subsetting is bounded by licensing. Not every font may be redistributed or embedded in a web page, so check the licence terms before processing a commercial font; technically possible is not the same as permitted."
+      ],
+      "comparison": {
+        "caption": "All three canvas tools exist to get an idea drawn, but they suit different stages; and the wrong one misleads the reader about your intent.",
+        "headers": [
+          "Tool",
+          "Data structure",
+          "Visual style",
+          "Stage it suits"
+        ],
+        "rows": [
+          [
+            "Whiteboard",
+            "Free canvas with no enforced relationships",
+            "Clean vector",
+            "Diagrams and meeting records that should look finished"
+          ],
+          [
+            "Excalidraw Board",
+            "Free canvas with grouping and layer order",
+            "Hand-drawn",
+            "Draft stage, where deliberate roughness invites changes"
+          ],
+          [
+            "Mind Map",
+            "A tree; every node has one parent",
+            "Structured node tree",
+            "Clear hierarchical breakdowns, exportable to Markdown"
+          ],
+          [
+            "Font Subset",
+            "Not a canvas tool; it processes font files",
+            ": ",
+            "Reducing web font payload"
+          ]
+        ]
+      }
+    }
+  },
+  "tool_article": {
+    "overview": "About this tool",
+    "steps": "How to use it",
+    "example": "Input and output example",
+    "specs": "Supported range and limits",
+    "scenarios": "When you would use it",
+    "notes": "What to know before you start",
+    "reference": "Related concepts"
   },
   "categories": {
     "format": "Format",
@@ -4139,5 +4801,10 @@
       "page_label": "Page {page}",
       "empty_state": "Upload a PDF and click Convert"
     }
+  },
+  "redirect_page": {
+    "title": "This address has moved",
+    "description": "Taking you to the matching tool page now. If nothing happens, use the link below.",
+    "action": "Go to {target}"
   }
 }

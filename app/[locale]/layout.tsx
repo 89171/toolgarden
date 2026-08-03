@@ -59,6 +59,10 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
+// 只允许 generateStaticParams 中声明的语言段。否则 `/json-diff` 这类无 locale
+// 路径会被动态段误认成 locale，并在 `output: export` 的开发模式下返回 500。
+export const dynamicParams = false;
+
 export default async function LocaleLayout({
   children,
   params,

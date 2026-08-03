@@ -17,6 +17,7 @@ import {
   type FontSubsetFormat,
   type FontSubsetSuccess,
 } from '@/lib/utils/font-subset';
+import { fontSubsetContent } from '@/lib/tools/content/font-subset';
 
 type FontSubsetOutputState = FontSubsetSuccess & {
   url: string;
@@ -172,7 +173,7 @@ export function FontSubsetTool() {
   }, [output]);
 
   return (
-    <ToolLayout toolId="font-subset">
+    <ToolLayout toolId="font-subset" content={fontSubsetContent}>
       {output ? (
         <style>
           {`@font-face{font-family:${JSON.stringify(output.fontFamily)};src:url(${JSON.stringify(output.url)}) format("${output.outputFormat === 'woff' ? 'woff' : 'truetype'}");font-display:block;}`}

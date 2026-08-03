@@ -14,6 +14,7 @@ import {
 import { workflowSeoBlogArticles } from './workflow-seo-articles';
 import { seoBlogArticles } from './seo-articles';
 import { longTailBlogArticles } from './long-tail-articles';
+import { isConsolidatedBlogSlug } from './consolidations';
 
 export const BLOG_INDEX_PATH = '/blog';
 
@@ -4051,7 +4052,9 @@ export function getBlogPaths(): string[] {
 
 export function getLocalizedBlogArticles(locale: string): LocalizedBlogArticle[] {
   const normalizedLocale = normalizeBlogLocale(locale);
-  return blogArticles.map((article) => toLocalizedArticle(article, normalizedLocale));
+  return blogArticles
+    .filter((article) => !isConsolidatedBlogSlug(article.slug))
+    .map((article) => toLocalizedArticle(article, normalizedLocale));
 }
 
 export function getLocalizedBlogArticle(slug: string, locale: string): LocalizedBlogArticle | null {
@@ -4117,7 +4120,7 @@ export function getRelatedBlogArticles(
   const targetTools = new Set(targetTranslation.relatedTools.map((tool) => tool.href));
 
   const scored = blogArticles
-    .filter((item) => item.slug !== slug)
+    .filter((item) => item.slug !== slug && !isConsolidatedBlogSlug(item.slug))
     .map((item) => {
       const t = item.translations[normalizedLocale];
       const tagOverlap = t.tags.filter((tag) => targetTags.has(tag)).length;

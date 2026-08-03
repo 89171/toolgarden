@@ -12,6 +12,7 @@ import {
   getLocalizedBlogTopicForArticle,
   getRelatedBlogArticles,
 } from '@/lib/blog/articles';
+import { getBlogConsolidation } from '@/lib/blog/consolidations';
 import {
   createBlogArticleBreadcrumbJsonLd,
   createBlogArticleFaqJsonLd,
@@ -59,6 +60,67 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
   if (!article) notFound();
 
   const m = getLocaleMessages(normalizedLocale);
+  const consolidatedTargetSlug = getBlogConsolidation(slug);
+  const consolidatedTarget = consolidatedTargetSlug
+    ? getLocalizedBlogArticle(consolidatedTargetSlug, normalizedLocale)
+    : null;
+
+  if (consolidatedTarget) {
+    return (
+      <div className="flex min-h-[100dvh] flex-col bg-background text-foreground">
+        <div className="flex w-full flex-grow flex-col px-3 py-3 sm:px-6 sm:py-4 lg:px-10 xl:px-14 2xl:px-20">
+          <Header compact />
+          <main className="mx-auto flex w-full max-w-[860px] flex-grow flex-col justify-center py-12 sm:py-20">
+            <nav className="mb-8 flex items-center gap-1 text-sm text-content-muted" aria-label="breadcrumb">
+              <Link href={`/${normalizedLocale}`} className="transition-colors hover:text-content-secondary">
+                {m.home.breadcrumb}
+              </Link>
+              <span aria-hidden="true">/</span>
+              <Link href={`/${normalizedLocale}/blog`} className="transition-colors hover:text-content-secondary">
+                {m.blog.breadcrumb}
+              </Link>
+            </nav>
+
+            <section className="border-y border-border-subtle py-10 sm:py-14" aria-labelledby="consolidated-title">
+              <p className="font-mono text-xs font-semibold uppercase tracking-normal text-content-faint">
+                {m.blog.consolidated_eyebrow}
+              </p>
+              <h1 id="consolidated-title" className="mt-3 max-w-3xl text-3xl font-bold leading-tight text-content sm:text-5xl">
+                {m.blog.consolidated_title}
+              </h1>
+              <p className="mt-5 max-w-[68ch] text-base leading-8 text-content-muted">
+                {m.blog.consolidated_description}
+              </p>
+
+              <Link
+                href={getLocalizedPath(normalizedLocale, consolidatedTarget.path)}
+                className="group mt-8 block border-l-2 border-border-strong pl-5 transition-colors hover:border-content"
+              >
+                <span className="block text-xs font-semibold uppercase tracking-normal text-content-faint">
+                  {m.blog.consolidated_action}
+                </span>
+                <span className="mt-2 block text-xl font-bold leading-snug text-content sm:text-2xl">
+                  {consolidatedTarget.title}
+                </span>
+                <span className="mt-2 block text-sm leading-7 text-content-muted">
+                  {consolidatedTarget.excerpt}
+                </span>
+              </Link>
+
+              <Link
+                href={`/${normalizedLocale}/blog`}
+                className="mt-8 inline-block text-sm font-semibold text-content-secondary underline decoration-border-strong underline-offset-4 transition-colors hover:text-content"
+              >
+                {m.blog.consolidated_back}
+              </Link>
+            </section>
+          </main>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
   const relatedArticles = getRelatedBlogArticles(slug, normalizedLocale);
   const topicMembership = getLocalizedBlogTopicForArticle(slug, normalizedLocale);
   const faqJsonLd = createBlogArticleFaqJsonLd(slug, normalizedLocale);

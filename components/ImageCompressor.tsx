@@ -19,6 +19,7 @@ import {
   type ImageConversionError,
 } from '@/lib/utils/image';
 import { createZipArchive } from '@/lib/utils/zip';
+import { imageCompressContent } from '@/lib/tools/content/image-compress';
 
 type CompressorItemStatus = 'ready' | 'compressing' | 'done' | 'error';
 type PreviewKind = 'source' | 'output';
@@ -290,7 +291,7 @@ export function ImageCompressor() {
   const canPreviewOutput = Boolean(previewItem?.outputUrl);
 
   return (
-    <ToolLayout toolId="image-compress">
+    <ToolLayout toolId="image-compress" content={imageCompressContent}>
       <div className="grid flex-grow grid-cols-1 gap-4 overflow-auto pb-4 sm:gap-6 sm:pb-8 xl:min-h-0 xl:grid-cols-[minmax(340px,430px)_1fr] xl:overflow-hidden">
         <Panel
           title={ti('settings_title')}

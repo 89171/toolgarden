@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
+import type { ToolContent } from '@/lib/tools/content';
 import {
   inspectImageFile,
   preloadImageBackgroundRemovalModel,
@@ -136,7 +137,11 @@ function getPointerCenter(first: PointerPosition, second: PointerPosition): Poin
   };
 }
 
-export function ImageIdPhotoTool() {
+interface ImageIdPhotoToolProps {
+  content?: ToolContent;
+}
+
+export function ImageIdPhotoTool({ content }: ImageIdPhotoToolProps) {
   const ti = useTranslations('image_id_photo');
   const inputRef = useRef<HTMLInputElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
@@ -580,7 +585,7 @@ export function ImageIdPhotoTool() {
     : ti('progress_model_note_quality');
 
   return (
-    <ToolLayout toolId={TOOL_ID}>
+    <ToolLayout toolId={TOOL_ID} content={content}>
       <Panel
         title={ti('editor_title')}
         actions={(

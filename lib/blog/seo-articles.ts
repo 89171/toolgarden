@@ -959,7 +959,7 @@ export const seoBlogArticles = [
   {
     slug: 'what-is-json-schema-api-validation',
     publishedAt: '2026-07-02',
-    updatedAt: '2026-07-03',
+    updatedAt: '2026-08-03',
     translations: {
       zh: {
         title: 'JSON Schema 是什么？如何用它校验接口数据',
@@ -1023,6 +1023,30 @@ export const seoBlogArticles = [
               '用 Schema 校验真实请求或响应数据。',
               '根据错误路径定位具体字段，再修正数据或调整规则。',
             ],
+          },
+          { type: 'heading', level: 2, text: '从样本生成的 Schema 只是起点' },
+          {
+            type: 'paragraph',
+            text: '生成器只能观察样本里已经出现的值。它无法知道某个字段是否可能缺失，字符串是不是固定枚举，数字有没有上下限，也无法从一个 null 推断真实业务类型。因此自动结果适合搭建骨架，最终约束仍要对照接口文档、数据库规则和异常样本补齐。',
+          },
+          {
+            type: 'table',
+            headers: ['样本现象', '自动推断的盲点', '人工补充'],
+            rows: [
+              ['字段每次都出现', '不代表业务上必填', '按合同决定是否放入 required'],
+              ['值是 paid', '看不出还有 draft 或 failed', '补充 enum 或 oneOf'],
+              ['数组只有一项', '看不出其它元素形态', '加入更多样本并检查 items'],
+              ['对象没有额外字段', '看不出是否允许扩展', '明确 additionalProperties 策略'],
+            ],
+          },
+          { type: 'heading', level: 2, text: '校验通过也不等于业务正确' },
+          {
+            type: 'paragraph',
+            text: 'Schema 主要验证结构与声明的约束。即使 email 格式正确，也不能证明邮箱真实存在；即使金额是正数，也不能证明订单允许退款；format 关键字是否强制检查还取决于验证器配置。把 Schema 放在输入边界用于尽早拒绝坏数据，跨字段规则、权限和业务状态仍应由应用代码处理。',
+          },
+          {
+            type: 'paragraph',
+            text: '团队还应固定所使用的 JSON Schema draft 与验证器版本。不同 draft 的关键字和引用行为可能不同，Schema 文件最好声明 $schema，并把验证规则纳入接口测试，避免生产端和文档端使用不同解释。',
           },
           {
             type: 'callout',
@@ -1123,6 +1147,30 @@ export const seoBlogArticles = [
               'Use the error path to locate the exact field that needs attention.',
             ],
           },
+          { type: 'heading', level: 2, text: 'A generated Schema is only a starting point' },
+          {
+            type: 'paragraph',
+            text: 'A generator can observe only values present in the sample. It cannot know whether a field may be absent, whether a string is a closed enum, whether a number has limits, or what business type sits behind a lone null. Generated output is useful scaffolding, but the final constraints still need the API contract, database rules, and representative failure cases.',
+          },
+          {
+            type: 'table',
+            headers: ['Sample observation', 'What inference cannot know', 'Manual decision'],
+            rows: [
+              ['A field appears every time', 'That does not prove it is required', 'Use the contract to decide required'],
+              ['The value is paid', 'Other states such as draft or failed are unseen', 'Add enum or oneOf'],
+              ['An array has one item', 'Other item shapes are unseen', 'Add more samples and review items'],
+              ['An object has no extra fields', 'Extensibility is unknown', 'Choose an additionalProperties policy'],
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Passing validation does not prove business correctness' },
+          {
+            type: 'paragraph',
+            text: 'Schema primarily verifies structure and the constraints you declared. A syntactically valid email is not proof that the mailbox exists, and a positive amount does not prove that an order may be refunded. Whether format is asserted can also depend on validator configuration. Use Schema at the input boundary to reject malformed data early, while cross-field rules, authorization, and business state remain application logic.',
+          },
+          {
+            type: 'paragraph',
+            text: 'A team should also pin the JSON Schema draft and validator version. Keywords and reference behavior differ across drafts, so declare $schema where possible and include validation rules in API tests. That prevents production and documentation tooling from interpreting the same file differently.',
+          },
           {
             type: 'callout',
             title: 'ToolGarden JSON Schema Tools',
@@ -1164,7 +1212,7 @@ export const seoBlogArticles = [
   {
     slug: 'what-is-jwt-header-payload',
     publishedAt: '2026-07-02',
-    updatedAt: '2026-07-03',
+    updatedAt: '2026-08-03',
     translations: {
       zh: {
         title: 'JWT 是什么？如何安全查看 Header 和 Payload',
@@ -1214,6 +1262,31 @@ export const seoBlogArticles = [
               ['Payload', '业务声明，例如 sub、exp、role', '不是加密'],
               ['Signature', '用密钥或私钥计算出的签名', '用于验证完整性'],
             ],
+          },
+          { type: 'heading', level: 2, text: '解码和验证是两件不同的事' },
+          {
+            type: 'paragraph',
+            text: '解码只需要把前两段从 Base64URL 还原成 JSON，不需要密钥，所以攻击者也能任意制作一个看起来合理的 Payload。验证则必须由服务端根据允许的算法和可信密钥检查 Signature，并同时校验 exp、nbf、iss、aud 等声明。调试工具显示出字段，只能说明 token 结构可读，不能授予任何信任。',
+          },
+          {
+            type: 'code',
+            language: 'text',
+            code: '解码成功 ≠ 签名有效\n签名有效 ≠ 当前请求有权限\n\n完整判断 = 签名 + 时间 + 签发方 + 受众 + 业务权限',
+          },
+          { type: 'heading', level: 2, text: '服务端验证时的关键边界' },
+          {
+            type: 'list',
+            items: [
+              '由服务端配置允许的算法，不要直接接受 Header 中 alg 指定的任意算法。',
+              'exp 和 nbf 通常使用秒级 Unix 时间戳，比较时要考虑小幅时钟偏差。',
+              'RS256 等非对称算法使用公钥验签，HS256 则要求验证方持有同一个 secret。',
+              'token 撤销、用户停用和权限变化不会自动写回旧 token，需要额外的会话策略。',
+              '签名只保护内容未被修改，不会隐藏 Payload，也不会证明终端设备安全。',
+            ],
+          },
+          {
+            type: 'paragraph',
+            text: '排错时可以使用脱敏 token，或在本地查看 Header 与 Payload。生产密钥不应放进浏览器代码、截图、工单或第三方页面。需要验证真实签名时，优先在受控后端或本地开发环境使用与生产相同的验证库和算法白名单。',
           },
           { type: 'heading', level: 2, text: '安全查看 JWT 的注意事项' },
           {
@@ -1345,6 +1418,31 @@ export const seoBlogArticles = [
               ['aud', 'Audience', 'Is it meant for this service?'],
               ['iss', 'Issuer', 'Does it come from the expected authority?'],
             ],
+          },
+          { type: 'heading', level: 2, text: 'Decoding and verification are different operations' },
+          {
+            type: 'paragraph',
+            text: 'Decoding only restores the first two Base64URL segments as JSON and requires no key, so an attacker can create a plausible-looking Payload too. Verification must happen on the server with an allowed algorithm and trusted key, followed by checks for exp, nbf, iss, aud, and other claims. A debugging tool showing the fields proves only that the token is readable, not that it deserves trust.',
+          },
+          {
+            type: 'code',
+            language: 'text',
+            code: 'decoded successfully != valid signature\nvalid signature != authorized request\n\ncomplete decision = signature + time + issuer + audience + application permissions',
+          },
+          { type: 'heading', level: 2, text: 'Important server-side verification boundaries' },
+          {
+            type: 'list',
+            items: [
+              'Configure the allowed algorithms on the server instead of accepting any alg named by the Header.',
+              'exp and nbf normally use Unix seconds, and comparisons may need a small allowance for clock skew.',
+              'Asymmetric algorithms such as RS256 verify with a public key, while HS256 requires every verifier to possess the same secret.',
+              'Token revocation, user suspension, and permission changes do not rewrite an old token automatically, so sessions need a separate policy.',
+              'A signature protects against content modification. It does not hide the Payload or prove that the client device is safe.',
+            ],
+          },
+          {
+            type: 'paragraph',
+            text: 'For debugging, use a redacted token or inspect Header and Payload locally. Production keys do not belong in browser code, screenshots, support tickets, or third-party pages. When a real signature must be tested, use the same verification library and algorithm allowlist in a controlled backend or local development environment.',
           },
           {
             type: 'callout',
@@ -1582,7 +1680,7 @@ export const seoBlogArticles = [
   {
     slug: 'why-qr-code-cannot-be-decoded',
     publishedAt: '2026-07-02',
-    updatedAt: '2026-07-03',
+    updatedAt: '2026-08-03',
     translations: {
       zh: {
         title: '二维码识别不出来是什么原因？如何提高识别率',
@@ -1647,6 +1745,27 @@ export const seoBlogArticles = [
               '打印前做真实距离测试，避免尺寸太小。',
               '如果二维码内容很长，优先改成短链接再生成。',
             ],
+          },
+          { type: 'heading', level: 2, text: '按顺序排查，避免盲目美化' },
+          {
+            type: 'list',
+            ordered: true,
+            items: [
+              '先用原图解码，记录是否每次失败、偶尔失败，还是只有某一台设备失败。',
+              '确认三个定位方块完整，模块没有被非等比例拉伸，四周仍有连续浅色静区。',
+              '转成灰度观察前景与背景是否仍清楚，复杂底图和半透明模块会破坏二值化。',
+              '如果只在打印后失败，检查物理尺寸、打印网点、反光、折痕和实际扫码距离。',
+              '如果图像能解码但手机没有执行动作，问题在 payload 格式或内容，不在二维码图形。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '纠错等级不是万能修复' },
+          {
+            type: 'paragraph',
+            text: '二维码纠错可以在部分模块受损时恢复数据，但定位方块、时序结构、静区或大量连续区域被破坏时，增加纠错等级也无法补救。较高等级还会让相同内容需要更多模块，若输出尺寸不变，单个模块反而更小。设计阶段应同时控制内容长度、纠错等级和最终尺寸。',
+          },
+          {
+            type: 'paragraph',
+            text: '已经模糊或严重压缩的二维码无法凭空恢复确定的原始模块。像素无损整数倍放大只方便扫描器观察现有边界，不会创造丢失数据；锐化和 AI 放大还可能把错误边缘变得更确定。重要二维码应回到原始 payload 重新生成，而不是反复修图。',
           },
           {
             type: 'callout',
@@ -1747,6 +1866,27 @@ export const seoBlogArticles = [
               'Test printed QR codes from the actual viewing distance.',
               'If the payload is long, use a short URL before generating the QR code.',
             ],
+          },
+          { type: 'heading', level: 2, text: 'Diagnose in order instead of styling blindly' },
+          {
+            type: 'list',
+            ordered: true,
+            items: [
+              'Decode the original image first and record whether failure is consistent, intermittent, or limited to one device.',
+              'Confirm all three finder squares are intact, modules were not stretched out of proportion, and a continuous light quiet zone remains.',
+              'View it in grayscale to see whether foreground and background still separate clearly; busy artwork and translucent modules make thresholding unreliable.',
+              'If only the printed copy fails, inspect physical size, printer dots, glare, folds, and the real scanning distance.',
+              'If the image decodes but the phone performs no action, the problem is payload syntax or content rather than the QR artwork.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Error correction is not a universal repair' },
+          {
+            type: 'paragraph',
+            text: 'QR error correction can recover data when some modules are damaged, but it cannot compensate for destroyed finder patterns, timing structure, quiet zone, or a large continuous missing area. A higher level also needs more modules for the same payload, making each module smaller when output dimensions stay fixed. Content length, correction level, and final size must be chosen together.',
+          },
+          {
+            type: 'paragraph',
+            text: 'A blurred or heavily compressed QR image cannot reveal lost modules with certainty. Integer pixel upscaling merely gives a scanner a larger view of existing edges; it does not create missing data. Sharpening or AI upscaling can make a wrong edge look more definite. For an important code, regenerate from the original payload instead of repeatedly repairing the image.',
           },
           {
             type: 'callout',

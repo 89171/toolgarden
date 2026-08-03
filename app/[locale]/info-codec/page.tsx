@@ -8,6 +8,7 @@ import {
   InfoCodecOperation,
   runInfoCodecOperation,
 } from '@/lib/utils/info-codec';
+import { infoCodecContent } from '@/lib/tools/content/info-codec';
 
 const ENCODE_OPERATIONS: InfoCodecOperation[] = [
   'legacy-encode',
@@ -101,7 +102,7 @@ export default function InfoCodecPage() {
   );
 
   return (
-    <ToolLayout toolId="info-codec">
+    <ToolLayout toolId="info-codec" content={infoCodecContent}>
       <div className="flex-grow grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] min-h-0">
         <div className="flex min-h-0 flex-col gap-4">
           <Panel

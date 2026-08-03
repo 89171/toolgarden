@@ -66,12 +66,13 @@ function article(
   slug: string,
   en: ArticleCopy,
   zh: ArticleCopy,
-  publishedAt = '2026-07-20'
+  publishedAt = '2026-07-20',
+  updatedAt = publishedAt
 ): BlogArticle {
   return {
     slug,
     publishedAt,
-    updatedAt: publishedAt,
+    updatedAt,
     translations: {
       en: buildTranslation(en),
       zh: buildTranslation(zh),
@@ -916,7 +917,7 @@ export const topicClusterBlogArticles: BlogArticle[] = [
       lead: 'QR codes and subtitle files look unrelated, but both are compact interchange formats where small syntax details control whether another device can understand the result.',
       intro: 'A Wi-Fi QR payload needs the right field escaping and enough visual contrast. A subtitle file needs precise timestamps, encoding, and cue order. Browser-local tools make both workflows easy to test without uploading network passwords, videos, audio, or subtitle drafts.',
       sections: [
-        { heading: 'Choose the QR payload before styling', paragraphs: ['A QR code stores text. URLs, Wi-Fi credentials, vCards, email links, and plain text each use a different payload convention. Build and verify the payload first, then choose size, error correction, foreground color, background, and download format.'] },
+        { heading: 'Choose the QR payload before styling', paragraphs: ['A QR code stores text. URLs, Wi-Fi credentials, vCards, email links, and plain text each use a different payload convention. Build and verify the payload first, then choose size, error correction, foreground color, background, and download format.', 'For a website, encode the complete HTTPS URL. A Wi-Fi join code commonly follows WIFI:T:WPA;S:Network;P:Password;;, with structural characters escaped inside values. A contact card uses vCard text beginning with BEGIN:VCARD and should keep core fields such as FN, TEL, EMAIL, and URL for broad compatibility. Always decode the exported image once and compare the recovered text with the intended payload.'] },
         { heading: 'Make QR codes easy to scan', paragraphs: ['Use a quiet zone, strong contrast, sufficient pixel dimensions, and an error-correction level appropriate for the environment. Avoid shrinking dense payloads or placing codes over busy backgrounds. Always scan the exported image with more than one device when it will be printed or widely distributed.'] },
         { heading: 'Protect sensitive QR content', paragraphs: ['A QR code is not encryption. Anyone who can scan a Wi-Fi code can read the network name and password. Generate it locally, share it only with the intended audience, rotate credentials when needed, and do not publish private payloads simply because the text is encoded as a pattern.'] },
         { heading: 'Understand subtitle formats', paragraphs: ['SRT uses numbered cues and comma-separated milliseconds. WebVTT begins with WEBVTT, uses dot-separated milliseconds, and supports web-oriented cue settings. LRC is line-oriented and commonly used for lyrics. Converting the timestamps is straightforward, but styling and positioning may need separate handling.'] },
@@ -942,7 +943,7 @@ export const topicClusterBlogArticles: BlogArticle[] = [
       lead: '二维码和字幕文件看起来没有关联，但它们都是紧凑的交换格式，细小语法差异会直接决定另一台设备能否理解结果。',
       intro: 'Wi-Fi 二维码 payload 需要正确字段转义和足够视觉对比，字幕文件则需要精确时间戳、编码和 cue 顺序。浏览器本地工具可以方便测试两类流程，而且无需上传网络密码、视频、音频或字幕草稿。',
       sections: [
-        { heading: '先确定二维码 payload，再设置样式', paragraphs: ['二维码实际存储文本。网址、Wi-Fi 凭据、vCard、邮件链接和普通文本分别有不同 payload 约定。应先构建并验证 payload，再选择尺寸、纠错等级、前景色、背景和下载格式。'] },
+        { heading: '先确定二维码 payload，再设置样式', paragraphs: ['二维码实际存储文本。网址、Wi-Fi 凭据、vCard、邮件链接和普通文本分别有不同 payload 约定。应先构建并验证 payload，再选择尺寸、纠错等级、前景色、背景和下载格式。', '网址应编码完整 HTTPS 地址。Wi-Fi 连接码常用 WIFI:T:WPA;S:Network;P:Password;; 结构，字段值中的结构字符需要转义。联系人卡片使用以 BEGIN:VCARD 开始的 vCard 文本，优先保留 FN、TEL、EMAIL、URL 等兼容性较好的基础字段。导出后应至少反向解码一次，把恢复出的文本与预期 payload 逐字核对。'] },
         { heading: '让二维码更容易扫描', paragraphs: ['保留静区，使用强对比，确保足够像素尺寸，并按环境选择纠错等级。不要把密集 payload 缩得过小，也不要把二维码放在复杂背景上。用于印刷或广泛分发前，应使用多台设备扫描导出图片。'] },
         { heading: '保护敏感二维码内容', paragraphs: ['二维码不是加密。任何可以扫描 Wi-Fi 码的人都能读取网络名称和密码。应在本地生成，只分享给目标用户，需要时轮换凭据，也不要因为文本变成图案就公开私密 payload。'] },
         { heading: '理解字幕格式', paragraphs: ['SRT 使用带编号的 cue 和逗号毫秒，WebVTT 以 WEBVTT 开头、使用点号毫秒，并支持网页 cue 设置；LRC 以行为单位，常用于歌词。转换时间戳并不复杂，但样式和定位可能需要另外处理。'] },
@@ -956,7 +957,9 @@ export const topicClusterBlogArticles: BlogArticle[] = [
         { question: '可以不上传视频就编辑字幕吗？', answer: '可以。浏览器可以通过 object URL 预览本地音频或视频，同时让字幕解析、计时和导出留在设备上。' },
         { question: 'SRT 与 VTT 的主要区别是什么？', answer: 'SRT 通常带 cue 编号并使用逗号表示毫秒；WebVTT 以 WEBVTT 头开始，使用点号表示毫秒，还支持额外的网页 cue 设置。' },
       ],
-    }
+    },
+    '2026-07-20',
+    '2026-08-03'
   ),
   article(
     'srt-to-vtt-browser-workflow',

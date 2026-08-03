@@ -6,6 +6,7 @@ import { Panel } from '@/components/ui/Panel';
 import { Button } from '@/components/ui/Button';
 import { queryJsonPath } from '@/lib/utils/jsonpath';
 import { stringifyJSONValue } from '@/lib/utils/json';
+import { jsonPathContent } from '@/lib/tools/content/json-path';
 
 const EXAMPLE_JSON = stringifyJSONValue({
   store: {
@@ -43,7 +44,7 @@ export default function JsonPathPage() {
   };
 
   return (
-    <ToolLayout toolId="json-path">
+    <ToolLayout toolId="json-path" content={jsonPathContent}>
       <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
         <Panel title={t('input_title')} className="min-h-64">
           <textarea value={json} onChange={(e) => setJson(e.target.value)}

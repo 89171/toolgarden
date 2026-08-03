@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { canvasToBlob, loadImageFromFile } from '@/lib/utils/image-transform';
+import { imageExifContent } from '@/lib/tools/content/image-exif';
 
 type ExifRow = { key: string; value: string };
 
@@ -78,7 +79,7 @@ export default function ImageExifPage() {
   };
 
   return (
-    <ToolLayout toolId="image-exif">
+    <ToolLayout toolId="image-exif" content={imageExifContent}>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
         <section className="flex flex-col gap-3 rounded-lg border border-border-base bg-surface p-4 shadow">
           <h2 className="text-lg font-semibold text-content">{t('upload_title')}</h2>

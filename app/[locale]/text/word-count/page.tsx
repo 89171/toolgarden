@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { countTextStats } from '@/lib/utils/text';
+import { textWordCountContent } from '@/lib/tools/content/text-word-count';
 
 interface StatCardProps {
   label: string;
@@ -38,7 +39,7 @@ export default function TextWordCountPage() {
   ];
 
   return (
-    <ToolLayout toolId="text-word-count">
+    <ToolLayout toolId="text-word-count" content={textWordCountContent}>
       <div className="grid min-h-0 flex-grow gap-4 lg:grid-cols-[minmax(0,1.15fr)_minmax(20rem,0.85fr)]">
         <section className="flex min-h-0 flex-col rounded-lg border border-border-base bg-surface p-4 shadow">
           <div className="flex flex-wrap items-center justify-between gap-2">

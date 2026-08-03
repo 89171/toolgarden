@@ -1,5 +1,7 @@
 import { HomePageContent } from '@/components/HomePageContent';
 
+export const dynamicParams = false;
+
 export default async function HomePage({
   params,
 }: {

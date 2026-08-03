@@ -16,6 +16,8 @@ import {
   type ImageToBase64Success,
 } from '@/lib/utils/image-base64';
 import { formatFileSize, getImageAcceptValue, getSupportedImageInputLabel } from '@/lib/utils/image';
+import { base64ToImageContent } from '@/lib/tools/content/base64-to-image';
+import { imageToBase64Content } from '@/lib/tools/content/image-to-base64';
 
 function downloadBlob(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);
@@ -151,7 +153,7 @@ export function ImageToBase64Tool() {
   }, [handleFile]);
 
   return (
-    <ToolLayout toolId="image-to-base64">
+    <ToolLayout toolId="image-to-base64" content={imageToBase64Content}>
       <Base64ToolSwitcher current="to-base64" />
       <div className="grid flex-grow grid-cols-1 gap-4 overflow-auto pb-4 sm:gap-6 sm:pb-8 xl:min-h-0 xl:grid-cols-[minmax(340px,440px)_1fr] xl:overflow-hidden">
         <Panel
@@ -387,7 +389,7 @@ export function Base64ToImageTool() {
   }, [decodeInput]);
 
   return (
-    <ToolLayout toolId="base64-to-image">
+    <ToolLayout toolId="base64-to-image" content={base64ToImageContent}>
       <Base64ToolSwitcher current="to-image" />
       <div className="grid flex-grow grid-cols-1 gap-4 overflow-auto pb-4 sm:gap-6 sm:pb-8 xl:min-h-0 xl:grid-cols-[minmax(340px,520px)_1fr] xl:overflow-hidden">
         <Panel

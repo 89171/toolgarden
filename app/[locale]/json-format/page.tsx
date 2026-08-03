@@ -5,6 +5,7 @@ import { ToolLayout } from '@/components/ToolLayout';
 import { Panel } from '@/components/ui/Panel';
 import { Button } from '@/components/ui/Button';
 import { JsonNode } from '@/components/JsonNode';
+import { jsonFormatContent } from '@/lib/tools/content/json-format';
 import {
   deleteJSONEntryAtPath,
   formatJSON,
@@ -120,7 +121,7 @@ export default function JsonFormatPage() {
   const parsedOutput = output && outputMode === 'tree' ? parseJSONValue(output) : null;
 
   return (
-    <ToolLayout toolId="json-format">
+    <ToolLayout toolId="json-format" content={jsonFormatContent}>
       <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
         <Panel title={t('input_title')} actions={inputActions} className="min-h-64 lg:min-h-0">
           <textarea value={input} onChange={(e) => setInput(e.target.value)}

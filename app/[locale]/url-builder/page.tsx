@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
+import { urlBuilderContent } from '@/lib/tools/content/url-builder';
 
 interface Param {
   key: string;
@@ -83,7 +84,7 @@ export default function UrlBuilderPage() {
   };
 
   return (
-    <ToolLayout toolId="url-builder">
+    <ToolLayout toolId="url-builder" content={urlBuilderContent}>
       <div className="flex flex-col gap-4">
         <section className="flex flex-col gap-3 rounded-lg border border-border-base bg-surface p-4 shadow">
           <h2 className="text-lg font-semibold text-content">{t('input_title')}</h2>

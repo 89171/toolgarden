@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { routing } from '@/i18n/routing';
 import { BLOG_INDEX_PATH, blogArticles } from '@/lib/blog/articles';
+import { isConsolidatedBlogSlug } from '@/lib/blog/consolidations';
 import { toolRegistry } from '@/lib/tools/registry';
 import { sitePageRegistry } from '@/lib/site/registry';
 import { BASE_URL, getLanguageAlternates, getLocalizedUrl } from '@/lib/tools/seo';
@@ -10,12 +11,18 @@ export const dynamic = 'force-static';
 const hubPaths = ['/json-tools', '/image', '/audio', '/pdf', '/file-merge', '/text', '/other'] as const;
 const blogPaths = [
   BLOG_INDEX_PATH,
-  ...blogArticles.map((article) => `${BLOG_INDEX_PATH}/${article.slug}`),
+  ...blogArticles
+    .filter((article) => !isConsolidatedBlogSlug(article.slug))
+    .map((article) => `${BLOG_INDEX_PATH}/${article.slug}`),
 ];
 const blogArticleByPath = new Map(
-  blogArticles.map((article) => [`${BLOG_INDEX_PATH}/${article.slug}`, article])
+  blogArticles
+    .filter((article) => !isConsolidatedBlogSlug(article.slug))
+    .map((article) => [`${BLOG_INDEX_PATH}/${article.slug}`, article])
 );
-const blogIndexUpdatedAt = blogArticles.reduce(
+const blogIndexUpdatedAt = blogArticles
+  .filter((article) => !isConsolidatedBlogSlug(article.slug))
+  .reduce(
   (latest, article) => article.updatedAt > latest ? article.updatedAt : latest,
   '',
 );

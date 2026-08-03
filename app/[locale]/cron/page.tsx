@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { CRON_TEMPLATES, parseCron } from '@/lib/utils/cron';
 import { formatDate } from '@/lib/utils/timestamp';
+import { cronContent } from '@/lib/tools/content/cron';
 
 export default function CronPage() {
   const t = useTranslations('tools.cron');
@@ -18,7 +19,7 @@ export default function CronPage() {
   );
 
   return (
-    <ToolLayout toolId="cron">
+    <ToolLayout toolId="cron" content={cronContent}>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <section className="flex flex-col gap-3 rounded-lg border border-border-base bg-surface p-4 shadow">
           <h2 className="text-lg font-semibold text-content">{t('expression_title')}</h2>

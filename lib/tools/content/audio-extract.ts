@@ -1,0 +1,22 @@
+import { defineToolContent } from './define';
+
+export const audioExtractContent = defineToolContent({
+  zh: {
+    overview: ['从视频提取音频会读取媒体容器中的声音轨道并输出独立音频文件，适合把访谈、课程或自拍视频用于剪辑和转写。视频文件可能包含多个音轨、不同语言或环绕声，浏览器流程通常处理默认可解码轨道。', '提取过程可能包含重新编码，而不一定是原始码流的无损复制。输出前应确认你拥有处理该视频和音轨的权利，并检查时长、声画起止点与音质是否完整。'],
+    steps: [['上传视频文件', '选择浏览器支持的来源并确认其中确实包含可播放声音。'], ['设置音频输出', '选择目标格式和必要的比特率，开始提取。'], ['试听完整性', '检查开头、结尾和随机中段，确认时长、语言轨道与声道符合预期。']],
+    scenarios: [['准备访谈转写', '从会议或采访视频中单独导出音频，减少后续处理数据量。'], ['复用自有配音', '从自己制作的视频中取出旁白，进入新的剪辑或存档流程。'], ["把讲座或访谈录像转成音频稿", "只需要声音内容时，提取出音频再交给音频转文本，比处理整个视频文件快得多。"]],
+    notes: ['受版权保护的电影、课程和音乐视频需要获得相应提取与使用许可。', '多音轨容器可能只输出默认轨道，重要素材应在专业工具中确认轨道选择。', '重新编码后的音质上限受源轨道限制，提升比特率不会增加真实细节。'],
+    specs: [["输入容器", "MP4、MOV、WebM、MKV、AVI 等浏览器可解复用的视频容器"], ["输出", "MP3。原视频若含多条音轨，通常取默认（第一条）音轨"], ["是否重新编码", "是。音轨会解码后再编码为 MP3，因此存在一次有损转换"], ["视频轨", "完全丢弃，不影响原视频文件"], ["主要失败原因", "整个视频需要读进内存，长视频或高码率素材可能因内存不足中断"], ["处理位置", "浏览器内的 FFmpeg WebAssembly，视频文件不上传"]],
+    faq: [{ question: "提取会影响原视频吗？", answer: "不会。原文件完全不被修改，工具只是读取其中的音轨并输出一个新的 MP3。" }, { question: "视频里有多条音轨怎么办？", answer: "通常取默认的第一条。如果需要的是第二语言配音或解说轨，浏览器内的处理无法逐一挑选，需要用桌面端工具。" }, { question: "为什么大视频会失败？", answer: "整个视频需要读进浏览器内存才能解复用。几百 MB 以上的文件在多数设备上会失败，建议先用视频工具裁出需要的片段。" }],
+    reference: [['container', '同时组织视频、音频、字幕和元数据轨道的媒体文件结构。'], ['audio track', '媒体容器中一条独立声音流，可代表语言、评论或不同混音。']],
+  },
+  en: {
+    overview: ['Audio extraction reads a sound track from a media container and outputs a separate audio file for editing or transcription of interviews, lessons, and owned videos. A video can contain multiple languages, commentaries, or surround tracks, while a browser workflow commonly processes the default decodable track.', 'Extraction may re-encode instead of copying the original bitstream losslessly. Confirm that you have rights to process the video and audio, and check duration, start and end points, and sound quality after output.'],
+    steps: [['Upload the video', 'Choose a browser-supported source and confirm that it contains playable sound.'], ['Set audio output', 'Choose the format and required bitrate, then start extraction.'], ['Listen for completeness', 'Check the beginning, end, and random middle points for duration, language, and channel correctness.']],
+    scenarios: [['Preparing interview transcription', 'Export only audio from a meeting or interview video to reduce downstream processing data.'], ['Reusing owned narration', 'Recover narration from a video you produced for a new edit or archive.'], ["Turning a recorded lecture or interview into audio", "When only the sound matters, extracting first and handing the result to Audio to Text is far quicker than processing the whole video."]],
+    notes: ['Copyrighted films, courses, and music videos require the appropriate extraction and reuse permission.', 'A multi-track container may yield only its default track; verify track selection in professional software for critical media.', 'Re-encoded quality is limited by the source track, and a higher bitrate cannot add real detail.'],
+    specs: [["Input containers", "MP4, MOV, WebM, MKV, AVI; containers the browser can demux"], ["Output", "MP3. When a video carries several audio tracks, the default (first) track is used"], ["Re-encoded", "Yes. The track is decoded and re-encoded to MP3, so one lossy generation is added"], ["Video track", "Discarded entirely; the original video file is untouched"], ["Main failure mode", "The whole video is read into memory, so long or high-bitrate sources can run out of it"], ["Where it runs", "FFmpeg compiled to WebAssembly in your browser; the video is never uploaded"]],
+    faq: [{ question: "Does extracting change the video?", answer: "No. The original file is untouched; the tool reads its audio track and writes a separate MP3." }, { question: "What if the video has several audio tracks?", answer: "The default first track is used. If you need a second-language dub or a commentary track, in-browser processing cannot pick between them and you will want a desktop tool." }, { question: "Why do large videos fail?", answer: "The whole file must be read into browser memory to demux it. Files of a few hundred megabytes and up fail on most devices; trim the segment you need first." }],
+    reference: [['container', 'A media structure organizing video, audio, subtitle, and metadata tracks together.'], ['audio track', 'An independent sound stream inside a container, possibly representing a language, commentary, or mix.']],
+  },
+});

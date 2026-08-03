@@ -3,6 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { REGEX_TEMPLATES, runRegex } from '@/lib/utils/regex';
+import { regexContent } from '@/lib/tools/content/regex';
 
 const FLAG_KEYS = ['g', 'i', 'm', 's', 'u', 'y'] as const;
 type FlagKey = (typeof FLAG_KEYS)[number];
@@ -17,7 +18,7 @@ export default function RegexPage() {
   const outcome = useMemo(() => runRegex(pattern, flagString, text), [pattern, flagString, text]);
 
   return (
-    <ToolLayout toolId="regex">
+    <ToolLayout toolId="regex" content={regexContent}>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
         <section className="flex flex-col gap-3 rounded-lg border border-border-base bg-surface p-4 shadow">
           <h2 className="text-lg font-semibold text-content">{t('pattern_title')}</h2>

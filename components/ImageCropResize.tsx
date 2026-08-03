@@ -7,6 +7,7 @@ import { ImagePreviewDialog } from '@/components/ImagePreviewDialog';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
+import type { ToolContent } from '@/lib/tools/content';
 import { cropResizeImageFile, inspectImageFile } from '@/lib/utils/image-browser';
 import {
   createCropRectFromPoints,
@@ -34,6 +35,7 @@ type ImageEditorMode = 'crop' | 'resize';
 
 interface ImageCropResizeProps {
   mode: ImageEditorMode;
+  content?: ToolContent;
 }
 
 interface DragState {
@@ -105,7 +107,7 @@ function createFullImageCropRect(image: ImageInspectionSuccess): ImageCropRect {
   };
 }
 
-export function ImageCropResize({ mode }: ImageCropResizeProps) {
+export function ImageCropResize({ mode, content }: ImageCropResizeProps) {
   const tc = useTranslations('common');
   const ti = useTranslations(mode === 'crop' ? 'image_crop' : 'image_resize');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -488,7 +490,7 @@ export function ImageCropResize({ mode }: ImageCropResizeProps) {
   }, [output, ti]);
 
   return (
-    <ToolLayout toolId={toolId}>
+    <ToolLayout toolId={toolId} content={content}>
       <div className="grid flex-grow grid-cols-1 gap-4 overflow-auto pb-4 sm:gap-6 sm:pb-8 xl:min-h-0 xl:grid-cols-[minmax(320px,400px)_1fr] xl:overflow-hidden">
         <Panel
           title={ti('settings_title')}

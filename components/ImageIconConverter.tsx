@@ -23,6 +23,7 @@ import {
 } from '@/lib/utils/image-icon';
 import { formatFileSize, getSupportedImageInputLabel, type ImageConversionError } from '@/lib/utils/image';
 import type { ImageBackgroundRemovalProgress } from '@/lib/utils/image';
+import { imageToIconContent } from '@/lib/tools/content/image-to-icon';
 
 const FORMAT_OPTIONS: IconOutputFormat[] = ['ico', 'icns', 'png-zip'];
 const DEFAULT_TRANSFORM: IconRenderTransform = {
@@ -378,7 +379,7 @@ export function ImageIconConverter() {
   const progressPercent = backgroundProgress?.percent ?? 0;
 
   return (
-    <ToolLayout toolId="image-to-icon">
+    <ToolLayout toolId="image-to-icon" content={imageToIconContent}>
       <div className="grid gap-4 xl:grid-cols-[360px_minmax(0,1fr)]">
         <Panel
           title={ti('settings_title')}

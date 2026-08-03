@@ -2,6 +2,7 @@ import Link from '@/components/ui/AppLink';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { AllToolsDirectory, type AllToolsSection } from '@/components/AllToolsDirectory';
+import { HubArticleBody } from '@/components/HubArticle';
 import type { ToolCardData } from '@/components/ToolDirectory';
 import {
   getAudioTools,
@@ -19,6 +20,7 @@ import type { ToolMeta } from '@/lib/tools/types';
 import { getLocalizedBlogTopics } from '@/lib/blog/articles';
 import {
   createToolItemListJsonLd,
+  getHomeArticleContent,
   getLocaleMessages,
   getLocalizedToolCards,
   normalizeLocale,
@@ -75,6 +77,7 @@ export function HomePageContent({ locale }: HomePageContentProps) {
 
   const featured = localizedTools.filter((tool) => tool.featured);
   const blogTopics = getLocalizedBlogTopics(normalizedLocale);
+  const article = getHomeArticleContent(normalizedLocale);
 
   return (
     <div className="flex min-h-[100dvh] flex-col bg-background text-foreground">
@@ -85,6 +88,7 @@ export function HomePageContent({ locale }: HomePageContentProps) {
       <div className="flex w-full flex-grow flex-col px-3 py-3 sm:px-6 sm:py-4 lg:px-10 xl:px-14 2xl:px-20">
         <Header compact />
 
+        <main className="flex w-full flex-col">
         <header className="mb-8 text-center sm:mb-10">
           <h1 className="text-3xl font-bold leading-tight text-content sm:text-4xl">
             {m.home.title}
@@ -110,6 +114,20 @@ export function HomePageContent({ locale }: HomePageContentProps) {
             viewAllTemplate: m.home.view_all_in,
           }}
         />
+
+        {article ? (
+          <div className="mx-auto w-full max-w-[1400px]">
+            <HubArticleBody
+              content={article}
+              labels={{
+                overview: m.hub_article.overview,
+                choosing: m.hub_article.choosing,
+                comparison: m.hub_article.comparison,
+                notes: m.hub_article.notes,
+              }}
+            />
+          </div>
+        ) : null}
 
         <section className="mx-auto mt-14 w-full max-w-[1400px] border-t border-border-subtle py-10" aria-labelledby="home-guides-title">
           <h2 id="home-guides-title" className="text-2xl font-bold text-content sm:text-3xl">
@@ -145,6 +163,7 @@ export function HomePageContent({ locale }: HomePageContentProps) {
             ))}
           </div>
         </section>
+        </main>
       </div>
       <Footer />
     </div>

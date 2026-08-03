@@ -15,6 +15,7 @@ import {
 } from '@/lib/utils/pdf-browser';
 import { parsePdfPageGroups, PDF_FILE_ACCEPT_VALUE, type PdfPageGroup } from '@/lib/utils/pdf';
 import { createZipArchive } from '@/lib/utils/zip';
+import { pdfSplitContent } from '@/lib/tools/content/pdf-split';
 
 interface SplitResult {
   url: string;
@@ -148,7 +149,7 @@ export function PdfSplitTool() {
   }, [file, getErrorMessage, inspection, processing, rangeInput, result]);
 
   return (
-    <ToolLayout toolId="pdf-split">
+    <ToolLayout toolId="pdf-split" content={pdfSplitContent}>
       <div className="grid flex-grow grid-cols-1 gap-4 overflow-auto pb-4 sm:gap-6 sm:pb-8 xl:min-h-0 xl:grid-cols-[minmax(340px,460px)_1fr] xl:overflow-hidden">
         <Panel
           title={t('settings_title')}

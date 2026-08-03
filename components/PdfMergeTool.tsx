@@ -8,6 +8,7 @@ import { Panel } from '@/components/ui/Panel';
 import { formatFileSize } from '@/lib/utils/image';
 import { inspectPdfFile, mergePdfFiles, type PdfOperationError } from '@/lib/utils/pdf-browser';
 import { PDF_FILE_ACCEPT_VALUE } from '@/lib/utils/pdf';
+import { pdfMergeContent } from '@/lib/tools/content/pdf-merge';
 
 type MergeItemStatus = 'loading' | 'ready' | 'error';
 
@@ -151,7 +152,7 @@ export function PdfMergeTool() {
   }, [canMerge, readyItems, result]);
 
   return (
-    <ToolLayout toolId="pdf-merge">
+    <ToolLayout toolId="pdf-merge" content={pdfMergeContent}>
       <div className="grid flex-grow grid-cols-1 gap-4 overflow-auto pb-4 sm:gap-6 sm:pb-8 xl:min-h-0 xl:grid-cols-[minmax(340px,460px)_1fr] xl:overflow-hidden">
         <Panel
           title={t('settings_title')}

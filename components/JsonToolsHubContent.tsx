@@ -2,11 +2,13 @@ import Link from '@/components/ui/AppLink';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { ToolDirectory } from '@/components/ToolDirectory';
+import { HubArticleBody } from '@/components/HubArticle';
 import type { ToolCardData } from '@/components/ToolDirectory';
 import { getJsonToolGroups, getJsonTools } from '@/lib/tools/registry';
 import {
   createFaqJsonLd,
   createJsonToolItemListJsonLd,
+  getHubArticleContent,
   getLocaleMessages,
   getLocalizedToolCards,
   normalizeLocale,
@@ -32,6 +34,8 @@ export function JsonToolsHubContent({ locale }: JsonToolsHubContentProps) {
       .filter((tool): tool is ToolCardData => Boolean(tool)),
   }));
 
+  const article = getHubArticleContent('json_hub', normalizedLocale);
+
   const faqItems = [
     ['privacy_q', 'privacy_a'],
     ['formats_q', 'formats_a'],
@@ -52,6 +56,7 @@ export function JsonToolsHubContent({ locale }: JsonToolsHubContentProps) {
       <div className="flex w-full flex-grow flex-col px-3 py-3 sm:px-6 sm:py-4 lg:px-10 xl:px-14 2xl:px-20">
         <Header compact />
 
+        <main className="flex w-full flex-col">
         <header className="mb-8">
           <nav className="mb-4 flex items-center gap-1 text-sm text-content-muted" aria-label="breadcrumb">
             <Link href={`/${normalizedLocale}`} className="hover:text-content-secondary">
@@ -66,7 +71,7 @@ export function JsonToolsHubContent({ locale }: JsonToolsHubContentProps) {
           <p className="mt-3 max-w-3xl text-base leading-relaxed text-content-muted">
             {m.json_hub.description}
           </p>
-          <p className="mt-2 text-sm text-content-faint">
+          <p className="mt-4 text-sm text-content-faint">
             {m.json_hub.privacy_note}
           </p>
         </header>
@@ -80,6 +85,18 @@ export function JsonToolsHubContent({ locale }: JsonToolsHubContentProps) {
           searchResultsTitle={m.json_hub.search_results}
           tools={tools}
         />
+
+        {article ? (
+          <HubArticleBody
+            content={article}
+            labels={{
+              overview: m.hub_article.overview,
+              choosing: m.hub_article.choosing,
+              comparison: m.hub_article.comparison,
+              notes: m.hub_article.notes,
+            }}
+          />
+        ) : null}
 
         <section className="mt-14">
           <h2 className="mb-4 border-b border-border-subtle pb-2 text-xs font-semibold uppercase tracking-normal text-content-faint">
@@ -96,6 +113,7 @@ export function JsonToolsHubContent({ locale }: JsonToolsHubContentProps) {
             ))}
           </div>
         </section>
+        </main>
       </div>
       <Footer />
     </div>

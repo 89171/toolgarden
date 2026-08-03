@@ -6,6 +6,7 @@ import { ToolLayout } from '@/components/ToolLayout';
 import { Panel } from '@/components/ui/Panel';
 import { Button } from '@/components/ui/Button';
 import { repairJson } from '@/lib/utils/repair';
+import { jsonRepairContent } from '@/lib/tools/content/json-repair';
 
 const EXAMPLE = `{
   // Comments are removed
@@ -46,7 +47,7 @@ export default function JsonRepairPage() {
   };
 
   return (
-    <ToolLayout toolId="json-repair">
+    <ToolLayout toolId="json-repair" content={jsonRepairContent}>
       <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
         <Panel
           title={t('input_title')}

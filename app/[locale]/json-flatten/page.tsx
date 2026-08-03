@@ -7,6 +7,7 @@ import { Panel } from '@/components/ui/Panel';
 import { Button } from '@/components/ui/Button';
 import { flattenJson, unflattenJson } from '@/lib/utils/flatten';
 import { stringifyJSONValue } from '@/lib/utils/json';
+import { jsonFlattenContent } from '@/lib/tools/content/json-flatten';
 
 const EXAMPLE = stringifyJSONValue({
   user: {
@@ -71,7 +72,7 @@ export default function JsonFlattenPage() {
   };
 
   return (
-    <ToolLayout toolId="json-flatten">
+    <ToolLayout toolId="json-flatten" content={jsonFlattenContent}>
       <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
         <Panel
           title={t('input_title')}

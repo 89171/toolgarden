@@ -5,6 +5,7 @@ import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { decodeGif, downloadFramesAsZip, type DecodedFrame } from '@/lib/utils/gif';
 import { loadImageFromFile } from '@/lib/utils/image-transform';
+import { imageGifContent } from '@/lib/tools/content/image-gif';
 
 type Mode = 'split' | 'compose';
 
@@ -13,7 +14,7 @@ export default function ImageGifPage() {
   const [mode, setMode] = useState<Mode>('split');
 
   return (
-    <ToolLayout toolId="image-gif">
+    <ToolLayout toolId="image-gif" content={imageGifContent}>
       <div className="mb-4 inline-flex overflow-hidden rounded border border-border-input">
         <button
           type="button"

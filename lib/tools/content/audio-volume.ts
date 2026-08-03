@@ -1,0 +1,22 @@
+import { defineToolContent } from './define';
+
+export const audioVolumeContent = defineToolContent({
+  zh: {
+    overview: ['音量调整通过增益系数放大或减小所有采样。它能修正整体偏轻或偏响的文件，但不会自动让不同段落达到统一感知响度，也不能修复已经在录制时发生的削波失真。', '提高增益会同时放大底噪，并可能让峰值超过数字上限而产生新的削波。输出前应试听最响片段；如果目标是播客或广播响度标准，需要测量 LUFS 和真峰值的专用响度工具。'],
+    steps: [['上传并试听峰值段', '找到最响和最安静的位置，判断需要整体调整还是更复杂处理。'], ['设置增益倍率', '小幅调整后生成预览，避免一次把音量推得过高。'], ['检查失真后导出', '用耳机试听峰值、底噪和整体平衡，再保存结果。']],
+    scenarios: [['提高偏轻录音', '让距离较远但未削波的语音更容易听清。'], ['降低过响素材', '为演示或剪辑准备电平更温和的背景音。'], ["拉平一组素材的响度", "把几段音量差异明显的录音各自调整后再合并，避免听众在段落之间反复调音量。"]],
+    notes: ['增益不等于响度标准化，无法自动匹配多文件的主观音量。', '削波形成的平顶波形不能通过降低音量恢复。', '放大安静录音也会放大环境噪声和电子底噪。'],
+    specs: [["调整方式", "对整段音频施加统一增益，不做动态压缩或自动响度归一化"], ["削波风险", "增益过高会让波形超出上限被截断，产生无法修复的失真；提高音量前先留意峰值"], ["降低音量", "安全且可逆性好，但过低后再调回来会放大底噪"], ["输出", "MP3。调整后重新编码，因此会有一次有损转换"], ["不能做什么", "无法只提高人声而不动背景音，那需要音频分轨或专业软件"], ["处理位置", "浏览器内的 FFmpeg WebAssembly，音频文件不上传"]],
+    faq: [{ question: "为什么调高音量后声音变得刺耳？", answer: "增益超出上限后波形被截断，这叫削波，会产生尖锐的失真且无法修复。请小幅提升并试听，或者先降低再整体重做。" }, { question: "能只放大说话声吗？", answer: "不能。这里施加的是整段统一增益，背景噪声会同比放大。要区分处理需要音频分轨，或在专业软件里做动态处理。" }, { question: "调整音量算有损吗？", answer: "增益本身是数学运算，但输出为 MP3 时会重新编码一次，因此有一代有损损失。多次反复调整会累积，建议一次调到位。" }],
+    reference: [['gain', '施加到音频采样上的乘数，用于整体提高或降低电平。'], ['clipping', '信号超过数字可表示上限后被截平而产生的失真。']],
+  },
+  en: {
+    overview: ['Volume adjustment multiplies every sample by a gain factor. It can correct an overall quiet or loud file but does not automatically equalize perceived loudness across passages and cannot repair clipping that happened during recording.', 'Increasing gain also raises the noise floor and can push peaks beyond the digital limit, creating new clipping. Listen to the loudest passage before export. Podcast or broadcast targets require a dedicated tool that measures LUFS and true peak.'],
+    steps: [['Upload and find peak passages', 'Locate loudest and quietest areas and decide whether global gain is sufficient.'], ['Set a gain factor', 'Make a small adjustment and preview instead of pushing the level dramatically at once.'], ['Check distortion and export', 'Listen on headphones for peaks, noise, and overall balance before saving.']],
+    scenarios: [['Raising a quiet recording', 'Make distant but unclipped speech easier to hear.'], ['Reducing an overly loud asset', 'Prepare gentler background audio for a presentation or edit.'], ["Levelling a set of clips", "Adjust several recordings of differing loudness individually before merging, so listeners are not reaching for the volume between sections."]],
+    notes: ['Gain is not loudness normalization and does not automatically match perceived volume across files.', 'A flat clipped waveform cannot be restored by turning it down.', 'Boosting a quiet recording also boosts room and electronic noise.'],
+    specs: [["How it adjusts", "Applies one uniform gain across the whole file; no dynamic compression, no loudness normalisation"], ["Clipping risk", "Too much gain pushes the waveform past full scale and truncates it, which is unrepairable distortion; check peaks before boosting"], ["Turning it down", "Safe and largely reversible, though bringing it back up afterwards also raises the noise floor"], ["Output", "MP3, re-encoded after the change, so one lossy generation is added"], ["What it cannot do", "Raise a voice without raising the background; that needs stem separation or a proper DAW"], ["Where it runs", "FFmpeg compiled to WebAssembly in your browser; the file is never uploaded"]],
+    faq: [{ question: "Why does it sound harsh after I turned it up?", answer: "Gain past full scale truncates the waveform; that is clipping, and it produces harsh distortion that cannot be repaired. Raise in small steps and listen, or start over from the original." }, { question: "Can I boost just the speech?", answer: "No. This applies one uniform gain, so background noise rises with it. Separating them needs stem splitting, or dynamics processing in proper software." }, { question: "Is changing volume lossy?", answer: "The gain itself is arithmetic, but MP3 output re-encodes the file, adding one lossy generation. Repeated adjustments stack, so get it right in a single pass." }],
+    reference: [['gain', 'A multiplier applied to audio samples to raise or lower overall level.'], ['clipping', 'Distortion caused when a signal exceeds the maximum representable digital level and is flattened.']],
+  },
+});

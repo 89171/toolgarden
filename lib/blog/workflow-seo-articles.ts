@@ -822,7 +822,7 @@ export const workflowSeoBlogArticles = [
   {
     slug: 'remove-image-watermark-local-ai-inpainting',
     publishedAt: '2026-07-02',
-    updatedAt: '2026-07-03',
+    updatedAt: '2026-08-03',
     translations: {
       zh: {
         title: '如何在线去除图片水印？浏览器本地 AI 补全原理',
@@ -874,6 +874,25 @@ export const workflowSeoBlogArticles = [
               ['大面积半透明水印', '较难', '遮挡范围大，补全信息不足'],
             ],
           },
+          { type: 'heading', level: 2, text: '怎样画选区更容易得到自然结果？' },
+          {
+            type: 'list',
+            items: [
+              '选区应完整覆盖文字笔画、描边、阴影和半透明边缘，漏掉一圈会留下明显残影。',
+              '第一次只处理一个较小区域，观察纹理方向是否连续，再逐步扩大到相邻水印。',
+              '贴着主体轮廓的水印应拆成几段处理，避免模型同时重画人物、商品或正文。',
+              '重复纹理、直线和建筑边缘要重点检查，错位通常比颜色偏差更容易被看见。',
+            ],
+          },
+          {
+            type: 'paragraph',
+            text: '快速像素修复适合纯色与规则纹理，模型补全更适合需要理解周围画面的区域。两种方式都不会读取被遮住的真实像素。放大查看边缘、缩回实际使用尺寸再判断，通常比只盯着局部预览更可靠。',
+          },
+          { type: 'heading', level: 2, text: '导出前的检查清单' },
+          {
+            type: 'paragraph',
+            text: '至少检查补全区域是否出现重复纹理、弯曲直线、重影和色带；再对比整张图的噪点、锐度与压缩程度。JPG 会再经历一次有损编码，带透明背景的素材应优先保留 PNG。重要素材始终保留未修改原件，方便重新选择区域。',
+          },
           {
             type: 'callout',
             title: 'ToolGarden 图片去水印',
@@ -898,7 +917,7 @@ export const workflowSeoBlogArticles = [
           },
           {
             question: "去水印和马赛克、模糊有什么区别？",
-            answer: "马赛克和模糊是主动遮挡：告诉观众“这里有内容，但我不给你看”，常用于保护隐私信息，比如车牌、身份证号或聊天头像。去水印则是相反目的——让水印看起来消失，让人以为原图就是干净的。两者的算法也不同：马赛克只需要对像素做平均或高斯运算；去水印则要理解周围内容并重建背景。如果目标只是遮住敏感区域，模糊或马赛克更快也更稳定，不需要 AI 模型。",
+            answer: "马赛克和模糊是主动遮挡：告诉观众“这里有内容，但我不给你看”，常用于保护隐私信息，比如车牌、身份证号或聊天头像。去水印则是相反目的：让水印看起来消失，让人以为原图就是干净的。两者的算法也不同：马赛克只需要对像素做平均或高斯运算；去水印则要理解周围内容并重建背景。如果目标只是遮住敏感区域，模糊或马赛克更快也更稳定，不需要 AI 模型。",
           },
           {
             question: "如果水印覆盖在人脸、手部或复杂文字上，效果为什么很差？",
@@ -960,6 +979,25 @@ export const workflowSeoBlogArticles = [
               ['Large translucent watermark', 'Hard', 'Too much image context is missing'],
             ],
           },
+          { type: 'heading', level: 2, text: 'How to draw a mask that produces a natural result' },
+          {
+            type: 'list',
+            items: [
+              'Cover every letter stroke, outline, shadow, and translucent edge. Missing a narrow fringe leaves an obvious ghost.',
+              'Repair one small region first and inspect whether the texture direction continues before expanding to adjacent marks.',
+              'Split a mark that touches the subject outline into several passes, so the model does not redraw the person, product, or text all at once.',
+              'Inspect repeating patterns, straight lines, and building edges closely, because misalignment is usually more visible than a small color shift.',
+            ],
+          },
+          {
+            type: 'paragraph',
+            text: 'Fast pixel repair fits flat areas and regular textures, while model-based inpainting is more useful when the region needs surrounding image context. Neither method can read the real pixels hidden by the mark. Judge the repair both zoomed in for edges and at the final viewing size for overall plausibility.',
+          },
+          { type: 'heading', level: 2, text: 'Checks before export' },
+          {
+            type: 'paragraph',
+            text: 'Look for repeated texture, bent lines, halos, and color bands, then compare noise, sharpness, and compression across the full image. JPG adds another lossy encode, so preserve PNG when transparency matters. Always keep the untouched source for important material so the mask can be redrawn.',
+          },
           {
             type: 'callout',
             title: 'ToolGarden Image Watermark Remover',
@@ -984,7 +1022,7 @@ export const workflowSeoBlogArticles = [
           },
           {
             question: "How is watermark removal different from mosaic or blur tools?",
-            answer: "Mosaic and blur are intentional coverage — they tell viewers that something is hidden, and are used to protect license plates, ID numbers, or chat avatars. Watermark removal has the opposite goal: it tries to make the mark disappear so the image looks untouched. The algorithms differ too. Mosaic and blur just average pixels or apply a Gaussian kernel. Watermark removal must understand context and reconstruct background. If you only need to obscure sensitive content, blur or mosaic is faster and needs no AI model.",
+            answer: "Mosaic and blur are intentional coverage; they tell viewers that something is hidden, and are used to protect license plates, ID numbers, or chat avatars. Watermark removal has the opposite goal: it tries to make the mark disappear so the image looks untouched. The algorithms differ too. Mosaic and blur just average pixels or apply a Gaussian kernel. Watermark removal must understand context and reconstruct background. If you only need to obscure sensitive content, blur or mosaic is faster and needs no AI model.",
           },
           {
             question: "Why does it fail so badly on faces, hands, or printed text?",
@@ -1001,7 +1039,7 @@ export const workflowSeoBlogArticles = [
   {
     slug: 'add-watermark-to-image-text-tile-diagonal',
     publishedAt: '2026-07-02',
-    updatedAt: '2026-07-03',
+    updatedAt: '2026-08-03',
     translations: {
       zh: {
         title: '如何给图片加水印：文字/图片、九宫格、平铺、对角线',
@@ -1058,6 +1096,25 @@ export const workflowSeoBlogArticles = [
               '公开发布前，先在手机和桌面上检查水印是否过浅或过重。',
             ],
           },
+          { type: 'heading', level: 2, text: '先按目的选择布局' },
+          {
+            type: 'paragraph',
+            text: '署名水印的重点是说明来源，通常放在边角并保持可读；审核图和付费样张更在意截图后的可追溯性，适合低透明度平铺；订单号、收件人或日期属于个性化标记，应放在不容易被一次裁剪完全移除的位置。水印越强，图片可用性越低，所以没有一个透明度适合所有素材。',
+          },
+          {
+            type: 'list',
+            items: [
+              '在最亮和最暗的画面区域都检查一次对比度，必要时为文字增加轻微描边。',
+              '平铺间距应让常见裁剪范围里仍保留至少一个完整标记，同时避免形成密集噪声。',
+              'Logo 使用透明背景源文件，先缩放再旋转可以减少锯齿和模糊。',
+              '文字里包含订单号或姓名时，先确认分享范围和保存期限，不要制造新的隐私泄露。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '水印能做什么，不能做什么？' },
+          {
+            type: 'paragraph',
+            text: '可见水印能表明来源、降低直接盗用的便利性，也能让内部样张更容易追踪，但它不是访问控制或不可移除的版权保护。裁剪、重绘和图像补全仍可能移除水印。需要限制原始文件访问时，应同时使用权限控制、低分辨率预览和独立存档，而不是只依赖图片上的标记。',
+          },
           {
             type: 'callout',
             title: 'ToolGarden 图片加水印',
@@ -1081,7 +1138,7 @@ export const workflowSeoBlogArticles = [
           },
           {
             question: "文字水印和 Logo 水印可以同时用吗？",
-            answer: "可以，很多场景就是双水印组合：右下角放品牌 Logo，居中或对角线加平铺文字（网址、账号或版权声明）。两者不冲突，反而互补——Logo 传达品牌，文字传达版权信息和联系方式。使用时要注意视觉层次：Logo 通常需要更高的透明度和更小的占比，文字水印则可以更淡但更多，避免两个水印同时抢注意力。导出前放到实际发布场景（社媒、公众号、图库）中预览。",
+            answer: "可以，很多场景就是双水印组合：右下角放品牌 Logo，居中或对角线加平铺文字（网址、账号或版权声明）。两者不冲突，反而互补：Logo 传达品牌，文字传达版权信息和联系方式。使用时要注意视觉层次：Logo 通常需要更高的透明度和更小的占比，文字水印则可以更淡但更多，避免两个水印同时抢注意力。导出前放到实际发布场景（社媒、公众号、图库）中预览。",
           },
           {
             question: "加了水印的原始文件要不要保留？",
@@ -1144,6 +1201,25 @@ export const workflowSeoBlogArticles = [
               'Preview on mobile and desktop before publishing.',
             ],
           },
+          { type: 'heading', level: 2, text: 'Choose the layout from the purpose' },
+          {
+            type: 'paragraph',
+            text: 'An attribution mark mainly identifies the source, so a readable corner placement is usually enough. Review images and paid proofs need to remain traceable after a screenshot, which favors low-opacity tiling. An order number, recipient, or date is a personalized marker and should not sit where one simple crop removes every occurrence. Stronger marks reduce image usefulness, so there is no universal opacity setting.',
+          },
+          {
+            type: 'list',
+            items: [
+              'Check contrast over both the brightest and darkest parts of the image, adding a subtle text outline when necessary.',
+              'Space tiles so a common crop still contains one complete mark without turning the image into visual noise.',
+              'Start from a transparent logo source, and scale before rotating to reduce jagged or blurry edges.',
+              'If the text contains an order ID or a person name, review the sharing scope and retention period so the mark does not create a new privacy leak.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'What a watermark can and cannot do' },
+          {
+            type: 'paragraph',
+            text: 'A visible mark can state origin, discourage casual reuse, and make an internal proof traceable. It is not access control or tamper-proof copyright protection. Cropping, repainting, and image inpainting can still remove it. When access to the source matters, combine the mark with permissions, lower-resolution previews, and a separate archive rather than relying on pixels alone.',
+          },
           {
             type: 'callout',
             title: 'ToolGarden Image Watermark',
@@ -1159,7 +1235,7 @@ export const workflowSeoBlogArticles = [
           },
           {
             question: "Is a diagonal watermark or a tiled watermark better at preventing theft?",
-            answer: "A tiled watermark covers more area, so even if someone crops a small piece of the image, a mark is still visible — better for screenshot and repost protection. A diagonal watermark has clean, uniform strokes and stronger visual impact, which fits contract samples or review images that need an obvious warning. If your goal is a clear warning, use diagonal. If you worry about cropping and reposting, use tiled. Both need low opacity so they do not damage readability of the actual content.",
+            answer: "A tiled watermark covers more area, so even if someone crops a small piece of the image, a mark is still visible; better for screenshot and repost protection. A diagonal watermark has clean, uniform strokes and stronger visual impact, which fits contract samples or review images that need an obvious warning. If your goal is a clear warning, use diagonal. If you worry about cropping and reposting, use tiled. Both need low opacity so they do not damage readability of the actual content.",
           },
           {
             question: "Why do some watermarked images look crisp while others look blurry?",
@@ -1167,11 +1243,11 @@ export const workflowSeoBlogArticles = [
           },
           {
             question: "Can text and logo watermarks be used together?",
-            answer: "Yes, and it is a common pattern: a brand logo in the bottom-right corner plus centered or tiled text carrying a URL, handle, or copyright notice. The two complement each other — the logo communicates brand while text carries copyright and contact info. Watch the visual hierarchy: the logo can be smaller and more opaque, while the text watermark can be lighter but repeated more often, so both do not fight for attention. Preview the result inside the actual publishing environment (social media, article page, stock library) before exporting.",
+            answer: "Yes, and it is a common pattern: a brand logo in the bottom-right corner plus centered or tiled text carrying a URL, handle, or copyright notice. The two complement each other; the logo communicates brand while text carries copyright and contact info. Watch the visual hierarchy: the logo can be smaller and more opaque, while the text watermark can be lighter but repeated more often, so both do not fight for attention. Preview the result inside the actual publishing environment (social media, article page, stock library) before exporting.",
           },
           {
             question: "Should I keep the un-watermarked source file?",
-            answer: "Yes, definitely. Three reasons. First, you may want to change the watermark later — a new logo, new URL, or new campaign slogan. Second, different platforms need different sizes, ratios, or formats, and re-cropping from a watermarked image usually looks messy. Third, if the font, size, or position turns out wrong, only the clean source lets you redo the work. Name the files clearly (photo-original.jpg, photo-watermark-v1.jpg) or put them in separate folders so the clean version does not get lost after publishing.",
+            answer: "Yes, definitely. Three reasons. First, you may want to change the watermark later; a new logo, new URL, or new campaign slogan. Second, different platforms need different sizes, ratios, or formats, and re-cropping from a watermarked image usually looks messy. Third, if the font, size, or position turns out wrong, only the clean source lets you redo the work. Name the files clearly (photo-original.jpg, photo-watermark-v1.jpg) or put them in separate folders so the clean version does not get lost after publishing.",
           },
         ],
       },
@@ -1392,7 +1468,7 @@ export const workflowSeoBlogArticles = [
           },
           {
             question: "How does a local model compare to paid services like remove.bg?",
-            answer: "For standard cases — portraits, products, pets, clean backgrounds — visual quality is close and local open-source models cover social posting, e-commerce prep, and slide assets well. The gap shows up in two places. First, edge refinement on hair and transparent objects is stronger in commercial services thanks to more training and post-processing. Second, robustness on hard cases (similar colors, tricky lighting, tiny subjects) is better. If quality matters a lot, run local first, then hand off only the important shots to a paid service.",
+            answer: "For standard cases; portraits, products, pets, clean backgrounds; visual quality is close and local open-source models cover social posting, e-commerce prep, and slide assets well. The gap shows up in two places. First, edge refinement on hair and transparent objects is stronger in commercial services thanks to more training and post-processing. Second, robustness on hard cases (similar colors, tricky lighting, tiny subjects) is better. If quality matters a lot, run local first, then hand off only the important shots to a paid service.",
           },
           {
             question: "Why does my transparent PNG show a white background in some apps?",
@@ -1400,7 +1476,7 @@ export const workflowSeoBlogArticles = [
           },
           {
             question: "Can it handle batch background removal?",
-            answer: "A browser-local model can do batches, but two things matter. First, the model loads once, then each image is inferred separately — the first takes a few seconds, later ones typically a few hundred milliseconds to a couple of seconds depending on image size and device. Second, browser memory accumulates as you process more images, so uploading hundreds at once can slow down or crash the tab. Do 20 to 50 at a time. For e-commerce workflows with thousands of images, a batch server or desktop tool like rembg CLI is more stable.",
+            answer: "A browser-local model can do batches, but two things matter. First, the model loads once, then each image is inferred separately; the first takes a few seconds, later ones typically a few hundred milliseconds to a couple of seconds depending on image size and device. Second, browser memory accumulates as you process more images, so uploading hundreds at once can slow down or crash the tab. Do 20 to 50 at a time. For e-commerce workflows with thousands of images, a batch server or desktop tool like rembg CLI is more stable.",
           },
           {
             question: "Why do parts of my subject go missing or break apart?",
@@ -1413,7 +1489,7 @@ export const workflowSeoBlogArticles = [
   {
     slug: 'base64-encoding-explained-common-pitfalls',
     publishedAt: '2026-07-02',
-    updatedAt: '2026-07-03',
+    updatedAt: '2026-08-03',
     translations: {
       zh: {
         title: 'Base64 编码原理和常见坑',
@@ -1485,6 +1561,31 @@ export const workflowSeoBlogArticles = [
               '混用标准 Base64 和 URL Safe Base64。',
             ],
           },
+          { type: 'heading', level: 2, text: '文本为什么还涉及字符编码？' },
+          {
+            type: 'paragraph',
+            text: 'Base64 编码的是字节，不是抽象字符。英文 Hello 在 UTF-8 中是 5 个字节，而中文、Emoji 和其它字符会先按 UTF-8 转成不同的字节序列，再进行 Base64。编码方和解码方如果使用不同字符集，Base64 本身即使完全正确，恢复出的文字仍可能乱码。',
+          },
+          {
+            type: 'code',
+            language: 'text',
+            code: '文本 → UTF-8 字节 → Base64\nBase64 → 字节 → 使用同一字符集还原文本',
+          },
+          { type: 'heading', level: 2, text: '什么时候应该用，什么时候不该用？' },
+          {
+            type: 'table',
+            headers: ['场景', '建议', '原因'],
+            rows: [
+              ['很小的图标内联到 CSS', '可以考虑', '减少一次请求，但会增加文本体积'],
+              ['JSON 中传递少量二进制', '先确认接口约定', '需要明确 MIME 类型、长度和大小限制'],
+              ['大图片或视频', '不要内联', '体积膨胀、内存占用和解析成本都很高'],
+              ['密码、token、个人信息', '不能当作保护措施', '解码无需密钥，拿到字符串就能还原'],
+            ],
+          },
+          {
+            type: 'paragraph',
+            text: '解码失败时先确认是否混入 Data URL 前缀、空格或换行，再检查使用的是标准还是 URL Safe 字母表。末尾填充可以按协议省略，但接收方必须明确支持；不要仅靠手工补等号猜测损坏内容。',
+          },
           {
             type: 'callout',
             title: 'ToolGarden Base64 工具',
@@ -1504,7 +1605,7 @@ export const workflowSeoBlogArticles = [
           },
           {
             question: "为什么把大图片转 Base64 之后页面变得很慢？",
-            answer: "Base64 编码会让数据体积膨胀约 33%，一张 500KB 的图片编码后大约 667KB 文本。这段文本会作为字符串塞进 HTML 或 JSON，浏览器解析、内存占用、传输时间都比链接一张外部图片更重。此外，HTML/JS 中的长字符串不能被浏览器缓存复用——每次页面加载都要重新下载和解码。适用 Base64 的场景是极小的图标（十几 KB 以内）或必须内嵌的邮件、报告、离线应用；大图片建议用 CDN 链接。",
+            answer: "Base64 编码会让数据体积膨胀约 33%，一张 500KB 的图片编码后大约 667KB 文本。这段文本会作为字符串塞进 HTML 或 JSON，浏览器解析、内存占用、传输时间都比链接一张外部图片更重。此外，HTML/JS 中的长字符串不能被浏览器缓存复用：每次页面加载都要重新下载和解码。适用 Base64 的场景是极小的图标（十几 KB 以内）或必须内嵌的邮件、报告、离线应用；大图片建议用 CDN 链接。",
           },
           {
             question: "URL Safe Base64 是什么，什么时候要用？",
@@ -1586,6 +1687,31 @@ export const workflowSeoBlogArticles = [
               'Mixing standard Base64 and URL Safe Base64.',
             ],
           },
+          { type: 'heading', level: 2, text: 'Why text still needs a character encoding' },
+          {
+            type: 'paragraph',
+            text: 'Base64 encodes bytes, not abstract characters. English Hello is five bytes in UTF-8, while Chinese text, emoji, and other characters first become different UTF-8 byte sequences and are then encoded. If the producer and consumer use different character sets, the Base64 can be perfectly valid while the restored text is still corrupted.',
+          },
+          {
+            type: 'code',
+            language: 'text',
+            code: 'text -> UTF-8 bytes -> Base64\nBase64 -> bytes -> decode with the same character set',
+          },
+          { type: 'heading', level: 2, text: 'When it fits and when it does not' },
+          {
+            type: 'table',
+            headers: ['Situation', 'Recommendation', 'Reason'],
+            rows: [
+              ['A very small icon in CSS', 'Consider it', 'It removes one request but enlarges the text asset'],
+              ['A small binary field in JSON', 'Confirm the API contract', 'MIME type, length, and size limits need an explicit convention'],
+              ['A large image or video', 'Do not inline it', 'Expansion, memory use, and parsing cost all become significant'],
+              ['Passwords, tokens, or personal data', 'Never treat it as protection', 'No key is needed; anyone with the string can restore it'],
+            ],
+          },
+          {
+            type: 'paragraph',
+            text: 'When decoding fails, first check for an included Data URL prefix, spaces, or line breaks, then confirm whether the alphabet is standard or URL-safe. Some protocols omit trailing padding deliberately, but the receiver must support that convention. Do not guess at damaged content by adding equals signs blindly.',
+          },
           {
             type: 'callout',
             title: 'ToolGarden Base64 Tools',
@@ -1605,7 +1731,7 @@ export const workflowSeoBlogArticles = [
           },
           {
             question: "Why does my page become slow after embedding large images as Base64?",
-            answer: "Base64 inflates data size by about 33 percent, so a 500KB image becomes about 667KB of text. That text is embedded in HTML or JSON, and the browser must parse it, hold it in memory, and transfer it every time — much heavier than fetching an external image. HTML and JS strings also cannot be cached separately, so every page load re-downloads and re-decodes them. Base64 embedding fits tiny icons (under about 15KB) or offline/email/report contexts. For big images, use a CDN URL.",
+            answer: "Base64 inflates data size by about 33 percent, so a 500KB image becomes about 667KB of text. That text is embedded in HTML or JSON, and the browser must parse it, hold it in memory, and transfer it every time; much heavier than fetching an external image. HTML and JS strings also cannot be cached separately, so every page load re-downloads and re-decodes them. Base64 embedding fits tiny icons (under about 15KB) or offline/email/report contexts. For big images, use a CDN URL.",
           },
           {
             question: "What is URL Safe Base64 and when should I use it?",
@@ -1715,7 +1841,7 @@ export const workflowSeoBlogArticles = [
           },
           {
             question: "字幕里的中文变成乱码或问号怎么办？",
-            answer: "几乎都是编码问题。SRT 和 LRC 都是纯文本文件，如果保存时选了 ANSI、GBK 或者 Windows-1252，在其他系统里打开就可能变成乱码。解决方式统一——用文本编辑器（VS Code、Sublime、Notepad++）打开原文件，另存为 UTF-8（不带 BOM），再重新导入播放器或字幕工具。如果原文件已经乱码了，可以用编码识别工具尝试 GBK、Big5、Shift-JIS 等常见编码强制读取一次再另存。",
+            answer: "几乎都是编码问题。SRT 和 LRC 都是纯文本文件，如果保存时选了 ANSI、GBK 或者 Windows-1252，在其他系统里打开就可能变成乱码。解决方式统一：用文本编辑器（VS Code、Sublime、Notepad++）打开原文件，另存为 UTF-8（不带 BOM），再重新导入播放器或字幕工具。如果原文件已经乱码了，可以用编码识别工具尝试 GBK、Big5、Shift-JIS 等常见编码强制读取一次再另存。",
           },
           {
             question: "整个字幕都比声音慢 500ms，要怎么快速修正？",
@@ -1727,7 +1853,7 @@ export const workflowSeoBlogArticles = [
           },
           {
             question: "LRC 转 SRT 时，最后一行的结束时间怎么办？",
-            answer: "LRC 每行只有开始时间，转成 SRT 需要每条都有结束时间。中间行的处理很简单——把下一行的开始时间当作当前行的结束时间。但最后一行没有“下一行”，只能自己指定。常见做法有三种：一是根据音频总时长填写最后一行的结束时间；二是给最后一行加一个固定延时，比如再显示 3 秒或 5 秒；三是手动听最后一句结束的位置。如果最后一行是长句，第三种最准，但也最费时。",
+            answer: "LRC 每行只有开始时间，转成 SRT 需要每条都有结束时间。中间行的处理很简单：把下一行的开始时间当作当前行的结束时间。但最后一行没有“下一行”，只能自己指定。常见做法有三种：一是根据音频总时长填写最后一行的结束时间；二是给最后一行加一个固定延时，比如再显示 3 秒或 5 秒；三是手动听最后一句结束的位置。如果最后一行是长句，第三种最准，但也最费时。",
           },
         ],
       },
@@ -1825,8 +1951,8 @@ export const workflowSeoBlogArticles = [
             answer: "Almost always an encoding problem. SRT and LRC are plain text files, so if they were saved as ANSI, GBK, or Windows-1252, they may look garbled on another system. The fix is consistent: open the original file in a text editor like VS Code, Sublime, or Notepad++, save as UTF-8 without BOM, then re-import into the player or subtitle tool. If the file is already garbled, use an encoding-detection tool to try GBK, Big5, or Shift-JIS as the source encoding first, then re-save as UTF-8.",
           },
           {
-            question: "My whole subtitle track is 500ms late — how do I fix it fast?",
-            answer: "Do not edit line by line. Every subtitle editor supports global timeline shift. Enter -500ms or -0.5s and every cue moves earlier at once. ToolGarden Subtitle Maker offers this too. If only part of the file drifts, select those cues and shift just them. If the offset grows over time — later cues drift more — the video and subtitle frame rates or sample rates do not match, and you need proportional time scaling rather than a linear shift.",
+            question: "My whole subtitle track is 500ms late; how do I fix it fast?",
+            answer: "Do not edit line by line. Every subtitle editor supports global timeline shift. Enter -500ms or -0.5s and every cue moves earlier at once. ToolGarden Subtitle Maker offers this too. If only part of the file drifts, select those cues and shift just them. If the offset grows over time; later cues drift more; the video and subtitle frame rates or sample rates do not match, and you need proportional time scaling rather than a linear shift.",
           },
           {
             question: "How long should each SRT cue be? What if a line is too long?",
@@ -1834,7 +1960,7 @@ export const workflowSeoBlogArticles = [
           },
           {
             question: "When converting LRC to SRT, what end time should the last line get?",
-            answer: "LRC has only start times, but SRT needs an end time for every cue. Middle lines are easy — use the next line's start time as the current line's end time. The last line has no next line, so you must set it yourself. There are three usual choices: use the total audio duration as the last end time; add a fixed display duration like 3 or 5 seconds; or manually listen and mark the exact end position. The third option is most accurate for long final phrases but takes the most time.",
+            answer: "LRC has only start times, but SRT needs an end time for every cue. Middle lines are easy; use the next line's start time as the current line's end time. The last line has no next line, so you must set it yourself. There are three usual choices: use the total audio duration as the last end time; add a fixed display duration like 3 or 5 seconds; or manually listen and mark the exact end position. The third option is most accurate for long final phrases but takes the most time.",
           },
         ],
       },
@@ -1955,7 +2081,7 @@ export const workflowSeoBlogArticles = [
         faq: [
           {
             question: "Excel 里的日期转成 JSON 后变成一串数字怎么办？",
-            answer: "这是 Excel 底层用序列值（比如 45678）表示日期的结果——1900-01-01 是 1，之后每天加 1。转换器如果直接把单元格值读成数字，就会把日期变成 45000 这种没意义的整数。解决办法有两种：一是转换前在 Excel 里选中日期列，设置单元格格式为“文本”，或者用公式 =TEXT(A2,\"yyyy-mm-dd\") 生成一个新列再转换；二是使用支持自动识别日期的转换工具，它会读取 Excel 的日期格式并输出 ISO 字符串（2024-11-15）。正式导入接口前，检查几行日期字段的实际值。",
+            answer: "这是 Excel 底层用序列值（比如 45678）表示日期的结果：1900-01-01 是 1，之后每天加 1。转换器如果直接把单元格值读成数字，就会把日期变成 45000 这种没意义的整数。解决办法有两种：一是转换前在 Excel 里选中日期列，设置单元格格式为“文本”，或者用公式 =TEXT(A2,\"yyyy-mm-dd\") 生成一个新列再转换；二是使用支持自动识别日期的转换工具，它会读取 Excel 的日期格式并输出 ISO 字符串（2024-11-15）。正式导入接口前，检查几行日期字段的实际值。",
           },
           {
             question: "身份证号、手机号在 Excel 里显示正常，转 JSON 后为什么变成科学计数法？",
@@ -1963,7 +2089,7 @@ export const workflowSeoBlogArticles = [
           },
           {
             question: "多个 Sheet 的 Excel 转 JSON 时会读取哪一张？",
-            answer: "绝大多数在线转换工具默认只读取第一张 Sheet（也就是打开 Excel 时最左边显示的那一张）。如果你的数据在其他 Sheet 上，转换结果会是空的或者错的。解决办法：转换前把目标 Sheet 拖到最前面，或者复制其内容到一个新 Excel 文件里再转换；如果工具支持选择 Sheet，就在设置中指定名称。多 Sheet 想全部转换的话，需要循环处理——ToolGarden 的 Excel → JSON 目前默认第一张，导入多表数据前先合并或分批处理。",
+            answer: "绝大多数在线转换工具默认只读取第一张 Sheet（也就是打开 Excel 时最左边显示的那一张）。如果你的数据在其他 Sheet 上，转换结果会是空的或者错的。解决办法：转换前把目标 Sheet 拖到最前面，或者复制其内容到一个新 Excel 文件里再转换；如果工具支持选择 Sheet，就在设置中指定名称。多 Sheet 想全部转换的话，需要循环处理：ToolGarden 的 Excel → JSON 目前默认第一张，导入多表数据前先合并或分批处理。",
           },
           {
             question: "Excel 转出来的 JSON 字段名带空格或换行，接口报错怎么办？",
@@ -1971,7 +2097,7 @@ export const workflowSeoBlogArticles = [
           },
           {
             question: "空单元格在 JSON 里应该是 null、空字符串还是省略字段？",
-            answer: "看接口约定，三种都合法但含义不同。null 明确表示“这个字段存在但没值”，适合数据库允许 NULL 的字段；空字符串（\"\"）表示“字段有值，值是空”，适合前端表单默认值场景；省略字段（key 都不出现）表示“这个属性根本不存在”，适合可选字段和稀疏数据。选错了后端可能出问题——比如后端用 if field is None 判断空但你传 \"\"，条件不成立。转换前问清接口对空值的处理规则，或者转换后统一用工具批量把 null 改成对应形式。",
+            answer: "看接口约定，三种都合法但含义不同。null 明确表示“这个字段存在但没值”，适合数据库允许 NULL 的字段；空字符串（\"\"）表示“字段有值，值是空”，适合前端表单默认值场景；省略字段（key 都不出现）表示“这个属性根本不存在”，适合可选字段和稀疏数据。选错了后端可能出问题：比如后端用 if field is None 判断空但你传 \"\"，条件不成立。转换前问清接口对空值的处理规则，或者转换后统一用工具批量把 null 改成对应形式。",
           },
         ],
       },
@@ -2096,12 +2222,12 @@ export const workflowSeoBlogArticles = [
             answer: "Most online converters default to the first sheet (the leftmost tab). If your data is on another sheet, the output will be empty or wrong. Fix: drag the target sheet to the first position before uploading, or copy its content into a new Excel file. If the tool supports sheet selection, name the sheet explicitly. To convert all sheets, you often need to loop. ToolGarden Excel to JSON currently reads the first sheet by default, so merge or split before importing multi-sheet data.",
           },
           {
-            question: "The JSON output has spaces or line breaks in field names and my API rejects it — how do I fix that?",
-            answer: "The header is the problem. Excel allows headers like \"user name\" or \"order\\nid\" with spaces or line breaks, and those become JSON keys directly: { \"user name\": \"Alice\", \"order\\nid\": \"A001\" }. Most APIs reject keys with spaces or special characters. Fix: normalize headers in Excel first — replace spaces with underscores (user_name), rename to lowerCamelCase (orderId), and remove line breaks. You can also run the output through a JSON cleanup tool to rename keys in bulk. Doing it once per template keeps every future conversion clean.",
+            question: "The JSON output has spaces or line breaks in field names and my API rejects it; how do I fix that?",
+            answer: "The header is the problem. Excel allows headers like \"user name\" or \"order\\nid\" with spaces or line breaks, and those become JSON keys directly: { \"user name\": \"Alice\", \"order\\nid\": \"A001\" }. Most APIs reject keys with spaces or special characters. Fix: normalize headers in Excel first; replace spaces with underscores (user_name), rename to lowerCamelCase (orderId), and remove line breaks. You can also run the output through a JSON cleanup tool to rename keys in bulk. Doing it once per template keeps every future conversion clean.",
           },
           {
             question: "Should empty cells become null, empty string, or omitted in JSON?",
-            answer: "It depends on the API contract, and all three are valid but mean different things. null explicitly says the field exists but has no value, matching database NULL. An empty string means the field has a value that happens to be empty, common for form defaults. Omitting the key means the property does not exist, useful for optional or sparse data. Picking the wrong one can break the backend — for example, if the server checks `if field is None` but you send \"\", the condition fails. Confirm the contract, or post-process with a JSON tool to standardize.",
+            answer: "It depends on the API contract, and all three are valid but mean different things. null explicitly says the field exists but has no value, matching database NULL. An empty string means the field has a value that happens to be empty, common for form defaults. Omitting the key means the property does not exist, useful for optional or sparse data. Picking the wrong one can break the backend; for example, if the server checks `if field is None` but you send \"\", the condition fails. Confirm the contract, or post-process with a JSON tool to standardize.",
           },
         ],
       },
@@ -2110,7 +2236,7 @@ export const workflowSeoBlogArticles = [
   {
     slug: 'text-diff-algorithm-add-delete-change',
     publishedAt: '2026-07-02',
-    updatedAt: '2026-07-03',
+    updatedAt: '2026-08-03',
     translations: {
       zh: {
         title: '文本对比工具原理：diff 算法怎么找出增删改',
@@ -2141,6 +2267,20 @@ export const workflowSeoBlogArticles = [
             type: 'lead',
             text: 'diff 算法的目标不是理解文本含义，而是找出两个序列里哪些部分相同，哪些部分发生了变化。',
           },
+          {
+            type: 'paragraph',
+            text: '实际使用时，先把旧版本放在左侧、新版本放在右侧，再选择适合内容的比较粒度。行级结果适合快速定位段落，词级高亮则负责指出同一行内部究竟改了哪个词。两级结合，既能看到整体结构，也不会漏掉数字、状态或措辞变化。',
+          },
+          { type: 'heading', level: 2, text: '先看一个可复现的例子' },
+          {
+            type: 'code',
+            language: 'text',
+            code: '旧版本\nCheckout success\nPayment pending\nSend email receipt\n\n新版本\nCheckout success\nPayment completed\nSend email receipt',
+          },
+          {
+            type: 'paragraph',
+            text: '行级比较会把第二行标记为一处删除和一处新增；词级比较继续在这一行里对齐共同的 Payment，只高亮 pending 与 completed。人工扫长日志时最容易漏掉的，正是这种行结构不变但关键状态已经变化的情况。',
+          },
           { type: 'heading', level: 2, text: '基本思路' },
           {
             type: 'list',
@@ -2168,6 +2308,22 @@ export const workflowSeoBlogArticles = [
             type: 'paragraph',
             text: '很多 diff 实现会使用最长公共子序列或类似策略。它们尽量保留共同内容，再用最少的插入和删除说明变化。',
           },
+          { type: 'heading', level: 2, text: '如何减少无意义的差异' },
+          {
+            type: 'list',
+            items: [
+              '先统一换行符与文件编码，避免 Windows CRLF 和 Unix LF 造成整段变化。',
+              '对日志先去掉每行都会变化的时间戳、请求 ID 或随机值，再比较真正有用的内容。',
+              '两份 JSON 应改用结构化 JSON 对比，缩进和字段顺序不应该成为差异。',
+              '整段移动通常会显示为原位置删除、新位置新增，结果并不表示内容被改写。',
+              '超长文件先按章节或时间范围切小，浏览器更容易计算，人工复核也更聚焦。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '把 diff 当作审查线索，而不是结论' },
+          {
+            type: 'paragraph',
+            text: '算法只能证明文本序列不同，不能判断改动是否正确。审查配置时要确认单位与环境，审查文案时要检查上下文，审查代码生成结果时还要运行对应验证。对于看似只有一个字符的变化，尤其要留意版本号、小数点、负号和权限值。',
+          },
           {
             type: 'callout',
             title: 'ToolGarden 文本对比',
@@ -2179,7 +2335,7 @@ export const workflowSeoBlogArticles = [
         faq: [
           {
             question: "为什么两段文本明明只改了一个字，diff 工具却显示整行都变了？",
-            answer: "这是行级 diff 的正常行为。行级 diff 把文本按换行符切成块，然后逐行比较——只要一行里任何一个字符不同，整行就被标记为删除加新增。要看清具体改了哪个字，需要切换到词级 diff 或字符级 diff。词级 diff 会把行内容再切成单词，只高亮改动的词；字符级 diff 更细，能显示单个字母或汉字变化。ToolGarden 文本对比支持切换粒度。对代码或配置文件用行级，对文案或句子用词级更合适。",
+            answer: "这是行级 diff 的正常行为。行级 diff 把文本按换行符切成块，然后逐行比较：只要一行里任何一个字符不同，整行就被标记为删除加新增。要看清具体改了哪个字，需要切换到词级 diff 或字符级 diff。词级 diff 会把行内容再切成单词，只高亮改动的词；字符级 diff 更细，能显示单个字母或汉字变化。ToolGarden 文本对比支持切换粒度。对代码或配置文件用行级，对文案或句子用词级更合适。",
           },
           {
             question: "diff 结果里出现大量“删除+新增”而不是“修改”，正常吗？",
@@ -2187,7 +2343,7 @@ export const workflowSeoBlogArticles = [
           },
           {
             question: "对比 JSON 数据时，为什么应该用 JSON diff 而不是文本 diff？",
-            answer: "JSON 是结构化数据，字段顺序、缩进、空格都可以变化而不影响语义。文本 diff 会把这些格式差异当成真差异——同一份 JSON 只是重新格式化了一次，文本 diff 就报出满屏改动。JSON diff 先把两份 JSON 解析成对象树，再按字段路径（比如 user.address.city）比较值，忽略格式和字段顺序。这样你看到的差异才是真正的数据变化：某个字段从 A 变成 B、某个字段新增、某个数组多了一项。做接口回归、数据校对时，JSON diff 效率高得多。",
+            answer: "JSON 是结构化数据，字段顺序、缩进、空格都可以变化而不影响语义。文本 diff 会把这些格式差异当成真差异：同一份 JSON 只是重新格式化了一次，文本 diff 就报出满屏改动。JSON diff 先把两份 JSON 解析成对象树，再按字段路径（比如 user.address.city）比较值，忽略格式和字段顺序。这样你看到的差异才是真正的数据变化：某个字段从 A 变成 B、某个字段新增、某个数组多了一项。做接口回归、数据校对时，JSON diff 效率高得多。",
           },
           {
             question: "diff 工具能理解代码语义（比如变量重命名）吗？",
@@ -2228,6 +2384,20 @@ export const workflowSeoBlogArticles = [
             type: 'lead',
             text: 'A diff algorithm does not understand meaning. It finds which parts of two sequences are shared and which parts changed.',
           },
+          {
+            type: 'paragraph',
+            text: 'In practice, put the older version on the left, the newer version on the right, and choose a granularity that fits the material. Line-level output locates changed passages quickly, while word-level highlighting shows exactly what changed inside a line. Used together, they preserve the overall structure without hiding a changed number, status, or phrase.',
+          },
+          { type: 'heading', level: 2, text: 'A reproducible example' },
+          {
+            type: 'code',
+            language: 'text',
+            code: 'Old version\nCheckout success\nPayment pending\nSend email receipt\n\nNew version\nCheckout success\nPayment completed\nSend email receipt',
+          },
+          {
+            type: 'paragraph',
+            text: 'A line diff reports the second line as one deletion and one addition. Word comparison then aligns the shared word Payment and highlights only pending versus completed. This is exactly the kind of unchanged line shape with a changed state that people miss while scanning a long log.',
+          },
           { type: 'heading', level: 2, text: 'The Basic Idea' },
           {
             type: 'list',
@@ -2255,6 +2425,22 @@ export const workflowSeoBlogArticles = [
             type: 'paragraph',
             text: 'Many diff implementations use longest common subsequence ideas or similar strategies: preserve shared content and explain changes with insertions and deletions.',
           },
+          { type: 'heading', level: 2, text: 'Reducing differences that do not matter' },
+          {
+            type: 'list',
+            items: [
+              'Normalize line endings and encodings first, so Windows CRLF and Unix LF do not make a whole passage look different.',
+              'For logs, remove timestamps, request IDs, or random values that change on every line before comparing the useful payload.',
+              'Use a structured JSON diff for JSON documents, where indentation and key order are not data changes.',
+              'A moved block normally appears as a deletion at the old location and an insertion at the new one; that does not mean its content was rewritten.',
+              'Split very large files by section or time range so browser calculation and human review both stay focused.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Treat the diff as review evidence, not a verdict' },
+          {
+            type: 'paragraph',
+            text: 'The algorithm proves that two text sequences differ, but not whether the change is correct. Configuration review still needs units and environment context, copy review needs the surrounding paragraph, and generated code still needs its normal checks. Pay particular attention to apparently tiny changes in version numbers, decimal points, minus signs, and permission values.',
+          },
           {
             type: 'callout',
             title: 'ToolGarden Text Diff',
@@ -2265,23 +2451,23 @@ export const workflowSeoBlogArticles = [
         ],
         faq: [
           {
-            question: "I changed only one character, but the diff shows the whole line as different — why?",
+            question: "I changed only one character, but the diff shows the whole line as different; why?",
             answer: "This is normal for line-level diff. Line diff splits text at line breaks and compares whole lines, so any single-character change marks the entire line as deleted-plus-added. To see the exact character change, switch to word-level or character-level diff. Word diff splits the line into tokens and only highlights changed words. Character diff is even finer and shows individual letter changes. ToolGarden Text Diff supports switching granularity. Use line diff for code and configs, word diff for prose and copy.",
           },
           {
             question: "Why does diff show many delete+add pairs instead of a modification?",
-            answer: "That is how classic diff algorithms (Myers, LCS variants) work — they only emit insertions and deletions, and the modification view is a rendering hint that merges adjacent delete+add pairs. If the two texts share very little in common between differing chunks, the algorithm cannot find long enough common subsequences and marks big blocks as pure delete-and-add. Try adjusting granularity (word or character), or align the paragraph order between the two versions before diffing, which reduces false-positive differences.",
+            answer: "That is how classic diff algorithms (Myers, LCS variants) work; they only emit insertions and deletions, and the modification view is a rendering hint that merges adjacent delete+add pairs. If the two texts share very little in common between differing chunks, the algorithm cannot find long enough common subsequences and marks big blocks as pure delete-and-add. Try adjusting granularity (word or character), or align the paragraph order between the two versions before diffing, which reduces false-positive differences.",
           },
           {
             question: "Why should I use a JSON diff instead of a text diff for JSON data?",
-            answer: "JSON is structured data, so formatting, indentation, and key order can change without altering meaning. A text diff reports all those cosmetic differences as real changes — a reformatted JSON file lights up entirely under text diff. A JSON diff parses both sides into object trees and compares by field path like user.address.city, ignoring format and key order. What you see then is a true data change: a field went from A to B, a new field appeared, an array grew. For API regression or data reconciliation, JSON diff is far more efficient.",
+            answer: "JSON is structured data, so formatting, indentation, and key order can change without altering meaning. A text diff reports all those cosmetic differences as real changes; a reformatted JSON file lights up entirely under text diff. A JSON diff parses both sides into object trees and compares by field path like user.address.city, ignoring format and key order. What you see then is a true data change: a field went from A to B, a new field appeared, an array grew. For API regression or data reconciliation, JSON diff is far more efficient.",
           },
           {
             question: "Can diff tools understand semantic changes like variable renaming?",
             answer: "Standard diff cannot. Classic algorithms only compare characters or lines and do not understand syntax. Renaming userName to user_name shows up as a delete of userName plus an insert of user_name, with no signal that it is the same variable. For semantic comparison, use specialized tools: GitHub semantic diff, JetBrains structural diff, or AST diff tools like gumtree and difftastic parse code into syntax trees before comparing. Standard diff is enough for daily coding; large-scale renames and refactors benefit from the smarter tools.",
           },
           {
-            question: "Diffing two large files is slow or hangs — can it be optimized?",
+            question: "Diffing two large files is slow or hangs; can it be optimized?",
             answer: "Diff has worst-case O(N×M) complexity, so two files with tens of thousands of lines can explode. Options: manually split by section and diff only changed parts; drop word or character granularity and use line diff; use command-line diff or git diff, which are heavily optimized for large files; or search for the specific area of interest and diff only that region. Browser-based diff typically handles files up to a few thousand lines well, and larger files are better served by desktop tools.",
           },
         ],
@@ -2407,7 +2593,7 @@ export const workflowSeoBlogArticles = [
           },
           {
             question: "尾逗号（trailing comma）为什么在有些解析器里能过，在有些里不能过？",
-            answer: "标准 JSON 严格禁止尾逗号——[1, 2, 3,] 或 {\"a\":1,} 都是非法的。但 JavaScript 语言允许尾逗号，所以 V8、SpiderMonkey 等 JS 引擎的宽松模式和 JSON5 都接受。Python 的 json 库、Java 的 Gson、Go 的 encoding/json 严格执行标准，遇到尾逗号直接报错。开发时你可能在浏览器控制台粘贴带尾逗号的 JSON 能解析，但发给后端就报错，就是这个原因。写标准 JSON 时删掉所有尾逗号，或者用格式化工具自动清理。",
+            answer: "标准 JSON 严格禁止尾逗号：[1, 2, 3,] 或 {\"a\":1,} 都是非法的。但 JavaScript 语言允许尾逗号，所以 V8、SpiderMonkey 等 JS 引擎的宽松模式和 JSON5 都接受。Python 的 json 库、Java 的 Gson、Go 的 encoding/json 严格执行标准，遇到尾逗号直接报错。开发时你可能在浏览器控制台粘贴带尾逗号的 JSON 能解析，但发给后端就报错，就是这个原因。写标准 JSON 时删掉所有尾逗号，或者用格式化工具自动清理。",
           },
           {
             question: "JSON5 和 JSONC 到底该选哪个？",
@@ -2517,15 +2703,15 @@ export const workflowSeoBlogArticles = [
         faq: [
           {
             question: "Why doesn't JSON allow single-quoted strings?",
-            answer: "The JSON spec (RFC 8259) requires strings to be wrapped in double quotes. This is not arbitrary — it keeps the rules minimal and cross-language parsers consistent. Single quotes are also valid string delimiters in many languages, but each language handles them slightly differently (Python treats both as equivalent; Java and C# only use double quotes; JavaScript accepts both). Restricting JSON to double quotes avoids all that ambiguity. JSON5 allows single quotes because it targets JavaScript developers and prioritizes hand-writing convenience, but any API-bound JSON must use double quotes.",
+            answer: "The JSON spec (RFC 8259) requires strings to be wrapped in double quotes. This is not arbitrary; it keeps the rules minimal and cross-language parsers consistent. Single quotes are also valid string delimiters in many languages, but each language handles them slightly differently (Python treats both as equivalent; Java and C# only use double quotes; JavaScript accepts both). Restricting JSON to double quotes avoids all that ambiguity. JSON5 allows single quotes because it targets JavaScript developers and prioritizes hand-writing convenience, but any API-bound JSON must use double quotes.",
           },
           {
             question: "Can I use NaN or Infinity in JSON?",
             answer: "No. Standard JSON only allows finite number literals (0, 1, -3.14, 1e10), not IEEE 754 special values like NaN, Infinity, -Infinity, or undefined. JavaScript's JSON.stringify(NaN) returns null on purpose, to keep output valid. If your data legitimately has NaN or Infinity (scientific computing, ML output), common workarounds are: convert them to null; convert to string sentinels like \"NaN\" and \"Infinity\" and handle on the frontend; or replace Infinity with an agreed-upon large value. JSON5 accepts these values, but you must normalize before sending to a standard API.",
           },
           {
-            question: "tsconfig.json allows comments — can I put comments in my project's .json files too?",
-            answer: "It depends. tsconfig.json, VS Code's settings.json, and some launch.json files support comments because TypeScript and VS Code read them with a JSONC parser — a special convention, not part of the JSON spec. If your own project's config.json is parsed by JavaScript's JSON.parse, Python's json.loads, or Java's Jackson, comments cause parse errors immediately. To use comments in config, pick a JSONC-aware parser like jsonc-parser, switch to YAML or TOML, or keep comments in a separate README.",
+            question: "tsconfig.json allows comments; can I put comments in my project's .json files too?",
+            answer: "It depends. tsconfig.json, VS Code's settings.json, and some launch.json files support comments because TypeScript and VS Code read them with a JSONC parser; a special convention, not part of the JSON spec. If your own project's config.json is parsed by JavaScript's JSON.parse, Python's json.loads, or Java's Jackson, comments cause parse errors immediately. To use comments in config, pick a JSONC-aware parser like jsonc-parser, switch to YAML or TOML, or keep comments in a separate README.",
           },
           {
             question: "Why do trailing commas work in some parsers but not others?",
@@ -2533,7 +2719,7 @@ export const workflowSeoBlogArticles = [
           },
           {
             question: "Should I use JSON5 or JSONC?",
-            answer: "Depends on the use case. JSONC is conservative — it only adds comments, keeps everything else close to JSON, and fits existing JSON files that need human annotations (configs, sample data). JSON5 is more aggressive, allowing single quotes, trailing commas, unquoted keys, multi-line strings, and hex numbers, feeling closer to a JavaScript object literal. It suits hand-written data files where your own toolchain controls parsing (Babel config, Rollup config). If you only need comments, use JSONC. If double quotes and quoted keys feel too noisy, use JSON5. Either way, always convert to standard JSON before hitting an API.",
+            answer: "Depends on the use case. JSONC is conservative; it only adds comments, keeps everything else close to JSON, and fits existing JSON files that need human annotations (configs, sample data). JSON5 is more aggressive, allowing single quotes, trailing commas, unquoted keys, multi-line strings, and hex numbers, feeling closer to a JavaScript object literal. It suits hand-written data files where your own toolchain controls parsing (Babel config, Rollup config). If you only need comments, use JSONC. If double quotes and quoted keys feel too noisy, use JSON5. Either way, always convert to standard JSON before hitting an API.",
           },
         ],
       },
@@ -2655,7 +2841,7 @@ export const workflowSeoBlogArticles = [
           },
           {
             question: "PPT 转 PDF 后动画和视频消失是正常的吗？",
-            answer: "正常。PDF 是静态文档格式，无法承载动画、切换效果、内嵌视频或音频。PPT 转 PDF 时，每一张幻灯片会被渲染成一个静态页面——文字、图片、图表都能保留，但动画会消失，视频会被替换成一张封面图或空白。如果需要动态演示，导出为 MP4 视频更合适；如果只是归档存底或分享讲义，PDF 完全够用。转换前记得把 PPT 里的备注（notes）也考虑上——有些工具支持导出成含备注的 PDF，有些不支持。",
+            answer: "正常。PDF 是静态文档格式，无法承载动画、切换效果、内嵌视频或音频。PPT 转 PDF 时，每一张幻灯片会被渲染成一个静态页面：文字、图片、图表都能保留，但动画会消失，视频会被替换成一张封面图或空白。如果需要动态演示，导出为 MP4 视频更合适；如果只是归档存底或分享讲义，PDF 完全够用。转换前记得把 PPT 里的备注（notes）也考虑上：有些工具支持导出成含备注的 PDF，有些不支持。",
           },
           {
             question: "多张图片合并成 PDF 时怎么控制每页大小和方向？",
@@ -2770,22 +2956,22 @@ export const workflowSeoBlogArticles = [
         faq: [
           {
             question: "How does online PDF conversion compare to exporting from Microsoft Word?",
-            answer: "Word's desktop \"Export as PDF\" uses Microsoft's own layout engine, so fonts, page layout, tables of contents, and table borders are preserved almost exactly — especially for complex styles like multi-level lists, footnotes, SmartArt, and equations. Online tools use open-source libraries (LibreOffice, pdf-lib, pdfmake), and complex styling can show font substitution, TOC page-number drift, or table wrapping. Rule of thumb: everyday documents, resumes, notices, and simple reports convert fine online. Formal contracts, precisely formatted papers, and technical documents with equations and charts are safer with Word's native export.",
+            answer: "Word's desktop \"Export as PDF\" uses Microsoft's own layout engine, so fonts, page layout, tables of contents, and table borders are preserved almost exactly; especially for complex styles like multi-level lists, footnotes, SmartArt, and equations. Online tools use open-source libraries (LibreOffice, pdf-lib, pdfmake), and complex styling can show font substitution, TOC page-number drift, or table wrapping. Rule of thumb: everyday documents, resumes, notices, and simple reports convert fine online. Formal contracts, precisely formatted papers, and technical documents with equations and charts are safer with Word's native export.",
           },
           {
-            question: "My Excel table splits across multiple pages in the PDF — how do I fit it on one page?",
+            question: "My Excel table splits across multiple pages in the PDF; how do I fit it on one page?",
             answer: "The issue is Excel's page layout settings, not the converter. In Excel, go to Page Layout > Scale and choose \"Fit sheet on one page,\" or set \"1 page wide by unlimited tall\" so width does not split. You can also set the Print Area to just the needed range so blank columns are excluded. For very wide tables, switching to A3 or landscape orientation helps. Once the print preview in Excel looks right, uploading to a converter reproduces exactly that layout.",
           },
           {
             question: "Is it normal for animations and videos to disappear when PowerPoint becomes PDF?",
-            answer: "Yes. PDF is a static document format and cannot carry animation, slide transitions, embedded video, or audio. During conversion, each slide is rendered as one static page — text, images, and charts survive, but animations vanish and videos are replaced by a poster frame or blank. For dynamic delivery, export to MP4 instead. For archiving or handouts, PDF is fine. Also decide whether to include speaker notes: some tools support notes-included PDF export, others do not.",
+            answer: "Yes. PDF is a static document format and cannot carry animation, slide transitions, embedded video, or audio. During conversion, each slide is rendered as one static page; text, images, and charts survive, but animations vanish and videos are replaced by a poster frame or blank. For dynamic delivery, export to MP4 instead. For archiving or handouts, PDF is fine. Also decide whether to include speaker notes: some tools support notes-included PDF export, others do not.",
           },
           {
             question: "When combining images into a PDF, how do I control page size and orientation?",
             answer: "Merge tools usually offer several modes: match each page to the image's actual size (great for scans); force a uniform A4 or Letter and scale images to fit (good for formal submissions); or auto-orient (landscape image → landscape page, portrait → portrait). The wrong choice causes excessive compression or lots of whitespace. Before merging, normalize orientation (rotate upside-down images), align resolutions (avoid mixing crisp and blurry pages), and name files in reading order (01.jpg, 02.jpg). The output quality improves a lot.",
           },
           {
-            question: "The PDF is too big — how do I compress it without obvious quality loss?",
+            question: "The PDF is too big; how do I compress it without obvious quality loss?",
             answer: "PDF size mostly comes from embedded images and fonts. Options: re-encode images as JPG at lower quality (dropping from 100% to 70% is usually invisible but halves size); subset fonts to include only used characters; strip redundant metadata, annotations, and old revision layers. ToolGarden will add a PDF compression tool later. If you just need to email or upload, compressing images inside the source Word or Excel before conversion often yields the biggest gains.",
           },
         ],
@@ -2915,7 +3101,7 @@ export const workflowSeoBlogArticles = [
         faq: [
           {
             question: "合并 PDF 时能保留每个源文件的书签目录吗？",
-            answer: "取决于合并工具。基础合并只复制页面，源文件的书签树可能全部丢失，或者只保留第一个文件的目录，其他被忽略。专业 PDF 库（如 pdf-lib、iText、Adobe Acrobat）支持合并书签——把每个源文件的书签作为一个顶级节点插入结果 PDF，形成“合同 → 附件 A → 附件 B”这样的层级。ToolGarden 合并 PDF 目前以页面顺序为主，正式文档需要目录导航时，导出后建议用 Acrobat 或专业工具补一次。",
+            answer: "取决于合并工具。基础合并只复制页面，源文件的书签树可能全部丢失，或者只保留第一个文件的目录，其他被忽略。专业 PDF 库（如 pdf-lib、iText、Adobe Acrobat）支持合并书签：把每个源文件的书签作为一个顶级节点插入结果 PDF，形成“合同 → 附件 A → 附件 B”这样的层级。ToolGarden 合并 PDF 目前以页面顺序为主，正式文档需要目录导航时，导出后建议用 Acrobat 或专业工具补一次。",
           },
           {
             question: "合并后 PDF 有部分页面变模糊或者颜色变了，为什么？",
@@ -2923,11 +3109,11 @@ export const workflowSeoBlogArticles = [
           },
           {
             question: "合并加密的 PDF 会有什么问题？",
-            answer: "加密 PDF 分两种：一种只有查看密码（打开就要密码），另一种有编辑/打印限制但可以直接看。带查看密码的 PDF 必须先输入密码解锁才能合并，工具在处理时会要求你输入。带限制的 PDF 通常需要先解除限制——但注意，这里的“限制”是 PDF 制作者设置的软限制，工具能否解除、是否合法要看具体场景。合并加密源 PDF 后，结果通常不再有加密，等于把原来的保护移除了。如果需要保留保护，合并后手动重新加密结果。",
+            answer: "加密 PDF 分两种：一种只有查看密码（打开就要密码），另一种有编辑/打印限制但可以直接看。带查看密码的 PDF 必须先输入密码解锁才能合并，工具在处理时会要求你输入。带限制的 PDF 通常需要先解除限制：但注意，这里的“限制”是 PDF 制作者设置的软限制，工具能否解除、是否合法要看具体场景。合并加密源 PDF 后，结果通常不再有加密，等于把原来的保护移除了。如果需要保留保护，合并后手动重新加密结果。",
           },
           {
             question: "带数字签名的 PDF 合并后签名还有效吗？",
-            answer: "不会。数字签名的原理是对 PDF 的内容和结构做哈希，然后用私钥签名。任何修改（哪怕加一页空白）都会让哈希变化，签名验证失败。合并操作本质上是重新生成一个新 PDF 文件，原签名一定失效。因此正式的签名合同不建议合并——需要合并时，先把签名文件保留一份原件，合并后的版本只作为参考。如果合并结果本身需要签名，用 Adobe Sign、DocuSign 等工具在合并后重新签署。",
+            answer: "不会。数字签名的原理是对 PDF 的内容和结构做哈希，然后用私钥签名。任何修改（哪怕加一页空白）都会让哈希变化，签名验证失败。合并操作本质上是重新生成一个新 PDF 文件，原签名一定失效。因此正式的签名合同不建议合并：需要合并时，先把签名文件保留一份原件，合并后的版本只作为参考。如果合并结果本身需要签名，用 Adobe Sign、DocuSign 等工具在合并后重新签署。",
           },
           {
             question: "为什么合并了 10 个 PDF，结果文件比 10 个源文件相加还大？",
@@ -3053,22 +3239,22 @@ export const workflowSeoBlogArticles = [
         faq: [
           {
             question: "Does the merged PDF keep every source file's bookmark outline?",
-            answer: "It depends on the merge tool. A basic merge copies pages but may drop bookmarks entirely, or preserve only the first file's outline while ignoring the rest. Professional PDF libraries like pdf-lib, iText, and Adobe Acrobat support merging outlines — each source becomes a top-level node in the result, forming a hierarchy like Contract → Attachment A → Attachment B. ToolGarden Merge PDF currently prioritizes page order. For formal documents that need TOC navigation, run the export through Acrobat or a professional tool afterward.",
+            answer: "It depends on the merge tool. A basic merge copies pages but may drop bookmarks entirely, or preserve only the first file's outline while ignoring the rest. Professional PDF libraries like pdf-lib, iText, and Adobe Acrobat support merging outlines; each source becomes a top-level node in the result, forming a hierarchy like Contract → Attachment A → Attachment B. ToolGarden Merge PDF currently prioritizes page order. For formal documents that need TOC navigation, run the export through Acrobat or a professional tool afterward.",
           },
           {
-            question: "After merging, some pages look blurry or the colors shifted — why?",
-            answer: "Two common causes. First, source PDFs may use CMYK color space, and the merge converts to RGB, causing hue shift. Second, the tool may re-encode or downsample images — especially scans or image-heavy PDFs — to control output size. To avoid this: normalize color space in advance (all RGB or all CMYK), choose a merge option that preserves original image quality if available, or merge first and optimize separately. For print-quality output like brochures or samples, use professional software rather than a browser tool.",
+            question: "After merging, some pages look blurry or the colors shifted; why?",
+            answer: "Two common causes. First, source PDFs may use CMYK color space, and the merge converts to RGB, causing hue shift. Second, the tool may re-encode or downsample images; especially scans or image-heavy PDFs; to control output size. To avoid this: normalize color space in advance (all RGB or all CMYK), choose a merge option that preserves original image quality if available, or merge first and optimize separately. For print-quality output like brochures or samples, use professional software rather than a browser tool.",
           },
           {
             question: "What problems come up when merging encrypted PDFs?",
-            answer: "Encrypted PDFs come in two flavors: password-to-open, or permission-restricted but readable. Password-to-open files must be unlocked first, and the tool will prompt for the password. Permission-restricted files usually need restrictions removed before merging — but note these are soft restrictions set by the author, and whether a tool can remove them and whether it is legal depends on context. The merged result usually has no encryption, effectively removing the original protection. If you need protection preserved, re-encrypt manually after merging.",
+            answer: "Encrypted PDFs come in two flavors: password-to-open, or permission-restricted but readable. Password-to-open files must be unlocked first, and the tool will prompt for the password. Permission-restricted files usually need restrictions removed before merging; but note these are soft restrictions set by the author, and whether a tool can remove them and whether it is legal depends on context. The merged result usually has no encryption, effectively removing the original protection. If you need protection preserved, re-encrypt manually after merging.",
           },
           {
             question: "Are digital signatures still valid after PDF merge?",
-            answer: "No. Digital signatures work by hashing the PDF content and structure, then signing the hash with a private key. Any change — even adding a blank page — changes the hash and invalidates verification. Merging always produces a new PDF file, so original signatures always fail. For signed formal contracts, keep the signed original untouched and treat merged copies as reference only. If the merged result itself needs a signature, re-sign after merging using tools like Adobe Sign or DocuSign.",
+            answer: "No. Digital signatures work by hashing the PDF content and structure, then signing the hash with a private key. Any change; even adding a blank page; changes the hash and invalidates verification. Merging always produces a new PDF file, so original signatures always fail. For signed formal contracts, keep the signed original untouched and treat merged copies as reference only. If the merged result itself needs a signature, re-sign after merging using tools like Adobe Sign or DocuSign.",
           },
           {
-            question: "I merged 10 PDFs and the result is bigger than all 10 combined — why?",
+            question: "I merged 10 PDFs and the result is bigger than all 10 combined; why?",
             answer: "Several possibilities. If each source embeds the same font (say Noto Sans SC), a merge tool that does not deduplicate ends up embedding it 10 times. Every source has metadata, XMP, and revision history that the merge may preserve in full. The tool may not compact the final structure, leaving redundant objects. ToolGarden will add an optimize step later. If the output feels bloated, run it through a PDF compressor or qpdf --linearize / Ghostscript, which typically shrink files by 20 to 50 percent.",
           },
         ],
@@ -3177,7 +3363,7 @@ export const workflowSeoBlogArticles = [
           },
           {
             question: "按大小拆分 PDF 是精确切到目标 MB 数吗？",
-            answer: "并不是。PDF 是按对象组织的，页面之间的图片、字体经常共享同一份资源。工具的做法是「顺序累加页面，直到超过目标大小就切一刀」，所以最终每份可能略大或略小于目标值。如果你严格要求「每份不超过 5 MB」，建议目标值设成 4 MB 或 4.5 MB 留出缓冲。真正影响精度的是页面之间体积差异——含高清扫描的页面会一下把大小推上去。",
+            answer: "并不是。PDF 是按对象组织的，页面之间的图片、字体经常共享同一份资源。工具的做法是「顺序累加页面，直到超过目标大小就切一刀」，所以最终每份可能略大或略小于目标值。如果你严格要求「每份不超过 5 MB」，建议目标值设成 4 MB 或 4.5 MB 留出缓冲。真正影响精度的是页面之间体积差异：含高清扫描的页面会一下把大小推上去。",
           },
           {
             question: "拆分带书签的 PDF 后书签为什么消失了？",
@@ -3185,7 +3371,7 @@ export const workflowSeoBlogArticles = [
           },
           {
             question: "为什么按范围拆分时 `1-5,10-15` 会报错？",
-            answer: "常见原因有三：一是范围里有的起始页大于结束页（例如写成 `10-5`）；二是页码超出实际总页数；三是分隔符不对，中文全角逗号 `，` 或全角短横 `—` 会被识别为无效字符。工具通常只接受半角 `,` 和 `-`。另外像 `1-1` 这样看起来「取一页」的写法是合法的，但 `1-` 或 `-5` 这类省略端点的开区间在多数实现里不支持，需要写完整。",
+            answer: "常见原因有三：一是范围里有的起始页大于结束页（例如写成 `10-5`）；二是页码超出实际总页数；三是分隔符不对，中文全角逗号 `，` 或全角短横 `: ` 会被识别为无效字符。工具通常只接受半角 `,` 和 `-`。另外像 `1-1` 这样看起来「取一页」的写法是合法的，但 `1-` 或 `-5` 这类省略端点的开区间在多数实现里不支持，需要写完整。",
           },
           {
             question: "拆分后想把某几页再合并成一份能一次搞定吗？",
@@ -3286,23 +3472,23 @@ export const workflowSeoBlogArticles = [
         faq: [
           {
             question: "Why are my split PDFs each larger than expected?",
-            answer: "Two reasons dominate. First, the source PDF likely embeds whole fonts and shared images once; when you split, each output has to embed its own copy of the resources it references. Second, most splitters don't re-run compression or object deduplication on the outputs, so the writer leaves some overhead. If the total across splits is significantly bigger than the source, run each split through a PDF compressor afterwards. It's also worth checking whether contiguous pages could share resources — splitting into fewer, larger files is usually smaller in aggregate than many tiny ones.",
+            answer: "Two reasons dominate. First, the source PDF likely embeds whole fonts and shared images once; when you split, each output has to embed its own copy of the resources it references. Second, most splitters don't re-run compression or object deduplication on the outputs, so the writer leaves some overhead. If the total across splits is significantly bigger than the source, run each split through a PDF compressor afterwards. It's also worth checking whether contiguous pages could share resources; splitting into fewer, larger files is usually smaller in aggregate than many tiny ones.",
           },
           {
             question: "Does splitting by file size hit the target exactly?",
-            answer: "No. PDF pages share fonts, images, and other objects, and each page's contribution to the file depends on how much is unique to it. Splitters accumulate pages until adding the next page would exceed the target, then cut. That means individual outputs can be either slightly under the target or slightly over the previous cut, depending on the boundary page. If you need a hard cap (say, an email attachment limit), set the target 15–20% below the real limit to give yourself a safety buffer.",
+            answer: "No. PDF pages share fonts, images, and other objects, and each page's contribution to the file depends on how much is unique to it. Splitters accumulate pages until adding the next page would exceed the target, then cut. That means individual outputs can be either slightly under the target or slightly over the previous cut, depending on the boundary page. If you need a hard cap (say, an email attachment limit), set the target 15-20% below the real limit to give yourself a safety buffer.",
           },
           {
             question: "Why do bookmarks disappear when I split a PDF?",
-            answer: "PDF bookmarks (outlines) are a tree of pointers into the document by page. When you split, a bookmark that pointed to page 20 no longer makes sense in a 10-page slice, so most tools drop the outline entirely rather than fix up destinations. Preserving a localized outline requires the tool to walk the tree and rewrite each entry to reference only the pages that ended up in each output — pdf-lib does not do this automatically. If bookmarks matter, keep the original whole and use ranges/extract-pages instead.",
+            answer: "PDF bookmarks (outlines) are a tree of pointers into the document by page. When you split, a bookmark that pointed to page 20 no longer makes sense in a 10-page slice, so most tools drop the outline entirely rather than fix up destinations. Preserving a localized outline requires the tool to walk the tree and rewrite each entry to reference only the pages that ended up in each output; pdf-lib does not do this automatically. If bookmarks matter, keep the original whole and use ranges/extract-pages instead.",
           },
           {
             question: "What page-range syntax works reliably across splitters?",
-            answer: "Stick to ASCII `,` and `-` — e.g., `1-3,7,12-14`. Avoid full-width Chinese punctuation (`，`, `—`), em-dashes, and en-dashes; those get rejected as invalid characters. Ranges must be increasing (`5-3` fails), and endpoints must be within the document (`1-999` on a 20-page PDF is invalid). Open-ended forms like `10-` (meaning \"page 10 to end\") aren't supported everywhere; always write full ranges. And remember that page numbering starts at 1, not 0.",
+            answer: "Stick to ASCII `,` and `-`; e.g., `1-3,7,12-14`. Avoid full-width Chinese punctuation (`，`, `: `), em-dashes, and en-dashes; those get rejected as invalid characters. Ranges must be increasing (`5-3` fails), and endpoints must be within the document (`1-999` on a 20-page PDF is invalid). Open-ended forms like `10-` (meaning \"page 10 to end\") aren't supported everywhere; always write full ranges. And remember that page numbering starts at 1, not 0.",
           },
           {
             question: "Should I split-then-merge, or use extract-pages, to pull selected pages?",
-            answer: "Use extract-pages. Splitting produces multiple files; if what you actually want is a single new PDF containing, say, pages 1–3 + 7 + 12–14, splitting forces you to then merge those splits back together, which duplicates work and often loses metadata twice. Dedicated extract-pages tools accept comma-separated ranges and produce one PDF with just those pages, preserving order. On ToolGarden that's `/pdf/extract-pages`; use split only when you truly need N separate output files.",
+            answer: "Use extract-pages. Splitting produces multiple files; if what you actually want is a single new PDF containing, say, pages 1-3 + 7 + 12-14, splitting forces you to then merge those splits back together, which duplicates work and often loses metadata twice. Dedicated extract-pages tools accept comma-separated ranges and produce one PDF with just those pages, preserving order. On ToolGarden that's `/pdf/extract-pages`; use split only when you truly need N separate output files.",
           },
         ],
       },
@@ -3419,11 +3605,11 @@ export const workflowSeoBlogArticles = [
           },
           {
             question: "支持 `1,3,5-8,20` 这种混合写法吗？",
-            answer: "多数现代提取工具都支持逗号分隔的混合写法：单页 + 连续范围。ToolGarden 的实现按你写的顺序解析并去重，最终输出按范围出现的顺序排列——如果你写 `5,1,3` 出来的 PDF 页面顺序就是 5→1→3。这在做「重排 + 抽取」时很有用。不支持的写法通常是：负数、`3-1` 这种倒序范围、`0` 作为页码（PDF 页码从 1 开始）。",
+            answer: "多数现代提取工具都支持逗号分隔的混合写法：单页 + 连续范围。ToolGarden 的实现按你写的顺序解析并去重，最终输出按范围出现的顺序排列：如果你写 `5,1,3` 出来的 PDF 页面顺序就是 5→1→3。这在做「重排 + 抽取」时很有用。不支持的写法通常是：负数、`3-1` 这种倒序范围、`0` 作为页码（PDF 页码从 1 开始）。",
           },
           {
             question: "提取一页 PDF 出来体积和原文件差不多，是不是没提取成功？",
-            answer: "有可能是提取成功但资源没有裁剪。PDF 里一页可能引用了整个文件共享的字体子集或图片资源池，pdf-lib 默认会连带把这些资源拷过去，即使新文件只用到其中一小部分。要真正瘦身，需要在提取后再跑一次「压缩」或「优化」，把没被引用的对象删掉。ToolGarden 目前不会在提取时自动做这一步——如果单页也有几 MB，说明字体子集或大图是主要成本。",
+            answer: "有可能是提取成功但资源没有裁剪。PDF 里一页可能引用了整个文件共享的字体子集或图片资源池，pdf-lib 默认会连带把这些资源拷过去，即使新文件只用到其中一小部分。要真正瘦身，需要在提取后再跑一次「压缩」或「优化」，把没被引用的对象删掉。ToolGarden 目前不会在提取时自动做这一步：如果单页也有几 MB，说明字体子集或大图是主要成本。",
           },
           {
             question: "提取的页面顺序能自定义吗？",
@@ -3533,19 +3719,19 @@ export const workflowSeoBlogArticles = [
           },
           {
             question: "Why does my extracted PDF open blank or fail to open?",
-            answer: "Three usual suspects. First, an out-of-range page (you asked for page 21 of a 20-page file) — many tools silently produce a zero-page PDF. Second, the source is encrypted or permission-restricted and page copying references resources the reader can't unlock. Third, the page includes large or exotic XObjects (complex forms, embedded 3D) that the copier skipped or truncated. Verify the original opens correctly, confirm your page numbers, and try decrypting or flattening the source first.",
+            answer: "Three usual suspects. First, an out-of-range page (you asked for page 21 of a 20-page file); many tools silently produce a zero-page PDF. Second, the source is encrypted or permission-restricted and page copying references resources the reader can't unlock. Third, the page includes large or exotic XObjects (complex forms, embedded 3D) that the copier skipped or truncated. Verify the original opens correctly, confirm your page numbers, and try decrypting or flattening the source first.",
           },
           {
             question: "Can I mix single pages and ranges like `1,3,5-8,20`?",
-            answer: "Yes — most modern extractors accept comma-separated combinations of single pages and ranges. ToolGarden parses in the order you write, deduplicates, and outputs in the order encountered. That means `5,1,3` produces a PDF with pages in 5→1→3 order, which is handy for quick reordering-plus-extraction. What's typically not supported: descending ranges (`8-5`), zero-indexed numbers (PDFs are 1-indexed), negative numbers, and open ranges (`10-`).",
+            answer: "Yes; most modern extractors accept comma-separated combinations of single pages and ranges. ToolGarden parses in the order you write, deduplicates, and outputs in the order encountered. That means `5,1,3` produces a PDF with pages in 5→1→3 order, which is handy for quick reordering-plus-extraction. What's typically not supported: descending ranges (`8-5`), zero-indexed numbers (PDFs are 1-indexed), negative numbers, and open ranges (`10-`).",
           },
           {
-            question: "I extracted one page but the file size is almost the same as the original — why?",
+            question: "I extracted one page but the file size is almost the same as the original; why?",
             answer: "Extraction usually copies referenced resources but doesn't garbage-collect unused ones. If your one page references a font subset shared with the rest of the document, pdf-lib will pull that whole subset over. Same for image resource dictionaries and shared color profiles. To actually shrink the output, run it through a compressor or linearizer (like qpdf --optimize) afterwards. ToolGarden's extractor prioritizes fidelity over size; a second pass with a compressor is the standard follow-up if size matters.",
           },
           {
             question: "Can I control the page order in the extracted PDF?",
-            answer: "It depends on the tool. Range-extractors typically honor input order — writing `10,5,20` yields a PDF with pages in that exact sequence, which doubles as a quick reorder. Split-by-range tools instead force ascending numeric order. If you need arbitrary reordering (moving page 15 between pages 3 and 4, for example), extraction alone gives you the relative order in the new file but can't insert into an existing one — use an organizer/reorder tool (ToolGarden's `/pdf/organize`) for that.",
+            answer: "It depends on the tool. Range-extractors typically honor input order; writing `10,5,20` yields a PDF with pages in that exact sequence, which doubles as a quick reorder. Split-by-range tools instead force ascending numeric order. If you need arbitrary reordering (moving page 15 between pages 3 and 4, for example), extraction alone gives you the relative order in the new file but can't insert into an existing one; use an organizer/reorder tool (ToolGarden's `/pdf/organize`) for that.",
           },
         ],
       },
@@ -3662,11 +3848,11 @@ export const workflowSeoBlogArticles = [
           },
           {
             question: "Emoji、颜文字和特殊符号是按几个字符计算的？",
-            answer: "JavaScript 里的 `string.length` 按 UTF-16 code unit 计数，一个 emoji（如 「😀」）会算 2 个 code unit；带肤色修饰或性别的复合 emoji（如 「👨‍👩‍👧」）会算 5–8 个。人眼看到的是一个「字符」，但底层字符是好几个。ToolGarden 的字数统计用 `Array.from(str)` 或 grapheme 分段来算「视觉字符」，所以 emoji 通常按 1 个计。如果你在填表单有字符上限，建议以后端实际存储的编码单位为准。",
+            answer: "JavaScript 里的 `string.length` 按 UTF-16 code unit 计数，一个 emoji（如 「😀」）会算 2 个 code unit；带肤色修饰或性别的复合 emoji（如 「👨‍👩‍👧」）会算 5-8 个。人眼看到的是一个「字符」，但底层字符是好几个。ToolGarden 的字数统计用 `Array.from(str)` 或 grapheme 分段来算「视觉字符」，所以 emoji 通常按 1 个计。如果你在填表单有字符上限，建议以后端实际存储的编码单位为准。",
           },
           {
             question: "字节数怎么算，为什么中文比英文占更多字节？",
-            answer: "字节数取决于文本编码。UTF-8 下，英文字母占 1 字节，中文汉字占 3 字节，emoji 通常占 4 字节。所以「你好」占 6 字节，「hi」占 2 字节。UTF-16 则相反，中文汉字占 2 字节，某些英文特殊符号也占 2 字节。数据库字段（如 MySQL 的 `VARCHAR(255)`）按字符还是字节限制，取决于列的字符集设置——`utf8mb4` 按字符，`latin1` 按字节。做长度校验时一定要问清楚到底是哪种。",
+            answer: "字节数取决于文本编码。UTF-8 下，英文字母占 1 字节，中文汉字占 3 字节，emoji 通常占 4 字节。所以「你好」占 6 字节，「hi」占 2 字节。UTF-16 则相反，中文汉字占 2 字节，某些英文特殊符号也占 2 字节。数据库字段（如 MySQL 的 `VARCHAR(255)`）按字符还是字节限制，取决于列的字符集设置：`utf8mb4` 按字符，`latin1` 按字节。做长度校验时一定要问清楚到底是哪种。",
           },
           {
             question: "中英文混排时词数应该怎么算？",
@@ -3674,7 +3860,7 @@ export const workflowSeoBlogArticles = [
           },
           {
             question: "行数、段落数、句子数有什么用？",
-            answer: "对写作者：段落数看结构、行数看视觉密度、句子数看节奏（每段一句读起来短促，每段五六句读起来累）。对开发者：行数常用来估阅读时间、判断文件是否太长；句子数在做 NLP 分句、做机器翻译计价时最关键。对 SEO：段落数太少（一整篇一段）会被判定为可读性差，太多（每段一句）又会被判定为凑数。理想比例是每段 2–4 句、每 3–5 段一个二级标题。",
+            answer: "对写作者：段落数看结构、行数看视觉密度、句子数看节奏（每段一句读起来短促，每段五六句读起来累）。对开发者：行数常用来估阅读时间、判断文件是否太长；句子数在做 NLP 分句、做机器翻译计价时最关键。对 SEO：段落数太少（一整篇一段）会被判定为可读性差，太多（每段一句）又会被判定为凑数。理想比例是每段 2-4 句、每 3-5 段一个二级标题。",
           },
         ],
       },
@@ -3780,15 +3966,15 @@ export const workflowSeoBlogArticles = [
         faq: [
           {
             question: "Why does Word's word count differ from online counters for the same text?",
-            answer: "Because \"word\" doesn't mean the same thing everywhere. Microsoft Word counts each CJK character as one word for East Asian languages, but uses whitespace tokenization for English. Simpler online counters just split on whitespace, which merges CJK+Latin runs like `你好world` into a single token. Character counts, non-space character counts, and CJK-only counts also vary by implementation. To compare consistently across tools, standardize on character count — it has the fewest edge cases and is what most character-limit UIs actually check.",
+            answer: "Because \"word\" doesn't mean the same thing everywhere. Microsoft Word counts each CJK character as one word for East Asian languages, but uses whitespace tokenization for English. Simpler online counters just split on whitespace, which merges CJK+Latin runs like `你好world` into a single token. Character counts, non-space character counts, and CJK-only counts also vary by implementation. To compare consistently across tools, standardize on character count; it has the fewest edge cases and is what most character-limit UIs actually check.",
           },
           {
             question: "How are emoji and complex graphemes counted?",
-            answer: "JavaScript's `string.length` counts UTF-16 code units, so a basic emoji like 😀 is 2, and compound emoji with skin tone or ZWJ sequences (👨‍👩‍👧) can be 5–8 code units. Users see one glyph but the string is longer. ToolGarden's counter uses `Array.from()` or `Intl.Segmenter` to count perceived graphemes, so most emoji count as one visual character. However, form-field validators and database columns often disagree — for hard limits, always test what your backend actually stores.",
+            answer: "JavaScript's `string.length` counts UTF-16 code units, so a basic emoji like 😀 is 2, and compound emoji with skin tone or ZWJ sequences (👨‍👩‍👧) can be 5-8 code units. Users see one glyph but the string is longer. ToolGarden's counter uses `Array.from()` or `Intl.Segmenter` to count perceived graphemes, so most emoji count as one visual character. However, form-field validators and database columns often disagree; for hard limits, always test what your backend actually stores.",
           },
           {
             question: "How do bytes work, and why does Chinese take more bytes than English?",
-            answer: "Bytes depend on encoding. In UTF-8, ASCII letters are 1 byte, Chinese characters are 3 bytes, and most emoji are 4 bytes — so `hello` is 5 bytes but `你好` is 6. In UTF-16, most Chinese characters are 2 bytes but so are some accented Latin characters. Database column limits also vary: MySQL `VARCHAR(255)` on `utf8mb4` limits to 255 characters, but on `latin1` limits to 255 bytes. Before trusting a byte count, know the target encoding and whether your storage counts characters or bytes.",
+            answer: "Bytes depend on encoding. In UTF-8, ASCII letters are 1 byte, Chinese characters are 3 bytes, and most emoji are 4 bytes; so `hello` is 5 bytes but `你好` is 6. In UTF-16, most Chinese characters are 2 bytes but so are some accented Latin characters. Database column limits also vary: MySQL `VARCHAR(255)` on `utf8mb4` limits to 255 characters, but on `latin1` limits to 255 bytes. Before trusting a byte count, know the target encoding and whether your storage counts characters or bytes.",
           },
           {
             question: "How should mixed Chinese-English text be counted for word count?",
@@ -3796,7 +3982,7 @@ export const workflowSeoBlogArticles = [
           },
           {
             question: "What do line, paragraph, and sentence counts actually tell me?",
-            answer: "For writers: paragraphs show structure, lines show visual density, sentences show pacing. For developers: lines gauge reading time or file length; sentence counts drive NLP splitting and translation pricing. For SEO: too few paragraphs (one giant blob) hurts readability scoring; too many (one sentence each) reads as padding. A common sweet spot is 2–4 sentences per paragraph and a subheading every 3–5 paragraphs. If a tool reports zero sentences, it usually means your punctuation is non-ASCII or missing entirely.",
+            answer: "For writers: paragraphs show structure, lines show visual density, sentences show pacing. For developers: lines gauge reading time or file length; sentence counts drive NLP splitting and translation pricing. For SEO: too few paragraphs (one giant blob) hurts readability scoring; too many (one sentence each) reads as padding. A common sweet spot is 2-4 sentences per paragraph and a subheading every 3-5 paragraphs. If a tool reports zero sentences, it usually means your punctuation is non-ASCII or missing entirely.",
           },
         ],
       },

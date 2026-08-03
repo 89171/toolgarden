@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
+import type { ToolContent } from '@/lib/tools/content';
 import { StemPlayer, type StemPlayerTrack } from '@/components/StemPlayer';
 import { formatAudioFileSize, getAudioAcceptValue } from '@/lib/utils/audio';
 import { createZipArchive } from '@/lib/utils/zip';
@@ -29,6 +30,7 @@ import {
 
 interface StemSplitterProps {
   toolId: string;
+  content?: ToolContent;
 }
 
 /**
@@ -54,7 +56,7 @@ function downloadBlob(blob: Blob, filename: string): void {
   }, 0);
 }
 
-export function AudioStemSplitter({ toolId }: StemSplitterProps) {
+export function AudioStemSplitter({ toolId, content }: StemSplitterProps) {
   const t = useTranslations('stem_splitter');
 
   const [file, setFile] = useState<File | null>(null);
@@ -203,7 +205,7 @@ export function AudioStemSplitter({ toolId }: StemSplitterProps) {
 
   if (capability && !capability.supported) {
     return (
-      <ToolLayout toolId={toolId}>
+      <ToolLayout toolId={toolId} content={content}>
         <div className="rounded-lg border border-border-base bg-surface p-6">
           <h2 className="text-base font-semibold text-content">{t('unsupported_title')}</h2>
           <p className="mt-2 text-sm leading-relaxed text-content-muted">{t('unsupported_hint')}</p>
@@ -213,7 +215,7 @@ export function AudioStemSplitter({ toolId }: StemSplitterProps) {
   }
 
   return (
-    <ToolLayout toolId={toolId}>
+    <ToolLayout toolId={toolId} content={content}>
       <div className="grid min-h-0 flex-grow gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <Panel title={t('upload_title')}>
           <div className="flex flex-col gap-4">

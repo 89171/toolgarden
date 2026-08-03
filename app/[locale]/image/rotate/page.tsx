@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { canvasToBlob, drawTransformed, loadImageFromFile } from '@/lib/utils/image-transform';
+import { imageRotateContent } from '@/lib/tools/content/image-rotate';
 
 export default function ImageRotatePage() {
   const t = useTranslations('tools.image-rotate');
@@ -61,7 +62,7 @@ export default function ImageRotatePage() {
   };
 
   return (
-    <ToolLayout toolId="image-rotate">
+    <ToolLayout toolId="image-rotate" content={imageRotateContent}>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
         <section className="flex flex-col gap-3 rounded-lg border border-border-base bg-surface p-4 shadow">
           <h2 className="text-lg font-semibold text-content">{t('upload_title')}</h2>

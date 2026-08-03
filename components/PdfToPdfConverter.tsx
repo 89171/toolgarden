@@ -15,6 +15,7 @@ import {
 } from '@/lib/utils/pdf';
 import { formatFileSize } from '@/lib/utils/image';
 import { createZipArchive } from '@/lib/utils/zip';
+import { pdfToPdfContent } from '@/lib/tools/content/pdf-to-pdf';
 
 type PdfItemStatus = 'converting' | 'done' | 'error';
 
@@ -196,7 +197,7 @@ export function PdfToPdfConverter() {
   }, []);
 
   return (
-    <ToolLayout toolId="pdf-to-pdf">
+    <ToolLayout toolId="pdf-to-pdf" content={pdfToPdfContent}>
       <div className="grid flex-grow grid-cols-1 gap-4 overflow-auto pb-4 sm:gap-6 sm:pb-8 xl:min-h-0 xl:grid-cols-[minmax(340px,440px)_1fr] xl:overflow-hidden">
         <Panel
           title={tp('settings_title')}

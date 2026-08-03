@@ -6,6 +6,7 @@ import { Panel } from '@/components/ui/Panel';
 import { Button } from '@/components/ui/Button';
 import { generateSchema } from '@/lib/utils/schema';
 import { stringifyJSONValue } from '@/lib/utils/json';
+import { jsonSchemaContent } from '@/lib/tools/content/json-schema';
 
 const EXAMPLE = stringifyJSONValue({
   id: 1, name: '张三', email: 'zhang@example.com',
@@ -41,7 +42,7 @@ export default function JsonSchemaPage() {
   };
 
   return (
-    <ToolLayout toolId="json-schema">
+    <ToolLayout toolId="json-schema" content={jsonSchemaContent}>
       <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
         <Panel
           title={t('input_title')}

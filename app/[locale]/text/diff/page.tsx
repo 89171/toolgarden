@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { compareText, countTextStats, InlineTextDiffPart, TextDiffRow, TextDiffType } from '@/lib/utils/text';
+import { textDiffContent } from '@/lib/tools/content/text-diff';
 
 const leftCellStyles: Record<TextDiffType, string> = {
   added: 'bg-surface text-content-faint',
@@ -162,7 +163,7 @@ export default function TextDiffPage() {
   );
 
   return (
-    <ToolLayout toolId="text-diff">
+    <ToolLayout toolId="text-diff" content={textDiffContent}>
       <div className="flex min-h-0 flex-grow flex-col gap-4">
         <div className="grid gap-4 lg:grid-cols-2">
           <TextPane

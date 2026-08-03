@@ -13,6 +13,7 @@ import {
 } from '@/lib/utils/pdf-to-word';
 import { formatFileSize } from '@/lib/utils/image';
 import type { OcrLanguage } from '@/lib/utils/ocr';
+import { pdfToWordContent } from '@/lib/tools/content/pdf-to-word';
 
 type ConversionStatus = 'idle' | 'converting' | 'done' | 'error';
 const OCR_LANGUAGE_OPTIONS: OcrLanguage[] = ['eng', 'chi_sim', 'chi_tra', 'jpn'];
@@ -143,7 +144,7 @@ export function PdfToWordConverter() {
   const canDownload = status === 'done' && Boolean(result);
 
   return (
-    <ToolLayout toolId="pdf-to-word">
+    <ToolLayout toolId="pdf-to-word" content={pdfToWordContent}>
       <div className="grid flex-grow grid-cols-1 gap-4 overflow-auto pb-4 sm:gap-6 sm:pb-8 xl:min-h-0 xl:grid-cols-[minmax(340px,440px)_1fr] xl:overflow-hidden">
         <Panel
           title={t('settings_title')}

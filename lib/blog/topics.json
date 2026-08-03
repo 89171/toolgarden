@@ -75,12 +75,10 @@
     "id": "qr-subtitle-tools",
     "pillarSlug": "qr-code-subtitle-tools-guide",
     "clusterSlugs": [
-      "how-to-generate-qr-code-url-wifi-contact",
       "wifi-qr-code-generator-guide",
       "srt-to-vtt-browser-workflow"
     ],
     "targetKeywords": [
-      "QR code generator for URL WiFi contact",
       "WiFi QR code generator",
       "SRT to VTT converter"
     ],

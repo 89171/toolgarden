@@ -5,6 +5,7 @@ import { ToolLayout } from '@/components/ToolLayout';
 import { Panel } from '@/components/ui/Panel';
 import { Button } from '@/components/ui/Button';
 import { jsonToYaml, yamlToJson } from '@/lib/utils/yaml';
+import { jsonYamlContent } from '@/lib/tools/content/json-yaml';
 
 export default function JsonYamlPage() {
   const t = useTranslations('tools.json-yaml');
@@ -31,7 +32,7 @@ export default function JsonYamlPage() {
   };
 
   return (
-    <ToolLayout toolId="json-yaml">
+    <ToolLayout toolId="json-yaml" content={jsonYamlContent}>
       {error && <p className="mb-3 text-sm text-syntax-null bg-danger-surface border border-border-base rounded px-3 py-2">{error}</p>}
       <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
         <Panel title="JSON" actions={<>

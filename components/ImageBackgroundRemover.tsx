@@ -17,6 +17,7 @@ import {
   type ImageConversionError,
   type ImageInspectionSuccess,
 } from '@/lib/utils/image';
+import { imageRemoveBgContent } from '@/lib/tools/content/image-remove-bg';
 
 type RemoveBgStatus = 'idle' | 'ready' | 'processing' | 'done' | 'error';
 type PreviewKind = 'source' | 'output';
@@ -357,7 +358,7 @@ export function ImageBackgroundRemover() {
     : null;
 
   return (
-    <ToolLayout toolId="image-remove-bg">
+    <ToolLayout toolId="image-remove-bg" content={imageRemoveBgContent}>
       <div className="grid flex-grow grid-cols-1 gap-4 overflow-auto pb-4 sm:gap-6 sm:pb-8 xl:min-h-0 xl:grid-cols-[minmax(320px,420px)_1fr] xl:overflow-hidden">
         <Panel
           title={ti('settings_title')}

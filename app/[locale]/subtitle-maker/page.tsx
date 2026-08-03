@@ -12,6 +12,7 @@ import {
   type SubtitleCue,
   type SubtitleFormat,
 } from '@/lib/utils/subtitle';
+import { subtitleMakerContent } from '@/lib/tools/content/subtitle-maker';
 
 type MediaKind = 'audio' | 'video';
 
@@ -181,7 +182,7 @@ export default function SubtitleMakerPage() {
   };
 
   return (
-    <ToolLayout toolId="subtitle-maker">
+    <ToolLayout toolId="subtitle-maker" content={subtitleMakerContent}>
       <div className="flex min-h-0 flex-grow flex-col gap-4">
         <div className="flex flex-wrap items-center gap-2">
           <label className="inline-flex cursor-pointer items-center rounded border border-border-base bg-surface-hover px-3 py-2 text-sm text-content-secondary transition-colors hover:border-border-strong hover:text-content">

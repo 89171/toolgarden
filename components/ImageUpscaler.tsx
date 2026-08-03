@@ -22,6 +22,7 @@ import {
   type ImageUpscaleMode,
   type ImageUpscaleSuccess,
 } from '@/lib/utils/image';
+import { imageUpscaleContent } from '@/lib/tools/content/image-upscale';
 
 interface OutputState {
   result: ImageUpscaleSuccess;
@@ -261,7 +262,7 @@ export function ImageUpscaler() {
     : '--';
 
   return (
-    <ToolLayout toolId="image-upscale">
+    <ToolLayout toolId="image-upscale" content={imageUpscaleContent}>
       <div className="grid flex-grow grid-cols-1 gap-4 overflow-auto pb-4 sm:gap-6 sm:pb-8 xl:min-h-0 xl:grid-cols-[minmax(340px,430px)_1fr] xl:overflow-hidden">
         <Panel
           title={ti('settings_title')}

@@ -20,6 +20,7 @@ import {
   type QrFailureCode,
 } from '@/lib/utils/qr';
 import { generateQrCodeDataUrl } from '@/lib/utils/qr-browser';
+import { qrCodeGeneratorContent } from '@/lib/tools/content/qr-code-generator';
 
 const EXAMPLE_TEXT = 'https://toolgarden.xyz/zh/qr-code/generate';
 
@@ -129,7 +130,7 @@ export default function QrCodeGeneratePage() {
   };
 
   return (
-    <ToolLayout toolId="qr-code-generator">
+    <ToolLayout toolId="qr-code-generator" content={qrCodeGeneratorContent}>
       <QrToolSwitcher current="generate" />
       <div className="flex-grow min-h-0 overflow-auto pr-1">
         <div className="grid min-h-full grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(320px,0.8fr)]">

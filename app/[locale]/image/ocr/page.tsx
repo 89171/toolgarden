@@ -10,6 +10,7 @@ import {
   type OcrProgress,
 } from '@/lib/utils/ocr';
 import { recognizeImageOcr } from '@/lib/utils/ocr-browser';
+import { imageOcrContent } from '@/lib/tools/content/image-ocr';
 
 const OCR_LANGUAGE_OPTIONS: OcrLanguage[] = ['eng', 'chi_sim', 'chi_tra', 'jpn'];
 
@@ -69,7 +70,7 @@ export default function ImageOcrPage() {
   };
 
   return (
-    <ToolLayout toolId="image-ocr">
+    <ToolLayout toolId="image-ocr" content={imageOcrContent}>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <Panel title={t('upload_title')} className="min-h-[28rem]">
           <label className="flex cursor-pointer flex-col items-center gap-2 rounded border border-dashed border-border-input bg-surface-raised p-6 text-center hover:border-border-strong">

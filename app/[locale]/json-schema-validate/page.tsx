@@ -7,6 +7,7 @@ import { Panel } from '@/components/ui/Panel';
 import { Button } from '@/components/ui/Button';
 import { validateJsonSchema, SchemaValidationError } from '@/lib/utils/schema';
 import { stringifyJSONValue } from '@/lib/utils/json';
+import { jsonSchemaValidateContent } from '@/lib/tools/content/json-schema-validate';
 
 const EXAMPLE_JSON = stringifyJSONValue({
   id: 1,
@@ -59,7 +60,7 @@ export default function JsonSchemaValidatePage() {
   };
 
   return (
-    <ToolLayout toolId="json-schema-validate">
+    <ToolLayout toolId="json-schema-validate" content={jsonSchemaValidateContent}>
       <div className="flex-grow flex flex-col gap-4 min-h-0">
         <div className="grid min-h-0 grid-cols-1 gap-4 sm:gap-6 lg:min-h-[40dvh] lg:grid-cols-2">
           <Panel title={t('json_title')} className="min-h-64">

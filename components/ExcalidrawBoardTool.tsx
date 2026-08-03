@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
+import { excalidrawBoardContent } from '@/lib/tools/content/excalidraw-board';
 
 const EXCALIDRAW_ASSET_PATH = '/excalidraw/';
 
@@ -106,7 +107,7 @@ export function ExcalidrawBoardTool() {
   const isFullscreenActive = isFullscreen || isFullscreenFallback;
 
   return (
-    <ToolLayout toolId="excalidraw-board">
+    <ToolLayout toolId="excalidraw-board" content={excalidrawBoardContent}>
       <div
         ref={fullscreenRef}
         className={`flex min-h-0 flex-1 flex-col bg-background ${isFullscreenActive ? 'fixed inset-0 z-50 h-screen overflow-hidden p-3' : ''}`}

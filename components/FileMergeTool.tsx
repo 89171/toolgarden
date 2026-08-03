@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
+import type { ToolContent } from '@/lib/tools/content';
 import { formatFileSize } from '@/lib/utils/image';
 import {
   getFileMergeAcceptValue,
@@ -30,6 +31,7 @@ interface ModeMeta {
 
 interface FileMergeToolProps {
   mode: FileMergeMode;
+  content?: ToolContent;
 }
 
 const TOOL_ID_BY_MODE: Record<FileMergeMode, string> = {
@@ -109,7 +111,7 @@ function isFileTypeMergeOutcome(result: FileMergeResult | null): result is FileT
   return Boolean(result && result.ok && 'sourceCount' in result && 'format' in result);
 }
 
-export function FileMergeTool({ mode }: FileMergeToolProps) {
+export function FileMergeTool({ mode, content }: FileMergeToolProps) {
   const tc = useTranslations('common');
   const t = useTranslations('file_merge');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -749,7 +751,7 @@ export function FileMergeTool({ mode }: FileMergeToolProps) {
   };
 
   return (
-    <ToolLayout toolId={TOOL_ID_BY_MODE[mode]}>
+    <ToolLayout toolId={TOOL_ID_BY_MODE[mode]} content={content}>
       <div className="grid flex-grow grid-cols-1 gap-6 min-h-0 xl:grid-cols-[minmax(360px,460px)_1fr]">
         <Panel
           title={t('input_title')}

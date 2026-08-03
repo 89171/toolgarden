@@ -14,6 +14,7 @@ import {
   type PdfOrganizeEntry,
 } from '@/lib/utils/pdf-browser';
 import { PDF_FILE_ACCEPT_VALUE } from '@/lib/utils/pdf';
+import { pdfOrganizeContent } from '@/lib/tools/content/pdf-organize';
 
 interface OrganizeResult {
   url: string;
@@ -174,7 +175,7 @@ export function PdfOrganizeTool() {
   }, [entries, file, getErrorMessage, processing, resetResult]);
 
   return (
-    <ToolLayout toolId="pdf-organize">
+    <ToolLayout toolId="pdf-organize" content={pdfOrganizeContent}>
       <div className="grid flex-grow grid-cols-1 gap-4 overflow-auto pb-4 sm:gap-6 sm:pb-8 xl:min-h-0 xl:grid-cols-[minmax(360px,520px)_1fr] xl:overflow-hidden">
         <Panel
           title={t('settings_title')}

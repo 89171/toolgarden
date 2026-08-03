@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
+import type { ToolContent } from '@/lib/tools/content';
 import { convertImageFile } from '@/lib/utils/image-browser';
 import {
   formatFileSize,
@@ -38,6 +39,7 @@ interface ImageItem {
 interface ImageTargetConverterProps {
   toolId: 'image-to-jpg' | 'image-to-png' | 'image-to-webp' | 'image-to-avif';
   targetFormat: ImageTargetFormat;
+  content?: ToolContent;
 }
 
 function createItemId(file: File, index: number): string {
@@ -59,7 +61,7 @@ function downloadUrl(url: string, filename: string) {
   window.setTimeout(() => anchor.remove(), 0);
 }
 
-export function ImageTargetConverter({ toolId, targetFormat }: ImageTargetConverterProps) {
+export function ImageTargetConverter({ toolId, targetFormat, content }: ImageTargetConverterProps) {
   const tc = useTranslations('common');
   const ti = useTranslations('image_converter');
   const target = getImageTargetConfig(targetFormat);
@@ -259,7 +261,7 @@ export function ImageTargetConverter({ toolId, targetFormat }: ImageTargetConver
   const canPreviewOutput = Boolean(previewItem?.outputUrl);
 
   return (
-    <ToolLayout toolId={toolId}>
+    <ToolLayout toolId={toolId} content={content}>
       <div className="grid flex-grow grid-cols-1 gap-4 overflow-auto pb-4 sm:gap-6 sm:pb-8 xl:min-h-0 xl:grid-cols-[minmax(340px,440px)_1fr] xl:overflow-hidden">
         <Panel
           title={ti('settings_title')}

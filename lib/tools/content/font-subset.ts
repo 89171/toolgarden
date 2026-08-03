@@ -1,0 +1,22 @@
+import { defineToolContent } from './define';
+
+export const fontSubsetContent = defineToolContent({
+  zh: {
+    overview: ['字体子集会从字体中只保留指定文本所需的字形和相关数据，以显著减少网页字体体积。中文字体包含大量字符，针对确定文案生成子集尤其有效，但缺失的字符在运行时会回退到其它字体。', '可靠子集不仅包括可见文字，还要考虑数字、标点、空格、动态用户名、错误提示和多语言内容。字体许可证也可能限制修改、嵌入或再分发，处理前必须检查授权条款。'],
+    steps: [['收集完整字符集', '汇总静态页面、动态数据、标点、数字和备用文案。'], ['上传获授权字体并生成', '确认字体格式和许可证允许子集化及目标使用。'], ['在真实页面验证', '遍历交互状态和语言，观察缺字、字体回退与粗细变化。']],
+    scenarios: [['优化中文网页字体', '为固定品牌标题或活动页面只输出实际使用的汉字。'], ['制作嵌入式文档字体', '在许可允许时，为有限字符的展示文件减小字体资源。'], ["为固定标题文案嵌入展示字体", "首页大标题这类文案确定不变的位置，只取用到的十几个字，就能用上完整的品牌字体而不拖慢加载。"]],
+    notes: ['动态内容难以穷举，遗漏字符会导致局部字体回退。', '子集文件仍受原字体许可证约束，不会自动成为可自由分发资源。', '连字、组合附加符号和可变字体轴需要额外检查。'],
+    specs: [["输入格式", "TTF 与 WOFF 字体文件"], ["输出格式", "TTF 或 WOFF 子集字体"], ["体积效果", "中文字体常有数 MB，只嵌入实际用到的几十个字后通常能降到几十 KB"], ["取字方式", "按你提供的字符集提取。漏掉的字在页面上会回退到系统字体，出现字形不一致"], ["动态内容的风险", "用户名、评论这类运行时才确定的文字无法预先取字，子集化只适合固定文案"], ["授权提醒", "不是所有字体都允许再分发或嵌入网页。处理商业字体前请先确认授权条款"]],
+    faq: [{ question: "漏掉的字会怎么显示？", answer: "回退到系统默认字体，与子集字体的字形明显不同，看起来像混排错误。所以取字前必须把页面上所有会用这个字体的文案完整收集一遍，包括按钮、提示语和空状态文案。" }, { question: "用户名这类动态内容能用子集字体吗？", answer: "不能。运行时才确定的文字无法预先取字。这类位置应当使用系统字体或完整字体，把子集字体只用在固定文案上：这也是子集化通常只用于标题而不是正文的原因。" }],
+    reference: [['glyph', '字体中用于绘制字符或字符组合的具体形状。'], ['font fallback', '首选字体缺少字形时由系统选择另一字体显示。']],
+  },
+  en: {
+    overview: ['Font subsetting retains only glyphs and related data needed by selected text, substantially reducing webfont size. It is especially effective for Chinese fonts with large repertoires, but any missing runtime character falls back to another font.', 'A reliable subset includes visible copy, numbers, punctuation, spaces, dynamic usernames, errors, and multilingual states. A font license may restrict modification, embedding, or redistribution, so verify terms before processing.'],
+    steps: [['Collect the complete character set', 'Include static pages, dynamic data, punctuation, numbers, and fallback copy.'], ['Upload a licensed font and generate', 'Confirm the format and license allow subsetting and the destination use.'], ['Validate on the real page', 'Exercise interactive states and languages and watch for missing glyphs, fallback, and weight changes.']],
+    scenarios: [['Optimizing a Chinese webfont', 'Output only the ideographs used by a fixed brand title or campaign page.'], ['Preparing an embedded document font', 'Reduce a display font for limited text when the license permits embedding.'], ["Embedding a display face for fixed headline copy", "Where the copy is settled; a homepage headline, say; subsetting to the dozen glyphs used lets you ship the real brand face without the load cost."]],
+    notes: ['Dynamic content is difficult to enumerate, and omissions cause local font fallback.', 'The subset remains governed by the source font license and is not automatically freely redistributable.', 'Ligatures, combining marks, and variable-font axes require extra testing.'],
+    specs: [["Input formats", "TTF and WOFF font files"], ["Output formats", "A TTF or WOFF subset"], ["Size effect", "CJK fonts often run to several megabytes; embedding only the few dozen glyphs actually used typically brings that to tens of kilobytes"], ["How glyphs are chosen", "From the character set you supply. Anything omitted falls back to a system font on the page, producing visibly inconsistent letterforms"], ["Risk with dynamic content", "Usernames, comments and other runtime text cannot be known in advance, so subsetting only suits fixed copy"], ["Licensing reminder", "Not every font may be redistributed or embedded in a web page. Check the licence before processing a commercial font"]],
+    faq: [{ question: "What happens to a glyph I left out?", answer: "It falls back to a system font, whose letterforms differ visibly from the subset and read as a typesetting error. So collect every string on the page that uses the face first, including buttons, hints and empty-state copy." }, { question: "Can dynamic content like usernames use a subset font?", answer: "No. Text determined at runtime cannot be subsetted in advance. Use a system or full font there and reserve the subset for fixed copy; which is why subsetting is usually applied to headings rather than body text." }],
+    reference: [['glyph', 'The specific font shape used to draw a character or character sequence.'], ['font fallback', 'A system-selected replacement font used when the preferred font lacks a glyph.']],
+  },
+});

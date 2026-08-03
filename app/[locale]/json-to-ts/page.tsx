@@ -6,6 +6,7 @@ import { Panel } from '@/components/ui/Panel';
 import { Button } from '@/components/ui/Button';
 import { jsonToTypeScript } from '@/lib/utils/typescript';
 import { stringifyJSONValue } from '@/lib/utils/json';
+import { jsonToTsContent } from '@/lib/tools/content/json-to-ts';
 
 const EXAMPLE = stringifyJSONValue({
   id: 1, name: '张三', email: 'zhang@example.com',
@@ -39,7 +40,7 @@ export default function JsonToTsPage() {
   };
 
   return (
-    <ToolLayout toolId="json-to-ts">
+    <ToolLayout toolId="json-to-ts" content={jsonToTsContent}>
       <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
         <Panel
           title={t('input_title')}

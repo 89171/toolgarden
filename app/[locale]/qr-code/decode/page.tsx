@@ -14,6 +14,7 @@ import {
   type QrFailureCode,
 } from '@/lib/utils/qr';
 import { decodeQrCodeFile, decodeQrCodeImageData } from '@/lib/utils/qr-browser';
+import { qrCodeDecoderContent } from '@/lib/tools/content/qr-code-decoder';
 
 const CAMERA_SCAN_INTERVAL_MS = 240;
 const CAMERA_FRAME_MAX_WIDTH = 960;
@@ -222,7 +223,7 @@ export default function QrCodeDecodePage() {
   };
 
   return (
-    <ToolLayout toolId="qr-code-decoder">
+    <ToolLayout toolId="qr-code-decoder" content={qrCodeDecoderContent}>
       <QrToolSwitcher current="decode" />
       <div className="flex-grow min-h-0 overflow-auto pr-1">
         <div className="grid min-h-full grid-cols-1 gap-6 lg:grid-cols-[minmax(320px,0.8fr)_minmax(0,1fr)]">

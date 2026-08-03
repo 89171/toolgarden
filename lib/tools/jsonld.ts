@@ -287,20 +287,85 @@ export function buildBreadcrumbJsonLd(toolId: string, locale: string, messages: 
   };
 }
 
-export function buildToolFaqJsonLd(toolId: string, messages: JsonLdMessages) {
-  const faq = messages.tool_faq?.[toolId];
-  if (!faq?.items?.length) return null;
+export interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+/**
+ * FAQ 结构化数据。
+ *
+ * `extraItems` 来自工具内容模块（lib/tools/content/），与 messages.tool_faq 合并后
+ * 去重输出，这样扩充 FAQ 不必把条目塞进会内联到每个页面的 messages。
+ */
+export function buildToolFaqJsonLd(
+  toolId: string,
+  messages: JsonLdMessages,
+  extraItems: FaqItem[] = []
+) {
+  const items = mergeFaqItems(messages.tool_faq?.[toolId]?.items ?? [], extraItems);
+  if (items.length === 0) return null;
 
   return {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: faq.items.map((item) => ({
+    mainEntity: items.map((item) => ({
       '@type': 'Question',
       name: item.question,
       acceptedAnswer: {
         '@type': 'Answer',
         text: item.answer,
       },
+    })),
+  };
+}
+
+/** 合并两组 FAQ 并按问题去重，保持先 messages、后内容模块的顺序。 */
+export function mergeFaqItems(base: FaqItem[], extra: FaqItem[]): FaqItem[] {
+  const seen = new Set<string>();
+  const merged: FaqItem[] = [];
+
+  for (const item of [...base, ...extra]) {
+    if (seen.has(item.question)) continue;
+    seen.add(item.question);
+    merged.push(item);
+  }
+
+  return merged;
+}
+
+/**
+ * HowTo 结构化数据，由工具内容模块的 steps 派生。
+ *
+ * 只有当工具真的提供了操作步骤时才输出，避免为没有步骤的页面断言 HowTo。
+ */
+export function buildToolHowToJsonLd(
+  toolId: string,
+  locale: string,
+  messages: JsonLdMessages,
+  steps: Array<{ title: string; detail: string }>
+) {
+  const normalizedLocale = normalizeLocale(locale);
+  const tool = getToolById(toolId);
+  const localizedTool = messages.tools[toolId];
+
+  if (!tool || !localizedTool || steps.length === 0) return null;
+
+  const toolUrl = getLocalizedUrl(normalizedLocale, tool.path);
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: localizedTool.name,
+    description: createToolSeoDescription(localizedTool.description, normalizedLocale),
+    inLanguage: normalizedLocale === 'zh' ? 'zh-CN' : 'en',
+    url: toolUrl,
+    step: steps.map((step, index) => ({
+      '@type': 'HowToStep',
+      position: index + 1,
+      name: step.title,
+      text: step.detail,
+      url: `${toolUrl}#${toolId}-steps-title`,
     })),
   };
 }

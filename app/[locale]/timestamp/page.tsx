@@ -8,6 +8,7 @@ import {
   parseTimestamp,
   type TimestampUnit,
 } from '@/lib/utils/timestamp';
+import { timestampContent } from '@/lib/tools/content/timestamp';
 
 type Unit = TimestampUnit | 'auto';
 
@@ -35,7 +36,7 @@ export default function TimestampPage() {
   }, [batch, unit]);
 
   return (
-    <ToolLayout toolId="timestamp">
+    <ToolLayout toolId="timestamp" content={timestampContent}>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <section className="flex flex-col gap-4 rounded-lg border border-border-base bg-surface p-4 shadow">
           <div>

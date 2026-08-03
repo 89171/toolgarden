@@ -971,8 +971,6 @@ Canonical examples:
 - Pillar: https://toolgarden.xyz/en/blog/qr-code-subtitle-tools-guide
   - Chinese: https://toolgarden.xyz/zh/blog/qr-code-subtitle-tools-guide
 - Cluster articles:
-  - QR code generator for URL WiFi contact: https://toolgarden.xyz/en/blog/how-to-generate-qr-code-url-wifi-contact
-    - Chinese: https://toolgarden.xyz/zh/blog/how-to-generate-qr-code-url-wifi-contact
   - WiFi QR code generator: https://toolgarden.xyz/en/blog/wifi-qr-code-generator-guide
     - Chinese: https://toolgarden.xyz/zh/blog/wifi-qr-code-generator-guide
   - SRT to VTT converter: https://toolgarden.xyz/en/blog/srt-to-vtt-browser-workflow
@@ -1192,7 +1190,7 @@ Canonical examples:
 - Chinese: https://toolgarden.xyz/zh/blog/qr-code-subtitle-tools-guide
 - Chinese title: 二维码与字幕工具指南
 - Summary: Create reliable QR codes and edit or convert timed subtitles locally, with practical guidance for payloads, scan quality, timing, formats, and privacy.
-- Published: 2026-07-20; updated: 2026-07-20
+- Published: 2026-07-20; updated: 2026-08-03
 
 ### SRT to VTT Converter: Browser-Based Workflow
 - English: https://toolgarden.xyz/en/blog/srt-to-vtt-browser-workflow
@@ -1248,14 +1246,14 @@ Canonical examples:
 - Chinese: https://toolgarden.xyz/zh/blog/remove-image-watermark-local-ai-inpainting
 - Chinese title: 如何在线去除图片水印？浏览器本地 AI 补全原理
 - Summary: Removing a watermark is usually image inpainting: select the watermark area, then reconstruct the background from surrounding pixels locally in the browser.
-- Published: 2026-07-02; updated: 2026-07-03
+- Published: 2026-07-02; updated: 2026-08-03
 
 ### How to Add Text, Image, Tiled, and Diagonal Watermarks to Images
 - English: https://toolgarden.xyz/en/blog/add-watermark-to-image-text-tile-diagonal
 - Chinese: https://toolgarden.xyz/zh/blog/add-watermark-to-image-text-tile-diagonal
 - Chinese title: 如何给图片加水印：文字/图片、九宫格、平铺、对角线
 - Summary: Image watermarks can be text or logos. Position, opacity, rotation, and tiling decide whether the mark is useful without distracting from the image.
-- Published: 2026-07-02; updated: 2026-07-03
+- Published: 2026-07-02; updated: 2026-08-03
 
 ### How One-Click Background Removal Works with a Browser-Local Model
 - English: https://toolgarden.xyz/en/blog/remove-image-background-browser-local-model
@@ -1269,7 +1267,7 @@ Canonical examples:
 - Chinese: https://toolgarden.xyz/zh/blog/base64-encoding-explained-common-pitfalls
 - Chinese title: Base64 编码原理和常见坑
 - Summary: Base64 turns binary data into text for Data URLs, APIs, and embedded configuration. It is encoding, not encryption.
-- Published: 2026-07-02; updated: 2026-07-03
+- Published: 2026-07-02; updated: 2026-08-03
 
 ### LRC vs SRT Subtitle Formats and How to Edit Them Online
 - English: https://toolgarden.xyz/en/blog/lrc-vs-srt-subtitle-format-edit-online
@@ -1290,7 +1288,7 @@ Canonical examples:
 - Chinese: https://toolgarden.xyz/zh/blog/text-diff-algorithm-add-delete-change
 - Chinese title: 文本对比工具原理：diff 算法怎么找出增删改
 - Summary: Diff algorithms look for shared subsequences between two texts, then mark the remaining parts as additions, deletions, or changes.
-- Published: 2026-07-02; updated: 2026-07-03
+- Published: 2026-07-02; updated: 2026-08-03
 
 ### JSON vs JSONC vs JSON5: A Complete Guide
 - English: https://toolgarden.xyz/en/blog/json-json5-jsonc-differences
@@ -1360,14 +1358,14 @@ Canonical examples:
 - Chinese: https://toolgarden.xyz/zh/blog/what-is-json-schema-api-validation
 - Chinese title: JSON Schema 是什么？如何用它校验接口数据
 - Summary: JSON Schema is a rules document for JSON data. It can describe required fields, value types, arrays, string formats, and nested object structures.
-- Published: 2026-07-02; updated: 2026-07-03
+- Published: 2026-07-02; updated: 2026-08-03
 
 ### What Is a JWT and How Do You Safely Inspect Header and Payload?
 - English: https://toolgarden.xyz/en/blog/what-is-jwt-header-payload
 - Chinese: https://toolgarden.xyz/zh/blog/what-is-jwt-header-payload
 - Chinese title: JWT 是什么？如何安全查看 Header 和 Payload
 - Summary: A JWT has three parts: Header, Payload, and Signature. Header and Payload are Base64URL encoded, not encrypted, so anyone with the token can decode them.
-- Published: 2026-07-02; updated: 2026-07-03
+- Published: 2026-07-02; updated: 2026-08-03
 
 ### How to Generate QR Codes for URLs, Wi-Fi, and Contact Cards
 - English: https://toolgarden.xyz/en/blog/how-to-generate-qr-code-url-wifi-contact
@@ -1381,7 +1379,7 @@ Canonical examples:
 - Chinese: https://toolgarden.xyz/zh/blog/why-qr-code-cannot-be-decoded
 - Chinese title: 二维码识别不出来是什么原因？如何提高识别率
 - Summary: QR codes fail to scan when the image is blurry, too small, cropped, low contrast, heavily compressed, too dense, or physically damaged.
-- Published: 2026-07-02; updated: 2026-07-03
+- Published: 2026-07-02; updated: 2026-08-03
 
 ### How to Use a Text Diff Tool to Find Differences Quickly
 - English: https://toolgarden.xyz/en/blog/how-to-use-text-diff-tool

@@ -72,7 +72,9 @@ const nextConfig: NextConfig = {
   },
   productionBrowserSourceMaps: false,
   poweredByHeader: false,
-  output: "export",
+  // 生产仍生成纯静态站点；开发模式保留 Next 的正常 404 行为和中间件支持，
+  // 避免无 locale 路径被静态导出的参数检查提前变成 500。
+  output: process.env.NODE_ENV === 'production' ? 'export' : undefined,
 };
 
 export default nextConfig;

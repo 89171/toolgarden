@@ -11,6 +11,7 @@ import {
   type ExcelTablePreviewOutcome,
 } from '@/lib/utils/excel';
 import { stringifyJSONValue } from '@/lib/utils/json';
+import { jsonToExcelContent } from '@/lib/tools/content/json-to-excel';
 
 const EXAMPLE = stringifyJSONValue(
   [
@@ -92,7 +93,7 @@ export default function JsonToExcelPage() {
   };
 
   return (
-    <ToolLayout toolId="json-to-excel">
+    <ToolLayout toolId="json-to-excel" content={jsonToExcelContent}>
       <ToolSwitchLinks
         ariaLabel={t('switcher_label')}
         currentKey="json-to-excel"

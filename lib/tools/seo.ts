@@ -8,6 +8,7 @@ import {
   getLocalizedBlogTopicForArticle,
   getLocalizedBlogTopics,
 } from '@/lib/blog/articles';
+import { getBlogConsolidation } from '@/lib/blog/consolidations';
 import {
   BASE_URL,
   buildBreadcrumbJsonLd,
@@ -26,6 +27,7 @@ import {
   type Locale,
 } from './jsonld';
 import { SITE_CONTACT_EMAIL, getSitePage, type SitePageId } from '@/lib/site/registry';
+import type { HubArticleContent } from './types';
 import { formatPrimaryOrganicKeyword, parseOrganicKeywords } from '@/lib/utils/seo';
 import {
   getAudioTools,
@@ -67,12 +69,22 @@ export function getLocaleMessages(locale: string) {
   return messages[normalizeLocale(locale)];
 }
 
+/**
+ * 传给 NextIntlClientProvider 的 messages。
+ *
+ * 这个对象会被整体序列化进每个页面的 HTML，所以只由服务端组件读取的长文内容
+ * （站点信息页、hub 页正文）必须在这里剔除，否则每个页面都要背上全站正文的体积。
+ */
 export function getClientMessages(locale: string) {
   const {
     site_pages: _sitePages,
+    hub_content: _hubContent,
+    home_content: _homeContent,
     ...clientMessages
   } = getLocaleMessages(locale);
   void _sitePages;
+  void _hubContent;
+  void _homeContent;
   return clientMessages;
 }
 
@@ -310,31 +322,39 @@ export function createBlogArticleMetadata(slug: string, locale: string): Metadat
 
   if (!article) return null;
 
-  const seoDescription = createPrivacySeoDescription(article.metaDescription, normalizedLocale);
-  const seoTitle = createPageSeoTitle(article.metaTitle, normalizedLocale);
-  const topicMembership = getLocalizedBlogTopicForArticle(slug, normalizedLocale);
+  const consolidatedTargetSlug = getBlogConsolidation(slug);
+  const canonicalArticle = consolidatedTargetSlug
+    ? getLocalizedBlogArticle(consolidatedTargetSlug, normalizedLocale)
+    : article;
+
+  if (!canonicalArticle) return null;
+
+  const seoDescription = createPrivacySeoDescription(canonicalArticle.metaDescription, normalizedLocale);
+  const seoTitle = createPageSeoTitle(canonicalArticle.metaTitle, normalizedLocale);
+  const topicMembership = getLocalizedBlogTopicForArticle(canonicalArticle.slug, normalizedLocale);
 
   return {
     title: seoTitle,
     description: seoDescription,
     keywords: [
-      ...article.tags,
+      ...canonicalArticle.tags,
       ...(topicMembership?.targetKeyword ? [topicMembership.targetKeyword] : []),
     ],
+    ...(consolidatedTargetSlug ? { robots: { index: false, follow: true } } : {}),
     alternates: {
-      canonical: getLocalizedPath(normalizedLocale, article.path),
-      languages: getLanguageAlternates(article.path),
+      canonical: getLocalizedPath(normalizedLocale, canonicalArticle.path),
+      languages: getLanguageAlternates(canonicalArticle.path),
     },
     openGraph: {
       title: `${seoTitle} | ${m.home.title}`,
       images: [DEFAULT_OPEN_GRAPH_IMAGE],
       description: seoDescription,
       type: 'article',
-      publishedTime: article.publishedAt,
-      modifiedTime: article.updatedAt,
+      publishedTime: canonicalArticle.publishedAt,
+      modifiedTime: canonicalArticle.updatedAt,
       locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
       siteName: m.home.title,
-      url: getLocalizedPath(normalizedLocale, article.path),
+      url: getLocalizedPath(normalizedLocale, canonicalArticle.path),
     },
   };
 }
@@ -707,6 +727,26 @@ export function getHubFaqItems(
       answer: faq[`${questionKey.slice(0, -2)}_a`],
     }))
     .filter((item) => Boolean(item.question) && Boolean(item.answer));
+}
+
+/**
+ * 取某个 hub 的分类正文（导语 / 选择建议 / 对照表 / 注意事项）。
+ * 只有服务端 hub 页会调用，内容不进客户端 bundle。
+ */
+export function getHubArticleContent(
+  hubKey: HubFaqKey,
+  locale: string
+): HubArticleContent | null {
+  const m = getLocaleMessages(locale) as unknown as {
+    hub_content?: Record<string, HubArticleContent | undefined>;
+  };
+  return m.hub_content?.[hubKey] ?? null;
+}
+
+/** 首页正文，与 hub 正文同一结构，同样只在服务端读取。 */
+export function getHomeArticleContent(locale: string): HubArticleContent | null {
+  const m = getLocaleMessages(locale) as unknown as { home_content?: HubArticleContent };
+  return m.home_content ?? null;
 }
 
 export function createHubFaqJsonLd(hubKey: HubFaqKey, locale: string) {

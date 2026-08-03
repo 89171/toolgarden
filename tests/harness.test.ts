@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import enMessages from '../messages/en.json';
 import zhMessages from '../messages/zh.json';
-import { blogArticles, getLocalizedBlogTopics } from '../lib/blog/articles';
+import {
+  blogArticles,
+  getLocalizedBlogArticles,
+  getLocalizedBlogTopics,
+} from '../lib/blog/articles';
+import { blogConsolidations } from '../lib/blog/consolidations';
+import { shouldLoadGoogleAdSense } from '../lib/ads/policy';
 import { sitePageRegistry } from '../lib/site/registry';
 import {
   createToolSeoDescription,
@@ -64,6 +70,39 @@ describe('blog topic harness', () => {
         for (const cluster of topic.clusters) expect(slugs.has(cluster.slug)).toBe(true);
       }
     }
+  });
+
+  it('keeps consolidated sources routable but out of discovery surfaces', () => {
+    const allSlugs = new Set(blogArticles.map((article) => article.slug));
+    const indexableSlugs = new Set(getLocalizedBlogArticles('en').map((article) => article.slug));
+
+    for (const [source, target] of Object.entries(blogConsolidations)) {
+      expect(allSlugs.has(source)).toBe(true);
+      expect(allSlugs.has(target)).toBe(true);
+      expect(indexableSlugs.has(source)).toBe(false);
+      expect(indexableSlugs.has(target)).toBe(true);
+    }
+  });
+});
+
+describe('ad eligibility policy', () => {
+  it('does not load ads on policy, contact, or consolidated pages', () => {
+    for (const locale of ['en', 'zh']) {
+      expect(shouldLoadGoogleAdSense(`/${locale}/about`)).toBe(false);
+      expect(shouldLoadGoogleAdSense(`/${locale}/privacy`)).toBe(false);
+      expect(shouldLoadGoogleAdSense(`/${locale}/terms`)).toBe(false);
+      expect(shouldLoadGoogleAdSense(`/${locale}/security`)).toBe(false);
+      expect(shouldLoadGoogleAdSense(`/${locale}/contact`)).toBe(false);
+
+      for (const source of Object.keys(blogConsolidations)) {
+        expect(shouldLoadGoogleAdSense(`/${locale}/blog/${source}`)).toBe(false);
+      }
+    }
+  });
+
+  it('loads ads on indexable editorial and tool pages', () => {
+    expect(shouldLoadGoogleAdSense('/en/blog/json-to-typescript-interface-guide')).toBe(true);
+    expect(shouldLoadGoogleAdSense('/zh/json-format')).toBe(true);
   });
 });
 

@@ -28,7 +28,15 @@ interface HeaderMenuItem {
   label: string;
   href: string;
   priority: 'core' | 'secondary';
-  panel?: ReactNode;
+  /**
+   * 下拉面板按需构造。
+   *
+   * 早先的实现把全部 87 个工具链接直接渲染进每个页面的 HTML，仅靠 CSS hover 控制可见性。
+   * 那意味着 300+ 个 URL 共享同一段上千字符的导航样板，正文占比被压得比样板还低。
+   * 现在改成首次 hover / focus 时才挂载面板：人的交互体验不变（挂载发生在同一个事件里，
+   * 面板即时出现），但初始 HTML 只保留 hub 级入口，完整工具清单由各 hub 页承载。
+   */
+  renderPanel?: () => ReactNode;
 }
 
 const navLinkClassName = 'flex min-h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong';
@@ -74,6 +82,35 @@ function MenuDropdownPanel({
       <div className="rounded-lg border border-border-base bg-surface p-3 shadow-lg">
         {children}
       </div>
+    </div>
+  );
+}
+
+/**
+ * hover 触发的下拉容器。面板内容在首次 hover / focus / touch 后才挂载，
+ * 挂载后保持常驻，所以第二次悬停没有额外开销。
+ */
+function HoverDropdown({
+  trigger,
+  renderPanel,
+  className = 'group relative shrink-0',
+}: {
+  trigger: ReactNode;
+  renderPanel: () => ReactNode;
+  className?: string;
+}) {
+  const [panelMounted, setPanelMounted] = useState(false);
+  const mountPanel = () => setPanelMounted(true);
+
+  return (
+    <div
+      className={className}
+      onMouseEnter={mountPanel}
+      onFocus={mountPanel}
+      onTouchStart={mountPanel}
+    >
+      {trigger}
+      {panelMounted ? renderPanel() : null}
     </div>
   );
 }
@@ -129,7 +166,7 @@ function Header({ compact = false }: HeaderProps) {
     </Link>
   );
 
-  const jsonToolsPanel = (
+  const renderJsonToolsPanel = () => (
     <MenuDropdownPanel>
       <div className="grid grid-cols-2 gap-x-4 gap-y-1">
         {jsonGroups.map((group, groupIndex) => (
@@ -146,13 +183,17 @@ function Header({ compact = false }: HeaderProps) {
     </MenuDropdownPanel>
   );
 
-  const createToolsPanel = (tools: ToolMeta[], columns: 'one' | 'two' = 'one') => (
-    <MenuDropdownPanel>
-      <div className={columns === 'two' ? 'grid gap-1 sm:grid-cols-2' : 'grid gap-1'}>
-        {tools.map(renderToolLink)}
-      </div>
-    </MenuDropdownPanel>
-  );
+  const createToolsPanel = (tools: ToolMeta[], columns: 'one' | 'two' = 'one') => {
+    const renderToolsPanel = () => (
+      <MenuDropdownPanel>
+        <div className={columns === 'two' ? 'grid gap-1 sm:grid-cols-2' : 'grid gap-1'}>
+          {tools.map(renderToolLink)}
+        </div>
+      </MenuDropdownPanel>
+    );
+
+    return renderToolsPanel;
+  };
 
   const navItems: HeaderMenuItem[] = [
     {
@@ -160,70 +201,70 @@ function Header({ compact = false }: HeaderProps) {
       label: t('nav.json_tools_menu'),
       href: `/${locale}/json-tools`,
       priority: 'core',
-      panel: jsonToolsPanel,
+      renderPanel: renderJsonToolsPanel,
     },
     {
       id: 'image',
       label: t('nav.image_toolbar'),
       href: `/${locale}/image`,
       priority: 'core',
-      panel: createToolsPanel(imageTools, 'two'),
+      renderPanel: createToolsPanel(imageTools, 'two'),
     },
     {
       id: 'audio',
       label: t('nav.audio_tools'),
       href: `/${locale}/audio`,
       priority: 'core',
-      panel: createToolsPanel(audioTools, 'two'),
+      renderPanel: createToolsPanel(audioTools, 'two'),
     },
     {
       id: 'pdf',
       label: t('nav.pdf_tools'),
       href: `/${locale}/pdf`,
       priority: 'core',
-      panel: createToolsPanel(pdfTools),
+      renderPanel: createToolsPanel(pdfTools),
     },
     {
       id: 'text',
       label: t('nav.text_tools'),
       href: `/${locale}/text`,
       priority: 'secondary',
-      panel: createToolsPanel(textTools),
+      renderPanel: createToolsPanel(textTools),
     },
     {
       id: 'file-merge',
       label: t('nav.file_merge_tools'),
       href: `/${locale}/file-merge`,
       priority: 'secondary',
-      panel: createToolsPanel(fileMergeTools),
+      renderPanel: createToolsPanel(fileMergeTools),
     },
     {
       id: 'info-codec',
       label: t('nav.info_codec_tools'),
       href: infoCodecMenuPath,
       priority: 'secondary',
-      panel: createToolsPanel(infoCodecTools),
+      renderPanel: createToolsPanel(infoCodecTools),
     },
     {
       id: 'qr',
       label: t('nav.qr_tools'),
       href: qrCodeMenuPath,
       priority: 'secondary',
-      panel: createToolsPanel(qrCodeTools),
+      renderPanel: createToolsPanel(qrCodeTools),
     },
     {
       id: 'subtitle',
       label: t('nav.subtitle_tools'),
       href: `/${locale}/subtitle-maker`,
       priority: 'secondary',
-      panel: createToolsPanel(subtitleTools),
+      renderPanel: createToolsPanel(subtitleTools),
     },
     {
       id: 'other',
       label: t('nav.other_tools'),
       href: `/${locale}/other`,
       priority: 'secondary',
-      panel: createToolsPanel(otherTools),
+      renderPanel: createToolsPanel(otherTools),
     },
     {
       id: 'blog',
@@ -286,15 +327,18 @@ function Header({ compact = false }: HeaderProps) {
   }, [navLayoutKey]);
 
   const renderDesktopMenuItem = (item: HeaderMenuItem) => {
-    if (item.panel) {
+    if (item.renderPanel) {
       return (
-        <div key={item.id} className="group relative shrink-0">
-          <Link href={item.href} className={navLinkClassName}>
-            <span>{item.label}</span>
-            <MenuDropdownCaret />
-          </Link>
-          {item.panel}
-        </div>
+        <HoverDropdown
+          key={item.id}
+          renderPanel={item.renderPanel}
+          trigger={(
+            <Link href={item.href} className={navLinkClassName}>
+              <span>{item.label}</span>
+              <MenuDropdownCaret />
+            </Link>
+          )}
+        />
       );
     }
 
@@ -325,7 +369,7 @@ function Header({ compact = false }: HeaderProps) {
     >
       <div className={navLinkClassName}>
         <span>{item.label}</span>
-        {item.panel ? <MenuDropdownCaret /> : null}
+        {item.renderPanel ? <MenuDropdownCaret /> : null}
       </div>
     </div>
   );
@@ -350,17 +394,21 @@ function Header({ compact = false }: HeaderProps) {
             <div className="flex min-w-0 items-center gap-2">
               {visibleDesktopItems.map(renderDesktopMenuItem)}
               {overflowDesktopItems.length > 0 && (
-                <div className="group relative shrink-0">
-                  <button type="button" className={menuButtonClassName} aria-haspopup="true">
-                    <span>{t('nav.more')}</span>
-                    <MenuDropdownCaret />
-                  </button>
-                  <MenuDropdownPanel align="right">
-                    <div className="grid min-w-48 gap-1">
-                      {overflowDesktopItems.map(renderMoreMenuLink)}
-                    </div>
-                  </MenuDropdownPanel>
-                </div>
+                <HoverDropdown
+                  trigger={(
+                    <button type="button" className={menuButtonClassName} aria-haspopup="true">
+                      <span>{t('nav.more')}</span>
+                      <MenuDropdownCaret />
+                    </button>
+                  )}
+                  renderPanel={() => (
+                    <MenuDropdownPanel align="right">
+                      <div className="grid min-w-48 gap-1">
+                        {overflowDesktopItems.map(renderMoreMenuLink)}
+                      </div>
+                    </MenuDropdownPanel>
+                  )}
+                />
               )}
             </div>
             <div className="pointer-events-none absolute inset-x-0 top-0 overflow-hidden opacity-0" aria-hidden="true">

@@ -5,6 +5,7 @@ import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { computeDiff, DiffLine, DiffType } from '@/lib/utils/diff';
 import { stringifyJSONValue } from '@/lib/utils/json';
+import { jsonDiffContent } from '@/lib/tools/content/json-diff';
 
 const leftCellStyles: Record<DiffType, string> = {
   added: 'bg-surface text-content-faint',
@@ -151,7 +152,7 @@ export default function JsonDiffPage() {
   const emptyDiffMessage = t('identical');
 
   return (
-    <ToolLayout toolId="json-diff">
+    <ToolLayout toolId="json-diff" content={jsonDiffContent}>
       <div className="flex-grow flex flex-col gap-4 min-h-0">
         {result?.ok && (
           <div className="flex flex-wrap items-center gap-3">

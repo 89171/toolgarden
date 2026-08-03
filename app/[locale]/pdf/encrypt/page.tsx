@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { decryptPdf, encryptPdf } from '@/lib/utils/pdf-encrypt';
+import { pdfEncryptContent } from '@/lib/tools/content/pdf-encrypt';
 
 type Mode = 'encrypt' | 'decrypt';
 
@@ -48,7 +49,7 @@ export default function PdfEncryptPage() {
   const downloadName = `${baseName}-${mode === 'encrypt' ? 'encrypted' : 'decrypted'}.pdf`;
 
   return (
-    <ToolLayout toolId="pdf-encrypt">
+    <ToolLayout toolId="pdf-encrypt" content={pdfEncryptContent}>
       <div className="mb-4 inline-flex overflow-hidden rounded border border-border-input">
         <button
           type="button"

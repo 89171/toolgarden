@@ -1,0 +1,22 @@
+import { defineToolContent } from './define';
+
+export const pdfToPdfContent = defineToolContent({
+  zh: {
+    overview: ['PDF 转 PDF 用于重新生成一个标准化副本，解决部分文件结构异常、兼容性差或需要统一输出的问题。它会读取现有页面并写入新的 PDF 容器，但不能保证修复所有损坏对象、字体缺失或复杂交互表单。', '重新生成可能改变元数据、书签、批注、表单、附件、数字签名和无障碍标签。对需要法律效力、长期归档或印刷色彩准确性的文件，应使用对应的 PDF/A、预检或签名验证工具。'],
+    steps: [['上传并先打开原件', '确认页数、方向和关键内容可读，并记录书签、表单或签名等特殊功能。'], ['生成标准化副本', '等待页面处理完成，不要在大文件处理时关闭页面。'], ['逐项比较输出', '核对页数、文字、图像、链接和特殊功能，再决定是否替换工作副本。']],
+    scenarios: [['改善阅读兼容性', '为某些查看器无法稳定打开的普通文档生成结构更简单的副本。'], ['统一后续流程输入', '在合并、拆分或加水印前先生成可由当前工具链读取的版本。'], ["把办公文档统一成可分发的格式", "Word、Excel、PPT 转成 PDF 后，接收方无需安装对应软件，排版也不会因版本差异变化。"]],
+    notes: ['数字签名依赖文件字节，重新生成后原签名通常会失效。', '受密码保护或严重损坏的 PDF 可能无法读取或完整重建。', '标准 PDF 重新输出不等于符合 PDF/A 归档标准。'],
+    specs: [["接受的来源", "Word、Excel、PowerPoint、EPUB、MOBI、JPG、PNG、WebP、TXT、Markdown、HTML"], ["排版还原度", "办公文档按浏览器渲染结果生成，与原软件的分页和字距可能有出入"], ["字体", "使用浏览器可获得的字体。源文档若用了本机未安装的字体，会回退到替代字体"], ["图片来源", "每张图片单独成页，页面尺寸按图片比例适配"], ["会丢失", "批注、修订记录、表单域交互、幻灯片动画"], ["处理位置", "浏览器内完成，源文档不上传"]],
+    faq: [{ question: "为什么转换后的排版和原文档不一样？", answer: "办公文档按浏览器的渲染结果生成 PDF，而不是调用原软件。字体可用性、行距计算和分页规则都可能与 Word 或 PowerPoint 不同。排版要求严格时，请用原软件自带的「导出为 PDF」。" }, { question: "字体为什么变了？", answer: "源文档使用了本机浏览器不可获得的字体，渲染时回退到了替代字体。把所需字体安装到系统上，或在源文档里改用通用字体，可以避免这种情况。" }],
+    reference: [['PDF object', 'PDF 内部用于描述页面、字体、图像和结构的对象。'], ['PDF/A', '面向长期保存的受约束 PDF 标准，需要专门验证。']],
+  },
+  en: {
+    overview: ['PDF to PDF regenerates a standardized copy when a document has unusual structure, weak compatibility, or needs consistent output. It reads existing pages into a new PDF container but cannot guarantee repair of every corrupt object, missing font, or complex interactive form.', 'Regeneration can change metadata, bookmarks, annotations, forms, attachments, digital signatures, and accessibility tags. Documents requiring legal validity, long-term archiving, or print color accuracy need dedicated signature, preflight, or PDF/A tooling.'],
+    steps: [['Open the original first', 'Confirm page count, orientation, and critical content and note bookmarks, forms, or signatures.'], ['Generate a new copy', 'Keep the page open while all pages are processed.'], ['Compare every important feature', 'Check page count, text, images, links, and special behavior before replacing a working copy.']],
+    scenarios: [['Improving reading compatibility', 'Create a simpler copy of an ordinary document that some viewers cannot open reliably.'], ['Normalizing a workflow input', 'Produce a version readable by the current toolchain before merging, splitting, or watermarking.'], ["Standardising office documents for distribution", "Once Word, Excel and PowerPoint files are PDFs, recipients need no matching software and the layout does not shift between versions."]],
+    notes: ['Digital signatures depend on file bytes and normally become invalid after regeneration.', 'Password-protected or severely damaged PDFs may not be readable or fully reconstructable.', 'Ordinary PDF regeneration does not establish PDF/A conformance.'],
+    specs: [["Accepted sources", "Word, Excel, PowerPoint, EPUB, MOBI, JPG, PNG, WebP, TXT, Markdown, HTML"], ["Layout fidelity", "Office documents are generated from the browser's rendering, so pagination and letter spacing can differ from the original application"], ["Fonts", "Uses fonts available to the browser; a font not installed locally falls back to a substitute"], ["From images", "Each image becomes its own page, sized to the image's aspect ratio"], ["Lost in conversion", "Comments, tracked changes, interactive form fields, slide animations"], ["Where it runs", "Entirely in the browser; the source document is never uploaded"]],
+    faq: [{ question: "Why does the layout differ from the original?", answer: "Office documents are rendered by the browser rather than by the original application, so font availability, line-height calculation and pagination rules can all differ from Word or PowerPoint. When layout must match exactly, use the source application's own Export as PDF." }, { question: "Why did the fonts change?", answer: "The document used a font your browser cannot access, so rendering fell back to a substitute. Install the font on the system, or switch the source document to a widely available one." }],
+    reference: [['PDF object', 'An internal PDF structure describing pages, fonts, images, and relationships.'], ['PDF/A', 'A constrained PDF standard for long-term preservation that requires dedicated validation.']],
+  },
+});

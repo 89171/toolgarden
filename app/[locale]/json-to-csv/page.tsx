@@ -6,6 +6,7 @@ import { Panel } from '@/components/ui/Panel';
 import { Button } from '@/components/ui/Button';
 import { jsonToCsv } from '@/lib/utils/csv';
 import { stringifyJSONValue } from '@/lib/utils/json';
+import { jsonToCsvContent } from '@/lib/tools/content/json-to-csv';
 
 const EXAMPLE = stringifyJSONValue([{ name: '张三', age: 28, city: '北京' }, { name: '李四', age: 32, city: '上海' }], 2);
 
@@ -32,7 +33,7 @@ export default function JsonToCsvPage() {
   };
 
   return (
-    <ToolLayout toolId="json-to-csv">
+    <ToolLayout toolId="json-to-csv" content={jsonToCsvContent}>
       <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
         <Panel title={t('input_title')} actions={<>
           <Button variant="secondary" onClick={() => updateInput(EXAMPLE)}>{tc('example')}</Button>

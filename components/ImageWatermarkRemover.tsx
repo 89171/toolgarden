@@ -27,6 +27,7 @@ import {
   type ImageWatermarkRemovalProgress,
   type ImageWatermarkRemovalSuccess,
 } from '@/lib/utils/image';
+import { imageRemoveWatermarkContent } from '@/lib/tools/content/image-remove-watermark';
 
 type DragMode = 'draw' | 'move' | 'resize';
 
@@ -454,7 +455,7 @@ export function ImageWatermarkRemover() {
   }, [getResultMethodLabel, output, ti]);
 
   return (
-    <ToolLayout toolId="image-remove-watermark">
+    <ToolLayout toolId="image-remove-watermark" content={imageRemoveWatermarkContent}>
       <div className="grid flex-grow grid-cols-1 gap-4 overflow-auto pb-4 sm:gap-6 sm:pb-8 xl:min-h-0 xl:grid-cols-[minmax(320px,420px)_1fr] xl:overflow-hidden">
         <Panel
           title={ti('settings_title')}

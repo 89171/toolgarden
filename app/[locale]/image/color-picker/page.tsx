@@ -5,6 +5,7 @@ import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { loadImageFromFile } from '@/lib/utils/image-transform';
 import { hslString, rgbString, rgbToHex, rgbToHsl } from '@/lib/utils/color';
+import { imageColorPickerContent } from '@/lib/tools/content/image-color-picker';
 
 interface Sample {
   hex: string;
@@ -62,7 +63,7 @@ export default function ImageColorPickerPage() {
   };
 
   return (
-    <ToolLayout toolId="image-color-picker">
+    <ToolLayout toolId="image-color-picker" content={imageColorPickerContent}>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.6fr)]">
         <section className="flex flex-col gap-3 rounded-lg border border-border-base bg-surface p-4 shadow">
           <h2 className="text-lg font-semibold text-content">{image ? t('picker_title') : t('upload_title')}</h2>

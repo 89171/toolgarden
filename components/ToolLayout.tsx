@@ -7,16 +7,25 @@ import { getPillarSlugForToolPath } from '@/lib/blog/topics';
 import {
   buildBreadcrumbJsonLd,
   buildToolFaqJsonLd,
+  buildToolHowToJsonLd,
   buildToolJsonLd,
+  mergeFaqItems,
   toJsonLd,
   type JsonLdMessages,
 } from '@/lib/tools/jsonld';
+import { resolveToolContent, type ToolContent } from '@/lib/tools/content';
+import { ToolArticle } from './ToolArticle';
 import Footer from './Footer';
 import Header from './Header';
 
 interface ToolLayoutProps {
   toolId: string;
   children: React.ReactNode;
+  /**
+   * 工具页正文。由工具页自己 import 对应的内容模块传入，而不是在这里按 id 查表。
+   * 查表会把全部 87 个工具的正文拉进 ToolLayout 所在的共享 chunk。
+   */
+  content?: ToolContent;
 }
 
 interface ToolFaqItem {
@@ -24,10 +33,11 @@ interface ToolFaqItem {
   answer: string;
 }
 
-export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
+export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children, content }) => {
   const t = useTranslations();
   const locale = useLocale();
   const tool = getToolById(toolId);
+  const articleBody = resolveToolContent(content, locale);
 
   const toolName  = tool ? t(`tools.${toolId}.name`)        : toolId;
   const toolDesc  = tool ? t(`tools.${toolId}.description`) : '';
@@ -47,7 +57,7 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
   const otherHubLabel = t('other_hub.breadcrumb');
   const faqKey = `tool_faq.${toolId}.items`;
   const rawFaqItems = tool && t.has(faqKey) ? t.raw(faqKey) : [];
-  const faqItems = Array.isArray(rawFaqItems)
+  const messageFaqItems = Array.isArray(rawFaqItems)
     ? rawFaqItems.filter(
         (item): item is ToolFaqItem =>
           typeof item === 'object' &&
@@ -56,6 +66,8 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
           typeof item.answer === 'string'
       )
     : [];
+  const contentFaqItems = articleBody?.faq ?? [];
+  const faqItems = mergeFaqItems(messageFaqItems, contentFaqItems);
   const jsonLdMessages: JsonLdMessages = {
     home: { title: t('home.title'), breadcrumb: homeLabel },
     image_hub: { breadcrumb: imageHubLabel },
@@ -66,11 +78,14 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
     other_hub: { breadcrumb: otherHubLabel },
     tools: { [toolId]: { name: toolName, description: toolDesc } },
     organic_keywords: tool ? { [toolId]: t(`organic_keywords.${toolId}`) } : {},
-    tool_faq: faqItems.length > 0 ? { [toolId]: { items: faqItems } } : {},
+    tool_faq: messageFaqItems.length > 0 ? { [toolId]: { items: messageFaqItems } } : {},
   };
   const toolJsonLd = tool ? buildToolJsonLd(toolId, locale, jsonLdMessages) : null;
   const breadcrumbJsonLd = tool ? buildBreadcrumbJsonLd(toolId, locale, jsonLdMessages) : null;
-  const faqJsonLd = tool ? buildToolFaqJsonLd(toolId, jsonLdMessages) : null;
+  const faqJsonLd = tool ? buildToolFaqJsonLd(toolId, jsonLdMessages, contentFaqItems) : null;
+  const howToJsonLd = tool && articleBody
+    ? buildToolHowToJsonLd(toolId, locale, jsonLdMessages, articleBody.steps)
+    : null;
   const relatedGuideSlug = tool ? getPillarSlugForToolPath(tool.path) : null;
   const relatedTools = tool ? getRelatedTools(tool.id) : [];
   const faqTitleId = `${toolId}-faq-title`;
@@ -94,6 +109,12 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: toJsonLd(faqJsonLd) }}
+        />
+      )}
+      {howToJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: toJsonLd(howToJsonLd) }}
         />
       )}
       <div className="flex min-h-[100dvh] flex-col bg-background text-foreground">
@@ -190,7 +211,21 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
         )}
 
         <main className="flex flex-1 flex-col lg:min-h-0">
-          <div data-clarity-mask="true" className="flex flex-1 flex-col lg:min-h-0">{children}</div>
+          {/*
+            有正文时页面不再只有一屏，flex-1 会退化成内容高度、把交互区压扁。
+            给一个 dvh 下限，保证工具本身仍然占据首屏，正文在其下方展开。
+          */}
+          <div
+            data-clarity-mask="true"
+            className={
+              articleBody
+                ? 'flex flex-1 flex-col lg:min-h-[58dvh]'
+                : 'flex flex-1 flex-col lg:min-h-0'
+            }
+          >
+            {children}
+          </div>
+          {articleBody ? <ToolArticle toolId={toolId} body={articleBody} /> : null}
           {relatedGuideSlug ? (
             <aside className="mt-6 flex flex-col gap-3 rounded-lg border border-border-subtle bg-surface px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
@@ -206,7 +241,7 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children }) => {
             </aside>
           ) : null}
           {faqItems.length > 0 ? (
-            <section className="mt-8 border-t border-border-subtle pt-6" aria-labelledby={faqTitleId}>
+            <section className="mt-8 w-full max-w-[1080px] border-t border-border-subtle pt-6" aria-labelledby={faqTitleId}>
               <h2 id={faqTitleId} className="text-xl font-bold text-content">
                 {t('blog.faq_title')}
               </h2>

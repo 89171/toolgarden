@@ -13,6 +13,7 @@ import {
   type PdfOperationError,
 } from '@/lib/utils/pdf-browser';
 import { parsePdfPageSelection, PDF_FILE_ACCEPT_VALUE } from '@/lib/utils/pdf';
+import { pdfExtractPagesContent } from '@/lib/tools/content/pdf-extract-pages';
 
 interface ExtractResult {
   url: string;
@@ -130,7 +131,7 @@ export function PdfExtractPagesTool() {
   }, [file, getErrorMessage, inspection, processing, result, selectionInput]);
 
   return (
-    <ToolLayout toolId="pdf-extract-pages">
+    <ToolLayout toolId="pdf-extract-pages" content={pdfExtractPagesContent}>
       <div className="grid flex-grow grid-cols-1 gap-4 overflow-auto pb-4 sm:gap-6 sm:pb-8 xl:min-h-0 xl:grid-cols-[minmax(340px,460px)_1fr] xl:overflow-hidden">
         <Panel
           title={t('settings_title')}
