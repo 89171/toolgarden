@@ -66,7 +66,7 @@ export function HubPageContent({ locale, hubKey, tools, itemListJsonLd }: HubPag
               <span className="font-medium text-content-secondary">{hub.breadcrumb}</span>
             </nav>
             <h1 className="text-2xl font-bold leading-tight text-content sm:text-3xl">{hub.title}</h1>
-            <p className="mt-3 max-w-3xl text-base leading-relaxed text-content-muted">
+            <p className="mt-3 text-base leading-relaxed text-content-muted">
               {hub.description}
             </p>
             <p className="mt-4 text-sm text-content-faint">{hub.privacy_note}</p>

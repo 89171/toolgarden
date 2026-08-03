@@ -88,7 +88,7 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
               <h1 id="consolidated-title" className="mt-3 max-w-3xl text-3xl font-bold leading-tight text-content sm:text-5xl">
                 {m.blog.consolidated_title}
               </h1>
-              <p className="mt-5 max-w-[68ch] text-base leading-8 text-content-muted">
+              <p className="mt-5 text-base leading-8 text-content-muted">
                 {m.blog.consolidated_description}
               </p>
 

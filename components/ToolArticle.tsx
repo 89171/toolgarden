@@ -20,13 +20,13 @@ export const ToolArticle: React.FC<ToolArticleProps> = ({ toolId, body }) => {
   const headingId = (block: string) => `${toolId}-${block}-title`;
 
   return (
-    <article className="mt-10 flex w-full max-w-[1080px] flex-col gap-10 border-t border-border-subtle pt-8">
+    <article className="mt-10 flex w-full flex-col gap-10 border-t border-border-subtle pt-8">
       {/* 概述：单栏散文，限制在易读的字符宽度内 */}
       <section aria-labelledby={headingId('overview')}>
         <h2 id={headingId('overview')} className="text-xl font-bold text-content sm:text-2xl">
           {t('overview')}
         </h2>
-        <div className="mt-4 flex max-w-[68ch] flex-col gap-4 text-base leading-8 text-content-secondary">
+        <div className="mt-4 flex flex-col gap-4 text-base leading-8 text-content-secondary">
           {body.overview.map((paragraph) => (
             <p key={paragraph}>{paragraph}</p>
           ))}
@@ -49,7 +49,7 @@ export const ToolArticle: React.FC<ToolArticleProps> = ({ toolId, body }) => {
               </span>
               <div className="min-w-0">
                 <h3 className="font-semibold leading-7 text-content">{step.title}</h3>
-                <p className="mt-1 max-w-[68ch] text-sm leading-7 text-content-muted">{step.detail}</p>
+                <p className="mt-1 text-sm leading-7 text-content-muted">{step.detail}</p>
               </div>
             </li>
           ))}
@@ -62,7 +62,7 @@ export const ToolArticle: React.FC<ToolArticleProps> = ({ toolId, body }) => {
           <h2 id={headingId('example')} className="text-xl font-bold text-content sm:text-2xl">
             {t('example')}
           </h2>
-          <p className="mt-3 max-w-[68ch] text-sm leading-7 text-content-muted">{body.example.caption}</p>
+          <p className="mt-3 text-sm leading-7 text-content-muted">{body.example.caption}</p>
           <div className="mt-4 grid gap-4 lg:grid-cols-2">
             {[
               { label: body.example.inputLabel, code: body.example.input },
@@ -110,7 +110,7 @@ export const ToolArticle: React.FC<ToolArticleProps> = ({ toolId, body }) => {
           {body.scenarios.map((scenario) => (
             <li key={scenario.title} className="border-l-2 border-border-strong pl-4 sm:pl-5">
               <h3 className="font-semibold leading-7 text-content">{scenario.title}</h3>
-              <p className="mt-1 max-w-[68ch] text-sm leading-7 text-content-muted">{scenario.detail}</p>
+              <p className="mt-1 text-sm leading-7 text-content-muted">{scenario.detail}</p>
             </li>
           ))}
         </ul>
