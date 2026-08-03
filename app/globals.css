@@ -187,18 +187,52 @@
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    Base
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-body {
-  background: var(--background);
-  color: var(--foreground);
-  overflow-x: hidden;
+
+/*
+ * 这几条必须放进 @layer base。
+ *
+ * 未分层的作者样式在层叠里排在**所有** @layer 之后，也就是优先级高于
+ * Tailwind 的 @layer utilities。之前 `* { min-width: 0 }` 是未分层的，
+ * 于是全站每一个 min-w-* 工具类都被它压掉——DevTools 里能看到规则、
+ * Computed 却是 0，因为 `*` 选择器那条才是最终生效的。
+ * body 的 overflow-x 同理会压掉 body 上的 overflow-* 工具类。
+ *
+ * 放进 @layer base 之后，它们仍然作为默认值生效，但工具类可以正常覆盖。
+ */
+@layer base {
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    overflow-x: hidden;
+  }
+
+  html {
+    min-height: 100%;
+  }
+
+  /* 让 flex/grid 子项默认可收缩，避免长内容把容器撑破 */
+  * {
+    min-width: 0;
+  }
 }
 
-html {
-  min-height: 100%;
+/* 让主要功能根节点填满桌面工作区，避免正文前出现无归属空白。 */
+@media (min-width: 1024px) {
+  .tool-workspace {
+    min-height: 76vh;
+    min-height: 76dvh;
+  }
+
+  .tool-workspace > :last-child {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
 }
 
-* {
-  min-width: 0;
+@media (min-width: 1024px) and (min-height: 1100px) {
+  .tool-workspace {
+    min-height: 52rem;
+  }
 }
 
 @keyframes model-progress-pulse {

@@ -27,7 +27,7 @@ export function HubArticleBody({
         <h2 id="hub-overview-title" className="text-xl font-bold text-content sm:text-2xl">
           {labels.overview}
         </h2>
-        <div className="mt-4 flex max-w-[70ch] flex-col gap-4 text-base leading-8 text-content-secondary">
+        <div className="mt-4 flex flex-col gap-4 text-base leading-8 text-content-secondary">
           {content.lead.map((paragraph) => (
             <p key={paragraph}>{paragraph}</p>
           ))}
@@ -53,7 +53,7 @@ export function HubArticleBody({
           <h2 id="hub-comparison-title" className="text-xl font-bold text-content sm:text-2xl">
             {labels.comparison}
           </h2>
-          <p className="mt-3 max-w-[70ch] text-sm leading-7 text-content-muted">
+          <p className="mt-3 text-sm leading-7 text-content-muted">
             {content.comparison.caption}
           </p>
           <div className="mt-4 overflow-x-auto rounded-lg border border-border-base">
@@ -94,7 +94,7 @@ export function HubArticleBody({
         <h2 id="hub-notes-title" className="text-xl font-bold text-content sm:text-2xl">
           {labels.notes}
         </h2>
-        <div className="mt-4 flex max-w-[70ch] flex-col gap-4 text-sm leading-7 text-content-secondary">
+        <div className="mt-4 flex flex-col gap-4 text-sm leading-7 text-content-secondary">
           {content.notes.map((note) => (
             <p key={note}>{note}</p>
           ))}

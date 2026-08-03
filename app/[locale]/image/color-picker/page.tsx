@@ -68,7 +68,7 @@ export default function ImageColorPickerPage() {
         <section className="flex flex-col gap-3 rounded-lg border border-border-base bg-surface p-4 shadow">
           <h2 className="text-lg font-semibold text-content">{image ? t('picker_title') : t('upload_title')}</h2>
           {!image ? (
-            <label className="flex cursor-pointer flex-col items-center gap-2 rounded border border-dashed border-border-input bg-surface-raised p-8 text-center hover:border-border-strong">
+            <label className="flex min-h-56 flex-1 cursor-pointer flex-col items-center justify-center gap-2 rounded border border-dashed border-border-input bg-surface-raised p-8 text-center hover:border-border-strong">
               <span className="text-sm text-content-secondary">{t('drop_title')}</span>
               <span className="text-xs text-content-faint">{t('drop_hint')}</span>
               <input

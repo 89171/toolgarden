@@ -109,6 +109,7 @@ function EditorPane({
   value,
   placeholder,
   clearLabel,
+  expand,
   onChange,
   onClear,
 }: {
@@ -116,11 +117,12 @@ function EditorPane({
   value: string;
   placeholder: string;
   clearLabel: string;
+  expand: boolean;
   onChange: (value: string) => void;
   onClear: () => void;
 }) {
   return (
-    <div className="border-b border-border-base bg-surface p-4">
+    <div className={`flex min-h-0 flex-col border-b border-border-base bg-surface p-4 ${expand ? 'flex-1' : ''}`}>
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-lg font-semibold text-content">{title}</h2>
         <Button variant="secondary" onClick={onClear}>{clearLabel}</Button>
@@ -128,7 +130,7 @@ function EditorPane({
       <textarea
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="mt-3 h-44 w-full resize-none rounded border border-border-input bg-surface-raised p-3 font-mono text-sm text-content-secondary focus:outline-none focus:ring-2 focus:ring-action"
+        className={`mt-3 min-h-44 w-full resize-none rounded border border-border-input bg-surface-raised p-3 font-mono text-sm text-content-secondary focus:outline-none focus:ring-2 focus:ring-action ${expand ? 'flex-1' : 'h-44'}`}
         placeholder={placeholder}
       />
     </div>
@@ -174,6 +176,7 @@ export default function JsonDiffPage() {
               value={left}
               placeholder={t('left_placeholder')}
               clearLabel={tc('clear')}
+              expand={!result?.ok}
               onChange={setLeft}
               onClear={() => setLeft('')}
             />
@@ -187,6 +190,7 @@ export default function JsonDiffPage() {
               value={right}
               placeholder={t('right_placeholder')}
               clearLabel={tc('clear')}
+              expand={!result?.ok}
               onChange={setRight}
               onClear={() => setRight('')}
             />

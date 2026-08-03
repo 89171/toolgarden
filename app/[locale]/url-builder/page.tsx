@@ -85,7 +85,7 @@ export default function UrlBuilderPage() {
 
   return (
     <ToolLayout toolId="url-builder" content={urlBuilderContent}>
-      <div className="flex flex-col gap-4">
+      <div className="flex min-h-0 flex-grow flex-col gap-4">
         <section className="flex flex-col gap-3 rounded-lg border border-border-base bg-surface p-4 shadow">
           <h2 className="text-lg font-semibold text-content">{t('input_title')}</h2>
           <div className="flex flex-col gap-2 sm:flex-row">
@@ -99,7 +99,7 @@ export default function UrlBuilderPage() {
           </div>
         </section>
 
-        <div className="grid gap-4 lg:grid-cols-2">
+        <div className="grid flex-1 gap-4 lg:grid-cols-2">
           <section className="flex flex-col gap-3 rounded-lg border border-border-base bg-surface p-4 shadow">
             <h2 className="text-lg font-semibold text-content">URL</h2>
             <Field label={t('protocol_label')} value={protocol} onChange={setProtocol} />

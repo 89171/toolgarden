@@ -212,14 +212,14 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children, conten
 
         <main className="flex flex-1 flex-col lg:min-h-0">
           {/*
-            有正文时页面不再只有一屏，flex-1 会退化成内容高度、把交互区压扁。
-            给一个 dvh 下限，保证工具本身仍然占据首屏，正文在其下方展开。
+            桌面端让工作区使用标题下方的主要视口空间，并限制超宽屏下的最大高度。
+            单一功能根节点由 globals.css 撑满工作区，正文紧接在工作区之后。
           */}
           <div
             data-clarity-mask="true"
             className={
               articleBody
-                ? 'flex flex-1 flex-col lg:min-h-[58dvh]'
+                ? 'tool-workspace flex flex-1 flex-col'
                 : 'flex flex-1 flex-col lg:min-h-0'
             }
           >
