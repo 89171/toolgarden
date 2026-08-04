@@ -366,6 +366,13 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 
 > Generated from the complete `blogArticles` registry during `npm run build`.
 
+### Harness Engineering in Practice: How Claude Helped Transform My Next.js Project
+- English: https://toolgarden.xyz/en/blog/harness-engineering-with-claude
+- Chinese: https://toolgarden.xyz/zh/blog/harness-engineering-with-claude
+- Chinese title: Harness Engineering 实践：我让 Claude 对项目做了一次改造
+- Summary: A real AI-assisted refactoring journey from one JSON formatter to a multilingual toolbox with 80+ utilities, registry-driven discovery, automated SEO, and repeatable validation.
+- Published: 2026-08-04; updated: 2026-08-04
+
 ### How to Split a Song into Vocals, Drums, Bass, Guitar, Piano, and Instrumental Stems
 - English: https://toolgarden.xyz/en/blog/split-song-into-vocals-instrumental-stems-browser
 - Chinese: https://toolgarden.xyz/zh/blog/split-song-into-vocals-instrumental-stems-browser

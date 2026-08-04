@@ -1,6 +1,7 @@
 import { routing } from '@/i18n/routing';
 import { audioBlogArticles } from './audio-articles';
 import { audioStemGuideArticles } from './audio-stem-guides';
+import { harnessEngineeringArticles } from './harness-engineering-articles';
 import { implementationEngineeringArticles } from './implementation-engineering-articles';
 import { creativeToolEngineeringArticles } from './creative-tool-engineering-articles';
 import { topicClusterBlogArticles } from './topic-cluster-articles';
@@ -182,6 +183,7 @@ const faviconHtmlSnippet = `<link rel="icon" href="/favicon.ico">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">`;
 
 export const blogArticles: BlogArticle[] = [
+  ...harnessEngineeringArticles,
   ...audioBlogArticles,
   ...audioStemGuideArticles,
   ...seoOptimizationGuideArticles,
