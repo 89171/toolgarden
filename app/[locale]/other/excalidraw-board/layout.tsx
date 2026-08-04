@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { createToolMetadata } from '@/lib/tools/seo';
 import '@excalidraw/excalidraw/index.css';
+import { ToolMessagesProvider } from '@/components/ToolMessagesProvider';
 
 const TOOL_ID = 'excalidraw-board';
 
@@ -13,6 +14,17 @@ export async function generateMetadata({
   return createToolMetadata(TOOL_ID, locale);
 }
 
-export default function Layout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+export default async function Layout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  return (
+    <ToolMessagesProvider locale={locale} toolId={TOOL_ID}>
+      {children}
+    </ToolMessagesProvider>
+  );
 }

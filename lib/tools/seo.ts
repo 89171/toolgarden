@@ -74,18 +74,61 @@ export function getLocaleMessages(locale: string) {
  *
  * 这个对象会被整体序列化进每个页面的 HTML，所以只由服务端组件读取的长文内容
  * （站点信息页、hub 页正文）必须在这里剔除，否则每个页面都要背上全站正文的体积。
+ *
+ * `tool_faq`（87 个工具约 51KB）和 `organic_keywords`（约 12KB）同样剔除：
+ * 它们只在 ToolLayout 里给「当前这一个工具」用，从来不会被 Header 之类的全站组件
+ * 引用，却因为挂在根 provider 上而被每一页背走全部 87 个工具的份额。
+ * 工具页需要自己那一份时，走 getToolClientMessages，在各自的 layout.tsx 里
+ * 通过嵌套的 NextIntlClientProvider 单独补回来（见该函数注释）。
  */
 export function getClientMessages(locale: string) {
   const {
     site_pages: _sitePages,
     hub_content: _hubContent,
     home_content: _homeContent,
+    tool_faq: _toolFaq,
+    organic_keywords: _organicKeywords,
     ...clientMessages
   } = getLocaleMessages(locale);
   void _sitePages;
   void _hubContent;
   void _homeContent;
+  void _toolFaq;
+  void _organicKeywords;
   return clientMessages;
+}
+
+/**
+ * 给单个工具页用的 messages：`getClientMessages` 的结果，再把这一个工具的
+ * `tool_faq` / `organic_keywords` 条目补回来。
+ *
+ * 之所以要单独一份，而不是让 ToolLayout 直接读根 provider：next-intl 的嵌套
+ * NextIntlClientProvider 在传入 `messages` 时是整体替换而不是深度合并
+ * （见 use-intl 的 IntlProvider：`messages: messages === undefined ? prevContext?.messages : messages`）。
+ * 所以这里必须基于完整的 clientMessages 重新拼出一份「其它命名空间不变 +
+ * tool_faq/organic_keywords 只含当前工具」的完整对象，而不能只传两个新增字段。
+ *
+ * 只应在各工具的 `layout.tsx` 里调用（服务端），用于渲染一层嵌套的
+ * NextIntlClientProvider；不要在客户端组件里调用，否则会把整份 messages
+ * JSON 重新打包进那个路由的 JS bundle。
+ */
+type ToolFaqEntry = { items: Array<{ question: string; answer: string }> };
+
+export function getToolClientMessages(locale: string, toolId: string) {
+  const clientMessages = getClientMessages(locale);
+  const fullMessages = getLocaleMessages(locale);
+  // 按 Record 取值而不是按 ToolMessageId 的精确字面量索引：不是每个工具都有
+  // tool_faq 条目（例如 audio-split-stems 就没有），字面量类型上没有这个 key。
+  const toolFaqMap = fullMessages.tool_faq as Record<string, ToolFaqEntry | undefined>;
+  const organicKeywordMap = fullMessages.organic_keywords as Record<string, string | undefined>;
+  const toolFaq = toolFaqMap[toolId];
+  const organicKeyword = organicKeywordMap[toolId];
+
+  return {
+    ...clientMessages,
+    tool_faq: toolFaq ? { [toolId]: toolFaq } : {},
+    organic_keywords: organicKeyword ? { [toolId]: organicKeyword } : {},
+  };
 }
 
 export function createLocaleMetadata(locale: string): Metadata {
