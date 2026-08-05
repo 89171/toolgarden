@@ -123,6 +123,40 @@ function fitDescriptionWithSuffix(description: string, suffix: string, locale: L
   return appendSeoSentence(conciseDescription, suffix, locale);
 }
 
+function finishSeoDescription(description: string, locale: Locale): string {
+  const punctuation = locale === 'zh' ? '。' : '.';
+  const withoutTrailingPunctuation = description.replace(/[。.!?]+$/u, '');
+  const body = truncatePlainText(
+    withoutTrailingPunctuation,
+    SEO_DESCRIPTION_LIMIT[locale] - punctuation.length,
+    locale
+  );
+
+  return `${body}${punctuation}`;
+}
+
+/**
+ * Prefer the richest suffix that fits without trimming the tool-specific copy.
+ * Short descriptions get a fuller value proposition, while detailed descriptions
+ * keep their useful capabilities and only receive a concise privacy reminder.
+ */
+function fitDescriptionWithSuffixes(
+  description: string,
+  suffixes: readonly string[],
+  locale: Locale
+): string {
+  const limit = SEO_DESCRIPTION_LIMIT[locale];
+
+  for (const suffix of suffixes) {
+    const fullDescription = appendSeoSentence(description, suffix, locale);
+    if (fullDescription.length <= limit) return fullDescription;
+  }
+
+  // If even the shortest suffix would force useful capabilities out, keep the
+  // complete tool-specific description and finish it as a clean sentence.
+  return finishSeoDescription(description, locale);
+}
+
 function hasLocalProcessingSignal(description: string, locale: Locale): boolean {
   return locale === 'zh'
     ? /浏览器|本地|无需上传|不上传/u.test(description)
@@ -148,14 +182,49 @@ export function createPrivacySeoDescription(description: string, locale: Locale)
 }
 
 export function createToolSeoDescription(description: string, locale: Locale): string {
+  // 描述本身已经点明「浏览器本地处理 / 无需上传」时不再拼接下面的通用兜底句——
+  // 这些候选句是为早期偏短的工具描述准备的，套在已经写明本地处理的描述后面
+  // 只会造成语义重复（例如「...浏览器本地处理，无需上传。无需安装或向服务器
+  // 上传文件，内容保留在当前设备中。」），读起来像批量生成的痕迹，而不是加分项。
+  if (hasLocalProcessingSignal(description, locale)) {
+    return finishSeoDescription(description, locale);
+  }
+
   const hasLocalSignal = locale === 'zh'
     ? /浏览器|本地/u.test(description)
     : /browser|locally|local/i.test(description);
-  const suffix = locale === 'zh'
-    ? (hasLocalSignal ? '无需上传。' : '浏览器本地处理，无需上传。')
-    : (hasLocalSignal ? 'No upload required.' : 'Browser-local with no upload required.');
+  const suffixes = locale === 'zh'
+    ? (hasLocalSignal
+        ? [
+            '免费使用，无需注册、安装软件或向服务器上传文件；内容保留在当前设备中，适合快速完成日常任务，全程无需等待文件传到服务器。',
+            '无需注册、安装软件或向服务器上传文件；内容保留在当前设备中，适合快速完成日常任务。',
+            '无需注册或安装软件，内容保留在设备中且无需向服务器上传，打开页面即可使用。',
+            '无需安装或向服务器上传文件，内容保留在当前设备中。',
+            '无需向服务器上传。',
+          ]
+        : [
+            '免费使用，无需注册、安装软件或向服务器上传文件；处理在浏览器本地完成，内容保留在当前设备中，打开页面即可快速完成日常任务。',
+            '无需注册、安装软件或向服务器上传文件；浏览器本地处理，内容保留在当前设备中，适合快速完成日常任务。',
+            '无需注册或安装软件，处理在浏览器本地完成，内容无需向服务器上传。',
+            '无需安装或向服务器上传文件，浏览器本地处理。',
+            '浏览器本地处理，无需向服务器上传。',
+          ])
+    : (hasLocalSignal
+        ? [
+            'No sign-up, installation, or server upload required; work stays on your device.',
+            'No sign-up or server upload required; work stays on your device.',
+            'No sign-up or server upload required.',
+            'No server upload required.',
+          ]
+        : [
+            'No sign-up, installation, or server upload required; processing stays in your browser.',
+            'No sign-up or server upload required; processing stays in your browser.',
+            'No installation or server upload required.',
+            'Browser-local with no server upload required.',
+            'No setup or server upload required.',
+          ]);
 
-  return fitDescriptionWithSuffix(description, suffix, locale);
+  return fitDescriptionWithSuffixes(description, suffixes, locale);
 }
 
 export function toJsonLd(data: unknown): string {

@@ -11,6 +11,7 @@
     "harden": "node scripts/harden-static-export.mjs",
     "audit:content": "tsx scripts/audit-publisher-content.ts",
     "submit:baidu": "node scripts/submit-baidu-pages.mjs",
+    "submit:indexnow": "tsx scripts/submit-indexnow.ts",
     "test": "vitest run"
   },
   "dependencies": {

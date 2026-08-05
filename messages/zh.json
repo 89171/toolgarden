@@ -2664,7 +2664,7 @@
     "about": {
       "title": "关于 ToolGarden",
       "meta_title": "关于 ToolGarden 与浏览器本地工具",
-      "meta_description": "了解 ToolGarden 为什么构建隐私优先的浏览器本地工具、工具套件的工作方式以及技术指南的维护原则。",
+      "meta_description": "了解 ToolGarden 为什么坚持在浏览器本地处理数据、工具套件的收录标准，以及技术文章如何维护更新和纠错。",
       "intro": "ToolGarden 是一套实用 Web 工具。在浏览器能够安全、可靠完成任务时，优先让常见开发、文档和媒体工作流直接在用户设备上运行。",
       "sections": [
         {
@@ -2723,7 +2723,7 @@
     "privacy": {
       "title": "隐私政策",
       "meta_title": "ToolGarden 隐私政策",
-      "meta_description": "了解哪些 ToolGarden 数据留在浏览器本地、哪些页面遥测会发送给统计服务，以及浏览器存储和模型资源的使用方式。",
+      "meta_description": "说明哪些数据只留在你的浏览器本地、哪些访问统计会发送给第三方服务，以及浏览器缓存、模型下载和广告 Cookie 的具体范围。",
       "intro": "ToolGarden 以浏览器本地工具处理为核心。本政策说明用户处理的文本或文件，与访问网站时产生的页面级遥测之间的重要区别。",
       "sections": [
         {
@@ -2788,7 +2788,7 @@
     "terms": {
       "title": "使用条款",
       "meta_title": "ToolGarden 使用条款",
-      "meta_description": "查看 ToolGarden 浏览器本地工具的使用条件，包括合理使用、输出校验和服务限制。",
+      "meta_description": "使用 ToolGarden 前请了解合理使用范围、输出结果需自行核验、原始文件请自行备份，以及服务当前可用状态的说明。",
       "intro": "使用 ToolGarden 即表示你同意合法使用工具、验证重要输出，并妥善保留原始数据备份。",
       "sections": [
         {
@@ -2846,7 +2846,7 @@
     "security": {
       "title": "安全",
       "meta_title": "ToolGarden 安全与本地处理",
-      "meta_description": "了解 ToolGarden 的安全边界、浏览器本地处理、依赖治理方式以及潜在漏洞报告流程。",
+      "meta_description": "说明 ToolGarden 的安全边界——浏览器本地处理能防护什么、不能防护什么，以及工程控制措施和安全问题报告流程。",
       "intro": "ToolGarden 通过在浏览器内处理受支持的工具输入来减少服务端暴露，同时承认交付代码、依赖、页面统计和用户设备仍属于完整安全模型的一部分。",
       "sections": [
         {
@@ -2904,7 +2904,7 @@
     "contact": {
       "title": "联系 ToolGarden",
       "meta_title": "联系 ToolGarden",
-      "meta_description": "就工具反馈、隐私问题、内容纠错、无障碍体验或负责任的安全报告联系 ToolGarden。",
+      "meta_description": "反馈工具报错、内容纠错、隐私疑问、无障碍体验问题，或提交负责任的安全报告，均可通过页面上的邮箱联系我们。",
       "intro": "欢迎反馈无法工作的流程、浏览器兼容性、隐私问题、文章纠错、无障碍体验，以及负责任的安全报告。",
       "email_label": "联系邮箱",
       "sections": [
@@ -3392,7 +3392,7 @@
     "title": "ToolGarden",
     "breadcrumb": "首页",
     "meta_title": "ToolGarden 工具箱 - JSON、图片、PDF、文本、二维码在线工具",
-    "subtitle": "在浏览器本地完成 JSON、图片、PDF、文本、二维码、字幕等常见工具操作，无需上传，无需登录，更安心保护隐私。",
+    "subtitle": "在浏览器本地完成 JSON、图片、PDF、音频、文本、二维码和字幕等常见工具操作，文件不上传到服务器，无需登录，更安心保护隐私。",
     "featured": "常用工具",
     "all_tools": "全部工具",
     "search_placeholder": "搜索工具、格式或用途...",
@@ -3938,23 +3938,23 @@
   "tools": {
     "font-subset": {
       "name": "字体提取",
-      "description": "从 TTF / WOFF 字体中提取指定字符，生成更小的 TTF 或 WOFF 子集字体"
+      "description": "从 TTF / WOFF 字体文件中只提取实际用到的字符，生成体积小得多的子集字体，适合优化中文网页字体加载速度。"
     },
     "whiteboard": {
       "name": "白板工具",
-      "description": "使用 tldraw 在浏览器本地创建完整白板，支持图形、画笔、便签、图片、页面和导出"
+      "description": "基于开源 tldraw 打造的本地白板，支持图形绘制、自由画笔、便签、插入图片、多页面切换和一键导出。"
     },
     "excalidraw-board": {
       "name": "Excalidraw画板",
-      "description": "使用开源 Excalidraw 在浏览器本地绘制手绘风画板，支持图形、文字、图片和导出"
+      "description": "基于开源 Excalidraw 打造手绘风格画板，适合画架构草图和示意图，支持图形、文字、图片绘制和多种格式导出。"
     },
     "mind-map": {
       "name": "思维导图",
-      "description": "使用开源 Mind Elixir 直接编辑思维导图，并可导出 Markdown 大纲"
+      "description": "基于开源 Mind Elixir 直接编辑思维导图节点树，支持增删节点、拖动重组层级，并可导出为 Markdown 大纲。"
     },
     "json-format": {
       "name": "JSON 格式化",
-      "description": "格式化、压缩、验证 JSON / JSONC / JSON5，支持注释、尾逗号、树形展示与节点操作",
+      "description": "格式化、压缩并校验 JSON / JSONC / JSON5，支持注释、尾逗号、树形展示与节点增删，浏览器本地处理，无需上传。",
       "input_title": "输入 JSON",
       "output_title": "输出结果",
       "format": "格式化",
@@ -3974,7 +3974,7 @@
     },
     "json-escape": {
       "name": "JSON 压缩转义",
-      "description": "压缩 JSON / JSONC / JSON5 并转义特殊字符，反转义还原可读格式",
+      "description": "将 JSON / JSONC / JSON5 压缩并转义为可嵌入字符串的形式，也支持反向反转义还原，浏览器本地完成，无需上传。",
       "input_title": "输入",
       "output_title": "输出",
       "escape": "压缩转义",
@@ -3983,7 +3983,7 @@
     },
     "json-repair": {
       "name": "JSON 修复清洗",
-      "description": "修复 JSONC / JSON5 注释、尾逗号、单引号、未加引号 key 等常见 JSON 问题",
+      "description": "自动修复 JSONC / JSON5 中的注释、尾逗号、单引号、未加引号 key 等常见问题，还原成标准 JSON，浏览器本地处理。",
       "input_title": "待修复 JSON",
       "output_title": "修复结果",
       "repair": "修复并格式化",
@@ -3992,7 +3992,7 @@
     },
     "json-diff": {
       "name": "JSON 对比",
-      "description": "可视化对比两份 JSON / JSONC / JSON5 的差异，高亮增删改",
+      "description": "可视化对比两份 JSON / JSONC / JSON5 文档，按字段高亮新增、删除和修改的内容，浏览器本地完成，无需上传。",
       "left_title": "左侧 JSON（原始）",
       "right_title": "右侧 JSON（新版）",
       "compare": "开始对比",
@@ -4007,7 +4007,7 @@
     },
     "json-yaml": {
       "name": "JSON ↔ YAML",
-      "description": "完成 JSON 与 YAML 格式双向互转",
+      "description": "完成 JSON 与 YAML 格式的双向互转，正确处理注释和多层嵌套结构，浏览器本地处理，适合配置文件互换。",
       "to_yaml": "→ YAML",
       "to_json": "→ JSON",
       "json_placeholder": "粘贴 JSON / JSONC / JSON5 对象，例如 key/value 配置",
@@ -4015,7 +4015,7 @@
     },
     "json-xml": {
       "name": "JSON ↔ XML",
-      "description": "完成 JSON 与 XML 格式双向互转",
+      "description": "完成 JSON 与 XML 格式的双向互转，自动处理数组的包装元素和类型还原，浏览器本地处理，适合对接遗留接口。",
       "to_xml": "→ XML",
       "to_json": "→ JSON",
       "json_placeholder": "粘贴 JSON / JSONC / JSON5 对象，例如姓名和年龄字段",
@@ -4023,7 +4023,7 @@
     },
     "json-to-csv": {
       "name": "JSON → CSV",
-      "description": "将 JSON / JSONC / JSON5 数组导出为 CSV 文件",
+      "description": "将 JSON / JSONC / JSON5 数组导出为 CSV 表格文件，嵌套字段自动平铺展开，浏览器本地生成，无需上传。",
       "input_title": "输入 JSON / JSONC / JSON5 数组",
       "output_title": "CSV 输出",
       "convert": "转换为 CSV",
@@ -4033,7 +4033,7 @@
     },
     "json-to-excel": {
       "name": "JSON → Excel",
-      "description": "将 JSON / JSONC / JSON5 数组导出为 Excel (.xlsx) 文件，支持多层属性自动展开",
+      "description": "将 JSON / JSONC / JSON5 数组导出为 Excel（.xlsx）文件，多层嵌套字段自动平铺为列，浏览器本地生成。",
       "input_title": "输入 JSON / JSONC / JSON5 数组",
       "preview_title": "预览",
       "upload_json": "上传 JSON 文件",
@@ -4053,7 +4053,7 @@
     },
     "excel-to-json": {
       "name": "Excel → JSON",
-      "description": "读取 Excel (.xlsx/.xls) 文件，转换为 JSON 数组，支持用 > 还原多层属性",
+      "description": "读取 Excel（.xlsx/.xls）文件并转换为 JSON 数组，还原多层嵌套字段，浏览器本地处理，无需上传。",
       "upload_title": "上传 Excel 文件",
       "output_title": "JSON 输出",
       "drop_title": "点击或拖拽上传",
@@ -4064,7 +4064,7 @@
     },
     "json-to-ts": {
       "name": "JSON → TypeScript",
-      "description": "从 JSON / JSONC / JSON5 自动推断并生成 TypeScript interface 类型",
+      "description": "从 JSON / JSONC / JSON5 样本推断并生成 TypeScript interface 类型定义，浏览器本地完成，方便对接接口。",
       "input_title": "输入 JSON / JSONC / JSON5",
       "output_title": "TypeScript 类型",
       "placeholder": "粘贴 JSON / JSONC / JSON5 样本，例如 id 和 name 字段",
@@ -4072,7 +4072,7 @@
     },
     "json-flatten": {
       "name": "JSON Flatten / Unflatten",
-      "description": "将嵌套 JSON / JSONC / JSON5 平铺为路径键，或从路径键还原嵌套结构",
+      "description": "将嵌套 JSON / JSONC / JSON5 平铺为路径键，或从路径键还原成嵌套结构，浏览器本地处理，无需上传。",
       "input_title": "输入 JSON / JSONC / JSON5",
       "output_title": "输出结果",
       "flatten": "Flatten",
@@ -4083,187 +4083,187 @@
     },
     "image-to-jpg": {
       "name": "图片转 JPG",
-      "description": "将 PNG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 JPG"
+      "description": "将 PNG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 JPG，浏览器本地处理，图片不会上传到服务器。"
     },
     "image-compress": {
       "name": "图片压缩",
-      "description": "智能压缩 JPG、PNG、WebP 等图片，默认保持原格式，也可选择输出 WebP"
+      "description": "智能压缩 JPG、PNG、WebP 等图片，默认保持原格式，也可选择输出 WebP，浏览器本地处理，无需上传。"
     },
     "image-upscale": {
       "name": "图片无损放大",
-      "description": "将 JPG、PNG、WebP 等图片按 2x、3x、4x 或自定义尺寸放大，支持像素无损、平滑高清和清晰增强模式"
+      "description": "将 JPG、PNG、WebP 等图片按 2x、3x、4x 或自定义尺寸放大，提供像素无损、平滑高清和清晰增强模式，浏览器本地处理。"
     },
     "image-remove-bg": {
       "name": "图片去背景",
-      "description": "使用开源模型移除图片背景，在浏览器本地导出透明 PNG"
+      "description": "使用开源分割模型在浏览器本地识别图片主体并移除背景，导出透明 PNG，图片不会上传到服务器。"
     },
     "image-id-photo": {
       "name": "证件照制作",
-      "description": "制作证件照，支持中国 1 寸、2 寸、中国签证、2 x 2 inch 等尺寸，AI 去背景、人脸构图、底色切换和拖动缩放调整"
+      "description": "制作证件照，支持中国 1 寸、2 寸、中国签证、2x2 inch 等尺寸及自定义规格，AI 去背景、人脸构图、换底色，浏览器本地完成。"
     },
     "image-remove-watermark": {
       "name": "图片去水印",
-      "description": "框选图片水印区域，使用浏览器本地 AI 模型补全或快速修复，导出 JPG、PNG 或 WebP"
+      "description": "框选图片上的水印区域，使用浏览器本地 AI 模型或快速像素修复补全该区域，支持导出 JPG、PNG 或 WebP。"
     },
     "image-watermark": {
       "name": "图片加水印",
-      "description": "为图片添加文字或图片水印，支持拖动、九宫格定位、平铺、旋转和透明度设置"
+      "description": "为一批图片批量添加文字或图片水印，支持拖动定位、九宫格布局、平铺排列、旋转和透明度调节。"
     },
     "image-editor": {
       "name": "图片编辑",
-      "description": "为图片绘制形状、折线、画笔、记号笔、文字、马赛克、模糊和橡皮擦标注"
+      "description": "为截图和图片绘制形状、折线、自由画笔、记号笔、文字标注，并提供马赛克、模糊和橡皮擦工具，浏览器本地完成，不上传图片。"
     },
     "image-to-icon": {
       "name": "图片转 Icon",
-      "description": "将 PNG、SVG、JPG、WebP 等图片制作成 ICO、ICNS 或多尺寸 PNG ZIP 图标，支持去背景、拖拽缩放、圆角和浏览器预览"
+      "description": "将 PNG、SVG、JPG、WebP 等图片转换为 ICO、ICNS 或多尺寸 PNG 图标包，支持去背景、缩放和圆角，浏览器本地完成。"
     },
     "image-to-png": {
       "name": "图片转 PNG",
-      "description": "将 JPG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 PNG"
+      "description": "将 JPG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 PNG，保留透明通道，浏览器本地处理，无需上传。"
     },
     "image-to-webp": {
       "name": "图片转 WebP",
-      "description": "将 JPG、PNG、GIF、BMP、SVG、AVIF 等图片转换为 WebP"
+      "description": "将 JPG、PNG、GIF、BMP、SVG、AVIF 等图片转换为 WebP，可选有损或无损模式，浏览器本地处理。"
     },
     "image-to-avif": {
       "name": "图片转 AVIF",
-      "description": "将 JPG、PNG、WebP、GIF、BMP、SVG 等图片转换为 AVIF"
+      "description": "将 JPG、PNG、WebP、GIF、BMP、SVG 等图片转换为 AVIF，体积更小、支持透明通道，浏览器本地处理。"
     },
     "image-to-base64": {
       "name": "图片转 Base64",
-      "description": "将 PNG、JPG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 Base64 Data URL，支持选择、拖拽和 Ctrl + V 粘贴图片"
+      "description": "将 PNG、JPG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 Base64 编码，支持选择、拖拽和粘贴上传，浏览器本地完成。"
     },
     "base64-to-image": {
       "name": "Base64 转图片",
-      "description": "将 Base64 或 data:image Data URL 还原为图片文件，在浏览器本地预览并下载"
+      "description": "将 Base64 或 data:image 格式的字符串还原为图片文件，支持预览和下载，浏览器本地完成，不上传内容。"
     },
     "image-crop": {
       "name": "图片裁剪",
-      "description": "拖拽裁剪框，移动或调整裁剪区域后导出图片"
+      "description": "拖动可调整的裁剪框截取图片局部区域，实时预览裁剪结果后再导出，浏览器本地处理，图片不会上传。"
     },
     "image-resize": {
       "name": "图片尺寸修改",
-      "description": "按指定宽度或高度等比例缩放图片并导出"
+      "description": "输入目标宽度或高度并自动保持原始宽高比，批量修改一组图片的尺寸，浏览器本地处理，适合统一素材规格。"
     },
     "pdf-to-pdf": {
       "name": "转为 PDF",
-      "description": "将 Word、Excel、PowerPoint、EPUB、MOBI、JPG、PNG、WebP、TXT、Markdown、HTML 转换为 PDF"
+      "description": "将 Word、Excel、PPT、EPUB、图片、TXT、Markdown、HTML 等多种格式转换为 PDF，浏览器本地完成，无需上传。"
     },
     "pdf-to-word": {
       "name": "PDF 转 Word",
-      "description": "保留 PDF 文字字号、基础样式和图片并生成可编辑的 Word DOCX 文档"
+      "description": "把 PDF 转换成可编辑的 Word DOCX 文档，按文字位置尽量还原段落、字号和基础样式，浏览器本地处理。"
     },
     "pdf-merge": {
       "name": "合并 PDF",
-      "description": "将多个 PDF 文件合并成一个文档，支持拖放重新排序"
+      "description": "把多个 PDF 文件按拖动排好的顺序合并成一份文档，不重新渲染页面，画质和排版完全保持不变。"
     },
     "word-merge": {
       "name": "Word 合并",
-      "description": "将多个 Word DOCX 文档合并成一个 DOCX 文件"
+      "description": "把多个 Word DOCX 文档按列表顺序合并成一份文件，样式冲突时以先出现的文档为准，浏览器本地完成。"
     },
     "ppt-merge": {
       "name": "PPT 合并",
-      "description": "将多个 PPTX 演示文稿合并成一个 PPTX 文件"
+      "description": "把多个 PPTX 演示文稿按列表顺序合并成一份文件，各文件原有的幻灯片顺序保持不变，浏览器本地完成。"
     },
     "txt-merge": {
       "name": "TXT 合并",
-      "description": "将多个 TXT 文本文件合并成一个 TXT 文件"
+      "description": "把多个 TXT 纯文本文件按列表顺序拼接成一份文件，适合把分章节导出的草稿合并成完整文档，浏览器本地处理。"
     },
     "markdown-merge": {
       "name": "Markdown 合并",
-      "description": "将多个 Markdown 文件合并成一个 MD 文件"
+      "description": "把多个 Markdown 文件按顺序合并成一份 MD 文件，浏览器本地完成，方便统一转成 PDF 或 HTML。"
     },
     "csv-merge": {
       "name": "CSV 合并",
-      "description": "将多个 CSV 文件按表格行合并成一个 CSV 文件"
+      "description": "把多个 CSV 文件按表格行拼接成一份文件，合并前请确认各文件列名和顺序一致，避免数据错位，浏览器本地处理。"
     },
     "rtf-merge": {
       "name": "RTF 合并",
-      "description": "将多个 RTF 富文本文件合并成一个 RTF 文件"
+      "description": "把多个 RTF 富文本文件按列表顺序合并成一份文件，保留字体、字号和段落对齐等基础格式，浏览器本地处理。"
     },
     "excel-merge": {
       "name": "Excel 合并",
-      "description": "合并多个 Excel / CSV 文件，支持汇总到同一个 Sheet 或保留多个来源 Sheet"
+      "description": "把多个 Excel 或 CSV 文件的数据汇总到同一个 Sheet，或让每个源文件各占一个独立 Sheet，浏览器本地处理。"
     },
     "image-merge": {
       "name": "图片合并长图",
-      "description": "将多张图片垂直拼接成长图 PNG，或合成为 PDF"
+      "description": "把多张图片纵向拼接成一张长图，或合成为多页 PDF，可按列表顺序调整排列，浏览器本地完成，无需上传图片。"
     },
     "pdf-split": {
       "name": "拆分 PDF",
-      "description": "将 PDF 文件拆分成多个文档，支持提取特定页面或按页面范围分割"
+      "description": "按指定页码范围把一份 PDF 拆分成多份独立文档，不重新渲染页面，画质和排版保持不变，浏览器本地完成。"
     },
     "pdf-extract-pages": {
       "name": "提取页面",
-      "description": "从 PDF 文件中提取特定页面，选择并保存单个页面或页面范围为新文档"
+      "description": "从 PDF 中挑出指定的单页或页码范围，保存为一份新文档，不重新渲染，页面画质与排版保持不变。"
     },
     "pdf-organize": {
       "name": "整理 PDF",
-      "description": "重新排序、复制和删除 PDF 页面，拖放整理后导出新文档"
+      "description": "对 PDF 页面进行重新排序、复制或删除，整理好后导出新文档，原文档内容不受影响，浏览器本地处理。"
     },
     "audio-to-mp3": {
       "name": "音频转 MP3",
-      "description": "将 WAV、M4A、AAC、OGG、OPUS、WebM、FLAC 等音频在浏览器本地转换为 MP3"
+      "description": "把 WAV、M4A、AAC、OGG、OPUS、WebM、FLAC 等音频文件转换为 MP3，浏览器本地完成，无需上传。"
     },
     "audio-to-wav": {
       "name": "音频转 WAV",
-      "description": "将 MP3、M4A、AAC、OGG、OPUS、WebM、FLAC 等音频在浏览器本地转换为 WAV"
+      "description": "把 MP3、M4A、AAC、OGG、OPUS、WebM、FLAC 等音频文件转换为无压缩的 WAV，浏览器本地处理。"
     },
     "audio-extract": {
       "name": "音频提取",
-      "description": "从 MP4、MOV、WebM、MKV、AVI、MPEG 等视频中提取音频并导出 MP3"
+      "description": "从 MP4、MOV、WebM、MKV、AVI 等视频文件中提取音轨并导出为 MP3，浏览器本地完成，无需上传视频。"
     },
     "audio-merge": {
       "name": "音频合并",
-      "description": "将多个不同格式的音频文件按顺序合并为一个 MP3 文件"
+      "description": "把多个不同格式的音频文件按列表顺序拼接成一份 MP3，各段先统一采样率再合并，浏览器本地处理。"
     },
     "audio-trim": {
       "name": "音频剪辑",
-      "description": "按开始和结束时间剪切或修剪音频，并导出为 MP3"
+      "description": "按指定的开始和结束时间截取音频中的一段并导出 MP3，适合从长录音里裁出需要引用的片段，浏览器本地处理。"
     },
     "audio-compress": {
       "name": "音频压缩",
-      "description": "通过降低 MP3 码率减少音频文件大小，并在浏览器本地导出压缩音频"
+      "description": "降低 MP3 比特率压缩音频体积，可将 320 kbps 降到 128 kbps 甚至更低，浏览器本地处理，适合满足附件限制。"
     },
     "audio-recorder": {
       "name": "录音笔",
-      "description": "使用麦克风在线录制音频，在浏览器本地预览并导出 MP3"
+      "description": "调用浏览器麦克风直接录音，本地试听确认效果后导出为 MP3 文件，录音全程不会上传到服务器。"
     },
     "audio-to-text": {
       "name": "音频转文本",
-      "description": "上传音频后在浏览器本地加载开源 Whisper 模型，将语音转写为文本"
+      "description": "加载开源 Whisper 模型在浏览器本地把语音转写成文字稿，音频内容不会上传，适合处理访谈等敏感录音。"
     },
     "audio-split-stems": {
       "name": "音频分轨",
-      "description": "在浏览器本地加载开源 HT-Demucs 模型，把歌曲拆分为人声、鼓、贝斯、吉他、钢琴和其他六条轨道"
+      "description": "加载开源 HT-Demucs 模型，把一首歌拆分成人声、鼓、贝斯、吉他、钢琴等独立音轨，浏览器本地推理完成。"
     },
     "audio-volume": {
       "name": "修改音量",
-      "description": "调整音频音量大小，并在浏览器本地导出 MP3"
+      "description": "整体放大或降低音频音量后导出 MP3，可用于拉平多段素材的音量差异，浏览器本地处理，不上传音频。"
     },
     "audio-speed": {
       "name": "修改播放速度",
-      "description": "改变音频播放速度，并在浏览器本地导出 MP3"
+      "description": "调整音频播放速度（如 0.5x 到 2x）并导出 MP3，采用变速不变调算法，语音听感保持自然，浏览器本地处理。"
     },
     "audio-sample-rate": {
       "name": "修改采样率",
-      "description": "将音频重新采样为指定采样率，并导出 MP3"
+      "description": "把音频重新采样到指定采样率（如 16kHz、44.1kHz）并导出 MP3，用于匹配语音识别模型或特定设备要求。"
     },
     "audio-bitrate": {
       "name": "调整比特率",
-      "description": "按指定 MP3 比特率重新编码音频文件"
+      "description": "把音频重新编码为指定的 MP3 比特率（如 96/128/192/320 kbps），精确控制文件体积，浏览器本地处理。"
     },
     "audio-remove-silence": {
       "name": "去除静音",
-      "description": "自动裁掉音频中的静音和空白片段，并导出 MP3"
+      "description": "自动检测并裁掉录音里的静音停顿和空白段落，导出精简后的 MP3，适合整理口述稿，浏览器本地处理。"
     },
     "audio-tts": {
       "name": "文字转语音",
-      "description": "使用浏览器本地语音合成朗读输入文字"
+      "description": "调用浏览器内置语音合成引擎朗读文字，可调整语速语调，实际音色取决于操作系统安装的语音包。"
     },
     "text-word-count": {
       "name": "字数统计",
-      "description": "统计文本字数、词数、行数、段落、句子和字节大小",
+      "description": "统计文本的字符数（含/不含空格）、词数、行数、段落数、句子数和字节大小，浏览器本地完成，适合控制投稿篇幅。",
       "input_title": "输入文本",
       "result_title": "统计结果",
       "placeholder": "粘贴或输入需要统计的文本...",
@@ -4279,7 +4279,7 @@
     },
     "text-diff": {
       "name": "文本对比",
-      "description": "使用开源 diff 算法对比两段文本差异，按行和词高亮增删改",
+      "description": "用开源 diff 算法对比两段文本，同时按行和按词高亮显示新增、删除和修改的内容，浏览器本地处理，不上传文本。",
       "left_title": "左侧文本（原始）",
       "right_title": "右侧文本（新版）",
       "left_result": "原始文本",
@@ -4297,15 +4297,15 @@
     },
     "text-markdown-to-pdf": {
       "name": "Markdown 转 PDF",
-      "description": "本地生成可下载的 PDF，支持中英文与自动分页"
+      "description": "把 Markdown 转换成排版整洁的 PDF 文件，支持中英文混排和自动分页，浏览器本地生成，不上传内容。"
     },
     "text-markdown-to-html": {
       "name": "Markdown 转 HTML",
-      "description": "本地生成完整 HTML，可预览、复制和下载"
+      "description": "把 Markdown 转换为完整的语义化 HTML，可直接预览、复制和下载，不内联主题样式，方便套用自己的 CSS。"
     },
     "subtitle-maker": {
       "name": "字幕编辑器",
-      "description": "编辑和转换 LRC、SRT 与 VTT 字幕，支持媒体预览、时间轴校准和字幕导出",
+      "description": "在 LRC、SRT、VTT 三种字幕格式之间互相转换和编辑，支持加载音视频预览并校准时间轴，浏览器本地处理。",
       "load_media": "加载媒体",
       "load_subtitle": "加载字幕",
       "export": "导出字幕",
@@ -4344,7 +4344,7 @@
     },
     "json-schema": {
       "name": "JSON Schema 生成",
-      "description": "从 JSON / JSONC / JSON5 样本自动推断生成 JSON Schema 定义",
+      "description": "从 JSON / JSONC / JSON5 样本自动推断字段、类型和嵌套结构，生成 JSON Schema 草稿，浏览器本地完成。",
       "input_title": "输入 JSON / JSONC / JSON5 样本",
       "output_title": "JSON Schema",
       "placeholder": "粘贴 JSON / JSONC / JSON5 样本，例如 id 和 name 字段",
@@ -4352,7 +4352,7 @@
     },
     "json-schema-validate": {
       "name": "JSON Schema 校验",
-      "description": "使用 JSON Schema 校验 JSON / JSONC / JSON5 数据，输出错误路径和原因",
+      "description": "用 JSON Schema 校验 JSON / JSONC / JSON5 数据，逐条给出错误字段路径和具体原因，浏览器本地处理。",
       "json_title": "JSON / JSONC / JSON5 数据",
       "schema_title": "JSON Schema",
       "result_title": "校验结果",
@@ -4365,7 +4365,7 @@
     },
     "json-path": {
       "name": "JSONPath 查询",
-      "description": "使用 JSONPath 表达式从 JSON / JSONC / JSON5 中精准提取嵌套字段",
+      "description": "用 JSONPath 表达式从嵌套 JSON / JSONC / JSON5 中精确提取字段，支持通配符与过滤条件，浏览器本地完成。",
       "input_title": "输入 JSON / JSONC / JSON5",
       "path_title": "JSONPath 表达式",
       "result_title": "查询结果",
@@ -4378,7 +4378,7 @@
     },
     "json-stats": {
       "name": "JSON 统计分析",
-      "description": "分析 JSON / JSONC / JSON5 结构：嵌套层级、Key 数量、类型分布、体积对比",
+      "description": "分析 JSON / JSONC / JSON5 的嵌套层级、key 数量、类型分布，并对比格式化与压缩后的体积，浏览器本地完成。",
       "input_title": "输入 JSON / JSONC / JSON5",
       "raw_size": "原始体积",
       "max_depth": "最大嵌套层级",
@@ -4392,7 +4392,7 @@
     },
     "info-codec": {
       "name": "信息编码转换",
-      "description": "处理 Unicode、URL、UTF16、Base64、MD5、SHA1、十六进制、JWT、Cookie、Gzip 和字符串转义",
+      "description": "支持 Unicode、URL、Base64、MD5、SHA1、十六进制、JWT、Cookie、Gzip 等常见编码解码，浏览器本地完成。",
       "input_title": "输入内容",
       "operation_title": "转换方式",
       "output_title": "输出结果",
@@ -4437,7 +4437,7 @@
     },
     "jwt": {
       "name": "JWT 解析",
-      "description": "解码 JWT Token，查看 Header / Payload，支持 HS256 签名验证",
+      "description": "解析 JWT，展示 Header 与 Payload 内容并支持校验 HS256 签名，浏览器本地完成，不上传 token。",
       "token_title": "JWT Token",
       "decode": "解码",
       "verify_title": "HS256 签名验证",
@@ -4457,7 +4457,7 @@
     },
     "qr-code-generator": {
       "name": "二维码生成",
-      "description": "将网址、文本、联系信息或 Wi-Fi 配置文本生成二维码 PNG",
+      "description": "为网址、纯文本、联系人信息和 Wi-Fi 密码生成二维码并导出 PNG 图片，浏览器本地完成，不经过服务器。",
       "generate_title": "生成二维码",
       "preview_title": "二维码预览",
       "text_label": "二维码内容",
@@ -4489,7 +4489,7 @@
     },
     "qr-code-decoder": {
       "name": "二维码解码",
-      "description": "上传二维码图片或开启摄像头实时识别，在浏览器本地解码并复制二维码内容",
+      "description": "上传二维码图片，或直接打开摄像头实时扫描识别其中的文字、网址或联系人信息，浏览器本地完成，不上传图片。",
       "decode_title": "上传图片或摄像头识别",
       "result_title": "识别结果",
       "choose_image": "选择图片",
@@ -4523,7 +4523,7 @@
     },
     "timestamp": {
       "name": "时间戳转换",
-      "description": "Unix 时间戳与日期双向转换，支持秒、毫秒、微秒精度和多时区",
+      "description": "在 Unix 时间戳与日期之间双向转换，支持秒、毫秒、微秒精度和多个时区，浏览器本地完成，适合排查跨时区日志。",
       "current_title": "当前时间",
       "current_second": "秒",
       "current_millisecond": "毫秒",
@@ -4548,7 +4548,7 @@
     },
     "uuid": {
       "name": "UUID 生成",
-      "description": "批量生成 UUID v1 / v4 / v7 和 NanoID，支持大小写切换和去连字符",
+      "description": "批量生成 UUID v1 / v4 / v7 和 NanoID，支持大小写切换与去除连字符，浏览器本地生成，不经过服务器。",
       "settings_title": "生成设置",
       "result_title": "结果",
       "version_label": "版本",
@@ -4568,7 +4568,7 @@
     },
     "color-converter": {
       "name": "颜色转换器",
-      "description": "HEX、RGB、HSL、HSV、CMYK 颜色格式互转，实时预览色板",
+      "description": "在 HEX、RGB、HSL、HSV、CMYK 五种颜色格式之间互相转换，带实时色板预览，浏览器本地完成。",
       "preview_title": "颜色预览",
       "formats_title": "颜色格式",
       "picker_label": "颜色选择器",
@@ -4581,7 +4581,7 @@
     },
     "regex": {
       "name": "正则表达式测试",
-      "description": "正则表达式测试工具，支持 flags、命名分组、高亮匹配和常用模板",
+      "description": "在线测试正则表达式，支持 flags、命名分组、高亮匹配结果，并提供常用正则模板，浏览器本地运行，不上传测试文本。",
       "pattern_title": "正则表达式",
       "test_text_title": "测试文本",
       "result_title": "匹配结果",
@@ -4605,7 +4605,7 @@
     },
     "cron": {
       "name": "Cron 表达式解析",
-      "description": "解析 Cron 表达式为人类可读描述，并预览下 N 次执行时间",
+      "description": "解析 Cron 表达式并转成人类可读的文字说明，同时预览接下来几次的实际触发时间，浏览器本地计算。",
       "expression_title": "Cron 表达式",
       "description_title": "解析结果",
       "next_runs_title": "下次执行时间",
@@ -4620,7 +4620,7 @@
     },
     "url-builder": {
       "name": "URL / Query String 构造器",
-      "description": "拆解和构造 URL Query String，添加、编辑、编码参数并实时预览",
+      "description": "拆解或构造 URL 的 query string，支持新增、编辑、自动编码参数并实时预览结果，浏览器本地处理。",
       "input_title": "URL",
       "params_title": "参数",
       "result_title": "构造结果",
@@ -4637,7 +4637,7 @@
     },
     "image-exif": {
       "name": "图片 EXIF 查看 / 清除",
-      "description": "读取图片 EXIF 元信息，或一键抹除后导出",
+      "description": "查看图片的拍摄时间、相机型号、光圈快门和 GPS 定位等 EXIF 信息，也可一键清除后下载，浏览器本地处理。",
       "upload_title": "上传图片",
       "exif_title": "EXIF 元信息",
       "drop_title": "点击或拖拽图片到这里",
@@ -4653,7 +4653,7 @@
     },
     "image-ocr": {
       "name": "图片 OCR 文字识别",
-      "description": "从图片中提取文字，适合扫描件、截图和拍照图片",
+      "description": "从扫描件、截图或拍照文档中识别提取文字内容，浏览器本地运行开源 OCR 引擎，图片不会上传。",
       "upload_title": "上传图片",
       "settings_title": "识别设置",
       "result_title": "识别结果",
@@ -4689,7 +4689,7 @@
     },
     "image-rotate": {
       "name": "图片旋转 / 翻转",
-      "description": "旋转 90°、180°、270°，或水平 / 垂直翻转图片",
+      "description": "把图片旋转 90°、180°、270°，或做水平、垂直翻转，一次性固定方向，浏览器本地处理，即时预览效果。",
       "upload_title": "上传图片",
       "transform_title": "变换设置",
       "result_title": "预览与下载",
@@ -4706,7 +4706,7 @@
     },
     "image-color-picker": {
       "name": "图片取色器",
-      "description": "上传图片，点击任意位置读取 HEX、RGB、HSL 颜色",
+      "description": "上传图片后点击任意像素点，读取该处颜色的 HEX、RGB、HSL 三种表示形式，浏览器本地完成，不上传图片。",
       "upload_title": "上传图片",
       "picker_title": "在图片上点击取色",
       "result_title": "拾取记录",
@@ -4720,7 +4720,7 @@
     },
     "image-gif": {
       "name": "GIF 分帧 / 合成",
-      "description": "将 GIF 拆成逐帧 PNG，或把多张 PNG / JPG 合成为 GIF 动图",
+      "description": "把 GIF 动图拆分成逐帧 PNG 图片，或把多张 PNG / JPG 合成为 GIF 动图，浏览器本地处理。",
       "mode_split": "GIF 拆帧",
       "mode_compose": "合成 GIF",
       "upload_title": "上传文件",
@@ -4741,7 +4741,7 @@
     },
     "pdf-encrypt": {
       "name": "PDF 加密 / 解密",
-      "description": "为 PDF 设置或移除打开密码，支持权限限制",
+      "description": "为 PDF 设置打开密码或移除已知密码，并可限制打印和复制权限，密码全程只在浏览器本地处理。",
       "mode_encrypt": "加密",
       "mode_decrypt": "解密",
       "upload_title": "上传 PDF",
@@ -4765,7 +4765,7 @@
     },
     "pdf-watermark": {
       "name": "PDF 加水印",
-      "description": "为 PDF 添加文字水印，支持九宫格定位、平铺、对角线和透明度",
+      "description": "为 PDF 每一页添加文字水印，支持九宫格定位、平铺排列、对角线排布、透明度和旋转角度调节。",
       "upload_title": "上传 PDF",
       "settings_title": "水印设置",
       "result_title": "结果",
@@ -4786,7 +4786,7 @@
     },
     "pdf-to-image": {
       "name": "PDF 转图片",
-      "description": "将 PDF 每一页导出为高清 PNG 或 JPG",
+      "description": "把 PDF 的每一页导出为高分辨率 PNG 或 JPG 图片，可自定义缩放倍数控制清晰度，浏览器本地完成。",
       "upload_title": "上传 PDF",
       "settings_title": "导出设置",
       "result_title": "预览页面",

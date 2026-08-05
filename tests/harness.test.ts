@@ -14,7 +14,7 @@ import {
   createToolSeoTitle,
   toJsonLd,
 } from '../lib/tools/jsonld';
-import { getClientMessages } from '../lib/tools/seo';
+import { getClientMessages, getToolClientMessages } from '../lib/tools/seo';
 import { toolRegistry } from '../lib/tools/registry';
 import {
   createSafeFilenameStem,
@@ -48,12 +48,14 @@ describe('registry and localization harness', () => {
     }
   });
 
-  it('keeps private policy copy server-only while exposing visible tool FAQs', () => {
+  it('keeps server-only copy out of the root provider and scopes visible tool FAQs', () => {
     const clientMessages = getClientMessages('en') as Record<string, unknown>;
+    const toolMessages = getToolClientMessages('en', 'json-format') as Record<string, unknown>;
     expect(clientMessages).not.toHaveProperty('site_pages');
-    expect(clientMessages).toHaveProperty('tool_faq');
+    expect(clientMessages).not.toHaveProperty('tool_faq');
     expect(clientMessages).toHaveProperty('common');
     expect(clientMessages).toHaveProperty('tools');
+    expect(toolMessages).toHaveProperty('tool_faq.json-format');
   });
 });
 
@@ -108,9 +110,11 @@ describe('ad eligibility policy', () => {
 
 describe('SEO helpers', () => {
   it('keeps generated tool titles and descriptions concise without literal ellipses', () => {
-    for (const [locale, messages, titleLimit, descriptionLimit] of [
-      ['en', enMessages, 47, 155],
-      ['zh', zhMessages, 30, 90],
+    // These lower bounds are a project-specific snippet coverage guardrail, not a
+    // claim that search engines use character counts as a ranking threshold.
+    for (const [locale, messages, titleLimit, descriptionMin, descriptionLimit] of [
+      ['en', enMessages, 47, 120, 155],
+      ['zh', zhMessages, 30, 70, 90],
     ] as const) {
       for (const tool of toolRegistry) {
         const copy = messages.tools[tool.id as keyof typeof messages.tools];
@@ -119,6 +123,7 @@ describe('SEO helpers', () => {
         expect(title.length).toBeLessThanOrEqual(titleLimit);
         expect(title).not.toContain('...');
         expect(title).not.toMatch(/[\s,.，。;；:：、/|\\–—-]$/u);
+        expect(description.length).toBeGreaterThanOrEqual(descriptionMin);
         expect(description.length).toBeLessThanOrEqual(descriptionLimit);
         expect(description).toMatch(locale === 'zh' ? /。$/u : /\.$/u);
       }
