@@ -16,6 +16,7 @@ import {
 } from '@/lib/utils/mind-map';
 import type { MindElixirData, MindElixirInstance, Theme, Topic } from 'mind-elixir';
 import { mindMapContent } from '@/lib/tools/content/mind-map';
+import { FULLSCREEN_ARIA_KEY_SHORTCUTS, useFullscreenShortcut } from '@/lib/hooks/useFullscreenShortcut';
 
 function downloadBlob(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);
@@ -704,6 +705,8 @@ export function MindMapTool() {
   };
 
   const isFullscreenActive = isFullscreen || isFullscreenFallback;
+  const fullscreenLabel = isFullscreenActive ? t('exit_fullscreen') : t('fullscreen');
+  useFullscreenShortcut(toggleFullscreen, isReady);
 
   const focusSelectedTopic = () => void runMapAction((mind) => {
     const target = getActionTarget(mind);
@@ -831,7 +834,7 @@ export function MindMapTool() {
     <ToolLayout toolId="mind-map" content={mindMapContent}>
       <div
         ref={fullscreenRef}
-        className={`flex min-h-0 flex-1 flex-col gap-3 bg-background ${isFullscreenActive ? 'fixed inset-0 z-50 h-screen overflow-hidden p-3' : ''}`}
+        className={`flex min-h-0 flex-1 flex-col gap-3 bg-background ${isFullscreenActive ? 'fixed inset-0 z-50 h-[100dvh] overflow-hidden p-3' : ''}`}
       >
         <input
           ref={importJsonInputRef}
@@ -904,8 +907,15 @@ export function MindMapTool() {
                 {t('layout_right')}
               </Button>
             </div>
-            <Button type="button" variant="secondary" onClick={toggleFullscreen} disabled={!isReady} title={isFullscreenActive ? t('exit_fullscreen') : t('fullscreen')}>
-              {isFullscreenActive ? t('exit_fullscreen') : t('fullscreen')}
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={toggleFullscreen}
+              disabled={!isReady}
+              aria-keyshortcuts={FULLSCREEN_ARIA_KEY_SHORTCUTS}
+              title={`${fullscreenLabel} (${t('fullscreen_shortcut')})`}
+            >
+              {fullscreenLabel}
             </Button>
             <Button type="button" variant="secondary" onClick={toggleOutline} disabled={!isReady} title={isOutlineOpen ? t('hide_markdown') : t('show_markdown')}>
               {isOutlineOpen ? t('hide_markdown') : t('show_markdown')}

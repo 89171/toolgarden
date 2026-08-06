@@ -171,3 +171,46 @@ export function unicodeDecode(input: string): string {
     String.fromCharCode(parseInt(code, 16))
   );
 }
+
+function transformJSONStringValues(value: unknown, transform: (input: string) => string): unknown {
+  if (typeof value === 'string') return transform(value);
+  if (Array.isArray(value)) return value.map((item) => transformJSONStringValues(item, transform));
+  if (typeof value === 'object' && value !== null) {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, item]) => [key, transformJSONStringValues(item, transform)])
+    );
+  }
+  return value;
+}
+
+/** 解析并格式化 JSON，同时只转换对象或数组中的字符串值，保留 key 和整体结构 */
+export function transformJSONValues(
+  input: string,
+  transform: (value: string) => string,
+  indent = 2
+): FormatOutcome {
+  if (!input.trim()) return { ok: false, message: '' };
+
+  try {
+    const parsed = transformJSONStringValues(parseLooseJSON(input), transform);
+    return { ok: true, output: stringifyJSONValue(parsed, indent), parsed };
+  } catch (e) {
+    return { ok: false, message: (e as Error).message };
+  }
+}
+
+export function urlEncodeJSONValues(input: string, indent = 2): FormatOutcome {
+  return transformJSONValues(input, urlEncode, indent);
+}
+
+export function urlDecodeJSONValues(input: string, indent = 2): FormatOutcome {
+  return transformJSONValues(input, urlDecode, indent);
+}
+
+export function unicodeEncodeJSONValues(input: string, indent = 2): FormatOutcome {
+  return transformJSONValues(input, unicodeEncode, indent);
+}
+
+export function unicodeDecodeJSONValues(input: string, indent = 2): FormatOutcome {
+  return transformJSONValues(input, unicodeDecode, indent);
+}

@@ -6,6 +6,7 @@ import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
 import { excalidrawBoardContent } from '@/lib/tools/content/excalidraw-board';
+import { FULLSCREEN_ARIA_KEY_SHORTCUTS, useFullscreenShortcut } from '@/lib/hooks/useFullscreenShortcut';
 
 const EXCALIDRAW_ASSET_PATH = '/excalidraw/';
 
@@ -105,19 +106,27 @@ export function ExcalidrawBoardTool() {
   };
 
   const isFullscreenActive = isFullscreen || isFullscreenFallback;
+  const fullscreenLabel = isFullscreenActive ? t('exit_fullscreen') : t('fullscreen');
+  useFullscreenShortcut(toggleFullscreen);
 
   return (
     <ToolLayout toolId="excalidraw-board" content={excalidrawBoardContent}>
       <div
         ref={fullscreenRef}
-        className={`flex min-h-0 flex-1 flex-col bg-background ${isFullscreenActive ? 'fixed inset-0 z-50 h-screen overflow-hidden p-3' : ''}`}
+        className={`flex min-h-0 flex-1 flex-col bg-background ${isFullscreenActive ? 'fixed inset-0 z-50 h-[100dvh] overflow-hidden p-3' : ''}`}
       >
         <Panel
           title={t('canvas_title')}
           className="min-h-0 flex-1"
           actions={(
-            <Button type="button" variant="secondary" onClick={toggleFullscreen}>
-              {isFullscreenActive ? t('exit_fullscreen') : t('fullscreen')}
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={toggleFullscreen}
+              aria-keyshortcuts={FULLSCREEN_ARIA_KEY_SHORTCUTS}
+              title={`${fullscreenLabel} (${t('fullscreen_shortcut')})`}
+            >
+              {fullscreenLabel}
             </Button>
           )}
         >

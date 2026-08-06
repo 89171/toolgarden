@@ -13,13 +13,13 @@ import {
   minifyJSON,
   parseJSONValue,
   stringifyJSONValue,
-  unicodeDecode,
-  unicodeEncode,
-  urlDecode,
-  urlEncode,
+  unicodeDecodeJSONValues,
+  unicodeEncodeJSONValues,
+  urlDecodeJSONValues,
+  urlEncodeJSONValues,
 } from '@/lib/utils/json';
 
-type OutputMode = 'tree' | 'jsonText' | 'text';
+type OutputMode = 'tree' | 'jsonText';
 
 const EXAMPLE_JSON = {
   name: 'JSON Toolkit', version: '1.0.0',
@@ -36,6 +36,7 @@ export default function JsonFormatPage() {
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [activeNodeId, setActiveNodeId] = useState<string | null>(null);
   const [allExpanded, setAllExpanded] = useState(true);
   const [outputMode, setOutputMode] = useState<OutputMode>('tree');
   const autoFormatTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -50,7 +51,7 @@ export default function JsonFormatPage() {
   const applyFormat = useCallback((raw: string) => {
     const r = formatJSON(raw);
     if (!r.ok) { setError(r.message); setOutput(''); }
-    else { setOutput(r.output); setOutputMode('tree'); setError(''); setAllExpanded(true); setExpanded({}); }
+    else { setOutput(r.output); setOutputMode('tree'); setError(''); setAllExpanded(true); setExpanded({}); setActiveNodeId(null); }
   }, []);
 
   const handleFormat = () => {
@@ -62,20 +63,26 @@ export default function JsonFormatPage() {
     const r = minifyJSON(input);
     if (!r.ok) { setError(r.message); setOutput(''); } else { setOutput(r.output); setOutputMode('jsonText'); setError(''); }
   };
-  const handleUrlEncode = () => { cancelAutoFormat(); try { setOutput(urlEncode(input)); setOutputMode('text'); setError(''); } catch { setError(t('url_encode_error')); setOutput(''); } };
-  const handleUrlDecode = () => { cancelAutoFormat(); try { setOutput(urlDecode(input)); setOutputMode('text'); setError(''); } catch { setError(t('url_decode_error')); setOutput(''); } };
-  const handleUnicodeEncode = () => { cancelAutoFormat(); try { setOutput(unicodeEncode(input)); setOutputMode('text'); setError(''); } catch { setError(t('encode_error')); setOutput(''); } };
-  const handleUnicodeDecode = () => { cancelAutoFormat(); try { setOutput(unicodeDecode(input)); setOutputMode('text'); setError(''); } catch { setError(t('decode_error')); setOutput(''); } };
-  const handleClear = () => { cancelAutoFormat(); setInput(''); setOutput(''); setError(''); setOutputMode('tree'); setExpanded({}); };
-  const handleExample = () => { cancelAutoFormat(); const s = stringifyJSONValue(EXAMPLE_JSON, 2); setInput(s); setOutput(s); setOutputMode('tree'); setError(''); setAllExpanded(true); setExpanded({}); };
+  const applyValueTransform = (result: ReturnType<typeof urlEncodeJSONValues>, errorMessage: string) => {
+    if (!result.ok) { setError(result.message || errorMessage); setOutput(''); return; }
+    setOutput(result.output);
+    setOutputMode('tree');
+    setError('');
+    setAllExpanded(true);
+    setExpanded({});
+    setActiveNodeId(null);
+  };
+  const handleUrlEncode = () => { cancelAutoFormat(); applyValueTransform(urlEncodeJSONValues(input), t('url_encode_error')); };
+  const handleUrlDecode = () => { cancelAutoFormat(); applyValueTransform(urlDecodeJSONValues(input), t('url_decode_error')); };
+  const handleUnicodeEncode = () => { cancelAutoFormat(); applyValueTransform(unicodeEncodeJSONValues(input), t('encode_error')); };
+  const handleUnicodeDecode = () => { cancelAutoFormat(); applyValueTransform(unicodeDecodeJSONValues(input), t('decode_error')); };
+  const handleClear = () => { cancelAutoFormat(); setInput(''); setOutput(''); setError(''); setOutputMode('tree'); setExpanded({}); setActiveNodeId(null); };
+  const handleExample = () => { cancelAutoFormat(); const s = stringifyJSONValue(EXAMPLE_JSON, 2); setInput(s); setOutput(s); setOutputMode('tree'); setError(''); setAllExpanded(true); setExpanded({}); setActiveNodeId(null); };
   const handleCopy = async () => { if (!output) return; await navigator.clipboard.writeText(output); setCopied(true); setTimeout(() => setCopied(false), 2000); };
   const handleDownload = async () => {
     if (!output) return;
     const { saveAs } = await import('file-saver');
-    const isJsonOutput = outputMode !== 'text';
-    const type = isJsonOutput ? 'application/json' : 'text/plain';
-    const filename = isJsonOutput ? 'formatted.json' : 'output.txt';
-    saveAs(new Blob([output], { type }), filename);
+    saveAs(new Blob([output], { type: 'application/json' }), 'formatted.json');
   };
   const handleDeleteNode = (path: JSONPathSegment[]) => {
     if (!output) return;
@@ -84,6 +91,7 @@ export default function JsonFormatPage() {
     setOutput(r.output);
     setOutputMode('tree');
     setInput(r.output);
+    setActiveNodeId(null);
   };
 
   useEffect(() => {
@@ -137,6 +145,8 @@ export default function JsonFormatPage() {
                   level={0}
                   expanded={expanded}
                   setExpanded={setExpanded}
+                  activeNodeId={activeNodeId}
+                  setActiveNodeId={setActiveNodeId}
                   onDelete={handleDeleteNode}
                   allExpanded={allExpanded}
                   actionLabels={{ copy: tc('copy'), delete: tc('delete'), download: tc('download') }}

@@ -2,6 +2,11 @@ import { unzipSync } from 'fflate';
 import type { PDFDocument, PDFImage } from 'pdf-lib';
 import { formatFileSize } from './image';
 import {
+  createPdfFromCsvDocument,
+  createPdfFromDocxDocument,
+  createPdfFromHtmlDocument,
+} from './pdf-dom-renderer';
+import {
   createPdfDerivedFilename,
   createPdfOutputFilename,
   inferPdfInputKind,
@@ -162,80 +167,6 @@ function textToBlocks(title: string, text: string, kind: TextBlockKind = 'body')
       return [{ kind, text: lines.join('\n') } satisfies TextBlock];
     }),
   ];
-}
-
-function splitCsvLine(line: string): string[] {
-  const cells: string[] = [];
-  let current = '';
-  let inQuotes = false;
-
-  for (let index = 0; index < line.length; index += 1) {
-    const char = line[index];
-
-    if (inQuotes) {
-      if (char === '"') {
-        if (line[index + 1] === '"') {
-          current += '"';
-          index += 1;
-        } else {
-          inQuotes = false;
-        }
-      } else {
-        current += char;
-      }
-      continue;
-    }
-
-    if (char === '"') {
-      inQuotes = true;
-      continue;
-    }
-
-    if (char === ',') {
-      cells.push(current);
-      current = '';
-      continue;
-    }
-
-    current += char;
-  }
-
-  cells.push(current);
-  return cells;
-}
-
-function csvToBlocks(title: string, text: string): TextBlock[] {
-  const lines = normalizeText(text)
-    .split('\n')
-    .map((line) => line.trimEnd())
-    .filter((line) => line.trim().length > 0);
-
-  if (lines.length === 0) return [];
-
-  const rows = lines.map(splitCsvLine);
-  const maxColumns = Math.min(12, Math.max(...rows.map((row) => row.length)));
-  const widths = Array.from({ length: maxColumns }, (_, columnIndex) => {
-    const width = Math.max(
-      4,
-      ...rows.map((row) => (row[columnIndex] ?? '').replace(/\s+/g, ' ').slice(0, 28).length)
-    );
-    return Math.min(28, width);
-  });
-
-  const body = rows
-    .slice(0, 600)
-    .map((row) =>
-      widths
-        .map((width, columnIndex) => (row[columnIndex] ?? '').replace(/\s+/g, ' ').slice(0, width).padEnd(width))
-        .join('  ')
-        .trimEnd()
-    );
-
-  if (rows.length > body.length) {
-    body.push(`... ${rows.length - body.length} more rows`);
-  }
-
-  return textToBlocks(title, body.join('\n'), 'mono');
 }
 
 function decodeRtfControlWord(word: string, param: string | undefined): string {
@@ -462,28 +393,6 @@ function resolveZipPath(baseDir: string, href: string): string {
   }
 
   return parts.join('/');
-}
-
-function extractParagraphText(element: Element): string {
-  let output = '';
-
-  for (const child of Array.from(element.querySelectorAll('*'))) {
-    if (child.localName === 't') output += child.textContent ?? '';
-    if (child.localName === 'tab') output += '    ';
-    if (child.localName === 'br') output += '\n';
-  }
-
-  return output.trim();
-}
-
-function extractDocxBlocks(filename: string, buffer: ArrayBuffer): TextBlock[] {
-  const entries = unzipSync(new Uint8Array(buffer));
-  const documentXml = parseXml(decodeXmlEntry(entries['word/document.xml']));
-  const paragraphs = getElementsByLocalName(documentXml, 'p')
-    .map(extractParagraphText)
-    .filter(Boolean);
-
-  return textToBlocks(filename, paragraphs.join('\n\n'));
 }
 
 function extractEpubBlocks(filename: string, buffer: ArrayBuffer): TextBlock[] {
@@ -928,9 +837,9 @@ async function createPdfBlobForFile(file: File): Promise<Blob> {
     case 'markdown':
       return createPdfFromBlocks(markdownToBlocks(file.name, await readFileText(file)));
     case 'html':
-      return createPdfFromBlocks(htmlToBlocks(file.name, await readFileText(file)));
+      return createPdfFromHtmlDocument(await readFileText(file));
     case 'csv':
-      return createPdfFromBlocks(csvToBlocks(file.name, await readFileText(file)));
+      return createPdfFromCsvDocument(await readFileText(file));
     case 'rtf':
       return createPdfFromBlocks(rtfToBlocks(file.name, await readFileText(file)));
     case 'epub':
@@ -938,7 +847,7 @@ async function createPdfBlobForFile(file: File): Promise<Blob> {
     case 'mobi':
       return createPdfFromBlocks(extractMobiBlocks(file.name, await file.arrayBuffer()));
     case 'word':
-      return createPdfFromBlocks(extractDocxBlocks(file.name, await file.arrayBuffer()));
+      return createPdfFromDocxDocument(await file.arrayBuffer());
     case 'excel':
       return createPdfFromBlocks(await extractExcelBlocks(file.name, await file.arrayBuffer()));
     case 'powerpoint':

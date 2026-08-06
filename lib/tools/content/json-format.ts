@@ -28,7 +28,7 @@ export const jsonFormatContent: ToolContent = {
       },
       {
         title: '选择输出形式',
-        detail: '「格式化」输出两空格缩进的多行 JSON，「压缩」输出去掉全部空白的单行 JSON。两者都会先做一次完整语法校验，语法有问题时只显示错误、不输出半成品。',
+        detail: '「格式化」输出两空格缩进的多行 JSON，「压缩」输出去掉全部空白的单行 JSON。URL 与 Uni 编解码只递归处理 JSON 中的字符串值，不改变 key、数组和对象结构。',
       },
       {
         title: '在树形视图里定位字段',
@@ -36,7 +36,7 @@ export const jsonFormatContent: ToolContent = {
       },
       {
         title: '复制或下载结果',
-        detail: '「复制」把当前输出写入剪贴板；「下载」保存为 formatted.json，输出是编码文本时保存为 output.txt。',
+        detail: '「复制」把当前输出写入剪贴板；「下载」把格式化、压缩或字段值编解码后的完整 JSON 保存为 formatted.json。',
       },
     ],
     example: {
@@ -109,7 +109,7 @@ export const jsonFormatContent: ToolContent = {
       },
       {
         title: 'Pick an output shape',
-        detail: 'Format emits multi-line JSON with two-space indentation; Minify emits a single line with all whitespace removed. Both validate the full document first and show only the error if the syntax is broken.',
+        detail: 'Format emits multi-line JSON with two-space indentation; Minify emits a single line with all whitespace removed. URL and Uni codecs recursively transform string values only, preserving keys, arrays, and object structure.',
       },
       {
         title: 'Locate fields in the tree view',
@@ -117,7 +117,7 @@ export const jsonFormatContent: ToolContent = {
       },
       {
         title: 'Copy or download the result',
-        detail: 'Copy writes the current output to the clipboard. Download saves formatted.json, or output.txt when the output is encoded text rather than JSON.',
+        detail: 'Copy writes the current output to the clipboard. Download saves the complete formatted, minified, or value-transformed JSON as formatted.json.',
       },
     ],
     example: {

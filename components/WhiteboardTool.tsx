@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
 import { tldrawAssetUrls } from '@/lib/utils/tldrawAssets';
 import { whiteboardContent } from '@/lib/tools/content/whiteboard';
+import { FULLSCREEN_ARIA_KEY_SHORTCUTS, useFullscreenShortcut } from '@/lib/hooks/useFullscreenShortcut';
 
 const TLDRAW_LICENSE_KEY = 'tldraw-jimmy-zhu-2027-07-17/WyJsLUQ4RXlMciIsWyIqLnRvb2xnYXJkZW4ueHl6Il0sOSwiMjAyNy0wNy0xNyJd.ZurBhW4L3cSjEc1rW398Hlge8lHL2VvvnSlqsi3o+OGkieOP0Fhho30OqXaVXiE6m/nDEUe5PNvdIB1VJ5YDYw';
 const TLDRAW_PERSISTENCE_KEY = 'toolgarden-whiteboard-tldraw';
@@ -106,6 +107,8 @@ export function WhiteboardTool() {
   };
 
   const isFullscreenActive = isFullscreen || isFullscreenFallback;
+  const fullscreenLabel = isFullscreenActive ? t('exit_fullscreen') : t('fullscreen');
+  useFullscreenShortcut(toggleFullscreen);
   const cameraOptions = useMemo<TldrawCameraOptions>(() => ({
     wheelBehavior: isFullscreenActive ? 'pan' : 'none',
   }), [isFullscreenActive]);
@@ -144,14 +147,20 @@ export function WhiteboardTool() {
     <ToolLayout toolId="whiteboard" content={whiteboardContent}>
       <div
         ref={fullscreenRef}
-        className={`flex min-h-0 flex-1 flex-col bg-background ${isFullscreenActive ? 'fixed inset-0 z-50 h-screen overflow-hidden p-3' : ''}`}
+        className={`flex min-h-0 flex-1 flex-col bg-background ${isFullscreenActive ? 'fixed inset-0 z-50 h-[100dvh] overflow-hidden p-3' : ''}`}
       >
         <Panel
           title={t('canvas_title')}
           className="min-h-0 flex-1"
           actions={(
-            <Button type="button" variant="secondary" onClick={toggleFullscreen}>
-              {isFullscreenActive ? t('exit_fullscreen') : t('fullscreen')}
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={toggleFullscreen}
+              aria-keyshortcuts={FULLSCREEN_ARIA_KEY_SHORTCUTS}
+              title={`${fullscreenLabel} (${t('fullscreen_shortcut')})`}
+            >
+              {fullscreenLabel}
             </Button>
           )}
         >

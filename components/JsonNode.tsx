@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from './ui/Button';
 import { stringifyJSONValue, type JSONPathSegment } from '@/lib/utils/json';
 
@@ -10,6 +10,8 @@ interface JsonNodeProps {
   level: number;
   expanded: Record<string, boolean>;
   setExpanded: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+  activeNodeId: string | null;
+  setActiveNodeId: React.Dispatch<React.SetStateAction<string | null>>;
   onDelete?: (path: JSONPathSegment[]) => void;
   allExpanded?: boolean;
   actionLabels?: {
@@ -42,6 +44,8 @@ export const JsonNode: React.FC<JsonNodeProps> = ({
   level,
   expanded,
   setExpanded,
+  activeNodeId,
+  setActiveNodeId,
   onDelete,
   allExpanded = true,
   actionLabels = {
@@ -50,11 +54,10 @@ export const JsonNode: React.FC<JsonNodeProps> = ({
     download: 'Download',
   },
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
-
   const isObject = typeof data === 'object' && data !== null;
   const isArray = Array.isArray(data);
   const nodeId = path.length > 0 ? JSON.stringify(path) : 'root';
+  const isActive = activeNodeId === nodeId;
   const isExpanded = expanded[nodeId] ?? allExpanded;
   const canDelete = Boolean(onDelete && path.length > 0);
 
@@ -77,17 +80,22 @@ export const JsonNode: React.FC<JsonNodeProps> = ({
 
   return (
     <div
-      className={`font-mono text-sm rounded focus:outline-none focus:ring-1 focus:ring-action ${isHovered ? 'bg-surface-hover' : ''}`}
+      className={`font-mono text-sm rounded focus:outline-none focus:ring-1 focus:ring-action ${isActive ? 'bg-surface-hover' : ''}`}
       tabIndex={isObject ? 0 : undefined}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseMove={(event) => {
+        event.stopPropagation();
+        if (!isActive) setActiveNodeId(nodeId);
+      }}
+      onMouseLeave={() => {
+        setActiveNodeId((current) => current === nodeId ? null : current);
+      }}
       onFocus={(event) => {
-        if (event.currentTarget === event.target) setIsHovered(true);
+        if (event.currentTarget === event.target) setActiveNodeId(nodeId);
       }}
       onBlur={(event) => {
         const nextFocused = event.relatedTarget;
         if (!(nextFocused instanceof Node) || !event.currentTarget.contains(nextFocused)) {
-          setIsHovered(false);
+          setActiveNodeId((current) => current === nodeId ? null : current);
         }
       }}
     >
@@ -122,7 +130,7 @@ export const JsonNode: React.FC<JsonNodeProps> = ({
           )}
         </div>
 
-        {isHovered && isObject && (
+        {isActive && isObject && (
           <div className="flex space-x-1 ml-2">
             <Button variant="secondary" onClick={copyNode} title={actionLabels.copy}>
               {actionLabels.copy}
@@ -150,6 +158,8 @@ export const JsonNode: React.FC<JsonNodeProps> = ({
                   level={level + 1}
                   expanded={expanded}
                   setExpanded={setExpanded}
+                  activeNodeId={activeNodeId}
+                  setActiveNodeId={setActiveNodeId}
                   onDelete={onDelete}
                   allExpanded={allExpanded}
                   actionLabels={actionLabels}
@@ -164,6 +174,8 @@ export const JsonNode: React.FC<JsonNodeProps> = ({
                   level={level + 1}
                   expanded={expanded}
                   setExpanded={setExpanded}
+                  activeNodeId={activeNodeId}
+                  setActiveNodeId={setActiveNodeId}
                   onDelete={onDelete}
                   allExpanded={allExpanded}
                   actionLabels={actionLabels}
