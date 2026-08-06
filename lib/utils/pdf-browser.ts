@@ -4,6 +4,7 @@ import { formatFileSize } from './image';
 import {
   createPdfFromCsvDocument,
   createPdfFromDocxDocument,
+  createPdfFromExcelDocument,
   createPdfFromHtmlDocument,
 } from './pdf-dom-renderer';
 import {
@@ -624,52 +625,6 @@ function extractMobiBlocks(filename: string, buffer: ArrayBuffer): TextBlock[] {
     : textToBlocks(title, text);
 }
 
-async function extractExcelBlocks(filename: string, buffer: ArrayBuffer): Promise<TextBlock[]> {
-  const XLSX = await import('xlsx');
-  const workbook = XLSX.read(buffer, { type: 'array' });
-  const blocks: TextBlock[] = [{ kind: 'title', text: filename }];
-
-  for (const sheetName of workbook.SheetNames) {
-    const sheet = workbook.Sheets[sheetName];
-    const rows = XLSX.utils.sheet_to_json<unknown[]>(sheet, {
-      header: 1,
-      blankrows: false,
-      defval: '',
-    });
-
-    blocks.push({ kind: 'heading', text: sheetName });
-
-    if (rows.length === 0) {
-      blocks.push({ kind: 'body', text: '(empty sheet)' });
-      continue;
-    }
-
-    const columnCount = Math.min(8, Math.max(...rows.map((row) => row.length)));
-    const clippedRows = rows.slice(0, 600);
-    const widths = Array.from({ length: columnCount }, (_, columnIndex) => {
-      const width = Math.max(
-        4,
-        ...clippedRows.map((row) => String(row[columnIndex] ?? '').slice(0, 28).length)
-      );
-      return Math.min(28, width);
-    });
-    const lines = clippedRows.map((row) =>
-      widths
-        .map((width, columnIndex) => String(row[columnIndex] ?? '').replace(/\s+/g, ' ').slice(0, width).padEnd(width))
-        .join('  ')
-        .trimEnd()
-    );
-
-    if (rows.length > clippedRows.length) {
-      lines.push(`... ${rows.length - clippedRows.length} more rows`);
-    }
-
-    blocks.push({ kind: 'mono', text: lines.join('\n') });
-  }
-
-  return blocks;
-}
-
 function canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {
@@ -849,7 +804,7 @@ async function createPdfBlobForFile(file: File): Promise<Blob> {
     case 'word':
       return createPdfFromDocxDocument(await file.arrayBuffer());
     case 'excel':
-      return createPdfFromBlocks(await extractExcelBlocks(file.name, await file.arrayBuffer()));
+      return createPdfFromExcelDocument(await file.arrayBuffer());
     case 'powerpoint':
       return createPdfFromBlocks(extractPptxBlocks(file.name, await file.arrayBuffer()));
     default:

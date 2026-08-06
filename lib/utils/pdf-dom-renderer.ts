@@ -1,14 +1,33 @@
 import type { PDFDocument } from 'pdf-lib';
+import type { CellObject, Range, WorkSheet } from 'xlsx';
 
 const PDF_MIME_TYPE = 'application/pdf';
 const A4_WIDTH = 595.28;
 const A4_HEIGHT = 841.89;
 const RENDER_WIDTH = 794;
 const RENDER_SCALE = 1.5;
+const MAX_EXCEL_ROWS = 2000;
+const MAX_EXCEL_COLUMNS = 50;
+const PDF_POINTS_PER_CSS_PIXEL = 72 / 96;
+
+interface CanvasPdfSize {
+  height: number;
+  width: number;
+}
+
+interface RenderElementOptions {
+  foreignObjectRendering?: boolean;
+  height?: number;
+  preserveCssPageSize?: boolean;
+  useElementBounds?: boolean;
+  width?: number;
+  y?: number;
+}
 
 type PdfLibModule = typeof import('pdf-lib');
 
 let pdfLibPromise: Promise<PdfLibModule> | null = null;
+const canvasPdfSizes = new WeakMap<HTMLCanvasElement, CanvasPdfSize>();
 
 function loadPdfLib(): Promise<PdfLibModule> {
   pdfLibPromise ??= import('pdf-lib');
@@ -77,7 +96,8 @@ async function waitForAssets(root: ParentNode, ownerDocument: Document): Promise
 
   const images = Array.from(root.querySelectorAll('img'));
   await Promise.all(images.map(async (image) => {
-    if (image.complete) {
+    image.loading = 'eager';
+    if (image.complete && image.naturalWidth > 0) {
       try {
         await image.decode();
       } catch {
@@ -87,7 +107,7 @@ async function waitForAssets(root: ParentNode, ownerDocument: Document): Promise
     }
 
     await new Promise<void>((resolve) => {
-      const timeout = window.setTimeout(resolve, 5000);
+      const timeout = window.setTimeout(resolve, 15000);
       const finish = () => {
         window.clearTimeout(timeout);
         resolve();
@@ -100,15 +120,63 @@ async function waitForAssets(root: ParentNode, ownerDocument: Document): Promise
   await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
 }
 
+function blobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(reader.error ?? new Error('Image encoding failed.'));
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function inlineImageUrl(url: string): Promise<string> {
+  if (!url || url.startsWith('data:')) return url;
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`Image load failed: ${response.status}`);
+  return blobToDataUrl(await response.blob());
+}
+
+async function inlineDocumentImages(root: ParentNode): Promise<void> {
+  const htmlImages = Array.from(root.querySelectorAll<HTMLImageElement>('img'));
+  await Promise.all(htmlImages.map(async (image) => {
+    image.loading = 'eager';
+    image.removeAttribute('srcset');
+    const source = image.currentSrc || image.src;
+    if (!source) return;
+
+    try {
+      image.src = await inlineImageUrl(source);
+      await image.decode();
+    } catch {
+      // Keep the original source so html2canvas can still attempt its own decoder.
+    }
+  }));
+
+  const svgImages = Array.from(root.querySelectorAll<SVGImageElement>('svg image'));
+  await Promise.all(svgImages.map(async (image) => {
+    const source = image.getAttribute('href') ?? image.getAttributeNS('http://www.w3.org/1999/xlink', 'href') ?? '';
+    if (!source) return;
+
+    try {
+      const dataUrl = await inlineImageUrl(source);
+      image.setAttribute('href', dataUrl);
+      image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', dataUrl);
+    } catch {
+      // Keep the original source so html2canvas can still attempt its own decoder.
+    }
+  }));
+}
+
 async function renderElementPage(
   element: HTMLElement,
-  options?: { y?: number; width?: number; height?: number }
+  options?: RenderElementOptions
 ): Promise<HTMLCanvasElement> {
   const { default: html2canvas } = await import('html2canvas');
-  const width = options?.width ?? Math.ceil(element.scrollWidth);
-  const height = options?.height ?? Math.ceil(element.scrollHeight);
+  const bounds = element.getBoundingClientRect();
+  const width = options?.width ?? Math.ceil(options?.useElementBounds ? bounds.width : element.scrollWidth);
+  const height = options?.height ?? Math.ceil(options?.useElementBounds ? bounds.height : element.scrollHeight);
 
-  return html2canvas(element, {
+  const canvas = await html2canvas(element, {
     x: 0,
     y: options?.y ?? 0,
     width,
@@ -117,12 +185,41 @@ async function renderElementPage(
     backgroundColor: '#ffffff',
     useCORS: true,
     allowTaint: false,
+    foreignObjectRendering: options?.foreignObjectRendering ?? false,
+    imageTimeout: 30000,
     logging: false,
     scrollX: 0,
     scrollY: 0,
     windowWidth: Math.max(RENDER_WIDTH, width),
     windowHeight: Math.max(1123, height),
+    onclone: (_ownerDocument, clonedElement) => {
+      const sourceImages = Array.from(element.querySelectorAll<HTMLImageElement>('img'));
+      const clonedImages = Array.from(clonedElement.querySelectorAll<HTMLImageElement>('img'));
+      clonedImages.forEach((image, index) => {
+        const source = sourceImages[index];
+        if (!source) return;
+        image.loading = 'eager';
+        image.removeAttribute('srcset');
+        image.src = source.currentSrc || source.src;
+      });
+
+      const sourceSvgImages = Array.from(element.querySelectorAll<SVGImageElement>('svg image'));
+      const clonedSvgImages = Array.from(clonedElement.querySelectorAll<SVGImageElement>('svg image'));
+      clonedSvgImages.forEach((image, index) => {
+        const source = sourceSvgImages[index];
+        const href = source?.getAttribute('href') ?? source?.getAttributeNS('http://www.w3.org/1999/xlink', 'href');
+        if (href) image.setAttribute('href', href);
+      });
+    },
   });
+
+  if (options?.preserveCssPageSize) {
+    canvasPdfSizes.set(canvas, {
+      width: bounds.width * PDF_POINTS_PER_CSS_PIXEL,
+      height: bounds.height * PDF_POINTS_PER_CSS_PIXEL,
+    });
+  }
+  return canvas;
 }
 
 async function renderPaginatedElement(element: HTMLElement): Promise<HTMLCanvasElement[]> {
@@ -151,9 +248,10 @@ async function addCanvasToPdf(pdf: PDFDocument, canvas: HTMLCanvasElement): Prom
     }, 'image/png');
   });
   const image = await pdf.embedPng(await blob.arrayBuffer());
+  const preservedSize = canvasPdfSizes.get(canvas);
   const aspectRatio = canvas.height / canvas.width;
-  const pageWidth = aspectRatio >= 1 ? A4_WIDTH : A4_HEIGHT;
-  const pageHeight = pageWidth * aspectRatio;
+  const pageWidth = preservedSize?.width ?? (aspectRatio >= 1 ? A4_WIDTH : A4_HEIGHT);
+  const pageHeight = preservedSize?.height ?? pageWidth * aspectRatio;
   const page = pdf.addPage([pageWidth, pageHeight]);
 
   page.drawImage(image, {
@@ -335,6 +433,200 @@ function buildCsvDocument(rows: unknown[][]): Document {
   return sourceDocument;
 }
 
+type XlsxModule = typeof import('xlsx');
+
+interface ExcelCellStyle {
+  alignment?: {
+    horizontal?: string;
+    vertical?: string;
+    wrapText?: boolean;
+    textRotation?: number;
+  };
+  bgColor?: { rgb?: string };
+  fgColor?: { rgb?: string };
+  fill?: {
+    bgColor?: { rgb?: string };
+    fgColor?: { rgb?: string };
+  };
+  font?: {
+    bold?: boolean;
+    color?: { rgb?: string };
+    italic?: boolean;
+    name?: string;
+    sz?: number;
+    underline?: boolean;
+  };
+  patternType?: string;
+}
+
+function excelRgbToCss(rgb?: string): string | null {
+  if (!rgb) return null;
+  const normalized = rgb.replace(/^#/, '').slice(-6);
+  return /^[0-9a-f]{6}$/i.test(normalized) ? `#${normalized}` : null;
+}
+
+function applyExcelCellStyle(element: HTMLTableCellElement, cell?: CellObject): void {
+  const style = cell?.s as ExcelCellStyle | undefined;
+  if (!style) return;
+
+  const fill = excelRgbToCss(style.fill?.fgColor?.rgb ?? style.fgColor?.rgb)
+    ?? excelRgbToCss(style.fill?.bgColor?.rgb ?? style.bgColor?.rgb);
+  if (fill && style.patternType !== 'none') element.style.backgroundColor = fill;
+
+  const fontColor = excelRgbToCss(style.font?.color?.rgb);
+  if (fontColor) element.style.color = fontColor;
+  if (style.font?.bold) element.style.fontWeight = '700';
+  if (style.font?.italic) element.style.fontStyle = 'italic';
+  if (style.font?.underline) element.style.textDecoration = 'underline';
+  if (style.font?.name) element.style.fontFamily = style.font.name;
+  if (style.font?.sz) element.style.fontSize = `${style.font.sz}pt`;
+
+  const horizontal = style.alignment?.horizontal;
+  if (horizontal === 'center' || horizontal === 'right' || horizontal === 'left' || horizontal === 'justify') {
+    element.style.textAlign = horizontal;
+  }
+  const vertical = style.alignment?.vertical;
+  if (vertical === 'top' || vertical === 'middle' || vertical === 'bottom') {
+    element.style.verticalAlign = vertical;
+  }
+  if (style.alignment?.wrapText === false) element.style.whiteSpace = 'nowrap';
+  if (style.alignment?.textRotation) {
+    element.style.writingMode = 'vertical-rl';
+  }
+}
+
+function createMergeMaps(merges: Range[], renderedRange: Range): {
+  covered: Set<string>;
+  starts: Map<string, Range>;
+} {
+  const covered = new Set<string>();
+  const starts = new Map<string, Range>();
+
+  for (const merge of merges) {
+    if (
+      merge.e.r < renderedRange.s.r || merge.s.r > renderedRange.e.r
+      || merge.e.c < renderedRange.s.c || merge.s.c > renderedRange.e.c
+    ) continue;
+
+    const clipped: Range = {
+      s: {
+        r: Math.max(merge.s.r, renderedRange.s.r),
+        c: Math.max(merge.s.c, renderedRange.s.c),
+      },
+      e: {
+        r: Math.min(merge.e.r, renderedRange.e.r),
+        c: Math.min(merge.e.c, renderedRange.e.c),
+      },
+    };
+    const startKey = `${clipped.s.r}:${clipped.s.c}`;
+    starts.set(startKey, clipped);
+
+    for (let rowIndex = clipped.s.r; rowIndex <= clipped.e.r; rowIndex += 1) {
+      for (let columnIndex = clipped.s.c; columnIndex <= clipped.e.c; columnIndex += 1) {
+        const key = `${rowIndex}:${columnIndex}`;
+        if (key !== startKey) covered.add(key);
+      }
+    }
+  }
+
+  return { covered, starts };
+}
+
+function getExcelCellText(cell: CellObject | undefined, XLSX: XlsxModule): string {
+  if (!cell) return '';
+  if (cell.w != null) return cell.w;
+  try {
+    return XLSX.utils.format_cell(cell);
+  } catch {
+    return cell.v == null ? '' : String(cell.v);
+  }
+}
+
+function buildExcelSheetDocument(sheetName: string, sheet: WorkSheet, XLSX: XlsxModule): Document {
+  const sourceDocument = new DOMParser().parseFromString('<!doctype html><html><body></body></html>', 'text/html');
+  const section = sourceDocument.createElement('section');
+  section.className = 'pdf-excel-sheet';
+  const heading = sourceDocument.createElement('h1');
+  heading.textContent = sheetName;
+  section.appendChild(heading);
+
+  const reference = sheet['!ref'];
+  if (!reference) {
+    sourceDocument.body.appendChild(section);
+    return sourceDocument;
+  }
+
+  const sourceRange = XLSX.utils.decode_range(reference);
+  const renderedRange: Range = {
+    s: sourceRange.s,
+    e: {
+      r: Math.min(sourceRange.e.r, sourceRange.s.r + MAX_EXCEL_ROWS - 1),
+      c: Math.min(sourceRange.e.c, sourceRange.s.c + MAX_EXCEL_COLUMNS - 1),
+    },
+  };
+  const table = sourceDocument.createElement('table');
+  table.className = 'pdf-excel-table';
+  const columnGroup = sourceDocument.createElement('colgroup');
+
+  for (let columnIndex = renderedRange.s.c; columnIndex <= renderedRange.e.c; columnIndex += 1) {
+    const column = sourceDocument.createElement('col');
+    const columnInfo = sheet['!cols']?.[columnIndex];
+    const width = columnInfo?.wpx ?? (columnInfo?.wch ? columnInfo.wch * 8 : undefined);
+    if (width) column.style.width = `${Math.min(240, Math.max(28, width))}px`;
+    columnGroup.appendChild(column);
+  }
+  table.appendChild(columnGroup);
+
+  const body = sourceDocument.createElement('tbody');
+  const { covered, starts } = createMergeMaps(sheet['!merges'] ?? [], renderedRange);
+
+  for (let rowIndex = renderedRange.s.r; rowIndex <= renderedRange.e.r; rowIndex += 1) {
+    const row = sourceDocument.createElement('tr');
+    const rowInfo = sheet['!rows']?.[rowIndex];
+    const rowHeight = rowInfo?.hpx ?? (rowInfo?.hpt ? rowInfo.hpt * (96 / 72) : undefined);
+    if (rowHeight) row.style.height = `${Math.max(18, rowHeight)}px`;
+
+    for (let columnIndex = renderedRange.s.c; columnIndex <= renderedRange.e.c; columnIndex += 1) {
+      const key = `${rowIndex}:${columnIndex}`;
+      if (covered.has(key)) continue;
+
+      const cell = sheet[XLSX.utils.encode_cell({ r: rowIndex, c: columnIndex })] as CellObject | undefined;
+      const element = sourceDocument.createElement('td');
+      element.textContent = getExcelCellText(cell, XLSX);
+      applyExcelCellStyle(element, cell);
+
+      const merge = starts.get(key);
+      if (merge) {
+        element.rowSpan = merge.e.r - merge.s.r + 1;
+        element.colSpan = merge.e.c - merge.s.c + 1;
+      }
+      row.appendChild(element);
+    }
+    body.appendChild(row);
+  }
+
+  table.appendChild(body);
+  section.appendChild(table);
+
+  if (renderedRange.e.r < sourceRange.e.r || renderedRange.e.c < sourceRange.e.c) {
+    const note = sourceDocument.createElement('p');
+    note.className = 'pdf-sheet-limit';
+    note.textContent = `Rendered the first ${MAX_EXCEL_ROWS} rows and ${MAX_EXCEL_COLUMNS} columns of this sheet.`;
+    section.appendChild(note);
+  }
+
+  const style = sourceDocument.createElement('style');
+  style.textContent = `
+    .pdf-excel-sheet > h1 { margin-bottom: 16px; font-size: 22px; }
+    .pdf-excel-table { font-size: 12px; line-height: 1.35; }
+    .pdf-excel-table td { min-width: 28px; white-space: pre-wrap; }
+    .pdf-sheet-limit { margin-top: 12px; color: #6b7280; font-size: 11px; }
+  `;
+  sourceDocument.head.appendChild(style);
+  sourceDocument.body.appendChild(section);
+  return sourceDocument;
+}
+
 export async function createPdfFromCsvDocument(text: string): Promise<Blob> {
   const XLSX = await import('xlsx');
   const workbook = XLSX.read(text, { type: 'string', raw: true });
@@ -357,6 +649,32 @@ export async function createPdfFromCsvDocument(text: string): Promise<Blob> {
   } finally {
     frame.remove();
   }
+}
+
+export async function createPdfFromExcelDocument(buffer: ArrayBuffer): Promise<Blob> {
+  const XLSX = await import('xlsx');
+  const workbook = XLSX.read(buffer, {
+    type: 'array',
+    cellDates: true,
+    cellStyles: true,
+  });
+  const canvases: HTMLCanvasElement[] = [];
+
+  for (const sheetName of workbook.SheetNames) {
+    const sheet = workbook.Sheets[sheetName];
+    if (!sheet) continue;
+
+    const sourceDocument = buildExcelSheetDocument(sheetName, sheet, XLSX);
+    const { frame, root } = prepareHtmlFrame(sourceDocument);
+    try {
+      await waitForAssets(root, frame.contentDocument ?? document);
+      canvases.push(...await renderPaginatedElement(root));
+    } finally {
+      frame.remove();
+    }
+  }
+
+  return createPdfFromCanvases(canvases);
 }
 
 export async function createPdfFromDocxDocument(buffer: ArrayBuffer): Promise<Blob> {
@@ -396,13 +714,17 @@ export async function createPdfFromDocxDocument(buffer: ArrayBuffer): Promise<Bl
     `;
     styleContainer.appendChild(overrideStyles);
 
+    await inlineDocumentImages(bodyContainer);
     await waitForAssets(bodyContainer, document);
     const pages = Array.from(bodyContainer.querySelectorAll<HTMLElement>('section.docx'));
     const renderTargets = pages.length > 0 ? pages : [bodyContainer];
     const canvases: HTMLCanvasElement[] = [];
 
     for (const page of renderTargets) {
-      canvases.push(await renderElementPage(page));
+      canvases.push(await renderElementPage(page, {
+        preserveCssPageSize: true,
+        useElementBounds: true,
+      }));
     }
 
     return createPdfFromCanvases(canvases);
