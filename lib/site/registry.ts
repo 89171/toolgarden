@@ -9,6 +9,19 @@
 export const SITE_CONTACT_EMAIL =
   process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? '891715824@qq.com';
 
+/**
+ * 首页使用的工具集合页。sitemap、导航与提交脚本都从这里读取，避免重复维护。
+ */
+export const hubPaths = [
+  '/json-tools',
+  '/image',
+  '/audio',
+  '/pdf',
+  '/file-merge',
+  '/text',
+  '/other',
+] as const;
+
 export const sitePageRegistry = [
   { id: 'about', path: '/about' },
   { id: 'privacy', path: '/privacy' },

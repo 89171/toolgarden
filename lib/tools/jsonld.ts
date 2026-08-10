@@ -37,7 +37,7 @@ export function getLanguageAlternates(path = ''): Record<string, string> {
     ...Object.fromEntries(
       routing.locales.map((locale) => [locale, getLocalizedPath(locale, path)])
     ),
-    'x-default': getLocalizedPath(routing.defaultLocale, path),
+    'x-default': path === '' ? '/' : getLocalizedPath(routing.defaultLocale, path),
   };
 }
 

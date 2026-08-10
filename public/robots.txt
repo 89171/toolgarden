@@ -3,4 +3,3 @@ Allow: /
 Disallow: /api/
 
 Sitemap: https://toolgarden.xyz/sitemap.xml
-Host: https://toolgarden.xyz

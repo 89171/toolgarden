@@ -98,7 +98,7 @@ function unique(values) {
 }
 
 function getHubPaths() {
-  return extractStringArrayConst(readSource('app/sitemap.ts'), 'hubPaths');
+  return extractStringArrayConst(readSource('lib/site/registry.ts'), 'hubPaths');
 }
 
 function getToolPaths() {

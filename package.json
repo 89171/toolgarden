@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run audit:content && tsx scripts/generate-blog-index.ts && node scripts/generate-static-metadata.mjs && next build && node scripts/harden-static-export.mjs",
+    "build": "npm run audit:content && tsx scripts/generate-blog-index.ts && tsx scripts/generate-sitemap-lastmod.ts && node scripts/generate-static-metadata.mjs && next build && node scripts/harden-static-export.mjs",
     "start": "next start",
     "lint": "eslint",
-    "clean": "tsx scripts/generate-blog-index.ts && node scripts/generate-static-metadata.mjs",
+    "clean": "tsx scripts/generate-blog-index.ts && tsx scripts/generate-sitemap-lastmod.ts && node scripts/generate-static-metadata.mjs",
     "harden": "node scripts/harden-static-export.mjs",
     "audit:content": "tsx scripts/audit-publisher-content.ts",
     "submit:baidu": "node scripts/submit-baidu-pages.mjs",

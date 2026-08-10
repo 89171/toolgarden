@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<url>
+<loc>https://toolgarden.xyz/zh</loc>
+</url>
+<url>
+<loc>https://toolgarden.xyz/en/text/markdown-to-pdf</loc>
+</url>
+<url>
+<loc>https://toolgarden.xyz/en/text/markdown-to-html</loc>
+</url>
+<url>
+<loc>https://toolgarden.xyz/en/image/gif</loc>
+</url>
+<url>
+<loc>https://toolgarden.xyz/en/pdf/encrypt</loc>
+</url>
+<url>
+<loc>https://toolgarden.xyz/en/pdf/watermark</loc>
+</url>
+<url>
+<loc>https://toolgarden.xyz/en/pdf/to-image</loc>
+</url>
+<url>
+<loc>https://toolgarden.xyz/en/json-schema</loc>
+</url>
+<url>
+<loc>https://toolgarden.xyz/en/json-schema-validate</loc>
+</url>
+</urlset>

@@ -131,7 +131,7 @@ export function getToolClientMessages(locale: string, toolId: string) {
   };
 }
 
-export function createLocaleMetadata(locale: string): Metadata {
+function createHomeMetadata(locale: string, canonical: string): Metadata {
   const normalizedLocale = normalizeLocale(locale);
   const m = getLocaleMessages(normalizedLocale);
   const seoDescription = createPrivacySeoDescription(m.home.subtitle, normalizedLocale);
@@ -144,7 +144,7 @@ export function createLocaleMetadata(locale: string): Metadata {
     description: seoDescription,
     metadataBase: new URL(BASE_URL),
     alternates: {
-      canonical: getLocalizedPath(normalizedLocale),
+      canonical,
       languages: getLanguageAlternates(),
     },
     openGraph: {
@@ -154,9 +154,19 @@ export function createLocaleMetadata(locale: string): Metadata {
       type: 'website',
       locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
       siteName: m.home.title,
-      url: getLocalizedPath(normalizedLocale),
+      url: canonical,
     },
   };
+}
+
+export function createLocaleMetadata(locale: string): Metadata {
+  const normalizedLocale = normalizeLocale(locale);
+  return createHomeMetadata(normalizedLocale, getLocalizedPath(normalizedLocale));
+}
+
+/** 根路径是语言无关的默认入口，canonical 与 x-default 都指向站点根目录。 */
+export function createRootMetadata(locale: string): Metadata {
+  return createHomeMetadata(locale, '/');
 }
 
 export function createImageHubMetadata(locale: string): Metadata {

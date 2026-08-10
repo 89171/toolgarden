@@ -1,16 +1,16 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import sitemap from '@/app/sitemap';
+import { getSitemapEntries } from '@/lib/site/sitemap';
 import { BASE_URL } from '@/lib/tools/seo';
 
 /**
  * 向 IndexNow 聚合端点（https://api.indexnow.org/indexnow）提交新增或有更新的 URL。
  *
- * URL 列表直接调用 app/sitemap.ts 的 sitemap()，不解析生成后的 sitemap.xml、
+ * URL 列表直接调用 lib/site/sitemap.ts 的 getSitemapEntries()，不解析生成后的 sitemap.xml、
  * 不正则扫描源码文件（对照 submit-baidu-pages.mjs 的做法：它正则扫描博客源文件时
  * 只覆盖了 3 个，漏掉了大部分博客文章）。sitemap() 才是这个站点 URL 列表的单一
- * 事实源，直接调它就不存在「两处逻辑要保持同步」的问题。sitemap() 不依赖任何
+ * 事实源，直接调它就不存在「两处逻辑要保持同步」的问题。生成器不依赖任何
  * Next 运行时请求作用域的 API（没有 headers()/cookies()），用 tsx 在构建流程之外
  * 单独调用是安全的，也不需要先跑完 next build。
  *
@@ -18,13 +18,12 @@ import { BASE_URL } from '@/lib/tools/seo';
  * （文档常见口径是上限一万条，实现时可以对照当前文档再确认一遍）远超这个站点
  * 现有的 URL 总数，所以不需要百度脚本那套按每日配额分批 + 游标续跑的复杂度。
  * 换成「按内容是否变化增量提交」：首次运行提交全部 URL，之后只提交新增或
- * lastModified 变化过的 URL。今天 sitemap() 只给博客文章赋 lastModified，
- * 工具页 / 分类页 / 站点信息页没有这个字段——所以这些页面上线后通常只会被
- * 自动提交一次，后续想再催一次要用 --force 或 --url。
+ * lastModified 变化过的 URL。博客使用文章自己的 updatedAt，其余正式页面使用
+ * 构建前从 Git 历史生成的路由更新时间。
  *
  *   npx tsx scripts/submit-indexnow.ts              # 提交新增 / 变化的 URL
  *   npx tsx scripts/submit-indexnow.ts --dry-run    # 只打印会提交什么，不发请求
- *   npx tsx scripts/submit-indexnow.ts --list       # 打印 sitemap() 算出的完整 URL 列表
+ *   npx tsx scripts/submit-indexnow.ts --list       # 打印 sitemap 生成器算出的完整 URL 列表
  *   npx tsx scripts/submit-indexnow.ts --force      # 忽略状态文件，全部重新提交一次
  *   npx tsx scripts/submit-indexnow.ts --url <path> # 只提交一个指定 URL
  */
@@ -106,7 +105,7 @@ function normalizeLastModified(value: string | Date | undefined): string | null 
 }
 
 function getSiteEntries(): SiteEntry[] {
-  return sitemap().map((entry) => ({
+  return getSitemapEntries().map((entry) => ({
     url: entry.url,
     lastmod: normalizeLastModified(entry.lastModified),
   }));
@@ -123,8 +122,7 @@ function writeState(stateFile: string, state: SubmittedState) {
 
 /**
  * 判断一个 URL 是否需要提交：状态文件里完全没有它（新增页面）；或者 lastmod
- * 变了（目前只有博客文章会触发）。lastmod 从 null 变成有值也算「变了」——
- * 这是为将来给工具页 / 分类页也补上 lastModified 预留，到时候不用再改这个脚本。
+ * 变了。lastmod 从 null 变成有值也算「变了」。
  */
 function needsSubmission(entry: SiteEntry, state: SubmittedState): boolean {
   const prior = state[entry.url];
@@ -172,7 +170,7 @@ async function main() {
     );
     if (!match) {
       throw new Error(
-        `--url ${target} isn't in the current sitemap() output — check the path is correct`
+        `--url ${target} isn't in the current sitemap output — check the path is correct`
       );
     }
 

@@ -10,7 +10,7 @@ import { SiteProtection } from '@/components/SiteProtection';
 import { routing } from '@/i18n/routing';
 import { analyticsConfig } from '@/lib/analytics';
 import {
-  createLocaleMetadata,
+  createRootMetadata,
   createSiteJsonLd,
   getClientMessages,
   toJsonLd,
@@ -20,7 +20,7 @@ import './globals.css';
 const defaultLocale = routing.defaultLocale;
 
 export const metadata: Metadata = {
-  ...createLocaleMetadata(defaultLocale),
+  ...createRootMetadata(defaultLocale),
   manifest: '/manifest.webmanifest',
   icons: {
     icon: [
