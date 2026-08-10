@@ -88,9 +88,9 @@ export default function RootHomePage() {
         <NextIntlClientProvider locale={defaultLocale} messages={getClientMessages(defaultLocale)}>
           <HomePageContent locale={defaultLocale} />
           <FeedbackButton />
+          <PwaRegistration />
         </NextIntlClientProvider>
         <Analytics locale={defaultLocale} />
-        <PwaRegistration />
         <SiteProtection />
       </body>
     </html>

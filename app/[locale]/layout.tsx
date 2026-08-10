@@ -115,9 +115,9 @@ export default async function LocaleLayout({
         <NextIntlClientProvider locale={normalizedLocale} messages={clientMessages}>
           {children}
           <FeedbackButton />
+          <PwaRegistration />
         </NextIntlClientProvider>
         <Analytics locale={normalizedLocale} />
-        <PwaRegistration />
         <SiteProtection />
       </body>
     </html>

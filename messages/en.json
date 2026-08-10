@@ -2988,6 +2988,11 @@
     "copied": "Copied",
     "copy_failed": "Copy failed. Please copy the email address manually."
   },
+  "pwa_install": {
+    "message": "Install this app for offline access",
+    "install": "Install",
+    "close": "Dismiss install prompt"
+  },
   "audio_tool": {
     "upload_audio_title": "Upload audio",
     "upload_video_title": "Upload video",
