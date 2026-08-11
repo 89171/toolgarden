@@ -233,7 +233,11 @@ const VISIBLE_DIFF_THRESHOLD = {
 const PNG_QUANTIZED_TARGET_SAVINGS = 0.25;
 const BACKGROUND_REMOVAL_PUBLIC_PATH =
   'https://staticimgly.com/@imgly/background-removal-data/${PACKAGE_VERSION}/dist/';
-const IMAGE_ENHANCE_MODEL_URL = '/models/image-enhance/realesrgan-x4plus-fp16.onnx';
+const IMAGE_ENHANCE_MODEL_PART_URLS = [
+  '/models/image-enhance/realesrgan-x4plus-fp16.part-01.onnx',
+  '/models/image-enhance/realesrgan-x4plus-fp16.part-02.onnx',
+] as const;
+const IMAGE_ENHANCE_MODEL_SIZE = 33_756_472;
 const IMAGE_ENHANCE_MODEL_SCALE = 4;
 const IMAGE_ENHANCE_TILE_SIZE = 128;
 const IMAGE_ENHANCE_TILE_PADDING = 10;
@@ -1092,44 +1096,74 @@ function reportImageEnhanceProgress(progress: ImageEnhanceProgress) {
   imageEnhanceProgressListeners.forEach((listener) => listener(progress));
 }
 
-async function fetchImageEnhanceModel(): Promise<Uint8Array> {
-  const response = await fetch(IMAGE_ENHANCE_MODEL_URL);
+async function fetchImageEnhanceModelPart(
+  url: string,
+  partIndex: number,
+  loadedParts: number[]
+): Promise<Uint8Array> {
+  const response = await fetch(url);
   if (!response.ok) throw new Error('realesrgan_model_download_failed');
 
-  const contentLength = Number(response.headers.get('content-length')) || 0;
   if (!response.body) {
     const data = new Uint8Array(await response.arrayBuffer());
-    reportImageEnhanceProgress(createImageEnhanceProgress('model', 82, data.byteLength, data.byteLength));
+    loadedParts[partIndex] = data.byteLength;
+    const loaded = loadedParts.reduce((sum, value) => sum + value, 0);
+    reportImageEnhanceProgress(createImageEnhanceProgress(
+      'model',
+      clampNumber((loaded / IMAGE_ENHANCE_MODEL_SIZE) * 82, 1, 82),
+      loaded,
+      IMAGE_ENHANCE_MODEL_SIZE
+    ));
     return data;
   }
 
   const reader = response.body.getReader();
   const chunks: Uint8Array[] = [];
-  let loaded = 0;
+  let partLoaded = 0;
 
   while (true) {
     const { done, value } = await reader.read();
     if (done) break;
     chunks.push(value);
-    loaded += value.byteLength;
-    const ratio = contentLength > 0
-      ? loaded / contentLength
-      : loaded / (34 * 1024 * 1024);
+    partLoaded += value.byteLength;
+    loadedParts[partIndex] = partLoaded;
+    const loaded = loadedParts.reduce((sum, loadedPart) => sum + loadedPart, 0);
     reportImageEnhanceProgress(createImageEnhanceProgress(
       'model',
-      clampNumber(ratio * 82, 1, 82),
+      clampNumber((loaded / IMAGE_ENHANCE_MODEL_SIZE) * 82, 1, 82),
       loaded,
-      contentLength || Math.max(loaded, 34 * 1024 * 1024)
+      IMAGE_ENHANCE_MODEL_SIZE
     ));
   }
 
-  const data = new Uint8Array(loaded);
+  const data = new Uint8Array(partLoaded);
   let offset = 0;
   for (const chunk of chunks) {
     data.set(chunk, offset);
     offset += chunk.byteLength;
   }
   return data;
+}
+
+async function fetchImageEnhanceModel(): Promise<Uint8Array> {
+  const loadedParts = IMAGE_ENHANCE_MODEL_PART_URLS.map(() => 0);
+  const parts = await Promise.all(
+    IMAGE_ENHANCE_MODEL_PART_URLS.map((url, index) =>
+      fetchImageEnhanceModelPart(url, index, loadedParts)
+    )
+  );
+  const totalSize = parts.reduce((sum, part) => sum + part.byteLength, 0);
+  if (totalSize !== IMAGE_ENHANCE_MODEL_SIZE) {
+    throw new Error('realesrgan_model_download_failed');
+  }
+
+  const model = new Uint8Array(totalSize);
+  let offset = 0;
+  for (const part of parts) {
+    model.set(part, offset);
+    offset += part.byteLength;
+  }
+  return model;
 }
 
 async function getImageEnhanceSession(): Promise<{
