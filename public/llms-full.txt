@@ -336,6 +336,16 @@ Canonical examples:
 - English URL: https://toolgarden.xyz/en/image/upscale
 - Chinese URL: https://toolgarden.xyz/zh/image/upscale
 
+#### Image Enhance / 图片清晰增强 (/image/enhance)
+- ID: `image-enhance`
+- Category: Convert / 转换
+- Icon label: `HD`
+- Featured: yes
+- English description: Free browser-local Real-ESRGAN x4plus tool to reduce blur, noise, and compression artifacts with original-size, 2x, and 4x output
+- Chinese description: 使用 Real-ESRGAN x4plus 在浏览器本地修复图片模糊、噪点和压缩痕迹，支持原尺寸、2x 和 4x 输出，适合增强人像、照片和插画素材。
+- English URL: https://toolgarden.xyz/en/image/enhance
+- Chinese URL: https://toolgarden.xyz/zh/image/enhance
+
 #### Remove image background / 图片去背景 (/image/remove-bg)
 - ID: `image-remove-bg`
 - Category: Convert / 转换

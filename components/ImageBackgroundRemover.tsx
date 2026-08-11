@@ -49,21 +49,27 @@ const checkerboardStyle: React.CSSProperties = {
 
 const backgroundRemovalModelOptions: Array<{
   value: ImageBackgroundRemovalModel;
-  labelKey: 'model_quality_label' | 'model_speed_label';
-  sizeKey: 'model_size_medium' | 'model_size_small';
-  descriptionKey: 'model_quality_description' | 'model_speed_description';
+  labelKey: 'model_balanced_label' | 'model_speed_label' | 'model_hd_label';
+  sizeKey: 'model_size_medium' | 'model_size_small' | 'model_size_hd';
+  descriptionKey: 'model_balanced_description' | 'model_speed_description' | 'model_hd_description';
 }> = [
   {
     value: 'medium',
-    labelKey: 'model_quality_label',
+    labelKey: 'model_balanced_label',
     sizeKey: 'model_size_medium',
-    descriptionKey: 'model_quality_description',
+    descriptionKey: 'model_balanced_description',
   },
   {
     value: 'small',
     labelKey: 'model_speed_label',
     sizeKey: 'model_size_small',
     descriptionKey: 'model_speed_description',
+  },
+  {
+    value: 'birefnet-lite',
+    labelKey: 'model_hd_label',
+    sizeKey: 'model_size_hd',
+    descriptionKey: 'model_hd_description',
   },
 ];
 
@@ -132,6 +138,10 @@ export function ImageBackgroundRemover() {
         return error.detail ? `${ti('errors.canvas_export')} ${error.detail}` : ti('errors.canvas_export');
       case 'unsupported_output':
         return ti('errors.unsupported_output', { format: error.detail ?? '' });
+      case 'ai_model_unavailable':
+        return error.detail === 'birefnet_webgpu_unavailable'
+          ? ti('errors.hd_requires_webgpu')
+          : ti('errors.ai_model_unavailable');
       default:
         return ti('errors.general');
     }
@@ -398,7 +408,7 @@ export function ImageBackgroundRemover() {
                 <span className="mb-2 block text-xs font-semibold uppercase tracking-normal text-content-faint">
                   {ti('model_choice')}
                 </span>
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-2">
                   {backgroundRemovalModelOptions.map((option) => {
                     const selected = selectedModel === option.value;
 
@@ -427,6 +437,9 @@ export function ImageBackgroundRemover() {
                               {ti('model_default_badge')}
                             </span>
                           )}
+                        </span>
+                        <span className="mt-1.5 block text-xs leading-relaxed text-content-muted">
+                          {ti(option.descriptionKey)}
                         </span>
                       </button>
                     );

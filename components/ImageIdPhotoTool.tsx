@@ -159,7 +159,7 @@ export function ImageIdPhotoTool({ content }: ImageIdPhotoToolProps) {
   const [customHeightMm, setCustomHeightMm] = useState('45');
   const [backgroundColor, setBackgroundColor] = useState<string>(idPhotoBackgroundColors[0].value);
   const [customBackgroundColor, setCustomBackgroundColor] = useState<string>(idPhotoBackgroundColors[0].value);
-  const [model, setModel] = useState<ImageBackgroundRemovalModel>('small');
+  const [model, setModel] = useState<ImageBackgroundRemovalModel>('medium');
   const [outputFormat, setOutputFormat] = useState<OutputFormat>('jpg');
   const [transform, setTransform] = useState<IdPhotoTransform>({ x: 0, y: 0, scale: 1 });
   const [status, setStatus] = useState<ProcessingStatus>('idle');
@@ -279,6 +279,10 @@ export function ImageIdPhotoTool({ content }: ImageIdPhotoToolProps) {
         return imageError.detail ? `${ti('errors.canvas_export')} ${imageError.detail}` : ti('errors.canvas_export');
       case 'unsupported_output':
         return ti('errors.unsupported_output', { format: imageError.detail ?? '' });
+      case 'ai_model_unavailable':
+        return imageError.detail === 'birefnet_webgpu_unavailable'
+          ? ti('errors.hd_requires_webgpu')
+          : ti('errors.ai_model_unavailable');
       default:
         return ti('errors.general');
     }
@@ -317,7 +321,10 @@ export function ImageIdPhotoTool({ content }: ImageIdPhotoToolProps) {
     if (inputRef.current) inputRef.current.value = '';
   }, []);
 
-  const processSourceImage = useCallback(async (target: SourceImage) => {
+  const processSourceImage = useCallback(async (
+    target: SourceImage,
+    selectedModel: ImageBackgroundRemovalModel = model
+  ) => {
     if (!target.file || !target.info) return;
 
     const jobId = `${target.id}-${Date.now()}`;
@@ -329,7 +336,7 @@ export function ImageIdPhotoTool({ content }: ImageIdPhotoToolProps) {
 
     const facePromise = detectFaceBounds(target.file);
     const removalPromise = removeImageBackground(target.file, {
-      model,
+      model: selectedModel,
       onProgress: (nextProgress) => {
         if (jobRef.current !== jobId) return;
         setProgress(nextProgress);
@@ -378,6 +385,15 @@ export function ImageIdPhotoTool({ content }: ImageIdPhotoToolProps) {
     setVirtualProgress(0);
     setStatus('ready');
   }, [canvas, currentPresetForFit, getImageErrorMessage, model]);
+
+  const changeModel = useCallback((nextModel: ImageBackgroundRemovalModel) => {
+    setModel(nextModel);
+
+    const current = sourceRef.current;
+    if (current?.info) {
+      void processSourceImage(current, nextModel);
+    }
+  }, [processSourceImage]);
 
   const addFile = useCallback((fileList: FileList | File[]) => {
     const file = Array.from(fileList)[0];
@@ -580,9 +596,9 @@ export function ImageIdPhotoTool({ content }: ImageIdPhotoToolProps) {
         : ti('progress_compute', { value: progress.percent }))
     : ti('progress_prepare');
   const isModelProgress = status === 'processing' && (!progress || progress.stage === 'model');
-  const progressModelNote = model === 'small'
-    ? ti('progress_model_note_fast')
-    : ti('progress_model_note_quality');
+  const progressModelNote = model === 'birefnet-lite'
+    ? ti('progress_model_note_hd')
+    : ti('progress_model_note_balanced');
 
   return (
     <ToolLayout toolId={TOOL_ID} content={content}>
@@ -871,11 +887,11 @@ export function ImageIdPhotoTool({ content }: ImageIdPhotoToolProps) {
                   <select
                     value={model}
                     disabled={status === 'processing'}
-                    onChange={(event) => setModel(event.target.value as ImageBackgroundRemovalModel)}
+                    onChange={(event) => changeModel(event.target.value as ImageBackgroundRemovalModel)}
                     className="min-h-10 rounded border border-border-input bg-surface px-3 text-content outline-none transition-colors focus:border-border-strong disabled:text-content-faint"
                   >
-                    <option value="medium">{ti('model_quality')}</option>
-                    <option value="small">{ti('model_fast')}</option>
+                    <option value="medium">{ti('model_balanced')}</option>
+                    <option value="birefnet-lite">{ti('model_hd')}</option>
                   </select>
                 </label>
                 <label className="flex flex-col gap-1 text-sm font-medium text-content-secondary">

@@ -105,7 +105,36 @@ export interface ImageUpscaleSuccess {
 
 export type ImageUpscaleOutcome = ImageUpscaleSuccess | ImageConversionError;
 
-export type ImageBackgroundRemovalModel = 'small' | 'medium';
+export const IMAGE_ENHANCE_SCALES = [1, 2, 4] as const;
+export type ImageEnhanceScale = (typeof IMAGE_ENHANCE_SCALES)[number];
+export const IMAGE_ENHANCE_MAX_SOURCE_PIXELS = 4_000_000;
+
+export interface ImageEnhanceProgress {
+  stage: 'model' | 'compute' | 'encode';
+  percent: number;
+  current: number;
+  total: number;
+}
+
+export interface ImageEnhanceSuccess {
+  ok: true;
+  blob: Blob;
+  filename: string;
+  mimeType: BasicImageTargetConfig['mimeType'];
+  format: BasicImageTargetFormat;
+  width: number;
+  height: number;
+  sourceWidth: number;
+  sourceHeight: number;
+  originalSize: number;
+  outputSize: number;
+  durationMs: number;
+  scale: ImageEnhanceScale;
+}
+
+export type ImageEnhanceOutcome = ImageEnhanceSuccess | ImageConversionError;
+
+export type ImageBackgroundRemovalModel = 'small' | 'medium' | 'birefnet-lite';
 
 export interface ImageBackgroundRemovalProgress {
   stage: 'model' | 'compute';
@@ -314,6 +343,11 @@ export function createEditedImageFilename(filename: string, extension: string): 
 export function createUpscaledImageFilename(filename: string, extension: string): string {
   const base = filename.replace(/\.[^.]+$/, '') || 'image';
   return `${base}-upscaled.${extension}`;
+}
+
+export function createEnhancedImageFilename(filename: string, extension: string): string {
+  const base = filename.replace(/\.[^.]+$/, '') || 'image';
+  return `${base}-enhanced.${extension}`;
 }
 
 export function createBackgroundRemovedImageFilename(filename: string): string {

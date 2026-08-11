@@ -17,6 +17,7 @@ import {
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(scriptDir, '..');
 const outputPath = path.join(rootDir, 'lib/site/sitemap-lastmod.generated.json');
+const generationDate = new Date().toISOString().slice(0, 10);
 
 type RouteDates = Record<string, string>;
 
@@ -47,6 +48,10 @@ function getGitDate(relativePaths: string[]): string {
   ).trim();
 }
 
+function getSourceDate(relativePaths: string[]): string {
+  return getGitDate(relativePaths) || generationDate;
+}
+
 function requireDate(routePath: string, candidates: string[]): string {
   const date = latestDate(candidates.filter(Boolean));
   if (!date) throw new Error(`Could not derive sitemap lastmod for ${routePath || '/'}`);
@@ -58,7 +63,7 @@ function generateRouteDates(): RouteDates {
 
   for (const tool of toolRegistry) {
     dates[tool.path] = requireDate(tool.path, [
-      getGitDate([
+      getSourceDate([
         `app/[locale]${tool.path}`,
         `lib/tools/content/${tool.id}.ts`,
       ]),
@@ -68,19 +73,19 @@ function generateRouteDates(): RouteDates {
   for (const hubPath of hubPaths) {
     const childDates = (hubTools.get(hubPath) ?? []).map((tool) => dates[tool.path]);
     dates[hubPath] = requireDate(hubPath, [
-      getGitDate([`app/[locale]${hubPath}`]),
+      getSourceDate([`app/[locale]${hubPath}`]),
       ...childDates,
     ]);
   }
 
   for (const page of sitePageRegistry) {
     dates[page.path] = requireDate(page.path, [
-      getGitDate([`app/[locale]${page.path}`]),
+      getSourceDate([`app/[locale]${page.path}`]),
     ]);
   }
 
   dates[''] = requireDate('/', [
-    getGitDate(['app/page.tsx', 'components/HomePageContent.tsx']),
+    getSourceDate(['app/page.tsx', 'components/HomePageContent.tsx']),
     ...Object.values(dates),
   ]);
 

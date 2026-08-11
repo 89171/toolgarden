@@ -239,6 +239,15 @@ export const toolRegistry: ToolMeta[] = [
     featured: true,
   },
   {
+    id: 'image-enhance',
+    name: '图片清晰增强',
+    description: '在浏览器本地使用 Real-ESRGAN 修复图片模糊、噪点和压缩痕迹，支持原尺寸、2x 和 4x 输出',
+    path: '/image/enhance',
+    icon: 'HD',
+    category: 'convert',
+    featured: true,
+  },
+  {
     id: 'image-remove-bg',
     name: '图片去背景',
     description: '在浏览器本地使用开源模型移除图片背景，导出透明 PNG',

@@ -6,6 +6,7 @@ import {
   createBackgroundRemovedImageFilename,
   createCompressedImageFilename,
   createEditedImageFilename,
+  createEnhancedImageFilename,
   createImageOutputFilename,
   createUpscaledImageFilename,
   createWatermarkRemovedImageFilename,
@@ -15,6 +16,7 @@ import {
   getImageTargetConfig,
   inferImageMimeType,
   isSupportedImageInput,
+  IMAGE_ENHANCE_MAX_SOURCE_PIXELS,
   MAX_IMAGE_FILE_SIZE,
   MAX_IMAGE_PIXELS,
   normalizeImageQuality,
@@ -29,6 +31,10 @@ import {
   type ImageConversionOutcome,
   type ImageCropRect,
   type ImageEditOutcome,
+  type ImageEnhanceOutcome,
+  type ImageEnhanceProgress,
+  type ImageEnhanceScale,
+  type ImageEnhanceSuccess,
   type ImageInspectionOutcome,
   type ImageUpscaleMode,
   type ImageUpscaleOutcome,
@@ -43,6 +49,12 @@ import {
 
 type OrtWasmModule = typeof import('onnxruntime-web/wasm');
 type OrtInferenceSession = Awaited<ReturnType<OrtWasmModule['InferenceSession']['create']>>;
+type OrtWebGpuModule = typeof import('onnxruntime-web/webgpu');
+type OrtWebGpuInferenceSession = Awaited<ReturnType<OrtWebGpuModule['InferenceSession']['create']>>;
+type OrtWebGpuTensor = InstanceType<OrtWebGpuModule['Tensor']>;
+type TransformersModule = typeof import('@huggingface/transformers');
+type BiRefNetModel = Awaited<ReturnType<TransformersModule['AutoModel']['from_pretrained']>>;
+type BiRefNetProcessor = Awaited<ReturnType<TransformersModule['AutoProcessor']['from_pretrained']>>;
 type PicaInstance = ReturnType<typeof import('pica')['default']>;
 type SvgoBrowserModule = typeof import('svgo/browser');
 type UpscalerModule = typeof import('upscaler');
@@ -181,6 +193,14 @@ export interface UpscaleImageOptions {
   jpegBackground?: string;
 }
 
+export interface EnhanceImageOptions {
+  scale: ImageEnhanceScale;
+  targetFormat: BasicImageTargetFormat;
+  quality?: number;
+  jpegBackground?: string;
+  onProgress?: (progress: ImageEnhanceProgress) => void;
+}
+
 export interface RemoveImageWatermarkOptions {
   selection: ImageCropRect;
   targetFormat: ImageTargetFormat;
@@ -213,6 +233,12 @@ const VISIBLE_DIFF_THRESHOLD = {
 const PNG_QUANTIZED_TARGET_SAVINGS = 0.25;
 const BACKGROUND_REMOVAL_PUBLIC_PATH =
   'https://staticimgly.com/@imgly/background-removal-data/${PACKAGE_VERSION}/dist/';
+const IMAGE_ENHANCE_MODEL_URL = '/models/image-enhance/realesrgan-x4plus-fp16.onnx';
+const IMAGE_ENHANCE_MODEL_SCALE = 4;
+const IMAGE_ENHANCE_TILE_SIZE = 128;
+const IMAGE_ENHANCE_TILE_PADDING = 10;
+const BIREFNET_LITE_MODEL_ID = 'studioludens/birefnet-lite-512';
+const BIREFNET_LITE_MODEL_REVISION = '4a3c40c36c94093cc1e724d9ea428b8fa4b57dc7';
 const ONNX_WASM_PUBLIC_PATH = '/models/onnxruntime-web/';
 const WATERMARK_MIGAN_MODEL_URL = 'https://huggingface.co/andraniksargsyan/migan/resolve/main/migan_pipeline_v2.onnx';
 const WATERMARK_AI_MODEL_URL = 'https://huggingface.co/Carve/LaMa-ONNX/resolve/main/lama_fp32.onnx';
@@ -236,11 +262,22 @@ let avifEncoderPromise: Promise<AvifEncoderModule> | null = null;
 const aiUpscalerPromises: Partial<Record<AiUpscaleScale, Promise<AiUpscalerInstance>>> = {};
 const backgroundRemovalPreloadPromises: Partial<Record<ImageBackgroundRemovalModel, Promise<void>>> = {};
 const backgroundRemovalProgressListeners = new Set<(progress: ImageBackgroundRemovalProgress) => void>();
+const biRefNetProgressListeners = new Set<(progress: ImageBackgroundRemovalProgress) => void>();
+let biRefNetModelPromise: Promise<{
+  model: BiRefNetModel;
+  processor: BiRefNetProcessor;
+  RawImage: TransformersModule['RawImage'];
+}> | null = null;
+let imageEnhanceSessionPromise: Promise<{
+  ort: OrtWebGpuModule;
+  session: OrtWebGpuInferenceSession;
+}> | null = null;
+const imageEnhanceProgressListeners = new Set<(progress: ImageEnhanceProgress) => void>();
 
-const BACKGROUND_REMOVAL_MODEL_MAP: Record<ImageBackgroundRemovalModel, 'isnet_fp16' | 'isnet_quint8'> = {
+const BACKGROUND_REMOVAL_MODEL_MAP = {
   medium: 'isnet_fp16',
   small: 'isnet_quint8',
-};
+} as const;
 
 const AI_UPSCALE_MODEL_PATHS: Record<AiUpscaleScale, string> = {
   2: '/models/upscale/x2/model.json',
@@ -276,6 +313,10 @@ function reportBackgroundRemovalProgress(label: string, current: number, total: 
 }
 
 function createBackgroundRemovalConfig(model: ImageBackgroundRemovalModel) {
+  if (model === 'birefnet-lite') {
+    throw new Error('BiRefNet Lite uses its own browser inference pipeline');
+  }
+
   return {
     publicPath: BACKGROUND_REMOVAL_PUBLIC_PATH,
     model: BACKGROUND_REMOVAL_MODEL_MAP[model],
@@ -287,14 +328,84 @@ function createBackgroundRemovalConfig(model: ImageBackgroundRemovalModel) {
   } as const;
 }
 
+function createFixedBackgroundRemovalProgress(
+  stage: ImageBackgroundRemovalProgress['stage'],
+  label: string,
+  percent: number
+): ImageBackgroundRemovalProgress {
+  const normalizedPercent = clampNumber(Math.round(percent), 0, 100);
+
+  return {
+    stage,
+    label,
+    current: normalizedPercent,
+    total: 100,
+    percent: normalizedPercent,
+  };
+}
+
+function reportBiRefNetProgress(progress: ImageBackgroundRemovalProgress) {
+  biRefNetProgressListeners.forEach((listener) => listener(progress));
+}
+
+async function getBiRefNetLiteModel(): Promise<{
+  model: BiRefNetModel;
+  processor: BiRefNetProcessor;
+  RawImage: TransformersModule['RawImage'];
+}> {
+  if (typeof navigator === 'undefined' || !('gpu' in navigator)) {
+    throw new Error('birefnet_webgpu_unavailable');
+  }
+
+  if (!biRefNetModelPromise) {
+    biRefNetModelPromise = (async () => {
+      const transformers = await import('@huggingface/transformers');
+      const progressCallback: Parameters<TransformersModule['AutoModel']['from_pretrained']>[1] extends infer Options
+        ? Options extends { progress_callback?: infer Callback }
+          ? Callback
+          : never
+        : never = (progress) => {
+          if (progress.status !== 'progress' && progress.status !== 'progress_total') return;
+          reportBiRefNetProgress(createFixedBackgroundRemovalProgress(
+            'model',
+            'model:birefnet',
+            clampNumber(progress.progress * 0.7, 0, 70)
+          ));
+        };
+
+      const [model, processor] = await Promise.all([
+        transformers.AutoModel.from_pretrained(BIREFNET_LITE_MODEL_ID, {
+          device: 'webgpu',
+          dtype: 'fp16',
+          revision: BIREFNET_LITE_MODEL_REVISION,
+          progress_callback: progressCallback,
+        }),
+        transformers.AutoProcessor.from_pretrained(BIREFNET_LITE_MODEL_ID, {
+          revision: BIREFNET_LITE_MODEL_REVISION,
+        }),
+      ]);
+
+      reportBiRefNetProgress(createFixedBackgroundRemovalProgress('model', 'model:birefnet-ready', 72));
+      return { model, processor, RawImage: transformers.RawImage };
+    })().catch((error) => {
+      biRefNetModelPromise = null;
+      throw error;
+    });
+  }
+
+  return biRefNetModelPromise;
+}
+
 export function preloadImageBackgroundRemovalModel(
   model: ImageBackgroundRemovalModel = 'medium'
 ): Promise<void> {
   const existing = backgroundRemovalPreloadPromises[model];
   if (existing) return existing;
 
-  const preloadPromise = import('@imgly/background-removal')
-    .then((backgroundRemoval) => backgroundRemoval.preload(createBackgroundRemovalConfig(model)))
+  const preloadPromise = (model === 'birefnet-lite'
+    ? getBiRefNetLiteModel().then(() => undefined)
+    : import('@imgly/background-removal')
+      .then((backgroundRemoval) => backgroundRemoval.preload(createBackgroundRemovalConfig(model))))
     .catch((error) => {
       if (backgroundRemovalPreloadPromises[model] === preloadPromise) {
         delete backgroundRemovalPreloadPromises[model];
@@ -963,6 +1074,113 @@ async function getSvgCanvasResizer(): Promise<PicaInstance> {
   return svgCanvasResizerPromise;
 }
 
+function createImageEnhanceProgress(
+  stage: ImageEnhanceProgress['stage'],
+  percent: number,
+  current = percent,
+  total = 100
+): ImageEnhanceProgress {
+  return {
+    stage,
+    percent: clampNumber(Math.round(percent), 0, 100),
+    current,
+    total,
+  };
+}
+
+function reportImageEnhanceProgress(progress: ImageEnhanceProgress) {
+  imageEnhanceProgressListeners.forEach((listener) => listener(progress));
+}
+
+async function fetchImageEnhanceModel(): Promise<Uint8Array> {
+  const response = await fetch(IMAGE_ENHANCE_MODEL_URL);
+  if (!response.ok) throw new Error('realesrgan_model_download_failed');
+
+  const contentLength = Number(response.headers.get('content-length')) || 0;
+  if (!response.body) {
+    const data = new Uint8Array(await response.arrayBuffer());
+    reportImageEnhanceProgress(createImageEnhanceProgress('model', 82, data.byteLength, data.byteLength));
+    return data;
+  }
+
+  const reader = response.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let loaded = 0;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    chunks.push(value);
+    loaded += value.byteLength;
+    const ratio = contentLength > 0
+      ? loaded / contentLength
+      : loaded / (34 * 1024 * 1024);
+    reportImageEnhanceProgress(createImageEnhanceProgress(
+      'model',
+      clampNumber(ratio * 82, 1, 82),
+      loaded,
+      contentLength || Math.max(loaded, 34 * 1024 * 1024)
+    ));
+  }
+
+  const data = new Uint8Array(loaded);
+  let offset = 0;
+  for (const chunk of chunks) {
+    data.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return data;
+}
+
+async function getImageEnhanceSession(): Promise<{
+  ort: OrtWebGpuModule;
+  session: OrtWebGpuInferenceSession;
+}> {
+  if (!(await supportsImageEnhanceWebGpu())) {
+    throw new Error('realesrgan_webgpu_unavailable');
+  }
+
+  if (!imageEnhanceSessionPromise) {
+    imageEnhanceSessionPromise = (async () => {
+      reportImageEnhanceProgress(createImageEnhanceProgress('model', 0));
+      const [ort, modelData] = await Promise.all([
+        import('onnxruntime-web/webgpu'),
+        fetchImageEnhanceModel(),
+      ]);
+      reportImageEnhanceProgress(createImageEnhanceProgress('model', 88));
+      const session = await ort.InferenceSession.create(modelData, {
+        executionProviders: ['webgpu'],
+        graphOptimizationLevel: 'all',
+      });
+      reportImageEnhanceProgress(createImageEnhanceProgress('model', 100));
+      return { ort, session };
+    })().catch((error) => {
+      imageEnhanceSessionPromise = null;
+      throw error;
+    });
+  }
+
+  return imageEnhanceSessionPromise;
+}
+
+export async function supportsImageEnhanceWebGpu(): Promise<boolean> {
+  if (typeof navigator === 'undefined') return false;
+  const browserNavigator = navigator as Navigator & {
+    gpu?: { requestAdapter: () => Promise<unknown> };
+  };
+  if (!browserNavigator.gpu) return false;
+
+  try {
+    return Boolean(await browserNavigator.gpu.requestAdapter());
+  } catch {
+    return false;
+  }
+}
+
+export function preloadImageEnhanceModel(): Promise<void> {
+  return getImageEnhanceSession().then(() => undefined);
+}
+
 function getAiUpscaler(scale: AiUpscaleScale): Promise<AiUpscalerInstance> {
   if (!aiUpscalerPromises[scale]) {
     aiUpscalerPromises[scale] = Promise.all([
@@ -1014,6 +1232,166 @@ async function aiUpscaleImageToCanvas(
     return canvas;
   } catch {
     return null;
+  }
+}
+
+function createImageEnhanceInput(imageData: ImageData): Float32Array {
+  const pixelCount = imageData.width * imageData.height;
+  const input = new Float32Array(pixelCount * 3);
+
+  for (let index = 0; index < pixelCount; index += 1) {
+    const sourceIndex = index * 4;
+    input[index] = imageData.data[sourceIndex] / 255;
+    input[pixelCount + index] = imageData.data[sourceIndex + 1] / 255;
+    input[pixelCount * 2 + index] = imageData.data[sourceIndex + 2] / 255;
+  }
+
+  return input;
+}
+
+function renderImageEnhanceOutput(
+  data: readonly number[] | ArrayLike<number>,
+  width: number,
+  height: number
+): HTMLCanvasElement | null {
+  const pixelCount = width * height;
+  if (data.length < pixelCount * 3) return null;
+
+  const canvas = createRasterCanvas({ width, height });
+  const context = canvas.getContext('2d');
+  if (!context) return null;
+
+  const imageData = context.createImageData(width, height);
+  for (let index = 0; index < pixelCount; index += 1) {
+    const outputIndex = index * 4;
+    imageData.data[outputIndex] = clampNumber(Math.round(Number(data[index]) * 255), 0, 255);
+    imageData.data[outputIndex + 1] = clampNumber(
+      Math.round(Number(data[pixelCount + index]) * 255),
+      0,
+      255
+    );
+    imageData.data[outputIndex + 2] = clampNumber(
+      Math.round(Number(data[pixelCount * 2 + index]) * 255),
+      0,
+      255
+    );
+    imageData.data[outputIndex + 3] = 255;
+  }
+  context.putImageData(imageData, 0, 0);
+  return canvas;
+}
+
+async function enhanceImageToCanvas(
+  image: LoadedImage,
+  scale: ImageEnhanceScale,
+  onProgress?: (progress: ImageEnhanceProgress) => void
+): Promise<HTMLCanvasElement> {
+  if (onProgress) imageEnhanceProgressListeners.add(onProgress);
+
+  try {
+    const { ort, session } = await getImageEnhanceSession();
+    const inputName = session.inputNames[0];
+    const outputName = session.outputNames[0];
+    if (!inputName || !outputName) throw new Error('realesrgan_invalid_model');
+
+    const outputCanvas = createRasterCanvas({
+      width: image.width * scale,
+      height: image.height * scale,
+    });
+    const outputContext = outputCanvas.getContext('2d');
+    if (!outputContext) throw new Error('realesrgan_canvas_context');
+    outputContext.imageSmoothingEnabled = true;
+    outputContext.imageSmoothingQuality = 'high';
+
+    const columns = Math.ceil(image.width / IMAGE_ENHANCE_TILE_SIZE);
+    const rows = Math.ceil(image.height / IMAGE_ENHANCE_TILE_SIZE);
+    const totalTiles = columns * rows;
+    let completedTiles = 0;
+    onProgress?.(createImageEnhanceProgress('compute', 0, 0, totalTiles));
+
+    for (let tileY = 0; tileY < image.height; tileY += IMAGE_ENHANCE_TILE_SIZE) {
+      for (let tileX = 0; tileX < image.width; tileX += IMAGE_ENHANCE_TILE_SIZE) {
+        const coreWidth = Math.min(IMAGE_ENHANCE_TILE_SIZE, image.width - tileX);
+        const coreHeight = Math.min(IMAGE_ENHANCE_TILE_SIZE, image.height - tileY);
+        const sourceX = Math.max(0, tileX - IMAGE_ENHANCE_TILE_PADDING);
+        const sourceY = Math.max(0, tileY - IMAGE_ENHANCE_TILE_PADDING);
+        const sourceRight = Math.min(image.width, tileX + coreWidth + IMAGE_ENHANCE_TILE_PADDING);
+        const sourceBottom = Math.min(image.height, tileY + coreHeight + IMAGE_ENHANCE_TILE_PADDING);
+        const sourceWidth = sourceRight - sourceX;
+        const sourceHeight = sourceBottom - sourceY;
+
+        const tileCanvas = createRasterCanvas({ width: sourceWidth, height: sourceHeight });
+        const tileContext = tileCanvas.getContext('2d', { willReadFrequently: true });
+        if (!tileContext) throw new Error('realesrgan_canvas_context');
+        tileContext.fillStyle = '#ffffff';
+        tileContext.fillRect(0, 0, sourceWidth, sourceHeight);
+        tileContext.drawImage(
+          image.element,
+          sourceX,
+          sourceY,
+          sourceWidth,
+          sourceHeight,
+          0,
+          0,
+          sourceWidth,
+          sourceHeight
+        );
+
+        const inputData = createImageEnhanceInput(
+          tileContext.getImageData(0, 0, sourceWidth, sourceHeight)
+        );
+        const inputTensor = new ort.Tensor('float32', inputData, [1, 3, sourceHeight, sourceWidth]);
+        let outputTensor: OrtWebGpuTensor | undefined;
+        let predictionCanvas: HTMLCanvasElement | null = null;
+        try {
+          const results = await session.run({ [inputName]: inputTensor });
+          outputTensor = results[outputName];
+          if (!outputTensor) throw new Error('realesrgan_invalid_output');
+
+          const dimensions = Array.from(outputTensor.dims);
+          const predictionHeight = dimensions.at(-2) ?? 0;
+          const predictionWidth = dimensions.at(-1) ?? 0;
+          predictionCanvas = renderImageEnhanceOutput(
+            outputTensor.data as ArrayLike<number>,
+            predictionWidth,
+            predictionHeight
+          );
+        } finally {
+          outputTensor?.dispose();
+          inputTensor.dispose();
+        }
+        if (!predictionCanvas) throw new Error('realesrgan_invalid_output');
+
+        const cropX = (tileX - sourceX) * IMAGE_ENHANCE_MODEL_SCALE;
+        const cropY = (tileY - sourceY) * IMAGE_ENHANCE_MODEL_SCALE;
+        outputContext.drawImage(
+          predictionCanvas,
+          cropX,
+          cropY,
+          coreWidth * IMAGE_ENHANCE_MODEL_SCALE,
+          coreHeight * IMAGE_ENHANCE_MODEL_SCALE,
+          tileX * scale,
+          tileY * scale,
+          coreWidth * scale,
+          coreHeight * scale
+        );
+
+        completedTiles += 1;
+        onProgress?.(createImageEnhanceProgress(
+          'compute',
+          (completedTiles / totalTiles) * 100,
+          completedTiles,
+          totalTiles
+        ));
+      }
+    }
+
+    outputContext.globalCompositeOperation = 'destination-in';
+    outputContext.drawImage(image.element, 0, 0, outputCanvas.width, outputCanvas.height);
+    outputContext.globalCompositeOperation = 'source-over';
+    return outputCanvas;
+  } finally {
+    if (onProgress) imageEnhanceProgressListeners.delete(onProgress);
   }
 }
 
@@ -2730,6 +3108,80 @@ function createBackgroundRemovalProgress(
   };
 }
 
+async function removeBackgroundWithBiRefNetLite(
+  image: LoadedImage,
+  modelInput: Blob,
+  onProgress?: (progress: ImageBackgroundRemovalProgress) => void
+): Promise<Blob> {
+  onProgress?.(createFixedBackgroundRemovalProgress('model', 'model:birefnet', 0));
+  if (onProgress) biRefNetProgressListeners.add(onProgress);
+
+  try {
+    const { model, processor, RawImage } = await getBiRefNetLiteModel();
+    onProgress?.(createFixedBackgroundRemovalProgress('compute', 'compute:prepare', 76));
+
+    const rawImage = await RawImage.read(modelInput);
+    const { pixel_values: pixelValues } = await processor(rawImage);
+    onProgress?.(createFixedBackgroundRemovalProgress('compute', 'compute:inference', 80));
+
+    const outputs = await model({ input_image: pixelValues }) as { logits?: unknown };
+    const logits = outputs.logits;
+    if (!isOrtTensorLike(logits)) {
+      throw new Error('birefnet_invalid_output');
+    }
+
+    const dims = Array.from(logits.dims);
+    const maskHeight = dims.at(-2) ?? 0;
+    const maskWidth = dims.at(-1) ?? 0;
+    const maskPixelCount = maskWidth * maskHeight;
+    if (!maskWidth || !maskHeight || logits.data.length < maskPixelCount) {
+      throw new Error('birefnet_invalid_output');
+    }
+
+    const maskCanvas = document.createElement('canvas');
+    maskCanvas.width = maskWidth;
+    maskCanvas.height = maskHeight;
+    const maskContext = maskCanvas.getContext('2d');
+    if (!maskContext) throw new Error('birefnet_canvas_context');
+
+    const maskImageData = maskContext.createImageData(maskWidth, maskHeight);
+    const sourceOffset = logits.data.length - maskPixelCount;
+    for (let index = 0; index < maskPixelCount; index += 1) {
+      const alpha = clampNumber(
+        Math.round((1 / (1 + Math.exp(-Number(logits.data[sourceOffset + index])))) * 255),
+        0,
+        255
+      );
+      const outputIndex = index * 4;
+      maskImageData.data[outputIndex] = 255;
+      maskImageData.data[outputIndex + 1] = 255;
+      maskImageData.data[outputIndex + 2] = 255;
+      maskImageData.data[outputIndex + 3] = alpha;
+    }
+    maskContext.putImageData(maskImageData, 0, 0);
+
+    onProgress?.(createFixedBackgroundRemovalProgress('compute', 'compute:encode', 94));
+    const outputCanvas = document.createElement('canvas');
+    outputCanvas.width = image.width;
+    outputCanvas.height = image.height;
+    const outputContext = outputCanvas.getContext('2d');
+    if (!outputContext) throw new Error('birefnet_canvas_context');
+
+    outputContext.drawImage(image.element, 0, 0, image.width, image.height);
+    outputContext.globalCompositeOperation = 'destination-in';
+    outputContext.imageSmoothingEnabled = true;
+    outputContext.imageSmoothingQuality = 'high';
+    outputContext.drawImage(maskCanvas, 0, 0, image.width, image.height);
+    outputContext.globalCompositeOperation = 'source-over';
+
+    const blob = await canvasToBlob(outputCanvas, 'image/png');
+    onProgress?.(createFixedBackgroundRemovalProgress('compute', 'compute:done', 100));
+    return blob;
+  } finally {
+    if (onProgress) biRefNetProgressListeners.delete(onProgress);
+  }
+}
+
 export async function removeImageBackground(
   file: File,
   options: RemoveImageBackgroundOptions = {}
@@ -2775,20 +3227,27 @@ export async function removeImageBackground(
     const modelInput = await normalizeLoadedImageToPng(image);
     if (!modelInput) return { ok: false, code: 'canvas_context' };
 
-    const backgroundRemoval = await import('@imgly/background-removal');
-    const removeBackground = backgroundRemoval.removeBackground;
-    if (options.onProgress) {
-      backgroundRemovalProgressListeners.add(options.onProgress);
-    }
+    const selectedModel = options.model ?? 'medium';
+    let blob: Blob;
 
-    const blob = await removeBackground(
-      modelInput,
-      createBackgroundRemovalConfig(options.model ?? 'medium')
-    ).finally(() => {
+    if (selectedModel === 'birefnet-lite') {
+      blob = await removeBackgroundWithBiRefNetLite(image, modelInput, options.onProgress);
+    } else {
+      const backgroundRemoval = await import('@imgly/background-removal');
+      const removeBackground = backgroundRemoval.removeBackground;
       if (options.onProgress) {
-        backgroundRemovalProgressListeners.delete(options.onProgress);
+        backgroundRemovalProgressListeners.add(options.onProgress);
       }
-    });
+
+      blob = await removeBackground(
+        modelInput,
+        createBackgroundRemovalConfig(selectedModel)
+      ).finally(() => {
+        if (options.onProgress) {
+          backgroundRemovalProgressListeners.delete(options.onProgress);
+        }
+      });
+    }
     const pngBlob = blob.type === 'image/png' ? blob : new Blob([blob], { type: 'image/png' });
     const output = await maybeWatermarkImageBlob(pngBlob, 'image/png');
 
@@ -2804,6 +3263,14 @@ export async function removeImageBackground(
       durationMs: Math.round(performance.now() - startedAt),
     };
   } catch (error) {
+    if ((options.model ?? 'medium') === 'birefnet-lite') {
+      return {
+        ok: false,
+        code: 'ai_model_unavailable',
+        detail: error instanceof Error ? error.message : undefined,
+      };
+    }
+
     return {
       ok: false,
       code: 'canvas_export',
@@ -2947,6 +3414,114 @@ export async function upscaleImageFile(
     };
   } catch {
     return { ok: false, code: 'load_failed' };
+  }
+}
+
+export async function enhanceImageFile(
+  file: File,
+  options: EnhanceImageOptions
+): Promise<ImageEnhanceOutcome> {
+  if (file.size === 0) return { ok: false, code: 'empty_file' };
+
+  if (file.size > MAX_IMAGE_FILE_SIZE) {
+    return {
+      ok: false,
+      code: 'file_too_large',
+      maxSize: formatFileSize(MAX_IMAGE_FILE_SIZE),
+    };
+  }
+
+  if (!isSupportedImageInput(file)) {
+    return {
+      ok: false,
+      code: 'unsupported_input',
+      detail: inferImageMimeType(file) || 'unknown',
+    };
+  }
+
+  const startedAt = performance.now();
+  const sourceType = inferImageMimeType(file);
+  const sourceFile = sourceType === file.type ? file : new File([file], file.name, { type: sourceType });
+  const target = getBasicImageTargetConfig(options.targetFormat);
+
+  try {
+    const image = await loadImage(sourceFile);
+    const sourcePixels = image.width * image.height;
+    const outputWidth = image.width * options.scale;
+    const outputHeight = image.height * options.scale;
+
+    if (!image.width || !image.height) return { ok: false, code: 'load_failed' };
+    if (sourcePixels > IMAGE_ENHANCE_MAX_SOURCE_PIXELS) {
+      return {
+        ok: false,
+        code: 'too_many_pixels',
+        maxPixels: formatPixelLimit(IMAGE_ENHANCE_MAX_SOURCE_PIXELS),
+      };
+    }
+    if (outputWidth * outputHeight > MAX_IMAGE_PIXELS) {
+      return {
+        ok: false,
+        code: 'too_many_pixels',
+        maxPixels: formatPixelLimit(MAX_IMAGE_PIXELS),
+      };
+    }
+
+    const canvas = await enhanceImageToCanvas(image, options.scale, options.onProgress);
+    const context = canvas.getContext('2d');
+    if (!context) return { ok: false, code: 'canvas_context' };
+
+    if (target.mimeType === 'image/jpeg') {
+      context.fillStyle = options.jpegBackground ?? '#ffffff';
+      context.globalCompositeOperation = 'destination-over';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.globalCompositeOperation = 'source-over';
+    }
+
+    options.onProgress?.(createImageEnhanceProgress('encode', 25));
+    const quality = target.supportsQuality
+      ? normalizeImageQuality(options.quality ?? target.defaultQuality)
+      : undefined;
+    const output = shouldWatermarkImageOutput()
+      ? await addWatermarkToCanvasBlob(canvas, target, quality)
+      : {
+          blob: await canvasToBlob(canvas, target.mimeType, quality),
+          mimeType: target.mimeType,
+          format: target.format,
+          extension: target.extension,
+        };
+    options.onProgress?.(createImageEnhanceProgress('encode', 100));
+
+    if (output.blob.type && output.blob.type !== output.mimeType) {
+      return {
+        ok: false,
+        code: 'unsupported_output',
+        detail: target.label,
+      };
+    }
+
+    const outputMimeType = output.mimeType as ImageEnhanceSuccess['mimeType'];
+
+    return {
+      ok: true,
+      blob: output.blob,
+      filename: createEnhancedImageFilename(file.name, output.extension),
+      mimeType: outputMimeType,
+      format: output.format as BasicImageTargetFormat,
+      width: outputWidth,
+      height: outputHeight,
+      sourceWidth: image.width,
+      sourceHeight: image.height,
+      originalSize: file.size,
+      outputSize: output.blob.size,
+      durationMs: Math.round(performance.now() - startedAt),
+      scale: options.scale,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      code: 'ai_model_unavailable',
+      detail: error instanceof Error ? error.message : undefined,
+    };
   }
 }
 

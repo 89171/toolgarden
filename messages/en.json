@@ -631,20 +631,85 @@
       "general": "Image upscaling failed. Please try again."
     }
   },
+  "image_enhance": {
+    "settings_title": "Enhancement settings",
+    "result_title": "Enhanced result",
+    "drop_title": "Click or drag an image to make it clearer",
+    "drop_hint": "Supports {formats}. Processing stays local in your browser.",
+    "drop_action": "Choose image",
+    "model_name": "Real-ESRGAN HD restoration",
+    "model_detail": "Uses x4plus to restore blur, noise, and compression texture. PyTorch FP32 validates conversion; the browser runs ONNX FP16.",
+    "model_size": "Model download",
+    "runtime": "Runtime",
+    "output_scale": "Output size",
+    "scale_original": "Original",
+    "scale_hint_1": "Keeps the original pixel dimensions after 4x AI restoration and high-quality downsampling.",
+    "scale_hint_2": "Doubles width and height for displays, sharing, and general assets.",
+    "scale_hint_4": "Exports the native 4x model result with the most detail, processing time, and file size.",
+    "output_format": "Output format",
+    "quality": "Output quality",
+    "quality_value": "{value}%",
+    "lossless_png": "Lossless PNG output",
+    "source_size": "Original size",
+    "output_size": "Output size",
+    "input_formats": "Supported formats",
+    "local_note": "Image decoding, Real-ESRGAN inference, and export all run locally in your browser; the image is not uploaded. First use downloads about 32.2 MiB of model assets, which are normally cached. AI-generated detail is an estimate and must not be used as factual or forensic evidence.",
+    "apply": "Enhance image",
+    "processing": "Enhancing with AI",
+    "progress_prepare": "Preparing local model",
+    "progress_model": "Loading and compiling model {value}%",
+    "progress_compute": "Enhancing tiles {current}/{total}",
+    "progress_encode": "Exporting image {value}%",
+    "first_download_note": "First use downloads about 32.2 MiB of ONNX FP16 assets and compiles the WebGPU graph. Later runs are normally much faster.",
+    "empty_title": "Upload an image to enhance",
+    "empty_body": "Best for low-resolution photos, older images, noise, and JPEG artifacts. Inspect faces, text, and thin lines closely afterward.",
+    "file_size": "File size",
+    "source_image": "Source image",
+    "output_image": "Enhanced image",
+    "output_empty": "The enhanced image will appear here",
+    "processing_hint": "Real-ESRGAN is processing the image in tiles. Keep this page open.",
+    "preview_open": "Preview enhanced image",
+    "preview_title": "Enhanced image preview",
+    "preview_close": "Close preview",
+    "duration": "Duration",
+    "duration_value": "{value}ms",
+    "result_scale": "Output scale",
+    "result_model": "Model",
+    "source_limit": "The HD model accepts source images up to about {value} MP. Reduce the image dimensions first.",
+    "output_limit": "This scale would exceed the {value} MP output limit. Choose a smaller scale.",
+    "unknown_type": "unknown type",
+    "errors": {
+      "empty_file": "The file is empty. Choose a valid image.",
+      "unsupported_input": "This image type is not supported yet: {type}.",
+      "file_too_large": "The file is too large. Maximum size is {maxSize}.",
+      "too_many_pixels": "The image has too many pixels. The current limit is {maxPixels}.",
+      "load_failed": "The image could not be decoded. It may be damaged or unsupported by this browser.",
+      "canvas_context": "Could not create a Canvas drawing context.",
+      "canvas_export": "Image export failed. Try another browser.",
+      "unsupported_output": "This browser cannot export {format}.",
+      "webgpu_unavailable": "This tool requires a recent desktop Chrome or Edge browser with WebGPU.",
+      "model_download_failed": "The Real-ESRGAN model download failed. Check your connection and try again.",
+      "ai_model_unavailable": "Real-ESRGAN failed to load or run. Check browser compatibility, GPU memory, and the network, then try again.",
+      "general": "Image enhancement failed. Please try again."
+    }
+  },
   "image_remove_bg": {
     "settings_title": "Background removal",
     "results_title": "Background removal result",
     "model_label": "Local model",
     "model_title": "Export transparent PNG",
-    "model_description": "Use an open-source image segmentation model in the browser to detect the subject and remove the background. The high-quality model is used by default; the first run downloads model assets, and later runs are usually cached by the browser.",
+    "model_description": "Use an open-source image segmentation model in the browser to detect the subject and remove the background. Balanced mode is the default, with a lighter fast mode and a more detailed HD mode available. Model assets are usually cached by the browser.",
     "model_choice": "Model",
-    "model_quality_label": "High quality",
+    "model_balanced_label": "Balanced",
     "model_speed_label": "Fast",
+    "model_hd_label": "HD",
     "model_size_medium": "medium · about 80MB",
     "model_size_small": "small · about 40MB",
+    "model_size_hd": "BiRefNet Lite FP16 · about 94MB",
     "model_default_badge": "Default",
-    "model_quality_description": "More stable edges, hair, and complex subjects. Best for final export.",
+    "model_balanced_description": "Uses isnet_fp16 for a balance of result quality, download size, and inference speed.",
     "model_speed_description": "Faster download and lighter inference for quick previews, with possible artifacts on complex edges.",
+    "model_hd_description": "Uses 512px BiRefNet Lite FP16 for hair, thin objects, and complex edges. Requires a WebGPU-capable browser.",
     "drop_title": "Click or drag an image",
     "drop_hint": "Supports {formats}. Exports a transparent PNG.",
     "drop_action": "Choose image",
@@ -685,6 +750,8 @@
       "canvas_context": "Could not create a Canvas drawing context.",
       "canvas_export": "Background removal failed. Model assets may have failed to load, or this browser may not support the required capabilities.",
       "unsupported_output": "This browser cannot export {format}.",
+      "ai_model_unavailable": "The HD model failed to load or run. Check the network, GPU memory, and browser compatibility, then try again.",
+      "hd_requires_webgpu": "HD mode requires a recent desktop browser with WebGPU. Use Chrome or Edge, or select Balanced mode.",
       "general": "Background removal failed. Please try again."
     }
   },
@@ -712,8 +779,8 @@
     "background_gray": "Light gray",
     "background_custom": "Custom",
     "model_choice": "AI model",
-    "model_quality": "High quality",
-    "model_fast": "Fast (default)",
+    "model_balanced": "Balanced (default) · isnet_fp16",
+    "model_hd": "HD · BiRefNet Lite",
     "output_format": "Export format",
     "process_action": "Remove background and frame",
     "processing": "Processing",
@@ -721,8 +788,8 @@
     "replace": "Replace photo",
     "progress_prepare": "Preparing local model",
     "progress_model": "Loading model assets {value}%",
-    "progress_model_note_fast": "The first run downloads about 40MB of fast model assets. On a slow network this may take tens of seconds. Assets are usually cached by the browser, so later runs are much faster. Keep this page open while it loads.",
-    "progress_model_note_quality": "The high-quality model downloads about 80MB of assets on first use and may take longer on slow networks. Assets are usually cached by the browser, so later runs are much faster. Keep this page open while it loads.",
+    "progress_model_note_balanced": "Balanced mode downloads about 80MB of isnet_fp16 model assets on first use. Assets are usually cached by the browser, so later runs are much faster. Keep this page open while it loads.",
+    "progress_model_note_hd": "HD mode downloads about 94MB of BiRefNet Lite model assets on first use and requires a recent desktop browser with WebGPU. Assets are usually cached by the browser. Keep this page open while it loads.",
     "progress_compute": "Detecting person and background {value}%",
     "editor_title": "ID photo editor",
     "editor_aria": "ID photo preview canvas. Drag the person to adjust position.",
@@ -760,6 +827,8 @@
       "canvas_export": "ID photo generation failed. Model assets may have failed to load, or this browser may not support the required capabilities.",
       "unsupported_output": "This browser cannot export {format}.",
       "invalid_dimensions": "Enter a valid ID photo size.",
+      "ai_model_unavailable": "The HD model failed to load or run. Check the network, GPU memory, and browser compatibility, then try again.",
+      "hd_requires_webgpu": "HD mode requires a recent desktop browser with WebGPU. Use Chrome or Edge, or select Balanced mode.",
       "general": "ID photo generation failed. Please try again."
     }
   },
@@ -1175,6 +1244,7 @@
     "image-merge": "merge images online, combine images into one, stitch images vertically, images to PDF, long image maker",
     "image-compress": "compress image online, image compressor, reduce image file size, compress JPG, compress PNG, compress WebP",
     "image-upscale": "upscale image online, image upscaler, enlarge image without losing quality, increase image resolution, 2x image upscale, 4x image upscale",
+    "image-enhance": "enhance image online, make image clearer, fix blurry photo, AI photo restoration, Real-ESRGAN online, improve image quality",
     "image-remove-bg": "remove image background, background remover, transparent background maker, AI background removal, remove background online",
     "image-id-photo": "ID photo maker, passport photo maker, visa photo maker, 2x2 photo maker, ID photo background changer, online ID photo",
     "image-remove-watermark": "remove watermark from image, image watermark remover, AI watermark removal, erase watermark online, remove text from image",
@@ -2242,6 +2312,30 @@
         {
           "question": "Why does the file get larger after upscaling?",
           "answer": "Upscaling increases the pixel count, and lossless formats such as PNG can become much larger. You can compress the result with Image Compressor afterward."
+        }
+      ]
+    },
+    "image-enhance": {
+      "items": [
+        {
+          "question": "Does Image Enhance upload files?",
+          "answer": "No. Image decoding, Real-ESRGAN inference, and export all run locally in the browser; files are not uploaded to a server."
+        },
+        {
+          "question": "Which model does it use?",
+          "answer": "The browser uses an ONNX FP16 model converted and validated from the official RealESRGAN_x4plus PyTorch FP32 checkpoint. Its download size is about 32.2 MiB."
+        },
+        {
+          "question": "Why does it only work in some browsers?",
+          "answer": "The full Real-ESRGAN x4plus model is compute-intensive and needs WebGPU to use the device GPU. A recent desktop Chrome or Edge browser is recommended."
+        },
+        {
+          "question": "Why does original-size mode still run a 4x model?",
+          "answer": "x4plus natively creates a restored 4x result. Original-size mode then downsamples it at high quality to improve noise and compression texture without changing pixel dimensions."
+        },
+        {
+          "question": "Can I use the result to identify document or evidence details?",
+          "answer": "No. The model can generate plausible but incorrect faces, characters, and texture. Enhanced output is for visual improvement only, not factual or forensic evidence."
         }
       ]
     },
@@ -4102,6 +4196,10 @@
     "image-upscale": {
       "name": "Image Upscale",
       "description": "Free online image upscaler for JPG, PNG, WebP, and other images at 2x, 3x, 4x, or custom dimensions with pixel-perfect, Smooth HD, and Sharp enhance modes"
+    },
+    "image-enhance": {
+      "name": "Image Enhance",
+      "description": "Free browser-local Real-ESRGAN x4plus tool to reduce blur, noise, and compression artifacts with original-size, 2x, and 4x output"
     },
     "image-remove-bg": {
       "name": "Remove image background",

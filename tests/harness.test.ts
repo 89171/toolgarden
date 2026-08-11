@@ -21,6 +21,10 @@ import {
   extractMarkdownTitle,
   markdownToHtml,
 } from '../lib/utils/markdown';
+import {
+  createEnhancedImageFilename,
+  IMAGE_ENHANCE_SCALES,
+} from '../lib/utils/image';
 import { jsonToXml, xmlToJson } from '../lib/utils/xml';
 
 describe('registry and localization harness', () => {
@@ -152,6 +156,14 @@ describe('conversion compatibility', () => {
     if (json.ok) {
       expect(json.parsed).toEqual({ root: { name: 'ToolGarden', '@_id': 1 } });
     }
+  });
+});
+
+describe('image enhancement contract', () => {
+  it('exposes the supported output scales and creates a distinct download name', () => {
+    expect(IMAGE_ENHANCE_SCALES).toEqual([1, 2, 4]);
+    expect(createEnhancedImageFilename('portrait.jpeg', 'png')).toBe('portrait-enhanced.png');
+    expect(createEnhancedImageFilename('.hidden', 'webp')).toBe('image-enhanced.webp');
   });
 });
 

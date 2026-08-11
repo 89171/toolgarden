@@ -631,20 +631,85 @@
       "general": "图片放大失败，请重试。"
     }
   },
+  "image_enhance": {
+    "settings_title": "清晰增强设置",
+    "result_title": "增强结果",
+    "drop_title": "点击或拖拽需要变清晰的图片",
+    "drop_hint": "支持 {formats}，图片将在浏览器本地处理",
+    "drop_action": "选择图片",
+    "model_name": "Real-ESRGAN 高清修复",
+    "model_detail": "使用 x4plus 模型修复模糊、噪点和压缩纹理；PyTorch FP32 用于转换校验，浏览器运行 ONNX FP16。",
+    "model_size": "模型下载",
+    "runtime": "运行环境",
+    "output_scale": "输出尺寸",
+    "scale_original": "原尺寸",
+    "scale_hint_1": "保持原始像素尺寸，在 4 倍 AI 修复后高质量缩回原尺寸。",
+    "scale_hint_2": "宽高各放大 2 倍，适合屏幕展示、分享和常规素材。",
+    "scale_hint_4": "输出模型原生 4 倍结果，细节最多，但耗时和文件体积也最大。",
+    "output_format": "输出格式",
+    "quality": "输出质量",
+    "quality_value": "{value}%",
+    "lossless_png": "PNG 无损输出",
+    "source_size": "原始尺寸",
+    "output_size": "输出尺寸",
+    "input_formats": "支持格式",
+    "local_note": "图片解码、Real-ESRGAN 推理和导出都在浏览器本地完成，图片不会上传。首次使用会下载约 32.2 MiB 模型资源，之后通常由浏览器缓存。AI 生成的细节是估计结果，请勿用于取证或事实判断。",
+    "apply": "开始清晰增强",
+    "processing": "AI 增强中",
+    "progress_prepare": "准备本地模型",
+    "progress_model": "加载并编译模型 {value}%",
+    "progress_compute": "分块增强 {current}/{total}",
+    "progress_encode": "导出图片 {value}%",
+    "first_download_note": "首次使用需要下载约 32.2 MiB 的 ONNX FP16 模型并编译 WebGPU 图，之后通常会明显更快。",
+    "empty_title": "上传图片开始增强",
+    "empty_body": "适合低清照片、旧图、噪点和 JPEG 压缩痕迹。处理后请放大检查人脸、文字和细线。",
+    "file_size": "文件大小",
+    "source_image": "原图",
+    "output_image": "增强图",
+    "output_empty": "增强后的图片会显示在这里",
+    "processing_hint": "Real-ESRGAN 正在分块处理图片，请保持页面打开。",
+    "preview_open": "预览增强图片",
+    "preview_title": "增强图片预览",
+    "preview_close": "关闭预览",
+    "duration": "耗时",
+    "duration_value": "{value}ms",
+    "result_scale": "输出倍率",
+    "result_model": "模型",
+    "source_limit": "高清模型最多处理约 {value} MP 的原图，请先缩小图片尺寸。",
+    "output_limit": "当前倍率会超过 {value} MP 输出限制，请选择较小倍率。",
+    "unknown_type": "未知类型",
+    "errors": {
+      "empty_file": "文件为空，请选择有效图片。",
+      "unsupported_input": "暂不支持这种图片类型：{type}。",
+      "file_too_large": "文件过大，最大支持 {maxSize}。",
+      "too_many_pixels": "图片像素过多，当前限制为 {maxPixels}。",
+      "load_failed": "图片解码失败，文件可能已损坏或浏览器不支持该格式。",
+      "canvas_context": "无法创建 Canvas 绘图上下文。",
+      "canvas_export": "图片导出失败，请换一个浏览器重试。",
+      "unsupported_output": "当前浏览器不支持导出 {format}。",
+      "webgpu_unavailable": "该工具需要支持 WebGPU 的新版 Chrome 或 Edge 桌面浏览器。",
+      "model_download_failed": "Real-ESRGAN 模型下载失败，请检查网络后重试。",
+      "ai_model_unavailable": "Real-ESRGAN 模型加载或推理失败，请检查浏览器兼容性、显存和网络后重试。",
+      "general": "图片清晰增强失败，请重试。"
+    }
+  },
   "image_remove_bg": {
     "settings_title": "背景移除",
     "results_title": "去背景结果",
     "model_label": "本地模型",
     "model_title": "导出透明 PNG",
-    "model_description": "使用浏览器中的开源图像分割模型识别主体并移除背景。默认使用高质量模型，首次运行需要下载模型资源，之后通常会被浏览器缓存。",
+    "model_description": "使用浏览器中的开源图像分割模型识别主体并移除背景。默认使用均衡模式，也可选择更轻的快速模式或细节更强的高清模式；模型资源通常会被浏览器缓存。",
     "model_choice": "模型选择",
-    "model_quality_label": "高质量",
+    "model_balanced_label": "均衡",
     "model_speed_label": "快速",
+    "model_hd_label": "高清",
     "model_size_medium": "medium · 约 80MB",
     "model_size_small": "small · 约 40MB",
+    "model_size_hd": "BiRefNet Lite FP16 · 约 94MB",
     "model_default_badge": "默认",
-    "model_quality_description": "边缘、头发和复杂主体更稳，适合最终导出。",
+    "model_balanced_description": "使用 isnet_fp16，在效果、下载大小和推理速度之间取得平衡。",
     "model_speed_description": "下载更快、推理更轻，适合快速预览，复杂边缘可能有瑕疵。",
+    "model_hd_description": "使用 512px BiRefNet Lite FP16，强化发丝、细小物体和复杂边缘；需要支持 WebGPU 的浏览器。",
     "drop_title": "点击或拖拽图片去背景",
     "drop_hint": "支持 {formats}，输出为透明 PNG",
     "drop_action": "选择图片",
@@ -685,6 +750,8 @@
       "canvas_context": "无法创建 Canvas 绘图上下文。",
       "canvas_export": "背景移除失败，模型资源可能加载失败或当前浏览器不支持所需能力。",
       "unsupported_output": "当前浏览器不支持导出 {format}。",
+      "ai_model_unavailable": "高清模型加载或推理失败，请检查网络、显存和浏览器兼容性后重试。",
+      "hd_requires_webgpu": "高清模式需要支持 WebGPU 的新版桌面浏览器，请改用 Chrome、Edge，或选择均衡模式。",
       "general": "背景移除失败，请重试。"
     }
   },
@@ -712,8 +779,8 @@
     "background_gray": "浅灰",
     "background_custom": "自定义",
     "model_choice": "AI 模型",
-    "model_quality": "高质量",
-    "model_fast": "快速（默认）",
+    "model_balanced": "均衡（默认）· isnet_fp16",
+    "model_hd": "高清 · BiRefNet Lite",
     "output_format": "导出格式",
     "process_action": "AI 去背景并构图",
     "processing": "AI 处理中",
@@ -721,8 +788,8 @@
     "replace": "更换照片",
     "progress_prepare": "准备本地模型",
     "progress_model": "加载模型资源 {value}%",
-    "progress_model_note_fast": "首次会下载约 40MB 的快速模型资源，网络较慢时可能需要几十秒。资源通常会被浏览器缓存，之后会明显更快，请保持页面打开。",
-    "progress_model_note_quality": "高质量模型首次会下载约 80MB 资源，网络较慢时可能需要更久。资源通常会被浏览器缓存，之后会明显更快，请保持页面打开。",
+    "progress_model_note_balanced": "均衡模式首次会下载约 80MB 的 isnet_fp16 模型资源。资源通常会被浏览器缓存，之后会明显更快，请保持页面打开。",
+    "progress_model_note_hd": "高清模式首次会下载约 94MB 的 BiRefNet Lite 模型资源，需要支持 WebGPU 的新版桌面浏览器。资源通常会被浏览器缓存，请保持页面打开。",
     "progress_compute": "识别人物和背景 {value}%",
     "editor_title": "证件照编辑",
     "editor_aria": "证件照预览画布，拖动人物可以调整位置",
@@ -760,6 +827,8 @@
       "canvas_export": "证件照生成失败，模型资源可能加载失败或当前浏览器不支持所需能力。",
       "unsupported_output": "当前浏览器不支持导出 {format}。",
       "invalid_dimensions": "请输入有效的证件照尺寸。",
+      "ai_model_unavailable": "高清模型加载或推理失败，请检查网络、显存和浏览器兼容性后重试。",
+      "hd_requires_webgpu": "高清模式需要支持 WebGPU 的新版桌面浏览器，请改用 Chrome、Edge，或选择均衡模式。",
       "general": "证件照生成失败，请重试。"
     }
   },
@@ -1175,6 +1244,7 @@
     "image-merge": "图片合并,图片拼接长图,多图合成一张,图片转PDF,在线拼长图",
     "image-compress": "图片压缩,在线压缩图片,减小图片大小,JPG压缩,PNG压缩,WebP压缩",
     "image-upscale": "图片无损放大,图片放大不模糊,提高图片分辨率,2倍放大图片,4倍放大图片,图片超分辨率",
+    "image-enhance": "图片变清晰,图片清晰增强,模糊图片修复,照片变清晰,老照片清晰修复,Real-ESRGAN在线,AI图片修复",
     "image-remove-bg": "图片去背景,一键抠图,背景移除,透明背景图片,AI抠图,在线去背景",
     "image-id-photo": "证件照制作,在线证件照,一寸照制作,二寸照制作,证件照换底色,护照照片制作",
     "image-remove-watermark": "图片去水印,在线去水印,AI去水印,消除图片水印,去除图片文字",
@@ -2242,6 +2312,30 @@
         {
           "question": "图片放大后为什么文件变大？",
           "answer": "放大后像素数量增加，PNG 等无损格式尤其容易变大。可以在放大后继续使用图片压缩工具减小文件体积。"
+        }
+      ]
+    },
+    "image-enhance": {
+      "items": [
+        {
+          "question": "图片清晰增强会上传文件吗？",
+          "answer": "不会。图片解码、Real-ESRGAN 推理和导出都在浏览器本地完成，文件不会上传到服务器。"
+        },
+        {
+          "question": "使用的是什么模型？",
+          "answer": "浏览器使用从官方 RealESRGAN_x4plus PyTorch FP32 权重转换并校验的 ONNX FP16 模型，下载体积约 32.2 MiB。"
+        },
+        {
+          "question": "为什么只能在部分浏览器运行？",
+          "answer": "完整 Real-ESRGAN x4plus 计算量较大，需要 WebGPU 调用设备显卡。建议使用新版桌面 Chrome 或 Edge。"
+        },
+        {
+          "question": "原尺寸模式为什么仍然需要运行 4 倍模型？",
+          "answer": "x4plus 原生生成 4 倍修复结果，原尺寸模式再用高质量缩放回原像素尺寸，从而改善噪点和压缩纹理而不改变宽高。"
+        },
+        {
+          "question": "增强结果能用于识别证件或证据细节吗？",
+          "answer": "不能。模型可能生成看似合理但实际错误的人脸、文字和纹理，增强结果只能用于视觉改善，不能作为事实或取证依据。"
         }
       ]
     },
@@ -4102,6 +4196,10 @@
     "image-upscale": {
       "name": "图片无损放大",
       "description": "将 JPG、PNG、WebP 等图片按 2x、3x、4x 或自定义尺寸放大，提供像素无损、平滑高清和清晰增强模式，浏览器本地处理。"
+    },
+    "image-enhance": {
+      "name": "图片清晰增强",
+      "description": "使用 Real-ESRGAN x4plus 在浏览器本地修复图片模糊、噪点和压缩痕迹，支持原尺寸、2x 和 4x 输出，适合增强人像、照片和插画素材。"
     },
     "image-remove-bg": {
       "name": "图片去背景",

@@ -109,6 +109,9 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - **Image Upscale / 图片无损放大** (`/image/upscale`): Free online image upscaler for JPG, PNG, WebP, and other images at 2x, 3x, 4x, or custom dimensions with pixel-perfect, Smooth HD, and Sharp enhance modes
   - English: https://toolgarden.xyz/en/image/upscale
   - Chinese: https://toolgarden.xyz/zh/image/upscale
+- **Image Enhance / 图片清晰增强** (`/image/enhance`): Free browser-local Real-ESRGAN x4plus tool to reduce blur, noise, and compression artifacts with original-size, 2x, and 4x output
+  - English: https://toolgarden.xyz/en/image/enhance
+  - Chinese: https://toolgarden.xyz/zh/image/enhance
 - **Remove image background / 图片去背景** (`/image/remove-bg`): Free online background remover that processes images locally in your browser with an open-source model and exports a transparent PNG
   - English: https://toolgarden.xyz/en/image/remove-bg
   - Chinese: https://toolgarden.xyz/zh/image/remove-bg
