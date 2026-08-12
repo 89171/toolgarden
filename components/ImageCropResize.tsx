@@ -497,7 +497,7 @@ export function ImageCropResize({ mode, content }: ImageCropResizeProps) {
           actions={<Button variant="secondary" onClick={clearImage} disabled={!file && !error}>{tc('clear')}</Button>}
           className="h-[min(40rem,calc(100svh-12rem))] min-h-0 overflow-hidden xl:h-auto xl:min-h-0"
         >
-          <div className="flex min-h-0 flex-grow flex-col gap-4 overflow-y-auto overscroll-contain pr-1">
+          <div className="flex min-h-0 flex-grow flex-col gap-4 overflow-y-auto overscroll-auto pr-1">
             <input
               ref={inputRef}
               type="file"

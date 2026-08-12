@@ -46,15 +46,23 @@ import {
   type ImageWatermarkRemovalProgress,
   type BasicImageTargetFormat,
 } from './image';
+import {
+  createImglyBackgroundRemovalConfig,
+  createImglyBackgroundRemovalProgress,
+  isCorruptBiRefNetModelError,
+  isImglyBackgroundRemovalModel,
+  BIREFNET_LITE_MODEL_URL,
+  type BackgroundRemovalWorkerRequest,
+  type BackgroundRemovalWorkerResponse,
+  type BiRefNetWorkerRequest,
+  type ImglyBackgroundRemovalModel,
+} from './background-removal';
 
 type OrtWasmModule = typeof import('onnxruntime-web/wasm');
 type OrtInferenceSession = Awaited<ReturnType<OrtWasmModule['InferenceSession']['create']>>;
 type OrtWebGpuModule = typeof import('onnxruntime-web/webgpu');
 type OrtWebGpuInferenceSession = Awaited<ReturnType<OrtWebGpuModule['InferenceSession']['create']>>;
 type OrtWebGpuTensor = InstanceType<OrtWebGpuModule['Tensor']>;
-type TransformersModule = typeof import('@huggingface/transformers');
-type BiRefNetModel = Awaited<ReturnType<TransformersModule['AutoModel']['from_pretrained']>>;
-type BiRefNetProcessor = Awaited<ReturnType<TransformersModule['AutoProcessor']['from_pretrained']>>;
 type PicaInstance = ReturnType<typeof import('pica')['default']>;
 type SvgoBrowserModule = typeof import('svgo/browser');
 type UpscalerModule = typeof import('upscaler');
@@ -130,6 +138,13 @@ interface WorkerErrorMessage {
 }
 
 type WorkerMessage = WorkerSuccessMessage | WorkerCompressionSuccessMessage | WorkerErrorMessage;
+
+interface BackgroundRemovalWorkerPendingRequest {
+  onDone: (data?: ArrayBuffer) => void;
+  onProgress?: (progress: ImageBackgroundRemovalProgress) => void;
+  reject: (error: Error) => void;
+  timeoutId: ReturnType<typeof setTimeout>;
+}
 
 interface LoadedImage {
   element: HTMLImageElement;
@@ -219,6 +234,14 @@ export interface RemoveImageBackgroundOptions {
 let imageWorker: Worker | null = null;
 let imageWorkerUnavailable = false;
 let workerRequestId = 0;
+let backgroundRemovalWorker: Worker | null = null;
+let backgroundRemovalWorkerUnavailable = false;
+let backgroundRemovalWorkerRequestId = 0;
+const backgroundRemovalWorkerPending = new Map<string, BackgroundRemovalWorkerPendingRequest>();
+let biRefNetWorkerRequestId = 0;
+const biRefNetWorkerPending = new Map<string, BackgroundRemovalWorkerPendingRequest>();
+const BACKGROUND_REMOVAL_STALL_TIMEOUT_MS = 180_000;
+const BIREFNET_MAX_DURATION_MS = 180_000;
 
 const JPEG_COMPRESSION_QUALITIES = [0.92, 0.88, 0.84, 0.8, 0.76, 0.72, 0.68];
 const WEBP_COMPRESSION_QUALITIES = [0.96, 0.92, 0.88, 0.84, 0.8, 0.76, 0.72, 0.68];
@@ -231,8 +254,6 @@ const VISIBLE_DIFF_THRESHOLD = {
   maxChannel: 52,
 };
 const PNG_QUANTIZED_TARGET_SAVINGS = 0.25;
-const BACKGROUND_REMOVAL_PUBLIC_PATH =
-  'https://staticimgly.com/@imgly/background-removal-data/${PACKAGE_VERSION}/dist/';
 const IMAGE_ENHANCE_MODEL_PART_URLS = [
   '/models/image-enhance/realesrgan-x4plus-fp16.part-01.onnx',
   '/models/image-enhance/realesrgan-x4plus-fp16.part-02.onnx',
@@ -241,8 +262,6 @@ const IMAGE_ENHANCE_MODEL_SIZE = 33_756_472;
 const IMAGE_ENHANCE_MODEL_SCALE = 4;
 const IMAGE_ENHANCE_TILE_SIZE = 128;
 const IMAGE_ENHANCE_TILE_PADDING = 10;
-const BIREFNET_LITE_MODEL_ID = 'studioludens/birefnet-lite-512';
-const BIREFNET_LITE_MODEL_REVISION = '4a3c40c36c94093cc1e724d9ea428b8fa4b57dc7';
 const ONNX_WASM_PUBLIC_PATH = '/models/onnxruntime-web/';
 const WATERMARK_MIGAN_MODEL_URL = 'https://huggingface.co/andraniksargsyan/migan/resolve/main/migan_pipeline_v2.onnx';
 const WATERMARK_AI_MODEL_URL = 'https://huggingface.co/Carve/LaMa-ONNX/resolve/main/lama_fp32.onnx';
@@ -266,22 +285,11 @@ let avifEncoderPromise: Promise<AvifEncoderModule> | null = null;
 const aiUpscalerPromises: Partial<Record<AiUpscaleScale, Promise<AiUpscalerInstance>>> = {};
 const backgroundRemovalPreloadPromises: Partial<Record<ImageBackgroundRemovalModel, Promise<void>>> = {};
 const backgroundRemovalProgressListeners = new Set<(progress: ImageBackgroundRemovalProgress) => void>();
-const biRefNetProgressListeners = new Set<(progress: ImageBackgroundRemovalProgress) => void>();
-let biRefNetModelPromise: Promise<{
-  model: BiRefNetModel;
-  processor: BiRefNetProcessor;
-  RawImage: TransformersModule['RawImage'];
-}> | null = null;
 let imageEnhanceSessionPromise: Promise<{
   ort: OrtWebGpuModule;
   session: OrtWebGpuInferenceSession;
 }> | null = null;
 const imageEnhanceProgressListeners = new Set<(progress: ImageEnhanceProgress) => void>();
-
-const BACKGROUND_REMOVAL_MODEL_MAP = {
-  medium: 'isnet_fp16',
-  small: 'isnet_quint8',
-} as const;
 
 const AI_UPSCALE_MODEL_PATHS: Record<AiUpscaleScale, string> = {
   2: '/models/upscale/x2/model.json',
@@ -310,26 +318,272 @@ function getImageWorker(): Worker | null {
   }
 }
 
+function failBackgroundRemovalWorker(error: Error) {
+  const activeWorker = backgroundRemovalWorker;
+  backgroundRemovalWorker = null;
+  activeWorker?.terminate();
+
+  for (const pending of backgroundRemovalWorkerPending.values()) {
+    clearTimeout(pending.timeoutId);
+    pending.reject(error);
+  }
+  backgroundRemovalWorkerPending.clear();
+
+  for (const pending of biRefNetWorkerPending.values()) {
+    clearTimeout(pending.timeoutId);
+    pending.reject(error);
+  }
+  biRefNetWorkerPending.clear();
+}
+
+function createBackgroundRemovalWorkerTimeout(): ReturnType<typeof setTimeout> {
+  return setTimeout(() => {
+    failBackgroundRemovalWorker(new Error('background_removal_timeout'));
+  }, BACKGROUND_REMOVAL_STALL_TIMEOUT_MS);
+}
+
+function refreshBackgroundRemovalWorkerTimeout(pending: BackgroundRemovalWorkerPendingRequest) {
+  clearTimeout(pending.timeoutId);
+  pending.timeoutId = createBackgroundRemovalWorkerTimeout();
+}
+
+function getBackgroundRemovalWorker(): Worker | null {
+  if (backgroundRemovalWorkerUnavailable || typeof Worker === 'undefined') return null;
+  if (backgroundRemovalWorker) return backgroundRemovalWorker;
+
+  try {
+    const worker = new Worker(
+      new URL('../workers/background-removal.worker.ts', import.meta.url),
+      { type: 'module' }
+    );
+
+    worker.onmessage = (event: MessageEvent<BackgroundRemovalWorkerResponse>) => {
+      const response = event.data;
+      const backgroundPending = backgroundRemovalWorkerPending.get(response.id);
+      const biRefNetPending = biRefNetWorkerPending.get(response.id);
+      const pending = backgroundPending ?? biRefNetPending;
+      if (!pending) return;
+
+      if (response.type === 'progress') {
+        if (backgroundPending) refreshBackgroundRemovalWorkerTimeout(pending);
+        pending.onProgress?.(response.progress);
+        return;
+      }
+
+      clearTimeout(pending.timeoutId);
+      if (backgroundPending) {
+        backgroundRemovalWorkerPending.delete(response.id);
+      } else {
+        biRefNetWorkerPending.delete(response.id);
+      }
+
+      if (response.type === 'error') {
+        pending.reject(new Error(response.message));
+        return;
+      }
+
+      pending.onDone(response.type === 'done' ? response.data : undefined);
+    };
+    worker.onerror = () => {
+      if (backgroundRemovalWorker === worker) {
+        failBackgroundRemovalWorker(new Error('background_removal_worker_failed'));
+      }
+    };
+    backgroundRemovalWorker = worker;
+    return worker;
+  } catch {
+    backgroundRemovalWorkerUnavailable = true;
+    return null;
+  }
+}
+
+function preloadImageBackgroundRemovalModelInWorker(
+  model: ImglyBackgroundRemovalModel
+): Promise<void> | null {
+  const worker = getBackgroundRemovalWorker();
+  if (!worker) return null;
+
+  const id = `background-preload-${backgroundRemovalWorkerRequestId}`;
+  backgroundRemovalWorkerRequestId += 1;
+
+  return new Promise<void>((resolve, reject) => {
+    backgroundRemovalWorkerPending.set(id, {
+      onDone: () => resolve(),
+      reject,
+      timeoutId: createBackgroundRemovalWorkerTimeout(),
+    });
+
+    const request: BackgroundRemovalWorkerRequest = { id, type: 'preload', model };
+    try {
+      worker.postMessage(request);
+    } catch (error) {
+      const pending = backgroundRemovalWorkerPending.get(id);
+      if (pending) clearTimeout(pending.timeoutId);
+      backgroundRemovalWorkerPending.delete(id);
+      reject(error instanceof Error ? error : new Error(String(error)));
+    }
+  });
+}
+
+function removeImageBackgroundInWorker(
+  input: Blob,
+  model: ImglyBackgroundRemovalModel,
+  onProgress?: (progress: ImageBackgroundRemovalProgress) => void
+): Promise<Blob> | null {
+  const worker = getBackgroundRemovalWorker();
+  if (!worker) return null;
+
+  const id = `background-remove-${backgroundRemovalWorkerRequestId}`;
+  backgroundRemovalWorkerRequestId += 1;
+
+  return new Promise<Blob>((resolve, reject) => {
+    backgroundRemovalWorkerPending.set(id, {
+      onDone: (data) => {
+        if (!data) {
+          reject(new Error('background_removal_empty_output'));
+          return;
+        }
+        resolve(new Blob([data], { type: 'image/png' }));
+      },
+      onProgress,
+      reject,
+      timeoutId: createBackgroundRemovalWorkerTimeout(),
+    });
+
+    const request: BackgroundRemovalWorkerRequest = { id, type: 'remove', model, input };
+    try {
+      worker.postMessage(request);
+    } catch (error) {
+      const pending = backgroundRemovalWorkerPending.get(id);
+      if (pending) clearTimeout(pending.timeoutId);
+      backgroundRemovalWorkerPending.delete(id);
+      reject(error instanceof Error ? error : new Error(String(error)));
+    }
+  });
+}
+
+function failBiRefNetWorker(error: Error) {
+  failBackgroundRemovalWorker(error);
+}
+
+function createBiRefNetWorkerTimeout(): ReturnType<typeof setTimeout> {
+  return setTimeout(() => {
+    failBiRefNetWorker(new Error('birefnet_timeout'));
+  }, BIREFNET_MAX_DURATION_MS);
+}
+
+function getBiRefNetWorker(): Worker | null {
+  return getBackgroundRemovalWorker();
+}
+
+function preloadBiRefNetModelInWorker(): Promise<void> | null {
+  const worker = getBiRefNetWorker();
+  if (!worker) return null;
+
+  const id = `birefnet-preload-${biRefNetWorkerRequestId}`;
+  biRefNetWorkerRequestId += 1;
+
+  return new Promise<void>((resolve, reject) => {
+    biRefNetWorkerPending.set(id, {
+      onDone: () => resolve(),
+      reject,
+      timeoutId: createBiRefNetWorkerTimeout(),
+    });
+
+    const request: BiRefNetWorkerRequest = { id, type: 'preload' };
+    try {
+      worker.postMessage(request);
+    } catch (error) {
+      const pending = biRefNetWorkerPending.get(id);
+      if (pending) clearTimeout(pending.timeoutId);
+      biRefNetWorkerPending.delete(id);
+      reject(error instanceof Error ? error : new Error(String(error)));
+    }
+  });
+}
+
+function removeBackgroundWithBiRefNetWorker(
+  input: Blob,
+  onProgress?: (progress: ImageBackgroundRemovalProgress) => void
+): Promise<Blob> | null {
+  const worker = getBiRefNetWorker();
+  if (!worker) return null;
+
+  const id = `birefnet-remove-${biRefNetWorkerRequestId}`;
+  biRefNetWorkerRequestId += 1;
+
+  return new Promise<Blob>((resolve, reject) => {
+    biRefNetWorkerPending.set(id, {
+      onDone: (data) => {
+        if (!data) {
+          reject(new Error('birefnet_empty_output'));
+          return;
+        }
+        resolve(new Blob([data], { type: 'image/png' }));
+      },
+      onProgress,
+      reject,
+      timeoutId: createBiRefNetWorkerTimeout(),
+    });
+
+    const request: BiRefNetWorkerRequest = { id, type: 'remove', input };
+    try {
+      worker.postMessage(request);
+    } catch (error) {
+      const pending = biRefNetWorkerPending.get(id);
+      if (pending) clearTimeout(pending.timeoutId);
+      biRefNetWorkerPending.delete(id);
+      reject(error instanceof Error ? error : new Error(String(error)));
+    }
+  });
+}
+
+async function clearBiRefNetModelCache(): Promise<void> {
+  if (typeof caches === 'undefined') return;
+
+  const cacheNames = await caches.keys();
+  await Promise.all(cacheNames.map(async (cacheName) => {
+    const cache = await caches.open(cacheName);
+    await cache.delete(BIREFNET_LITE_MODEL_URL);
+  }));
+}
+
+async function removeBackgroundWithBiRefNetRecovery(
+  input: Blob,
+  onProgress?: (progress: ImageBackgroundRemovalProgress) => void
+): Promise<Blob> {
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      const workerRemoval = removeBackgroundWithBiRefNetWorker(input, onProgress);
+      if (!workerRemoval) throw new Error('birefnet_worker_unavailable');
+      return await workerRemoval;
+    } catch (error) {
+      lastError = error;
+      if (attempt > 0 || !isCorruptBiRefNetModelError(error)) throw error;
+
+      await clearBiRefNetModelCache();
+      failBiRefNetWorker(new Error('birefnet_cache_cleared'));
+      onProgress?.(createFixedBackgroundRemovalProgress('model', 'model:retry', 0));
+    }
+  }
+
+  throw lastError instanceof Error ? lastError : new Error('birefnet_failed');
+}
+
 function reportBackgroundRemovalProgress(label: string, current: number, total: number) {
   if (backgroundRemovalProgressListeners.size === 0) return;
-  const progress = createBackgroundRemovalProgress(label, current, total);
+  const progress = createImglyBackgroundRemovalProgress(label, current, total);
   backgroundRemovalProgressListeners.forEach((listener) => listener(progress));
 }
 
 function createBackgroundRemovalConfig(model: ImageBackgroundRemovalModel) {
-  if (model === 'birefnet-lite') {
+  if (!isImglyBackgroundRemovalModel(model)) {
     throw new Error('BiRefNet Lite uses its own browser inference pipeline');
   }
 
-  return {
-    publicPath: BACKGROUND_REMOVAL_PUBLIC_PATH,
-    model: BACKGROUND_REMOVAL_MODEL_MAP[model],
-    output: {
-      format: 'image/png',
-      quality: 1,
-    },
-    progress: reportBackgroundRemovalProgress,
-  } as const;
+  return createImglyBackgroundRemovalConfig(model, reportBackgroundRemovalProgress);
 }
 
 function createFixedBackgroundRemovalProgress(
@@ -348,68 +602,19 @@ function createFixedBackgroundRemovalProgress(
   };
 }
 
-function reportBiRefNetProgress(progress: ImageBackgroundRemovalProgress) {
-  biRefNetProgressListeners.forEach((listener) => listener(progress));
-}
-
-async function getBiRefNetLiteModel(): Promise<{
-  model: BiRefNetModel;
-  processor: BiRefNetProcessor;
-  RawImage: TransformersModule['RawImage'];
-}> {
-  if (typeof navigator === 'undefined' || !('gpu' in navigator)) {
-    throw new Error('birefnet_webgpu_unavailable');
-  }
-
-  if (!biRefNetModelPromise) {
-    biRefNetModelPromise = (async () => {
-      const transformers = await import('@huggingface/transformers');
-      const progressCallback: Parameters<TransformersModule['AutoModel']['from_pretrained']>[1] extends infer Options
-        ? Options extends { progress_callback?: infer Callback }
-          ? Callback
-          : never
-        : never = (progress) => {
-          if (progress.status !== 'progress' && progress.status !== 'progress_total') return;
-          reportBiRefNetProgress(createFixedBackgroundRemovalProgress(
-            'model',
-            'model:birefnet',
-            clampNumber(progress.progress * 0.7, 0, 70)
-          ));
-        };
-
-      const [model, processor] = await Promise.all([
-        transformers.AutoModel.from_pretrained(BIREFNET_LITE_MODEL_ID, {
-          device: 'webgpu',
-          dtype: 'fp16',
-          revision: BIREFNET_LITE_MODEL_REVISION,
-          progress_callback: progressCallback,
-        }),
-        transformers.AutoProcessor.from_pretrained(BIREFNET_LITE_MODEL_ID, {
-          revision: BIREFNET_LITE_MODEL_REVISION,
-        }),
-      ]);
-
-      reportBiRefNetProgress(createFixedBackgroundRemovalProgress('model', 'model:birefnet-ready', 72));
-      return { model, processor, RawImage: transformers.RawImage };
-    })().catch((error) => {
-      biRefNetModelPromise = null;
-      throw error;
-    });
-  }
-
-  return biRefNetModelPromise;
-}
-
 export function preloadImageBackgroundRemovalModel(
   model: ImageBackgroundRemovalModel = 'medium'
 ): Promise<void> {
   const existing = backgroundRemovalPreloadPromises[model];
   if (existing) return existing;
 
-  const preloadPromise = (model === 'birefnet-lite'
-    ? getBiRefNetLiteModel().then(() => undefined)
-    : import('@imgly/background-removal')
-      .then((backgroundRemoval) => backgroundRemoval.preload(createBackgroundRemovalConfig(model))))
+  const workerPreload = isImglyBackgroundRemovalModel(model)
+    ? preloadImageBackgroundRemovalModelInWorker(model)
+    : preloadBiRefNetModelInWorker();
+  const preloadPromise = (workerPreload ?? (isImglyBackgroundRemovalModel(model)
+    ? import('@imgly/background-removal')
+      .then((backgroundRemoval) => backgroundRemoval.preload(createBackgroundRemovalConfig(model)))
+    : Promise.reject(new Error('birefnet_worker_unavailable'))))
     .catch((error) => {
       if (backgroundRemovalPreloadPromises[model] === preloadPromise) {
         delete backgroundRemovalPreloadPromises[model];
@@ -3125,94 +3330,23 @@ export async function inspectImageFile(file: File): Promise<ImageInspectionOutco
   }
 }
 
-function createBackgroundRemovalProgress(
-  label: string,
-  current: number,
-  total: number
-): ImageBackgroundRemovalProgress {
-  const isComputeStage = label.startsWith('compute:');
-  const safeTotal = Math.max(1, total);
-
-  return {
-    stage: isComputeStage ? 'compute' : 'model',
-    label,
-    current,
-    total: safeTotal,
-    percent: Math.max(0, Math.min(100, Math.round((current / safeTotal) * 100))),
-  };
-}
-
-async function removeBackgroundWithBiRefNetLite(
-  image: LoadedImage,
+async function removeBackgroundWithImgly(
   modelInput: Blob,
+  model: ImglyBackgroundRemovalModel,
   onProgress?: (progress: ImageBackgroundRemovalProgress) => void
 ): Promise<Blob> {
-  onProgress?.(createFixedBackgroundRemovalProgress('model', 'model:birefnet', 0));
-  if (onProgress) biRefNetProgressListeners.add(onProgress);
+  const workerRemoval = removeImageBackgroundInWorker(modelInput, model, onProgress);
+  if (workerRemoval) return workerRemoval;
 
+  if (onProgress) backgroundRemovalProgressListeners.add(onProgress);
   try {
-    const { model, processor, RawImage } = await getBiRefNetLiteModel();
-    onProgress?.(createFixedBackgroundRemovalProgress('compute', 'compute:prepare', 76));
-
-    const rawImage = await RawImage.read(modelInput);
-    const { pixel_values: pixelValues } = await processor(rawImage);
-    onProgress?.(createFixedBackgroundRemovalProgress('compute', 'compute:inference', 80));
-
-    const outputs = await model({ input_image: pixelValues }) as { logits?: unknown };
-    const logits = outputs.logits;
-    if (!isOrtTensorLike(logits)) {
-      throw new Error('birefnet_invalid_output');
-    }
-
-    const dims = Array.from(logits.dims);
-    const maskHeight = dims.at(-2) ?? 0;
-    const maskWidth = dims.at(-1) ?? 0;
-    const maskPixelCount = maskWidth * maskHeight;
-    if (!maskWidth || !maskHeight || logits.data.length < maskPixelCount) {
-      throw new Error('birefnet_invalid_output');
-    }
-
-    const maskCanvas = document.createElement('canvas');
-    maskCanvas.width = maskWidth;
-    maskCanvas.height = maskHeight;
-    const maskContext = maskCanvas.getContext('2d');
-    if (!maskContext) throw new Error('birefnet_canvas_context');
-
-    const maskImageData = maskContext.createImageData(maskWidth, maskHeight);
-    const sourceOffset = logits.data.length - maskPixelCount;
-    for (let index = 0; index < maskPixelCount; index += 1) {
-      const alpha = clampNumber(
-        Math.round((1 / (1 + Math.exp(-Number(logits.data[sourceOffset + index])))) * 255),
-        0,
-        255
-      );
-      const outputIndex = index * 4;
-      maskImageData.data[outputIndex] = 255;
-      maskImageData.data[outputIndex + 1] = 255;
-      maskImageData.data[outputIndex + 2] = 255;
-      maskImageData.data[outputIndex + 3] = alpha;
-    }
-    maskContext.putImageData(maskImageData, 0, 0);
-
-    onProgress?.(createFixedBackgroundRemovalProgress('compute', 'compute:encode', 94));
-    const outputCanvas = document.createElement('canvas');
-    outputCanvas.width = image.width;
-    outputCanvas.height = image.height;
-    const outputContext = outputCanvas.getContext('2d');
-    if (!outputContext) throw new Error('birefnet_canvas_context');
-
-    outputContext.drawImage(image.element, 0, 0, image.width, image.height);
-    outputContext.globalCompositeOperation = 'destination-in';
-    outputContext.imageSmoothingEnabled = true;
-    outputContext.imageSmoothingQuality = 'high';
-    outputContext.drawImage(maskCanvas, 0, 0, image.width, image.height);
-    outputContext.globalCompositeOperation = 'source-over';
-
-    const blob = await canvasToBlob(outputCanvas, 'image/png');
-    onProgress?.(createFixedBackgroundRemovalProgress('compute', 'compute:done', 100));
-    return blob;
+    const backgroundRemoval = await import('@imgly/background-removal');
+    return await backgroundRemoval.removeBackground(
+      modelInput,
+      createBackgroundRemovalConfig(model)
+    );
   } finally {
-    if (onProgress) biRefNetProgressListeners.delete(onProgress);
+    if (onProgress) backgroundRemovalProgressListeners.delete(onProgress);
   }
 }
 
@@ -3262,25 +3396,21 @@ export async function removeImageBackground(
     if (!modelInput) return { ok: false, code: 'canvas_context' };
 
     const selectedModel = options.model ?? 'medium';
+    let actualModel = selectedModel;
+    let fallbackFrom: ImageBackgroundRemovalModel | undefined;
     let blob: Blob;
 
     if (selectedModel === 'birefnet-lite') {
-      blob = await removeBackgroundWithBiRefNetLite(image, modelInput, options.onProgress);
-    } else {
-      const backgroundRemoval = await import('@imgly/background-removal');
-      const removeBackground = backgroundRemoval.removeBackground;
-      if (options.onProgress) {
-        backgroundRemovalProgressListeners.add(options.onProgress);
+      try {
+        blob = await removeBackgroundWithBiRefNetRecovery(modelInput, options.onProgress);
+      } catch {
+        fallbackFrom = selectedModel;
+        actualModel = 'medium';
+        options.onProgress?.(createFixedBackgroundRemovalProgress('model', 'model:fallback', 0));
+        blob = await removeBackgroundWithImgly(modelInput, actualModel, options.onProgress);
       }
-
-      blob = await removeBackground(
-        modelInput,
-        createBackgroundRemovalConfig(selectedModel)
-      ).finally(() => {
-        if (options.onProgress) {
-          backgroundRemovalProgressListeners.delete(options.onProgress);
-        }
-      });
+    } else {
+      blob = await removeBackgroundWithImgly(modelInput, selectedModel, options.onProgress);
     }
     const pngBlob = blob.type === 'image/png' ? blob : new Blob([blob], { type: 'image/png' });
     const output = await maybeWatermarkImageBlob(pngBlob, 'image/png');
@@ -3295,19 +3425,15 @@ export async function removeImageBackground(
       originalSize: file.size,
       outputSize: output.blob.size,
       durationMs: Math.round(performance.now() - startedAt),
+      model: actualModel,
+      fallbackFrom,
     };
   } catch (error) {
-    if ((options.model ?? 'medium') === 'birefnet-lite') {
-      return {
-        ok: false,
-        code: 'ai_model_unavailable',
-        detail: error instanceof Error ? error.message : undefined,
-      };
-    }
-
     return {
       ok: false,
-      code: 'canvas_export',
+      code: (options.model ?? 'medium') === 'birefnet-lite'
+        ? 'ai_model_unavailable'
+        : 'canvas_export',
       detail: error instanceof Error ? error.message : undefined,
     };
   }

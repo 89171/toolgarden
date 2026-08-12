@@ -103,7 +103,6 @@ export function ImageBackgroundRemover() {
   const [dragging, setDragging] = useState(false);
   const [preview, setPreview] = useState<PreviewKind | null>(null);
   const [selectedModel, setSelectedModel] = useState<ImageBackgroundRemovalModel>('medium');
-  const [virtualProgress, setVirtualProgress] = useState(0);
   const accept = getImageAcceptValue();
   const inputFormatLabels = useMemo(() => getSupportedImageInputLabel().split(' / '), []);
   const hasImage = Boolean(image);
@@ -135,6 +134,7 @@ export function ImageBackgroundRemover() {
       case 'canvas_context':
         return ti('errors.canvas_context');
       case 'canvas_export':
+        if (error.detail === 'background_removal_timeout') return ti('errors.model_timeout');
         return error.detail ? `${ti('errors.canvas_export')} ${error.detail}` : ti('errors.canvas_export');
       case 'unsupported_output':
         return ti('errors.unsupported_output', { format: error.detail ?? '' });
@@ -226,7 +226,6 @@ export function ImageBackgroundRemover() {
     const jobId = `${target.id}-${Date.now()}`;
     const model = selectedModel;
     activeJobRef.current = jobId;
-    setVirtualProgress(8);
 
     setCurrentImage((current) => {
       if (current.outputUrl) URL.revokeObjectURL(current.outputUrl);
@@ -289,30 +288,17 @@ export function ImageBackgroundRemover() {
     downloadUrl(current.outputUrl, current.outputName);
   }, []);
 
-  useEffect(() => {
-    if (image?.status !== 'processing') {
-      return undefined;
-    }
-
-    const intervalId = window.setInterval(() => {
-      setVirtualProgress((current) => {
-        if (current >= 94) return current;
-        if (current < 40) return current + 4;
-        if (current < 72) return current + 2;
-        return current + 0.8;
-      });
-    }, 450);
-
-    return () => window.clearInterval(intervalId);
-  }, [image?.id, image?.status]);
-
   const progressPercent = image?.status === 'processing'
-    ? Math.min(100, Math.round(Math.max(image.progress?.percent ?? 0, virtualProgress)))
+    ? Math.min(100, Math.round(image.progress?.percent ?? 0))
     : 0;
 
   const progressLabel = (() => {
     const progress = image?.progress;
     if (!progress) return ti('progress_model', { value: progressPercent });
+    if (progress.label === 'model:prepare') return ti('progress_prepare');
+    if (progress.label === 'model:compile') return ti('progress_compile');
+    if (progress.label === 'model:retry') return ti('progress_retry');
+    if (progress.label === 'model:fallback') return ti('progress_fallback');
     if (progress.stage === 'model') {
       return ti('progress_model', { value: progressPercent });
     }
@@ -376,7 +362,7 @@ export function ImageBackgroundRemover() {
           className="h-[min(32rem,calc(100svh-10rem))] min-h-0 overflow-hidden xl:h-auto xl:min-h-0"
         >
           <div className="flex min-h-0 flex-grow flex-col">
-            <div className="flex min-h-0 flex-grow flex-col gap-3 overflow-y-auto overscroll-contain pr-1 sm:gap-4">
+            <div className="flex min-h-0 flex-grow flex-col gap-3 overflow-y-auto overscroll-auto pr-1 sm:gap-4">
               <input
                 ref={inputRef}
                 type="file"
@@ -597,12 +583,17 @@ export function ImageBackgroundRemover() {
                       >
                         {image.status === 'processing' ? (
                           <>
-                            <span className="rounded-full border border-border-subtle bg-surface-raised px-3 py-1 text-xs font-medium text-content-secondary">
+                            <span
+                              className="rounded-full border border-border-subtle bg-surface-raised px-3 py-1 text-xs font-medium text-content-secondary"
+                              aria-live="polite"
+                            >
                               {progressLabel}
                             </span>
                             <div className="h-2 w-full max-w-72 overflow-hidden rounded bg-surface-hover">
                               <div
-                                className="h-full rounded bg-action transition-all"
+                                className={`h-full rounded bg-action transition-all ${
+                                  image.progress?.label === 'model:compile' ? 'model-progress-pulse' : ''
+                                }`}
                                 style={{ width: `${progressPercent}%` }}
                               />
                             </div>
@@ -620,6 +611,12 @@ export function ImageBackgroundRemover() {
                 {image.error && (
                   <p className="mt-4 rounded border border-border-base bg-danger-surface p-3 text-sm text-danger-content">
                     {getErrorMessage(image.error)}
+                  </p>
+                )}
+
+                {image.result?.fallbackFrom === 'birefnet-lite' && (
+                  <p className="mt-4 rounded border border-border-base bg-surface-raised p-3 text-sm text-content-secondary">
+                    {ti('fallback_notice')}
                   </p>
                 )}
 

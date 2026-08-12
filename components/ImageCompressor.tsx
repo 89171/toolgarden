@@ -299,7 +299,7 @@ export function ImageCompressor() {
           className="h-[min(32rem,calc(100svh-10rem))] min-h-0 overflow-hidden xl:h-auto xl:min-h-0"
         >
           <div className="flex min-h-0 flex-grow flex-col">
-            <div className="flex min-h-0 flex-grow flex-col gap-3 overflow-y-auto overscroll-contain pr-1 sm:gap-4">
+            <div className="flex min-h-0 flex-grow flex-col gap-3 overflow-y-auto overscroll-auto pr-1 sm:gap-4">
               <input
                 ref={inputRef}
                 type="file"

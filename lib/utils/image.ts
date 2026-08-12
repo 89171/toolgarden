@@ -154,6 +154,8 @@ export interface ImageBackgroundRemovalSuccess {
   originalSize: number;
   outputSize: number;
   durationMs: number;
+  model: ImageBackgroundRemovalModel;
+  fallbackFrom?: ImageBackgroundRemovalModel;
 }
 
 export type ImageBackgroundRemovalOutcome = ImageBackgroundRemovalSuccess | ImageConversionError;

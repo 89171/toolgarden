@@ -591,7 +591,11 @@ export function ImageIdPhotoTool({ content }: ImageIdPhotoToolProps) {
     ? ti(`face_status_${subject.faceStatus}`)
     : ti('face_status_waiting');
   const progressLabel = progress
-    ? (progress.stage === 'model'
+    ? (progress.label === 'model:retry'
+        ? ti('progress_retry')
+        : progress.label === 'model:fallback'
+        ? ti('progress_fallback')
+        : progress.stage === 'model'
         ? ti('progress_model', { value: progress.percent })
         : ti('progress_compute', { value: progress.percent }))
     : ti('progress_prepare');
