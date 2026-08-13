@@ -3126,7 +3126,7 @@
       "en_gb_female": "英式女声"
     },
     "tts_rate_label": "语速",
-    "tts_model_hint": "Kokoro 高质量音色在浏览器本地生成，首次使用需加载约 130 MB 模型。",
+    "tts_model_hint": "Kokoro 高质量音色在浏览器本地生成，首次使用需加载约 339 MB 模型。",
     "tts_character_count": "{current} / {max} 字符",
     "tts_generating": "正在生成...",
     "tts_progress": {
@@ -3194,6 +3194,7 @@
       "tts_unsupported": "当前浏览器无法运行本地语音模型，请换用最新版 Chrome、Edge 或 Safari。",
       "tts_text_too_long": "文字过长，最多支持 {maxSize} 个字符。",
       "tts_generation_failed": "语音生成失败，请检查网络后重试。",
+      "tts_invalid_audio": "语音模型返回了异常音频，请刷新页面后重试。",
       "empty_text": "请输入要朗读的文字。",
       "invalid_value": "参数值无效，请调整后重试。",
       "processing_failed": "音频处理失败，请换一个文件或降低文件大小后重试。",

@@ -24,6 +24,10 @@ export const TTS_MODEL_ID = 'onnx-community/Kokoro-82M-v1.1-zh-ONNX';
 export const TTS_SAMPLE_RATE = 24_000;
 export const MAX_TTS_TEXT_LENGTH = 2_000;
 
+const WAV_HEADER_SIZE = 44;
+const PCM_BYTES_PER_SAMPLE = 2;
+const MIN_AUDIBLE_PEAK = 1e-5;
+
 export const ttsVoices: readonly TtsVoiceOption[] = [
   { id: 'zf_001', language: 'zh', labelKey: 'zh_female' },
   { id: 'zm_009', language: 'zh', labelKey: 'zh_male' },
@@ -104,4 +108,56 @@ export function splitTtsText(text: string, language: TtsLanguage): string[] {
 export function createTtsFilename(language: TtsLanguage, timestamp: number): string {
   const safeTimestamp = new Date(timestamp).toISOString().replace(/[:.]/g, '-');
   return `text-to-speech-${language}-${safeTimestamp}.wav`;
+}
+
+function writeAscii(view: DataView, offset: number, value: string): void {
+  for (let index = 0; index < value.length; index += 1) {
+    view.setUint8(offset + index, value.charCodeAt(index));
+  }
+}
+
+/**
+ * 将模型输出编码为浏览器和常见播放器广泛支持的 16-bit PCM WAV。
+ * 同时拒绝 NaN、Infinity 和全静音波形，避免生成“能播放但没有声音”的文件。
+ */
+export function createTtsWavBlob(
+  samples: Float32Array,
+  sampleRate = TTS_SAMPLE_RATE,
+): Blob {
+  if (samples.length === 0 || !Number.isInteger(sampleRate) || sampleRate <= 0) {
+    throw new Error('tts_invalid_audio');
+  }
+
+  let peak = 0;
+  for (const sample of samples) {
+    if (!Number.isFinite(sample)) throw new Error('tts_invalid_audio');
+    peak = Math.max(peak, Math.abs(sample));
+  }
+  if (peak < MIN_AUDIBLE_PEAK) throw new Error('tts_invalid_audio');
+
+  const dataSize = samples.length * PCM_BYTES_PER_SAMPLE;
+  const buffer = new ArrayBuffer(WAV_HEADER_SIZE + dataSize);
+  const view = new DataView(buffer);
+
+  writeAscii(view, 0, 'RIFF');
+  view.setUint32(4, 36 + dataSize, true);
+  writeAscii(view, 8, 'WAVE');
+  writeAscii(view, 12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, 1, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * PCM_BYTES_PER_SAMPLE, true);
+  view.setUint16(32, PCM_BYTES_PER_SAMPLE, true);
+  view.setUint16(34, 16, true);
+  writeAscii(view, 36, 'data');
+  view.setUint32(40, dataSize, true);
+
+  for (let index = 0; index < samples.length; index += 1) {
+    const sample = Math.max(-1, Math.min(1, samples[index]));
+    const pcm = sample < 0 ? sample * 0x8000 : sample * 0x7fff;
+    view.setInt16(WAV_HEADER_SIZE + index * PCM_BYTES_PER_SAMPLE, Math.round(pcm), true);
+  }
+
+  return new Blob([buffer], { type: 'audio/wav' });
 }

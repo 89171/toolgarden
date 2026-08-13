@@ -1,6 +1,5 @@
 import {
   AutoTokenizer,
-  RawAudio,
   StyleTextToSpeech2Model,
   Tensor,
   type PreTrainedTokenizer,
@@ -9,6 +8,7 @@ import type { AudioProcessingProgress } from '../utils/audio';
 import {
   TTS_MODEL_ID,
   TTS_SAMPLE_RATE,
+  createTtsWavBlob,
   normalizeTtsSpeed,
   splitTtsText,
   type TtsLanguage,
@@ -86,7 +86,7 @@ function loadModel(id: string): Promise<LoadedTtsModel> {
 
   modelPromise = Promise.all([
     StyleTextToSpeech2Model.from_pretrained(TTS_MODEL_ID, {
-      dtype: 'q8',
+      dtype: 'fp32',
       device: 'wasm',
       progress_callback: onProgress,
     }),
@@ -137,6 +137,7 @@ function normalizeTextForSpeech(text: string): string {
 
 function postProcessPhonemes(value: string): string {
   return value
+    .replace(/\u200d/g, '')
     .replace(/kəkˈoːɹoʊ/g, 'kˈoʊkəɹoʊ')
     .replace(/kəkˈɔːɹəʊ/g, 'kˈəʊkəɹəʊ')
     .replace(/ʲ/g, 'j')
@@ -175,7 +176,6 @@ async function phonemize(text: string, language: TtsLanguage): Promise<string> {
       '--ipa=3',
       '--phonout',
       'generated',
-      '--sep= ',
       '-q',
       normalized,
     ],
@@ -243,7 +243,7 @@ async function synthesize(request: SynthesizeRequest): Promise<void> {
 
   report(id, { stage: 'encode', label: 'tts_encoding', percent: 97 });
   const samples = concatAudio(audioChunks);
-  const blob = new RawAudio(samples, TTS_SAMPLE_RATE).toBlob();
+  const blob = createTtsWavBlob(samples, TTS_SAMPLE_RATE);
   const durationMs = Math.round((samples.length / TTS_SAMPLE_RATE) * 1_000);
   post({ id, type: 'result', blob, durationMs });
 }

@@ -193,6 +193,9 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
           maxSize: processingError.maxSize ?? String(MAX_TTS_TEXT_LENGTH),
         });
       case 'tts_generation_failed':
+        if (processingError.detail === 'tts_invalid_audio') {
+          return t('errors.tts_invalid_audio');
+        }
         return processingError.detail
           ? `${t('errors.tts_generation_failed')} ${processingError.detail}`
           : t('errors.tts_generation_failed');

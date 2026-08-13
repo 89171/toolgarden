@@ -17,13 +17,13 @@ export const audioTtsContent = defineToolContent({
       ['辅助阅读与原型验证', '为阅读辅助、交互演示和语音界面原型提供稳定的中英文语音。'],
     ],
     notes: [
-      '首次生成需要下载约 130 MB 的量化模型，后续访问通常会复用浏览器缓存。',
+      '首次生成需要下载约 339 MB 的高精度模型，后续访问通常会复用浏览器缓存。',
       '模型在浏览器本地运行，生成速度取决于设备性能，较长文本会自动分段合成。',
       '合成语音仍可能读错姓名、缩写和特殊数字，发布前请完整试听。',
       '不要用合成语音冒充真实人物或制作未经授权的欺骗性内容。',
     ],
     specs: [
-      ['合成引擎', 'Kokoro 82M 中英双语模型，使用量化 ONNX 版本在浏览器中运行'],
+      ['合成引擎', 'Kokoro 82M 中英双语模型，使用高精度 ONNX 版本在浏览器中运行'],
       ['语言支持', '中文和英语'],
       ['可用音色', '中文女声、中文男声、美式女声和英式女声'],
       ['可调参数', '语速 0.75x 到 1.5x'],
@@ -31,7 +31,7 @@ export const audioTtsContent = defineToolContent({
       ['处理位置', '文字和生成音频保留在当前浏览器，不发送到 ToolGarden 服务器'],
     ],
     faq: [
-      { question: '为什么第一次生成比较慢？', answer: '浏览器首次使用时需要下载并初始化约 130 MB 的语音模型。模型被缓存后，再次使用通常只需等待合成过程。' },
+      { question: '为什么第一次生成比较慢？', answer: '浏览器首次使用时需要下载并初始化约 339 MB 的语音模型。模型被缓存后，再次使用通常只需等待合成过程。' },
       { question: '可以把生成结果保存成文件吗？', answer: '可以。生成完成后可在输出面板试听，并点击下载按钮保存为 WAV 文件。' },
       { question: '为什么只保留中文和英语？', answer: '当前模型针对中文和英语进行了优化。精简语言列表可以保证每个选项都有稳定音色，避免显示设备上质量不一致的系统语音。' },
     ],
@@ -56,13 +56,13 @@ export const audioTtsContent = defineToolContent({
       ['Accessible reading and prototypes', 'Add stable Chinese or English speech to reading aids, interaction demos, and voice-interface prototypes.'],
     ],
     notes: [
-      'The first generation downloads about 130 MB of quantized model data. Later visits can usually reuse the browser cache.',
+      'The first generation downloads about 339 MB of high-precision model data. Later visits can usually reuse the browser cache.',
       'The model runs locally in the browser. Generation speed depends on your device, and longer text is synthesized in chunks.',
       'Synthetic speech can still misread names, abbreviations, and unusual numbers, so review the complete output before publishing.',
       'Do not use synthetic speech to impersonate a real person or create unauthorized deceptive material.',
     ],
     specs: [
-      ['Synthesis engine', 'The bilingual Kokoro 82M model, using a quantized ONNX build in the browser'],
+      ['Synthesis engine', 'The bilingual Kokoro 82M model, using a high-precision ONNX build in the browser'],
       ['Languages', 'Chinese and English'],
       ['Voices', 'Chinese female, Chinese male, US female, and UK female'],
       ['Adjustable', 'Speed from 0.75x to 1.5x'],
@@ -70,7 +70,7 @@ export const audioTtsContent = defineToolContent({
       ['Where it runs', 'Text and generated audio stay in your browser and are not sent to ToolGarden servers'],
     ],
     faq: [
-      { question: 'Why is the first generation slower?', answer: 'The browser must download and initialize about 130 MB of voice model data the first time. Once cached, later uses usually only wait for synthesis.' },
+      { question: 'Why is the first generation slower?', answer: 'The browser must download and initialize about 339 MB of voice model data the first time. Once cached, later uses usually only wait for synthesis.' },
       { question: 'Can I save the generated speech?', answer: 'Yes. Preview it in the output panel, then use the download button to save a WAV file.' },
       { question: 'Why are only Chinese and English available?', answer: 'The current model is optimized for Chinese and English. A focused list ensures every choice has a stable voice instead of exposing inconsistent system voices.' },
     ],

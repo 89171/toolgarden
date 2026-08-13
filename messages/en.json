@@ -3126,7 +3126,7 @@
       "en_gb_female": "UK female"
     },
     "tts_rate_label": "Rate",
-    "tts_model_hint": "High-quality Kokoro voices run locally in your browser. First use loads about 130 MB.",
+    "tts_model_hint": "High-quality Kokoro voices run locally in your browser. First use loads about 339 MB.",
     "tts_character_count": "{current} / {max} characters",
     "tts_generating": "Generating...",
     "tts_progress": {
@@ -3194,6 +3194,7 @@
       "tts_unsupported": "This browser cannot run the local speech model. Try the latest Chrome, Edge, or Safari.",
       "tts_text_too_long": "The text is too long. Enter up to {maxSize} characters.",
       "tts_generation_failed": "Speech generation failed. Check your connection and try again.",
+      "tts_invalid_audio": "The speech model returned invalid audio. Refresh the page and try again.",
       "empty_text": "Enter text to read aloud.",
       "invalid_value": "A parameter value is invalid. Adjust it and try again.",
       "processing_failed": "Audio processing failed. Try another file or a smaller file.",
