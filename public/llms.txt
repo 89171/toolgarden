@@ -199,7 +199,7 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - **Remove silence / 去除静音** (`/audio/remove-silence`): Free online tool to automatically trim silence and blank sections from audio and export MP3
   - English: https://toolgarden.xyz/en/audio/remove-silence
   - Chinese: https://toolgarden.xyz/zh/audio/remove-silence
-- **Text to speech / 文字转语音** (`/audio/tts`): Free online tool to read text aloud with browser-local speech synthesis
+- **Text to speech / 文字转语音** (`/audio/tts`): Turn Chinese or English text into natural Kokoro speech, adjust speed, preview it, and download a WAV file locally in your browser
   - English: https://toolgarden.xyz/en/audio/tts
   - Chinese: https://toolgarden.xyz/zh/audio/tts
 - **Markdown to PDF / Markdown 转 PDF** (`/text/markdown-to-pdf`): Create a clean PDF locally, with CJK text and automatic pagination

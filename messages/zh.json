@@ -1281,7 +1281,7 @@
     "audio-sample-rate": "音频采样率转换,修改音频采样率,音频重采样,转44100Hz,转48000Hz",
     "audio-bitrate": "音频比特率转换,修改MP3码率,MP3比特率调整,音频码率转换,MP3重新编码",
     "audio-remove-silence": "音频去静音,删除音频空白,裁掉MP3静音,去除音频间隙,自动剪辑音频",
-    "audio-tts": "文字转语音,在线TTS,文本朗读,语音合成,文字转声音",
+    "audio-tts": "文字转语音,在线TTS,Kokoro语音,中文语音合成,英文语音合成,WAV下载",
     "text-word-count": "在线字数统计,字符统计,文本长度统计,句子统计,段落统计,阅读时间计算",
     "text-diff": "文本对比,在线比较文本,文字差异对比,找出文本差异,按行对比,按词对比",
     "text-markdown-to-pdf": "Markdown转PDF,MD转PDF,在线Markdown转PDF,Markdown导出PDF,文档转PDF",
@@ -1702,15 +1702,15 @@
       "items": [
         {
           "question": "文字转语音会上传我的文字吗？",
-          "answer": "工具使用浏览器内置的语音合成来朗读文字，朗读过程在本地进行，不需要把文字发送到我们的服务器。"
+          "answer": "不会。文字由浏览器本地加载的 Kokoro 模型生成语音，不会发送到 ToolGarden 服务器。首次使用时浏览器会从模型仓库下载所需文件并缓存。"
         },
         {
           "question": "有哪些可用的声音？",
-          "answer": "可用的声音由你的操作系统和浏览器提供，不同设备上的语言和音色选项会有所不同。"
+          "answer": "语言精简为中文和英语，每种语言提供两款经过筛选的音色，避免受操作系统语音包质量影响。"
         },
         {
           "question": "可以导出语音文件吗？",
-          "answer": "本工具主要用于即时朗读预览；能否保存音频取决于浏览器的语音合成能力。"
+          "answer": "可以。生成完成后可先在页面试听，再直接下载标准 WAV 音频文件。"
         }
       ]
     },
@@ -3114,13 +3114,27 @@
     "start_seconds": "开始时间（秒）",
     "end_seconds": "结束时间（秒）",
     "tts_input_title": "文字转语音",
-    "tts_placeholder": "输入要朗读的文字...",
-    "tts_voice_label": "语音",
-    "tts_default_voice": "浏览器默认语音",
+    "tts_placeholder": "输入要转换为语音的中文或英文内容...",
+    "tts_language_label": "语言",
+    "tts_language_zh": "中文",
+    "tts_language_en": "英语",
+    "tts_voice_label": "音色",
+    "tts_voices": {
+      "zh_female": "清晰女声",
+      "zh_male": "沉稳男声",
+      "en_us_female": "美式女声",
+      "en_gb_female": "英式女声"
+    },
     "tts_rate_label": "语速",
-    "tts_pitch_label": "音调",
-    "tts_volume_label": "朗读音量",
-    "tts_speaking": "正在朗读",
+    "tts_model_hint": "Kokoro 高质量音色在浏览器本地生成，首次使用需加载约 130 MB 模型。",
+    "tts_character_count": "{current} / {max} 字符",
+    "tts_generating": "正在生成...",
+    "tts_progress": {
+      "tts_model_loading": "正在加载并缓存语音模型",
+      "tts_generating": "正在合成自然语音",
+      "tts_encoding": "正在生成 WAV 文件",
+      "tts_ready": "语音已生成，可以试听或下载"
+    },
     "processing": "处理中...",
     "clear": "清空",
     "download_output": "下载结果",
@@ -3140,6 +3154,7 @@
     "microphone_listening": "正在监听麦克风",
     "microphone_finalizing": "正在生成最终转写文本...",
     "empty_output": "选择文件并开始处理后，输出音频会显示在这里。",
+    "empty_tts_output": "输入文字并生成语音后，可在这里试听和下载 WAV 文件。",
     "empty_recording_output": "录音完成后可以导出 MP3 并在这里预览。",
     "empty_transcript": "上传音频并开始转文本后，识别结果会显示在这里。",
     "unknown_type": "未知类型",
@@ -3156,8 +3171,8 @@
       "sample_rate": "修改采样率",
       "bitrate": "调整比特率",
       "remove_silence": "去除静音",
-      "speak": "开始朗读",
-      "stop_speaking": "停止朗读",
+      "speak": "生成语音",
+      "stop_speaking": "取消生成",
       "export_recording": "导出 MP3"
     },
     "stages": {
@@ -3176,7 +3191,9 @@
       "invalid_range": "结束时间必须大于开始时间。",
       "recorder_unsupported": "当前浏览器不支持在线录音，请换用最新版 Chrome、Edge 或 Safari。",
       "microphone_denied": "无法访问麦克风，请在浏览器地址栏允许麦克风权限后重试。",
-      "tts_unsupported": "当前浏览器不支持文字转语音，请换用最新版 Chrome、Edge 或 Safari。",
+      "tts_unsupported": "当前浏览器无法运行本地语音模型，请换用最新版 Chrome、Edge 或 Safari。",
+      "tts_text_too_long": "文字过长，最多支持 {maxSize} 个字符。",
+      "tts_generation_failed": "语音生成失败，请检查网络后重试。",
       "empty_text": "请输入要朗读的文字。",
       "invalid_value": "参数值无效，请调整后重试。",
       "processing_failed": "音频处理失败，请换一个文件或降低文件大小后重试。",
@@ -3740,7 +3757,7 @@
         },
         {
           "title": "要把声音变成别的东西",
-          "detail": "音频转文本输出转写稿，音频分轨把歌曲拆成人声、鼓、贝斯、吉他、钢琴等轨道，文字转语音用浏览器自带的语音合成朗读文本，录音笔直接用麦克风录制。"
+          "detail": "音频转文本输出转写稿，音频分轨把歌曲拆成人声、鼓、贝斯、吉他、钢琴等轨道，文字转语音用 Kokoro 模型生成可下载的中英文 WAV，录音笔直接用麦克风录制。"
         }
       ],
       "comparison": {
@@ -4374,7 +4391,7 @@
     },
     "audio-tts": {
       "name": "文字转语音",
-      "description": "调用浏览器内置语音合成引擎朗读文字，可调整语速语调，实际音色取决于操作系统安装的语音包。"
+      "description": "使用 Kokoro 高质量音色把中文或英文转换为自然语音，可调语速、在线试听并下载 WAV，浏览器本地生成。"
     },
     "text-word-count": {
       "name": "字数统计",

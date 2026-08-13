@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
@@ -19,6 +19,14 @@ import {
   type AudioProcessingProgress,
   type AudioToolMode,
 } from '@/lib/utils/audio';
+import { cancelTtsSynthesis, synthesizeTts } from '@/lib/utils/tts-browser';
+import {
+  MAX_TTS_TEXT_LENGTH,
+  getDefaultTtsVoice,
+  getTtsVoices,
+  type TtsLanguage,
+  type TtsVoiceId,
+} from '@/lib/utils/tts';
 
 interface AudioToolProps {
   toolId: string;
@@ -72,6 +80,7 @@ function wait(ms: number): Promise<void> {
 
 export function AudioTool({ toolId, mode, content }: AudioToolProps) {
   const t = useTranslations('audio_tool');
+  const locale = useLocale();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -103,11 +112,10 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
   const [liveTranscriptionState, setLiveTranscriptionState] = useState<'idle' | 'recording' | 'stopping'>('idle');
   const [ttsText, setTtsText] = useState('');
   const [ttsRate, setTtsRate] = useState(1);
-  const [ttsPitch, setTtsPitch] = useState(1);
-  const [ttsVolume, setTtsVolume] = useState(1);
-  const [ttsVoiceUri, setTtsVoiceUri] = useState('');
-  const [ttsVoices, setTtsVoices] = useState<SpeechSynthesisVoice[]>([]);
-  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [ttsLanguage, setTtsLanguage] = useState<TtsLanguage>(locale === 'en' ? 'en' : 'zh');
+  const [ttsVoiceId, setTtsVoiceId] = useState<TtsVoiceId>(
+    getDefaultTtsVoice(locale === 'en' ? 'en' : 'zh'),
+  );
 
   const isMerge = mode === 'merge';
   const isRecorder = mode === 'recorder';
@@ -115,7 +123,7 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
   const isExtract = mode === 'extract';
   const isTrim = mode === 'trim';
   const isTts = mode === 'tts';
-  const isStandalone = isRecorder || isTts;
+  const isStandalone = isRecorder;
   const liveTranscriptionActive = isTranscribe && liveTranscriptionState !== 'idle';
   const usesBitrate = [
     'to-mp3',
@@ -133,8 +141,9 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
   const canRun = isRecorder
     ? Boolean(recording)
     : isTts
-      ? ttsText.trim().length > 0 && !isSpeaking
+      ? ttsText.trim().length > 0 && !isProcessing
       : files.length > 0 && !isProcessing && !liveTranscriptionActive;
+  const availableTtsVoices = useMemo(() => getTtsVoices(ttsLanguage), [ttsLanguage]);
 
   const uploadTitle = useMemo(() => {
     if (isExtract) return t('upload_video_title');
@@ -179,6 +188,14 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
         return t('errors.microphone_denied');
       case 'tts_unsupported':
         return t('errors.tts_unsupported');
+      case 'tts_text_too_long':
+        return t('errors.tts_text_too_long', {
+          maxSize: processingError.maxSize ?? String(MAX_TTS_TEXT_LENGTH),
+        });
+      case 'tts_generation_failed':
+        return processingError.detail
+          ? `${t('errors.tts_generation_failed')} ${processingError.detail}`
+          : t('errors.tts_generation_failed');
       case 'empty_text':
         return t('errors.empty_text');
       case 'invalid_value':
@@ -221,23 +238,7 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
     liveTranscriptionStateRef.current = liveTranscriptionState;
   }, [liveTranscriptionState]);
 
-  useEffect(() => {
-    if (!isTts || typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-
-    const updateVoices = () => {
-      const voices = window.speechSynthesis.getVoices();
-      setTtsVoices(voices);
-      setTtsVoiceUri((current) => current || voices[0]?.voiceURI || '');
-    };
-
-    updateVoices();
-    window.speechSynthesis.addEventListener('voiceschanged', updateVoices);
-
-    return () => {
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.removeEventListener('voiceschanged', updateVoices);
-    };
-  }, [isTts]);
+  useEffect(() => () => cancelTtsSynthesis(), []);
 
   const setSelectedFiles = useCallback((nextFiles: FileList | File[]) => {
     const selected = Array.from(nextFiles);
@@ -553,42 +554,41 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
     recorder.stop();
   }, [clearLiveTranscriptionInterval, t]);
 
-  const speakTts = useCallback(() => {
-    const text = ttsText.trim();
-    if (!text) {
-      setError(getErrorMessage({ ok: false, code: 'empty_text' }));
-      return;
-    }
-
-    if (typeof window === 'undefined' || !('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') {
-      setError(getErrorMessage({ ok: false, code: 'tts_unsupported' }));
-      return;
-    }
-
+  const generateTts = useCallback(async () => {
+    setIsProcessing(true);
     clearOutput();
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    const voice = ttsVoices.find((item) => item.voiceURI === ttsVoiceUri);
-    if (voice) utterance.voice = voice;
-    utterance.rate = ttsRate;
-    utterance.pitch = ttsPitch;
-    utterance.volume = ttsVolume;
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => {
-      setIsSpeaking(false);
-      setError(getErrorMessage({ ok: false, code: 'processing_failed' }));
-    };
 
-    setError('');
-    window.speechSynthesis.speak(utterance);
-  }, [clearOutput, getErrorMessage, ttsPitch, ttsRate, ttsText, ttsVoiceUri, ttsVoices, ttsVolume]);
+    try {
+      const result = await synthesizeTts({
+        text: ttsText,
+        language: ttsLanguage,
+        voiceId: ttsVoiceId,
+        speed: ttsRate,
+        onProgress: setProgress,
+      });
+
+      if (!result.ok) {
+        if (result.code !== 'tts_cancelled') setError(getErrorMessage(result));
+        return;
+      }
+
+      setOutput({
+        url: URL.createObjectURL(result.blob),
+        filename: result.filename,
+        mimeType: result.mimeType,
+        size: result.outputSize,
+        durationMs: result.durationMs,
+      });
+      setProgress({ stage: 'done', label: 'tts_ready', percent: 100 });
+    } finally {
+      setIsProcessing(false);
+    }
+  }, [clearOutput, getErrorMessage, ttsLanguage, ttsRate, ttsText, ttsVoiceId]);
 
   const stopTts = useCallback(() => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    }
-    setIsSpeaking(false);
+    cancelTtsSynthesis();
+    setIsProcessing(false);
+    setProgress(null);
   }, []);
 
   const onDrop = useCallback((event: React.DragEvent<HTMLLabelElement>) => {
@@ -606,7 +606,11 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
       <div className="h-2 overflow-hidden rounded bg-surface-raised">
         <div className="h-full bg-action transition-[width]" style={{ width: `${progress.percent}%` }} />
       </div>
-      <p className="mt-2 text-xs text-content-faint">{progress.label}</p>
+      <p className="mt-2 text-xs text-content-faint">
+        {isTts && progress.label.startsWith('tts_')
+          ? t(`tts_progress.${progress.label}`)
+          : progress.label}
+      </p>
     </div>
   ) : null;
 
@@ -628,83 +632,75 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
               <textarea
                 value={ttsText}
                 onChange={(event) => setTtsText(event.target.value)}
+                maxLength={MAX_TTS_TEXT_LENGTH}
                 placeholder={t('tts_placeholder')}
-                className="min-h-56 resize-y rounded border border-border-input bg-surface-raised p-3 text-sm leading-6 text-content-secondary placeholder:text-content-faint focus:outline-none focus:ring-2 focus:ring-action"
+                className="min-h-64 resize-y rounded border border-border-input bg-surface-raised p-3 text-sm leading-6 text-content-secondary placeholder:text-content-faint focus:outline-none focus:ring-2 focus:ring-action"
               />
+
+              <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-content-muted">
+                <span>{t('tts_model_hint')}</span>
+                <span>{t('tts_character_count', { current: ttsText.length, max: MAX_TTS_TEXT_LENGTH })}</span>
+              </div>
 
               <div className="grid gap-3 rounded-lg border border-border-base bg-surface p-4 sm:grid-cols-2">
                 <label className="text-sm font-medium text-content-secondary">
-                  {t('tts_voice_label')}
+                  {t('tts_language_label')}
                   <select
-                    value={ttsVoiceUri}
-                    onChange={(event) => setTtsVoiceUri(event.target.value)}
+                    value={ttsLanguage}
+                    onChange={(event) => {
+                      const language = event.target.value as TtsLanguage;
+                      stopTts();
+                      clearOutput();
+                      setTtsLanguage(language);
+                      setTtsVoiceId(getDefaultTtsVoice(language));
+                    }}
                     className="mt-2 w-full rounded border border-border-input bg-surface-raised px-3 py-2 text-sm text-content-secondary focus:outline-none focus:ring-2 focus:ring-action"
                   >
-                    <option value="">{t('tts_default_voice')}</option>
-                    {ttsVoices.map((voice) => (
-                      <option key={voice.voiceURI} value={voice.voiceURI}>
-                        {voice.name}{voice.lang ? ` (${voice.lang})` : ''}
+                    <option value="zh">{t('tts_language_zh')}</option>
+                    <option value="en">{t('tts_language_en')}</option>
+                  </select>
+                </label>
+
+                <label className="text-sm font-medium text-content-secondary">
+                  {t('tts_voice_label')}
+                  <select
+                    value={ttsVoiceId}
+                    onChange={(event) => {
+                      stopTts();
+                      clearOutput();
+                      setTtsVoiceId(event.target.value as TtsVoiceId);
+                    }}
+                    className="mt-2 w-full rounded border border-border-input bg-surface-raised px-3 py-2 text-sm text-content-secondary focus:outline-none focus:ring-2 focus:ring-action"
+                  >
+                    {availableTtsVoices.map((voice) => (
+                      <option key={voice.id} value={voice.id}>
+                        {t(`tts_voices.${voice.labelKey}`)}
                       </option>
                     ))}
                   </select>
                 </label>
 
-                <label className="text-sm font-medium text-content-secondary">
+                <label className="text-sm font-medium text-content-secondary sm:col-span-2">
                   <span className="flex items-center justify-between gap-3">
                     <span>{t('tts_rate_label')}</span>
-                    <span className="text-content-muted">{ttsRate.toFixed(1)}x</span>
+                    <span className="text-content-muted">{ttsRate.toFixed(2)}x</span>
                   </span>
                   <input
                     type="range"
-                    min="0.5"
-                    max="2"
-                    step="0.1"
-                    value={ttsRate}
-                    onChange={(event) => setTtsRate(Number(event.target.value))}
-                    className="mt-3 w-full accent-action"
-                  />
-                </label>
-
-                <label className="text-sm font-medium text-content-secondary">
-                  <span className="flex items-center justify-between gap-3">
-                    <span>{t('tts_pitch_label')}</span>
-                    <span className="text-content-muted">{ttsPitch.toFixed(1)}</span>
-                  </span>
-                  <input
-                    type="range"
-                    min="0"
-                    max="2"
-                    step="0.1"
-                    value={ttsPitch}
-                    onChange={(event) => setTtsPitch(Number(event.target.value))}
-                    className="mt-3 w-full accent-action"
-                  />
-                </label>
-
-                <label className="text-sm font-medium text-content-secondary">
-                  <span className="flex items-center justify-between gap-3">
-                    <span>{t('tts_volume_label')}</span>
-                    <span className="text-content-muted">{Math.round(ttsVolume * 100)}%</span>
-                  </span>
-                  <input
-                    type="range"
-                    min="0"
-                    max="1"
+                    min="0.75"
+                    max="1.5"
                     step="0.05"
-                    value={ttsVolume}
-                    onChange={(event) => setTtsVolume(Number(event.target.value))}
+                    value={ttsRate}
+                    onChange={(event) => {
+                      stopTts();
+                      clearOutput();
+                      setTtsRate(Number(event.target.value));
+                    }}
                     className="mt-3 w-full accent-action"
                   />
                 </label>
+
               </div>
-
-              {isSpeaking && (
-                <div className="rounded-lg border border-border-base bg-surface-raised p-4 text-sm font-medium text-content-secondary">
-                  {t('tts_speaking')}
-                </div>
-              )}
-
-              {errorBlock}
             </div>
           ) : isRecorder ? (
             <div className="flex flex-col gap-4">
@@ -1016,10 +1012,10 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
           <div className="mt-4 flex flex-wrap gap-2">
             {isTts ? (
               <>
-                <Button onClick={speakTts} disabled={!canRun}>
-                  {isSpeaking ? t('tts_speaking') : actionLabel}
+                <Button onClick={generateTts} disabled={!canRun}>
+                  {isProcessing ? t('tts_generating') : actionLabel}
                 </Button>
-                <Button variant="secondary" onClick={stopTts} disabled={!isSpeaking}>
+                <Button variant="secondary" onClick={stopTts} disabled={!isProcessing}>
                   {t('actions.stop_speaking')}
                 </Button>
                 {ttsText && (
@@ -1078,7 +1074,7 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
                   <div className="rounded-lg border border-border-base bg-surface p-4 text-sm text-content-muted">
                     <div className="font-medium text-content">{output.filename}</div>
                     <div className="mt-1">
-                      {output.mimeType} · {formatAudioFileSize(output.size)} · {output.durationMs} ms
+                      {output.mimeType} / {formatAudioFileSize(output.size)} / {output.durationMs} ms
                     </div>
                   </div>
                   <Button onClick={() => downloadUrl(output.url, output.filename)}>
@@ -1087,7 +1083,7 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
                 </div>
               ) : (
                 <div className="flex min-h-72 flex-grow items-center justify-center rounded-lg border border-border-subtle bg-surface-raised p-6 text-center text-sm text-content-muted">
-                  {isTranscribe ? t('empty_transcript') : t('empty_output')}
+                  {isTranscribe ? t('empty_transcript') : isTts ? t('empty_tts_output') : t('empty_output')}
                 </div>
               )}
             </div>

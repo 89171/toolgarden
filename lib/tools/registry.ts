@@ -493,7 +493,7 @@ export const toolRegistry: ToolMeta[] = [
   {
     id: 'audio-tts',
     name: '文字转语音',
-    description: '使用浏览器本地语音合成朗读输入文字',
+    description: '用 Kokoro 高质量音色生成中英文语音并下载 WAV',
     path: '/audio/tts',
     icon: 'TTS',
     category: 'convert',

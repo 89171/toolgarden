@@ -641,8 +641,8 @@ Canonical examples:
 - Category: Convert / 转换
 - Icon label: `TTS`
 - Featured: no
-- English description: Free online tool to read text aloud with browser-local speech synthesis
-- Chinese description: 调用浏览器内置语音合成引擎朗读文字，可调整语速语调，实际音色取决于操作系统安装的语音包。
+- English description: Turn Chinese or English text into natural Kokoro speech, adjust speed, preview it, and download a WAV file locally in your browser
+- Chinese description: 使用 Kokoro 高质量音色把中文或英文转换为自然语音，可调语速、在线试听并下载 WAV，浏览器本地生成。
 - English URL: https://toolgarden.xyz/en/audio/tts
 - Chinese URL: https://toolgarden.xyz/zh/audio/tts
 

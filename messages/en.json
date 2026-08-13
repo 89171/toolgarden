@@ -1281,7 +1281,7 @@
     "audio-sample-rate": "audio sample rate converter, change audio sample rate, resample audio online, convert audio to 44100 Hz, convert audio to 48000 Hz",
     "audio-bitrate": "audio bitrate converter, change MP3 bitrate, MP3 bitrate changer, convert audio bitrate, re-encode MP3 online",
     "audio-remove-silence": "remove silence from audio, audio silence remover, trim silence from MP3, delete audio gaps, automatic audio trimmer",
-    "audio-tts": "text to speech online, TTS tool, text reader, browser speech synthesis, convert text to voice",
+    "audio-tts": "text to speech online, Kokoro TTS, Chinese speech synthesis, English speech synthesis, download WAV",
     "text-word-count": "word counter online, character counter, text length counter, sentence counter, paragraph counter, reading time calculator",
     "text-diff": "text diff tool, compare text online, text comparison, find differences between texts, line diff, word diff",
     "text-markdown-to-pdf": "Markdown to PDF, convert MD to PDF, online Markdown PDF converter, export Markdown as PDF, browser PDF generator",
@@ -1702,15 +1702,15 @@
       "items": [
         {
           "question": "Does text-to-speech upload my text?",
-          "answer": "The tool uses your browser's built-in speech synthesis to read the text; the reading happens locally and the text is not sent to our servers."
+          "answer": "No. A Kokoro model loaded in your browser generates the speech, and your text is not sent to ToolGarden servers. On first use, the browser downloads and caches the required model files."
         },
         {
           "question": "What voices are available?",
-          "answer": "The available voices come from your operating system and browser, so the languages and timbres differ from device to device."
+          "answer": "The language list is focused on Chinese and English, with two curated voices for each language instead of variable operating-system voice packs."
         },
         {
           "question": "Can I export the speech to a file?",
-          "answer": "This tool is mainly for instant read-aloud preview; whether audio can be saved depends on your browser's speech synthesis capabilities."
+          "answer": "Yes. Preview the generated speech on the page, then download it as a standard WAV audio file."
         }
       ]
     },
@@ -3114,13 +3114,27 @@
     "start_seconds": "Start time (seconds)",
     "end_seconds": "End time (seconds)",
     "tts_input_title": "Text to speech",
-    "tts_placeholder": "Enter text to read aloud...",
+    "tts_placeholder": "Enter Chinese or English text to turn into speech...",
+    "tts_language_label": "Language",
+    "tts_language_zh": "Chinese",
+    "tts_language_en": "English",
     "tts_voice_label": "Voice",
-    "tts_default_voice": "Browser default voice",
+    "tts_voices": {
+      "zh_female": "Clear female",
+      "zh_male": "Warm male",
+      "en_us_female": "US female",
+      "en_gb_female": "UK female"
+    },
     "tts_rate_label": "Rate",
-    "tts_pitch_label": "Pitch",
-    "tts_volume_label": "Speech volume",
-    "tts_speaking": "Speaking",
+    "tts_model_hint": "High-quality Kokoro voices run locally in your browser. First use loads about 130 MB.",
+    "tts_character_count": "{current} / {max} characters",
+    "tts_generating": "Generating...",
+    "tts_progress": {
+      "tts_model_loading": "Loading and caching the voice model",
+      "tts_generating": "Synthesizing natural speech",
+      "tts_encoding": "Creating the WAV file",
+      "tts_ready": "Speech is ready to preview or download"
+    },
     "processing": "Processing...",
     "clear": "Clear",
     "download_output": "Download result",
@@ -3140,6 +3154,7 @@
     "microphone_listening": "listening from microphone",
     "microphone_finalizing": "Finalizing microphone transcription...",
     "empty_output": "Choose a file and start processing. The output audio will appear here.",
+    "empty_tts_output": "Enter text and generate speech to preview and download a WAV file here.",
     "empty_recording_output": "After recording, export MP3 and preview it here.",
     "empty_transcript": "Upload audio and start transcription. The recognized text will appear here.",
     "unknown_type": "unknown type",
@@ -3156,8 +3171,8 @@
       "sample_rate": "Change sample rate",
       "bitrate": "Adjust bitrate",
       "remove_silence": "Remove silence",
-      "speak": "Speak",
-      "stop_speaking": "Stop speaking",
+      "speak": "Generate speech",
+      "stop_speaking": "Cancel generation",
       "export_recording": "Export MP3"
     },
     "stages": {
@@ -3176,7 +3191,9 @@
       "invalid_range": "End time must be greater than start time.",
       "recorder_unsupported": "This browser does not support online recording. Try the latest Chrome, Edge, or Safari.",
       "microphone_denied": "Microphone access failed. Allow microphone permission in the browser address bar and try again.",
-      "tts_unsupported": "This browser does not support text to speech. Try the latest Chrome, Edge, or Safari.",
+      "tts_unsupported": "This browser cannot run the local speech model. Try the latest Chrome, Edge, or Safari.",
+      "tts_text_too_long": "The text is too long. Enter up to {maxSize} characters.",
+      "tts_generation_failed": "Speech generation failed. Check your connection and try again.",
       "empty_text": "Enter text to read aloud.",
       "invalid_value": "A parameter value is invalid. Adjust it and try again.",
       "processing_failed": "Audio processing failed. Try another file or a smaller file.",
@@ -3740,7 +3757,7 @@
         },
         {
           "title": "You need the sound turned into something else",
-          "detail": "Audio to Text produces a transcript, Split Stems separates a song into vocals, drums, bass, guitar, piano and other, Text to Speech reads text aloud with the browser's own synthesiser, and Voice Recorder captures straight from the microphone."
+          "detail": "Audio to Text produces a transcript, Split Stems separates a song into vocals, drums, bass, guitar, piano and other, Text to Speech creates downloadable Chinese or English WAV audio with Kokoro, and Voice Recorder captures straight from the microphone."
         }
       ],
       "comparison": {
@@ -4374,7 +4391,7 @@
     },
     "audio-tts": {
       "name": "Text to speech",
-      "description": "Free online tool to read text aloud with browser-local speech synthesis"
+      "description": "Turn Chinese or English text into natural Kokoro speech, adjust speed, preview it, and download a WAV file locally in your browser"
     },
     "text-word-count": {
       "name": "Word Count",

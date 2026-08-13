@@ -16,6 +16,7 @@
 # next.js
 /.next/
 /out/
+/public/vendor/espeak-ng/
 
 # production
 /build
