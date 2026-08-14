@@ -19,6 +19,7 @@ import { toolRegistry } from '../lib/tools/registry';
 import {
   createSafeFilenameStem,
   extractMarkdownTitle,
+  isMarkdownFile,
   markdownToHtml,
 } from '../lib/utils/markdown';
 import {
@@ -204,5 +205,12 @@ describe('Markdown conversion', () => {
     expect(extractMarkdownTitle('# **Quarterly** [report](https://example.com)', 'Fallback'))
       .toBe('Quarterly report');
     expect(createSafeFilenameStem('Report: Q3 / West?')).toBe('Report Q3 West');
+  });
+
+  it('recognizes Markdown files by extension or MIME type', () => {
+    expect(isMarkdownFile({ name: 'README.md', type: '' })).toBe(true);
+    expect(isMarkdownFile({ name: 'notes.MARKDOWN', type: 'application/octet-stream' })).toBe(true);
+    expect(isMarkdownFile({ name: 'document', type: 'text/markdown; charset=utf-8' })).toBe(true);
+    expect(isMarkdownFile({ name: 'notes.txt', type: 'text/plain' })).toBe(false);
   });
 });

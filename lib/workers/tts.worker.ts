@@ -86,6 +86,10 @@ function loadModel(id: string): Promise<LoadedTtsModel> {
 
   modelPromise = Promise.all([
     StyleTextToSpeech2Model.from_pretrained(TTS_MODEL_ID, {
+      // 曾尝试改用 transformers.js 对 wasm 设备默认推荐的 q8 量化权重来提速，
+      // 但这个自定义架构（style_text_to_speech_2）用量化权重会直接输出异常音频
+      // （NaN/静音），触发 tts_invalid_audio；该模型只在 fp32 下验证可用，
+      // 保留 fp32，速度问题留给后续换用更小模型或 WebGPU 设备解决。
       dtype: 'fp32',
       device: 'wasm',
       progress_callback: onProgress,
@@ -135,17 +139,28 @@ function normalizeTextForSpeech(text: string): string {
     .trim();
 }
 
-function postProcessPhonemes(value: string): string {
-  return value
+function postProcessPhonemes(value: string, language: TtsLanguage): string {
+  let result = value
     .replace(/\u200d/g, '')
     .replace(/kəkˈoːɹoʊ/g, 'kˈoʊkəɹoʊ')
     .replace(/kəkˈɔːɹəʊ/g, 'kˈəʊkəɹəʊ')
     .replace(/ʲ/g, 'j')
-    .replace(/r/g, 'ɹ')
+    // espeak-ng 给普通话卷舌声母 r-（人/日/然/让/如/热等极常见字）输出 ʐ，
+    // 但该符号不在 Kokoro 词表里，会被词表归一化直接丢弃而不是替换，
+    // 等于把整个声母吃掉；ɹ 在词表内且已用于英文 r，这里一并处理。
+    .replace(/[rʐ]/g, 'ɹ')
     .replace(/x/g, 'k')
-    .replace(/ɬ/g, 'l')
-    .replace(/\s+/g, ' ')
-    .trim();
+    .replace(/ɬ/g, 'l');
+
+  if (language === 'zh') {
+    // espeak-ng 用 "s." 表示卷舌声母 sh-/zh-/ch-（是/十/这/知/中/吃等），
+    // 但 "." 本身也是词表里的句末停顿符号，导致这些极常见字的音节内部
+    // 被插入一个多余的停顿。ʂ 是词表内真正对应的卷舌音符号，替换掉
+    // "s." 组合可以同时修正发音并去掉这个误插入的停顿。
+    result = result.replace(/s\./g, 'ʂ');
+  }
+
+  return result.replace(/\s+/g, ' ').trim();
 }
 
 function loadESpeakFactory(): Promise<ESpeakFactory> {
@@ -189,6 +204,7 @@ async function phonemize(text: string, language: TtsLanguage): Promise<string> {
 
   return postProcessPhonemes(
     lines.map((line, index) => `${line}${punctuation[index] ?? ''}`).join(' '),
+    language,
   );
 }
 

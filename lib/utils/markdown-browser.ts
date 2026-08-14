@@ -1,5 +1,23 @@
 import { convertFileToPdf } from './pdf-browser';
 import type { PdfConversionOutcome } from './pdf';
+import { isMarkdownFile } from './markdown';
+
+export type MarkdownFileReadOutcome =
+  | { ok: true; text: string; filename: string }
+  | { ok: false; code: 'invalid_markdown_file' | 'empty_markdown_file' | 'markdown_file_read_failed' };
+
+export async function readMarkdownFile(file: File): Promise<MarkdownFileReadOutcome> {
+  if (!isMarkdownFile(file)) return { ok: false, code: 'invalid_markdown_file' };
+  if (file.size === 0) return { ok: false, code: 'empty_markdown_file' };
+
+  try {
+    const text = (await file.text()).replace(/^\uFEFF/u, '');
+    if (!text.trim()) return { ok: false, code: 'empty_markdown_file' };
+    return { ok: true, text, filename: file.name };
+  } catch {
+    return { ok: false, code: 'markdown_file_read_failed' };
+  }
+}
 
 export function downloadBlob(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob);

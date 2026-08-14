@@ -3,7 +3,7 @@ import { defineToolContent } from './define';
 export const textMarkdownToHtmlContent = defineToolContent({
   zh: {
     overview: ['Markdown 转 HTML 会把标题、段落、列表、链接、引用、代码和表格等标记解析为网页元素。输出适合放入博客、邮件模板或内容系统，但视觉样式仍由目标页面的 CSS 决定。', 'HTML 可以包含可执行或危险结构。把不可信 Markdown 转换后直接插入网站时必须进行严格净化，尤其要处理原始 HTML、链接协议、图片地址和事件属性；本工具生成结果不等于可安全发布。'],
-    steps: [['输入并校验 Markdown', '确认链接、图片、代码围栏和标题结构完整。'], ['生成并预览 HTML', '检查语义元素和目标渲染效果，不只看源码字符串。'], ['在发布系统中净化', '根据允许标签和属性白名单处理输出，再应用站点样式。']],
+    steps: [['输入或选择 Markdown 文件', '可以粘贴内容，也可以选择 .md 或 .markdown 文件，并确认链接、图片、代码围栏和标题结构完整。'], ['生成并预览 HTML', '检查语义元素和目标渲染效果，不只看源码字符串。'], ['在发布系统中净化', '根据允许标签和属性白名单处理输出，再应用站点样式。']],
     example: {
       caption: "输出是语义化的结构标签，不内联主题样式，方便你套用自己的 CSS。",
       inputLabel: "Markdown",
@@ -20,7 +20,7 @@ export const textMarkdownToHtmlContent = defineToolContent({
   },
   en: {
     overview: ['Markdown to HTML parses headings, paragraphs, lists, links, quotations, code, and tables into web elements. Output can feed a blog, email template, or content system, while visual appearance remains controlled by CSS in the destination.', 'HTML can contain executable or dangerous structures. Strictly sanitize converted untrusted Markdown before inserting it into a site, especially raw HTML, URL schemes, image sources, and event attributes. Generated output is not automatically safe to publish.'],
-    steps: [['Enter and validate Markdown', 'Confirm links, images, code fences, and heading structure are complete.'], ['Generate and preview HTML', 'Inspect semantic elements and actual rendering rather than only the source string.'], ['Sanitize in the publishing system', 'Apply an allowed tag and attribute policy before destination styling.']],
+    steps: [['Enter or choose a Markdown file', 'Paste content or choose a .md or .markdown file, then confirm links, images, code fences, and heading structure are complete.'], ['Generate and preview HTML', 'Inspect semantic elements and actual rendering rather than only the source string.'], ['Sanitize in the publishing system', 'Apply an allowed tag and attribute policy before destination styling.']],
     example: {
       caption: "The output is semantic structural markup with no theme styles inlined, so your own CSS applies cleanly.",
       inputLabel: "Markdown",

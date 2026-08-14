@@ -15,6 +15,8 @@ interface MarkdownHtmlOptions {
   lang: 'en' | 'zh-CN';
 }
 
+export const MARKDOWN_FILE_ACCEPT = 'text/markdown,text/x-markdown,.md,.markdown';
+
 const UNSAFE_PROTOCOL = /^(?:javascript|vbscript|file):/iu;
 const SAFE_DATA_IMAGE = /^data:image\/(?:gif|jpe?g|png|webp);base64,/iu;
 
@@ -85,6 +87,13 @@ export function createSafeFilenameStem(value: string, fallback = 'document'): st
     .slice(0, 80);
 
   return normalized || fallback;
+}
+
+export function isMarkdownFile(file: Pick<File, 'name' | 'type'>): boolean {
+  const mimeType = file.type.toLowerCase().split(';', 1)[0].trim();
+  return /\.(?:md|markdown)$/iu.test(file.name)
+    || mimeType === 'text/markdown'
+    || mimeType === 'text/x-markdown';
 }
 
 function createHtmlDocument(fragment: string, title: string, lang: MarkdownHtmlOptions['lang']): string {

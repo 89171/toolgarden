@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { ToolSwitchLinks } from '@/components/ToolSwitchLinks';
 import { Button } from '@/components/ui/Button';
@@ -10,8 +10,13 @@ import {
   copyText,
   downloadBlob,
   downloadTextFile,
+  readMarkdownFile,
 } from '@/lib/utils/markdown-browser';
-import { markdownToHtml } from '@/lib/utils/markdown';
+import {
+  MARKDOWN_FILE_ACCEPT,
+  createSafeFilenameStem,
+  markdownToHtml,
+} from '@/lib/utils/markdown';
 
 type MarkdownConverterMode = 'pdf' | 'html';
 type OutputView = 'preview' | 'code';
@@ -24,17 +29,27 @@ export function MarkdownConverter({ mode }: MarkdownConverterProps) {
   const locale = useLocale();
   const t = useTranslations('markdown_converter');
   const tc = useTranslations('common');
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [markdown, setMarkdown] = useState('');
+  const [importedFileName, setImportedFileName] = useState('');
   const [outputView, setOutputView] = useState<OutputView>(mode === 'html' ? 'code' : 'preview');
   const [isGenerating, setIsGenerating] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
+  const [statusIsError, setStatusIsError] = useState(false);
+
+  const importedFilenameStem = useMemo(
+    () => importedFileName
+      ? createSafeFilenameStem(importedFileName.replace(/\.(?:md|markdown)$/iu, ''))
+      : '',
+    [importedFileName]
+  );
 
   const htmlOutcome = useMemo(
     () => markdownToHtml(markdown, {
-      fallbackTitle: t('fallback_title'),
+      fallbackTitle: importedFilenameStem || t('fallback_title'),
       lang: locale === 'zh' ? 'zh-CN' : 'en',
     }),
-    [locale, markdown, t]
+    [importedFilenameStem, locale, markdown, t]
   );
 
   const switchLinks = [
@@ -53,33 +68,62 @@ export function MarkdownConverter({ mode }: MarkdownConverterProps) {
   function updateMarkdown(value: string) {
     setMarkdown(value);
     setStatusMessage('');
+    setStatusIsError(false);
+  }
+
+  function resetMarkdown(value: string) {
+    setImportedFileName('');
+    updateMarkdown(value);
+  }
+
+  async function handleFileSelect(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+
+    const outcome = await readMarkdownFile(file);
+    if (!outcome.ok) {
+      setStatusMessage(t(outcome.code));
+      setStatusIsError(true);
+      return;
+    }
+
+    setMarkdown(outcome.text);
+    setImportedFileName(outcome.filename);
+    setStatusMessage(t('file_loaded', { name: outcome.filename }));
+    setStatusIsError(false);
   }
 
   async function handleCopyHtml() {
     if (!htmlOutcome.ok) return;
     const copied = await copyText(htmlOutcome.document);
     setStatusMessage(copied ? t('copied_html') : t('copy_error'));
+    setStatusIsError(!copied);
   }
 
   function handleDownloadHtml() {
     if (!htmlOutcome.ok) return;
     downloadTextFile(htmlOutcome.document, `${htmlOutcome.filenameStem}.html`);
     setStatusMessage(t('downloaded_html'));
+    setStatusIsError(false);
   }
 
   async function handleDownloadPdf() {
     if (!htmlOutcome.ok || isGenerating) return;
     setIsGenerating(true);
     setStatusMessage(t('generating_pdf'));
+    setStatusIsError(false);
 
     const outcome = await convertMarkdownTextToPdf(markdown, htmlOutcome.filenameStem);
     if (outcome.ok) {
       downloadBlob(outcome.blob, outcome.filename);
       setStatusMessage(t('downloaded_pdf', { count: outcome.pageCount }));
+      setStatusIsError(false);
     } else {
       setStatusMessage(
         outcome.code === 'empty_document' ? t('empty_error') : t('pdf_error')
       );
+      setStatusIsError(true);
     }
 
     setIsGenerating(false);
@@ -155,17 +199,31 @@ export function MarkdownConverter({ mode }: MarkdownConverterProps) {
           className="min-h-[30rem] border border-border-base lg:min-h-[38rem]"
           actions={
             <>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept={MARKDOWN_FILE_ACCEPT}
+                className="hidden"
+                onChange={(event) => void handleFileSelect(event)}
+              />
               <Button
                 type="button"
                 variant="secondary"
-                onClick={() => updateMarkdown(t('sample'))}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                {t('choose_file')}
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => resetMarkdown(t('sample'))}
               >
                 {tc('example')}
               </Button>
               <Button
                 type="button"
                 variant="secondary"
-                onClick={() => updateMarkdown('')}
+                onClick={() => resetMarkdown('')}
                 disabled={!markdown}
               >
                 {tc('clear')}
@@ -185,7 +243,9 @@ export function MarkdownConverter({ mode }: MarkdownConverterProps) {
             className="min-h-0 flex-grow resize-none rounded border border-border-input bg-surface-raised p-4 font-mono text-sm leading-6 text-content-secondary placeholder:text-content-faint focus:outline-none focus:ring-2 focus:ring-action"
           />
           <div className="mt-2 flex items-center justify-between gap-3 text-xs text-content-faint">
-            <span>{t('supports')}</span>
+            <span className="min-w-0 truncate">
+              {importedFileName ? t('selected_file', { name: importedFileName }) : t('supports')}
+            </span>
             <span className="shrink-0">{t('characters', { count: Array.from(markdown).length })}</span>
           </div>
         </Panel>
@@ -224,9 +284,7 @@ export function MarkdownConverter({ mode }: MarkdownConverterProps) {
           <p
             aria-live="polite"
             className={`mt-2 min-h-5 text-xs ${
-              statusMessage === t('copy_error') || statusMessage === t('pdf_error')
-                ? 'text-danger-content'
-                : 'text-content-muted'
+              statusIsError ? 'text-danger-content' : 'text-content-muted'
             }`}
           >
             {statusMessage}
