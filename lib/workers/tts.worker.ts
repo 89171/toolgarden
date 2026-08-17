@@ -4,6 +4,8 @@ import {
   Tensor,
   type PreTrainedTokenizer,
 } from '@huggingface/transformers';
+import { pinyin } from 'pinyin-pro';
+import { p2z } from 'pinyin-to-zhuyin';
 import type { AudioProcessingProgress } from '../utils/audio';
 import {
   TTS_MODEL_ID,
@@ -139,28 +141,17 @@ function normalizeTextForSpeech(text: string): string {
     .trim();
 }
 
-function postProcessPhonemes(value: string, language: TtsLanguage): string {
-  let result = value
+function postProcessPhonemes(value: string): string {
+  return value
     .replace(/\u200d/g, '')
     .replace(/kəkˈoːɹoʊ/g, 'kˈoʊkəɹoʊ')
     .replace(/kəkˈɔːɹəʊ/g, 'kˈəʊkəɹəʊ')
     .replace(/ʲ/g, 'j')
-    // espeak-ng 给普通话卷舌声母 r-（人/日/然/让/如/热等极常见字）输出 ʐ，
-    // 但该符号不在 Kokoro 词表里，会被词表归一化直接丢弃而不是替换，
-    // 等于把整个声母吃掉；ɹ 在词表内且已用于英文 r，这里一并处理。
-    .replace(/[rʐ]/g, 'ɹ')
+    .replace(/r/g, 'ɹ')
     .replace(/x/g, 'k')
-    .replace(/ɬ/g, 'l');
-
-  if (language === 'zh') {
-    // espeak-ng 用 "s." 表示卷舌声母 sh-/zh-/ch-（是/十/这/知/中/吃等），
-    // 但 "." 本身也是词表里的句末停顿符号，导致这些极常见字的音节内部
-    // 被插入一个多余的停顿。ʂ 是词表内真正对应的卷舌音符号，替换掉
-    // "s." 组合可以同时修正发音并去掉这个误插入的停顿。
-    result = result.replace(/s\./g, 'ʂ');
-  }
-
-  return result.replace(/\s+/g, ' ').trim();
+    .replace(/ɬ/g, 'l')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 function loadESpeakFactory(): Promise<ESpeakFactory> {
@@ -180,14 +171,13 @@ function loadESpeakFactory(): Promise<ESpeakFactory> {
   return espeakFactoryPromise;
 }
 
-async function phonemize(text: string, language: TtsLanguage): Promise<string> {
-  const normalized = normalizeTextForSpeech(text);
+async function phonemizeEnglish(normalized: string): Promise<string> {
   const punctuation = normalized.match(/[;:,.!?]+/g) ?? [];
   const ESpeakNg = await loadESpeakFactory();
   const espeak = await ESpeakNg({
     arguments: [
       '-v',
-      language === 'zh' ? 'zh-CN' : 'en-us',
+      'en-us',
       '--ipa=3',
       '--phonout',
       'generated',
@@ -204,8 +194,36 @@ async function phonemize(text: string, language: TtsLanguage): Promise<string> {
 
   return postProcessPhonemes(
     lines.map((line, index) => `${line}${punctuation[index] ?? ''}`).join(' '),
-    language,
   );
+}
+
+function pinyinToZhuyin(hanziSegment: string): string {
+  // pinyin-pro 标注中性调用的是 "0"，pinyin-to-zhuyin 认的是 "5"。
+  const numericPinyin = pinyin(hanziSegment, { toneType: 'num', type: 'string', separator: ' ' });
+  const withNeutralTone = numericPinyin.replace(/([a-z])0(?=[\s,.!?;:]|$)/gi, '$15');
+  return p2z(withNeutralTone, { tonemarks: false });
+}
+
+async function phonemizeChinese(normalized: string): Promise<string> {
+  // pinyin-pro 只管把汉字转成拼音，遇到夹在中文里的整段拉丁字母
+  // （品牌名、代码术语等）会逐字母瞎转，所以先按连续拉丁字母切开：
+  // 英文片段仍走 espeak 的英文注音，其余汉字/数字/标点部分转拼音再转
+  // 注音符号（ㄅㄆㄇㄈ）——这才是 Kokoro 中文模型词表实际匹配的注音
+  // 方式，而不是 espeak 的 IPA 转写。
+  const segments = normalized.split(/([A-Za-z]+)/);
+  const parts: string[] = [];
+
+  for (const segment of segments) {
+    if (!segment) continue;
+    parts.push(/^[A-Za-z]+$/.test(segment) ? await phonemizeEnglish(segment) : pinyinToZhuyin(segment));
+  }
+
+  return parts.join(' ').replace(/\s+/g, ' ').trim();
+}
+
+async function phonemize(text: string, language: TtsLanguage): Promise<string> {
+  const normalized = normalizeTextForSpeech(text);
+  return language === 'zh' ? phonemizeChinese(normalized) : phonemizeEnglish(normalized);
 }
 
 function concatAudio(chunks: Float32Array[]): Float32Array {

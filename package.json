@@ -55,6 +55,8 @@
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^6.0.227",
     "pica": "^10.0.2",
+    "pinyin-pro": "^3.29.1",
+    "pinyin-to-zhuyin": "^1.1.0",
     "qrcode": "^1.5.4",
     "react": "19.2.3",
     "react-dom": "19.2.3",
