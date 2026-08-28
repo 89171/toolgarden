@@ -8,15 +8,14 @@ import { BASE_URL } from '@/lib/tools/seo';
  * 向 IndexNow 聚合端点（https://api.indexnow.org/indexnow）提交新增或有更新的 URL。
  *
  * URL 列表直接调用 lib/site/sitemap.ts 的 getSitemapEntries()，不解析生成后的 sitemap.xml、
- * 不正则扫描源码文件（对照 submit-baidu-pages.mjs 的做法：它正则扫描博客源文件时
- * 只覆盖了 3 个，漏掉了大部分博客文章）。sitemap() 才是这个站点 URL 列表的单一
+ * 不正则扫描源码文件。sitemap() 才是这个站点 URL 列表的单一
  * 事实源，直接调它就不存在「两处逻辑要保持同步」的问题。生成器不依赖任何
  * Next 运行时请求作用域的 API（没有 headers()/cookies()），用 tsx 在构建流程之外
  * 单独调用是安全的，也不需要先跑完 next build。
  *
- * 与 submit-baidu-pages.mjs 的另一个差异：IndexNow 单次调用能接受的 URL 数量
+ * IndexNow 单次调用能接受的 URL 数量
  * （文档常见口径是上限一万条，实现时可以对照当前文档再确认一遍）远超这个站点
- * 现有的 URL 总数，所以不需要百度脚本那套按每日配额分批 + 游标续跑的复杂度。
+ * 现有的 URL 总数，所以不需要按每日配额分批 + 游标续跑的复杂度。
  * 换成「按内容是否变化增量提交」：首次运行提交全部 URL，之后只提交新增或
  * lastModified 变化过的 URL。博客使用文章自己的 updatedAt，其余正式页面使用
  * 构建前从 Git 历史生成的路由更新时间。
@@ -32,8 +31,7 @@ const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(scriptDir, '..');
 
 // IndexNow 的 key 按协议设计就是要公开发布在域名根目录的文件里，不是安全意义上的
-// 秘密，因此和 submit-baidu-pages.mjs 里硬编码百度 token 一样，直接写在源码里，
-// 不走 env var。对应的公开文件见 public/<KEY>.txt。
+// 秘密，因此保留在源码里。对应的公开文件见 public/<KEY>.txt。
 const INDEXNOW_KEY = '740e2f01a70446789f5bc4af928b9682';
 const INDEXNOW_ENDPOINT = 'https://api.indexnow.org/indexnow';
 const DEFAULT_STATE_FILE = path.join(rootDir, '.indexnow-submitted.json');
