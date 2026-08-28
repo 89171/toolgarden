@@ -1,5 +1,7 @@
 # ToolGarden / JSON Toolkit
 
+[中文文档](./README.zh-CN.md)
+
 ToolGarden is a browser-local toolbox for developers and everyday file work. It includes JSON utilities, PDF tools, image tools, audio tools, text tools, QR code tools, whiteboards, mind maps, and other small tools that are useful when you need to process something quickly without installing a desktop app.
 
 The project started as a JSON toolkit and has grown into a registry-driven web app with 88 tools, bilingual pages, static SEO output, and a strong preference for local processing.

@@ -42,6 +42,7 @@ interface HeaderMenuItem {
 const navLinkClassName = 'flex min-h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-md border border-border-subtle bg-surface-raised px-3 py-2 font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong';
 const menuButtonClassName = 'inline-flex min-h-10 shrink-0 items-center justify-center rounded-md border border-border-subtle bg-surface-raised px-3 py-2 text-sm font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong';
 const drawerLinkClassName = 'flex min-h-11 items-center justify-between rounded-md border border-border-subtle bg-surface-raised px-3 py-2 text-sm font-medium text-content-secondary transition-colors hover:border-border-base hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong';
+const githubUrl = 'https://github.com/89171/toolgarden';
 
 function ToolGlyph({ icon }: { icon: string }) {
   return (
@@ -62,6 +63,28 @@ function MenuDropdownCaret() {
     >
       <Image src="/down-arrow.svg" alt="" width={12} height={12} className="h-3 w-3" />
     </span>
+  );
+}
+
+function GitHubLink() {
+  return (
+    <a
+      href={githubUrl}
+      target="_blank"
+      rel="noreferrer"
+      aria-label="GitHub"
+      title="GitHub"
+      className="inline-flex min-h-10 w-10 shrink-0 items-center justify-center rounded border border-border-base text-content-muted transition-colors hover:border-border-strong hover:text-content-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+    >
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 24 24"
+        className="h-5 w-5"
+        fill="currentColor"
+      >
+        <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.4 7.86 10.93.58.1.79-.25.79-.56v-2.15c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.75 2.69 1.25 3.34.95.1-.74.4-1.25.73-1.54-2.55-.29-5.23-1.28-5.23-5.68 0-1.25.45-2.28 1.18-3.08-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18A10.9 10.9 0 0 1 12 6.04c.98 0 1.95.13 2.87.39 2.2-1.49 3.16-1.18 3.16-1.18.62 1.58.23 2.75.11 3.04.73.8 1.18 1.83 1.18 3.08 0 4.42-2.69 5.39-5.25 5.67.41.36.78 1.06.78 2.14v3.19c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z" />
+      </svg>
+    </a>
   );
 }
 
@@ -424,6 +447,7 @@ function Header({ compact = false }: HeaderProps) {
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
+          <GitHubLink />
           <LanguageSwitcher />
           <button
             type="button"
