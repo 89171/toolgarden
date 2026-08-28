@@ -734,6 +734,14 @@ export const toolRegistry: ToolMeta[] = [
     category: 'format',
   },
   {
+    id: 'quickdraw-whiteboard',
+    name: 'Quickdraw白板',
+    description: '使用开源 Quickdraw 在浏览器本地绘制无限白板，支持画笔、图形、便签、图片、导出和全屏',
+    path: '/other/quickdraw-whiteboard',
+    icon: 'QDW',
+    category: 'format',
+  },
+  {
     id: 'excalidraw-board',
     name: 'Excalidraw画板',
     description: '使用开源 Excalidraw 在浏览器本地绘制手绘风画板，支持图形、文字、图片和导出',

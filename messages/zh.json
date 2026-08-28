@@ -1315,6 +1315,7 @@
     "qr-code-decoder": "在线二维码扫描,二维码解码,图片识别二维码,摄像头扫二维码,读取二维码内容",
     "font-subset": "字体子集化,提取TTF字符,提取WOFF字符,减小字体文件,字体字符提取",
     "whiteboard": "在线白板,网页白板,浏览器画板,tldraw白板,数字画布",
+    "quickdraw-whiteboard": "Quickdraw白板,在线白板,无限画布,网页画板,MIT白板SDK,浏览器绘图板",
     "excalidraw-board": "在线Excalidraw,手绘风画板,在线绘图板,网页草图工具,Excalidraw编辑器",
     "mind-map": "在线思维导图,思维导图制作,脑图工具,Markdown思维导图,网页脑图编辑器",
     "jwt": "JWT解析,JWT解码,JWT Token解析,JWT签名验证,查看JWT Payload,HS256校验,JWT在线解析,JWT Token解码,HS256签名验证,JWT调试工具"
@@ -1829,6 +1830,22 @@
         {
           "question": "需要注册或安装吗？",
           "answer": "不需要。打开页面即可使用，无需登录或安装任何软件。"
+        }
+      ]
+    },
+    "quickdraw-whiteboard": {
+      "items": [
+        {
+          "question": "Quickdraw 白板内容会上传吗？",
+          "answer": "不会。Quickdraw 在浏览器本地运行，页面只把画布快照保存到当前浏览器的 localStorage。"
+        },
+        {
+          "question": "支持全屏吗？",
+          "answer": "支持。点击全屏按钮，或使用 Ctrl/⌘ + Shift + F 快捷键进入和退出全屏。"
+        },
+        {
+          "question": "和现有白板工具有什么不同？",
+          "answer": "Quickdraw 白板基于 MIT 许可的 Quickdraw SDK，无需 license key，体验更轻量；现有白板基于 tldraw，保留 tldraw 生态能力。"
         }
       ]
     },
@@ -3301,6 +3318,16 @@
     "load_error": "白板编辑器加载失败，请检查网络连接后重试。",
     "retry": "重试"
   },
+  "quickdraw_whiteboard_tool": {
+    "canvas_title": "Quickdraw白板",
+    "fullscreen": "全屏",
+    "exit_fullscreen": "退出全屏",
+    "fullscreen_shortcut": "Ctrl/⌘ + Shift + F",
+    "canvas_label": "Quickdraw 白板画布",
+    "local_note": "内容在浏览器本地编辑，并自动保存到当前浏览器；可使用 Quickdraw 内置工具绘制、插入图片并导出 PNG。",
+    "load_error": "Quickdraw 编辑器加载失败，请检查网络连接后重试。",
+    "retry": "重试"
+  },
   "excalidraw_board_tool": {
     "canvas_title": "Excalidraw画板",
     "fullscreen": "全屏",
@@ -4078,6 +4105,10 @@
     "whiteboard": {
       "name": "白板工具",
       "description": "基于开源 tldraw 打造的本地白板，支持图形绘制、自由画笔、便签、插入图片、多页面切换和一键导出。"
+    },
+    "quickdraw-whiteboard": {
+      "name": "Quickdraw白板",
+      "description": "基于开源 Quickdraw 打造的无限画布白板，支持画笔、荧光笔、图形、文字、便签、图片、导出和全屏演示。"
     },
     "excalidraw-board": {
       "name": "Excalidraw画板",

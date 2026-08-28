@@ -1315,6 +1315,7 @@
     "qr-code-decoder": "QR code scanner online, QR code decoder, read QR code from image, scan QR code with camera, decode QR image",
     "font-subset": "font subset generator, subset TTF font, subset WOFF font, reduce font file size, extract font characters",
     "whiteboard": "online whiteboard, collaborative drawing board, browser whiteboard, tldraw whiteboard, digital canvas",
+    "quickdraw-whiteboard": "Quickdraw whiteboard, online whiteboard, infinite canvas, browser drawing board, MIT whiteboard SDK",
     "excalidraw-board": "Excalidraw online, online drawing board, hand drawn diagram tool, browser sketch board, Excalidraw editor",
     "mind-map": "online mind map, mind map maker, mind mapping tool, Markdown mind map, browser mind map editor",
     "jwt": "JWT decoder,JWT parser,decode JWT token,JWT signature verifier,inspect JWT payload,HS256 validator,JWT decoder online,view JWT payload,HS256 signature verify,debug JWT online"
@@ -1829,6 +1830,22 @@
         {
           "question": "Do I need to sign up or install anything?",
           "answer": "No. Just open the page; no login and no software installation required."
+        }
+      ]
+    },
+    "quickdraw-whiteboard": {
+      "items": [
+        {
+          "question": "Is my Quickdraw board uploaded?",
+          "answer": "No. Quickdraw runs locally in the browser, and this page only stores the board snapshot in this browser localStorage."
+        },
+        {
+          "question": "Does it support fullscreen?",
+          "answer": "Yes. Use the fullscreen button or Ctrl/⌘ + Shift + F to enter and exit fullscreen."
+        },
+        {
+          "question": "How is it different from the existing whiteboard tool?",
+          "answer": "Quickdraw Whiteboard uses the MIT-licensed Quickdraw SDK with no license key and a lighter feel; the existing whiteboard uses tldraw and keeps tldraw ecosystem capabilities."
         }
       ]
     },
@@ -3301,6 +3318,16 @@
     "load_error": "The whiteboard editor could not be loaded. Check the connection and try again.",
     "retry": "Try again"
   },
+  "quickdraw_whiteboard_tool": {
+    "canvas_title": "Quickdraw Whiteboard",
+    "fullscreen": "Fullscreen",
+    "exit_fullscreen": "Exit fullscreen",
+    "fullscreen_shortcut": "Ctrl/⌘ + Shift + F",
+    "canvas_label": "Quickdraw whiteboard canvas",
+    "local_note": "The board is edited locally and automatically saved in this browser. Use Quickdraw tools to draw, insert images, and export PNG.",
+    "load_error": "The Quickdraw editor could not be loaded. Check the connection and try again.",
+    "retry": "Try again"
+  },
   "excalidraw_board_tool": {
     "canvas_title": "Excalidraw Board",
     "fullscreen": "Fullscreen",
@@ -4078,6 +4105,10 @@
     "whiteboard": {
       "name": "Whiteboard",
       "description": "Create a full local whiteboard with tldraw, including shapes, drawing, notes, images, pages, and export"
+    },
+    "quickdraw-whiteboard": {
+      "name": "Quickdraw Whiteboard",
+      "description": "Create an infinite-canvas whiteboard with open-source Quickdraw, including pen, highlighter, shapes, text, notes, images, export, and fullscreen presenting"
     },
     "excalidraw-board": {
       "name": "Excalidraw Board",

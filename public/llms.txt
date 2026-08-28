@@ -31,6 +31,9 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - **Whiteboard / 白板工具** (`/other/whiteboard`): Create a full local whiteboard with tldraw, including shapes, drawing, notes, images, pages, and export
   - English: https://toolgarden.xyz/en/other/whiteboard
   - Chinese: https://toolgarden.xyz/zh/other/whiteboard
+- **Quickdraw Whiteboard / Quickdraw白板** (`/other/quickdraw-whiteboard`): Create an infinite-canvas whiteboard with open-source Quickdraw, including pen, highlighter, shapes, text, notes, images, export, and fullscreen presenting
+  - English: https://toolgarden.xyz/en/other/quickdraw-whiteboard
+  - Chinese: https://toolgarden.xyz/zh/other/quickdraw-whiteboard
 - **Excalidraw Board / Excalidraw画板** (`/other/excalidraw-board`): Draw a local hand-drawn style board with open-source Excalidraw, including shapes, text, images, and export
   - English: https://toolgarden.xyz/en/other/excalidraw-board
   - Chinese: https://toolgarden.xyz/zh/other/excalidraw-board

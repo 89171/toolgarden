@@ -84,6 +84,16 @@ Canonical examples:
 - English URL: https://toolgarden.xyz/en/other/whiteboard
 - Chinese URL: https://toolgarden.xyz/zh/other/whiteboard
 
+#### Quickdraw Whiteboard / Quickdraw白板 (/other/quickdraw-whiteboard)
+- ID: `quickdraw-whiteboard`
+- Category: Format / 格式化
+- Icon label: `QDW`
+- Featured: no
+- English description: Create an infinite-canvas whiteboard with open-source Quickdraw, including pen, highlighter, shapes, text, notes, images, export, and fullscreen presenting
+- Chinese description: 基于开源 Quickdraw 打造的无限画布白板，支持画笔、荧光笔、图形、文字、便签、图片、导出和全屏演示。
+- English URL: https://toolgarden.xyz/en/other/quickdraw-whiteboard
+- Chinese URL: https://toolgarden.xyz/zh/other/quickdraw-whiteboard
+
 #### Excalidraw Board / Excalidraw画板 (/other/excalidraw-board)
 - ID: `excalidraw-board`
 - Category: Format / 格式化
