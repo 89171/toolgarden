@@ -3171,8 +3171,8 @@
     "record_hint": "Recording runs locally in your browser. The browser asks for microphone permission the first time.",
     "transcription_model_label": "Transcription model",
     "transcription_models": {
-      "base": "Recommended · Whisper base",
-      "small": "High accuracy · Whisper small"
+      "small": "Default high accuracy · Whisper small",
+      "base": "Balanced · Whisper base"
     },
     "start_microphone_transcription": "Start microphone transcription",
     "stop_microphone_transcription": "Stop and finalize",

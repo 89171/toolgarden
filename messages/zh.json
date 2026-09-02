@@ -3171,8 +3171,8 @@
     "record_hint": "录音在浏览器本地完成。首次使用时浏览器会请求麦克风权限。",
     "transcription_model_label": "转写模型",
     "transcription_models": {
-      "base": "推荐 · Whisper base",
-      "small": "高准确率 · Whisper small"
+      "small": "默认高准确率 · Whisper small",
+      "base": "均衡 · Whisper base"
     },
     "start_microphone_transcription": "开始麦克风转写",
     "stop_microphone_transcription": "停止并生成最终文本",

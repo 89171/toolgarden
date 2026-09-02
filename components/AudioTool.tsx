@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
 import type { ToolContent } from '@/lib/tools/content';
 import {
+  BALANCED_TRANSCRIPTION_MODEL,
   DEFAULT_TRANSCRIPTION_MODEL,
   HIGH_ACCURACY_TRANSCRIPTION_MODEL,
   type AudioTranscriptionModel,
@@ -809,11 +810,11 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
                       disabled={isProcessing || liveTranscriptionActive}
                       className="mt-2 w-full rounded border border-border-input bg-surface-raised px-3 py-2 text-sm text-content-secondary focus:outline-none focus:ring-2 focus:ring-action disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                      <option value={DEFAULT_TRANSCRIPTION_MODEL}>
-                        {t('transcription_models.base')}
-                      </option>
                       <option value={HIGH_ACCURACY_TRANSCRIPTION_MODEL}>
                         {t('transcription_models.small')}
+                      </option>
+                      <option value={BALANCED_TRANSCRIPTION_MODEL}>
+                        {t('transcription_models.base')}
                       </option>
                     </select>
                   </label>

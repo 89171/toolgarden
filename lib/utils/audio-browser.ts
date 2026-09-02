@@ -63,7 +63,8 @@ const MIN_SILENCE_DURATION = 0.05;
 const MAX_SILENCE_DURATION = 10;
 export type AudioTranscriptionModel = 'Xenova/whisper-base' | 'Xenova/whisper-small';
 
-export const DEFAULT_TRANSCRIPTION_MODEL: AudioTranscriptionModel = 'Xenova/whisper-base';
+export const DEFAULT_TRANSCRIPTION_MODEL: AudioTranscriptionModel = 'Xenova/whisper-small';
+export const BALANCED_TRANSCRIPTION_MODEL: AudioTranscriptionModel = 'Xenova/whisper-base';
 export const HIGH_ACCURACY_TRANSCRIPTION_MODEL: AudioTranscriptionModel = 'Xenova/whisper-small';
 
 const TRANSFORMERS_WASM_PATH = '/models/transformers/';
