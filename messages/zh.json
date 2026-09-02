@@ -3169,6 +3169,11 @@
     "stop_recording": "停止录音",
     "recording_now": "正在录音，请保持页面打开。停止后可预览并导出 MP3。",
     "record_hint": "录音在浏览器本地完成。首次使用时浏览器会请求麦克风权限。",
+    "transcription_model_label": "转写模型",
+    "transcription_models": {
+      "base": "推荐 · Whisper base",
+      "small": "高准确率 · Whisper small"
+    },
     "start_microphone_transcription": "开始麦克风转写",
     "stop_microphone_transcription": "停止并生成最终文本",
     "microphone_transcribing_now": "正在监听麦克风，转写结果会每隔几秒刷新，停止后会生成最终文本。",

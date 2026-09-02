@@ -7,6 +7,9 @@ import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
 import type { ToolContent } from '@/lib/tools/content';
 import {
+  DEFAULT_TRANSCRIPTION_MODEL,
+  HIGH_ACCURACY_TRANSCRIPTION_MODEL,
+  type AudioTranscriptionModel,
   convertRecordedAudioToMp3,
   processAudioFiles,
   transcribeAudioFile,
@@ -112,6 +115,7 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
   const [liveTranscriptionState, setLiveTranscriptionState] = useState<'idle' | 'recording' | 'stopping'>('idle');
   const [ttsText, setTtsText] = useState('');
   const [ttsRate, setTtsRate] = useState(1);
+  const [transcriptionModel, setTranscriptionModel] = useState<AudioTranscriptionModel>(DEFAULT_TRANSCRIPTION_MODEL);
   const [ttsLanguage, setTtsLanguage] = useState<TtsLanguage>(locale === 'en' ? 'en' : 'zh');
   const [ttsVoiceId, setTtsVoiceId] = useState<TtsVoiceId>(
     getDefaultTtsVoice(locale === 'en' ? 'en' : 'zh'),
@@ -277,6 +281,7 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
       if (mode === 'transcribe') {
         const result = await transcribeAudioFile(files[0], {
           language: 'auto',
+          model: transcriptionModel,
           onProgress: setProgress,
         });
 
@@ -333,6 +338,7 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
     startSeconds,
     t,
     targetFormat,
+    transcriptionModel,
     volumeGain,
   ]);
 
@@ -443,6 +449,7 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
     try {
       const result = await transcribeAudioFile(file, {
         language: 'auto',
+        model: transcriptionModel,
         onProgress: (nextProgress) => {
           setProgress(nextProgress);
         },
@@ -467,7 +474,7 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
     } finally {
       liveSnapshotRunningRef.current = false;
     }
-  }, [createLiveTranscriptionFile, getErrorMessage, t]);
+  }, [createLiveTranscriptionFile, getErrorMessage, t, transcriptionModel]);
 
   const startLiveTranscription = useCallback(async () => {
     if (typeof MediaRecorder === 'undefined' || !navigator.mediaDevices?.getUserMedia) {
@@ -789,34 +796,57 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
               </label>
 
               {isTranscribe && (
-                <div className="rounded-lg border border-border-base bg-surface p-4">
-                  <div className="flex flex-wrap gap-2">
-                    {liveTranscriptionState === 'recording' ? (
-                      <Button variant="danger" onClick={stopLiveTranscription}>
-                        {t('stop_microphone_transcription')}
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="secondary"
-                        onClick={startLiveTranscription}
-                        disabled={isProcessing || liveTranscriptionState === 'stopping'}
-                      >
-                        {t('start_microphone_transcription')}
-                      </Button>
-                    )}
-                    {transcript && liveTranscriptionState === 'idle' && (
-                      <Button variant="secondary" onClick={clearOutput}>
-                        {t('clear')}
-                      </Button>
-                    )}
+                <div className="grid gap-4 rounded-lg border border-border-base bg-surface p-4">
+                  <label className="text-sm font-medium text-content-secondary" htmlFor="audio-transcription-model">
+                    {t('transcription_model_label')}
+                    <select
+                      id="audio-transcription-model"
+                      value={transcriptionModel}
+                      onChange={(event) => {
+                        clearOutput();
+                        setTranscriptionModel(event.target.value as AudioTranscriptionModel);
+                      }}
+                      disabled={isProcessing || liveTranscriptionActive}
+                      className="mt-2 w-full rounded border border-border-input bg-surface-raised px-3 py-2 text-sm text-content-secondary focus:outline-none focus:ring-2 focus:ring-action disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      <option value={DEFAULT_TRANSCRIPTION_MODEL}>
+                        {t('transcription_models.base')}
+                      </option>
+                      <option value={HIGH_ACCURACY_TRANSCRIPTION_MODEL}>
+                        {t('transcription_models.small')}
+                      </option>
+                    </select>
+                  </label>
+
+                  <div>
+                    <div className="flex flex-wrap gap-2">
+                      {liveTranscriptionState === 'recording' ? (
+                        <Button variant="danger" onClick={stopLiveTranscription}>
+                          {t('stop_microphone_transcription')}
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="secondary"
+                          onClick={startLiveTranscription}
+                          disabled={isProcessing || liveTranscriptionState === 'stopping'}
+                        >
+                          {t('start_microphone_transcription')}
+                        </Button>
+                      )}
+                      {transcript && liveTranscriptionState === 'idle' && (
+                        <Button variant="secondary" onClick={clearOutput}>
+                          {t('clear')}
+                        </Button>
+                      )}
+                    </div>
+                    <p className="mt-3 text-sm leading-6 text-content-muted">
+                      {liveTranscriptionState === 'recording'
+                        ? t('microphone_transcribing_now')
+                        : liveTranscriptionState === 'stopping'
+                          ? t('microphone_finalizing')
+                          : t('microphone_transcription_hint')}
+                    </p>
                   </div>
-                  <p className="mt-3 text-sm leading-6 text-content-muted">
-                    {liveTranscriptionState === 'recording'
-                      ? t('microphone_transcribing_now')
-                      : liveTranscriptionState === 'stopping'
-                        ? t('microphone_finalizing')
-                        : t('microphone_transcription_hint')}
-                  </p>
                 </div>
               )}
             </div>

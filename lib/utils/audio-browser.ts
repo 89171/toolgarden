@@ -3,6 +3,7 @@ import {
   getAudioFileExtension,
   getAudioOutputMimeType,
   normalizeSeconds,
+  removeConsecutiveRepeatedTranscriptSentences,
   validateAudioFiles,
   type AudioOutputFormat,
   type AudioProcessingOutcome,
@@ -37,7 +38,7 @@ interface ProcessAudioOptions {
 
 interface TranscribeAudioOptions {
   language?: 'auto' | 'zh' | 'en';
-  model?: string;
+  model?: AudioTranscriptionModel;
   onProgress?: (progress: AudioProcessingProgress) => void;
 }
 
@@ -60,13 +61,17 @@ const MIN_SILENCE_THRESHOLD_DB = -80;
 const MAX_SILENCE_THRESHOLD_DB = -10;
 const MIN_SILENCE_DURATION = 0.05;
 const MAX_SILENCE_DURATION = 10;
-const DEFAULT_TRANSCRIPTION_MODEL = 'Xenova/whisper-tiny';
+export type AudioTranscriptionModel = 'Xenova/whisper-base' | 'Xenova/whisper-small';
+
+export const DEFAULT_TRANSCRIPTION_MODEL: AudioTranscriptionModel = 'Xenova/whisper-base';
+export const HIGH_ACCURACY_TRANSCRIPTION_MODEL: AudioTranscriptionModel = 'Xenova/whisper-small';
+
 const TRANSFORMERS_WASM_PATH = '/models/transformers/';
 
 let ffmpegPromise: Promise<FFmpegInstance> | null = null;
 let ffmpeg: FFmpegInstance | null = null;
 let ffmpegCoreAssetPromise: Promise<{ coreURL: string; wasmURL: string }> | null = null;
-let transcriberPromise: Promise<Transcriber> | null = null;
+const transcriberPromises = new Map<AudioTranscriptionModel, Promise<Transcriber>>();
 
 function toPublicAssetUrl(path: string): string {
   if (typeof window === 'undefined') return path;
@@ -415,6 +420,8 @@ export async function convertRecordedAudioToMp3(
 }
 
 async function loadTranscriber(options: TranscribeAudioOptions): Promise<Transcriber> {
+  const model = options.model ?? DEFAULT_TRANSCRIPTION_MODEL;
+  let transcriberPromise = transcriberPromises.get(model);
   if (!transcriberPromise) {
     transcriberPromise = (async () => {
       options.onProgress?.({ stage: 'model', label: 'loading-model', percent: 5 });
@@ -426,7 +433,7 @@ async function loadTranscriber(options: TranscribeAudioOptions): Promise<Transcr
 
       const pipe = await transformers.pipeline(
         'automatic-speech-recognition',
-        options.model ?? DEFAULT_TRANSCRIPTION_MODEL,
+        model,
         {
           progress_callback: (event: { status?: string; progress?: number; file?: string }) => {
             const percent = typeof event.progress === 'number' ? Math.min(90, event.progress) : 20;
@@ -441,9 +448,10 @@ async function loadTranscriber(options: TranscribeAudioOptions): Promise<Transcr
       options.onProgress?.({ stage: 'model', label: 'model-ready', percent: 92 });
       return pipe as unknown as Transcriber;
     })().catch((error) => {
-      transcriberPromise = null;
+      transcriberPromises.delete(model);
       throw error;
     });
+    transcriberPromises.set(model, transcriberPromise);
   }
 
   return transcriberPromise;
@@ -465,11 +473,15 @@ export async function transcribeAudioFile(
     const result = await transcriber(url, {
       chunk_length_s: 30,
       stride_length_s: 5,
+      return_timestamps: true,
+      task: 'transcribe',
+      no_repeat_ngram_size: 5,
+      repetition_penalty: 1.15,
       ...(language ? { language } : {}),
     });
     return {
       ok: true,
-      text: result.text?.trim() ?? '',
+      text: removeConsecutiveRepeatedTranscriptSentences(result.text ?? ''),
       durationMs: Math.round(performance.now() - startedAt),
     };
   } catch (error) {

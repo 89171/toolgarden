@@ -204,3 +204,34 @@ export function normalizeSeconds(value: number): number {
   if (!Number.isFinite(value) || value < 0) return 0;
   return Math.round(value * 1000) / 1000;
 }
+
+function normalizeTranscriptSentence(sentence: string): string {
+  return sentence
+    .toLowerCase()
+    .replace(/[“”"']/g, '')
+    .replace(/[。！？!?.,，、；;：:\s]+$/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+export function removeConsecutiveRepeatedTranscriptSentences(text: string): string {
+  const normalizedText = text.replace(/\s+/g, ' ').trim();
+  if (!normalizedText) return '';
+
+  const sentences = normalizedText.match(/[^。！？!?.]+[。！？!?.]?/g) ?? [normalizedText];
+  const kept: string[] = [];
+  let previous = '';
+
+  for (const sentence of sentences) {
+    const current = sentence.trim();
+    if (!current) continue;
+
+    const normalized = normalizeTranscriptSentence(current);
+    if (!normalized || normalized === previous) continue;
+
+    kept.push(current);
+    previous = normalized;
+  }
+
+  return kept.join(' ').trim();
+}
