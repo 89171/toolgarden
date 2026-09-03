@@ -365,6 +365,16 @@ ToolGarden provides practical browser-based utilities for developer data, docume
     - Chinese: https://toolgarden.xyz/zh/blog/wifi-qr-code-generator-guide
   - SRT to VTT converter: https://toolgarden.xyz/en/blog/srt-to-vtt-browser-workflow
     - Chinese: https://toolgarden.xyz/zh/blog/srt-to-vtt-browser-workflow
+
+### audio-tools
+
+- Pillar: https://toolgarden.xyz/en/blog/free-online-mp3-recording-video-to-text-tools
+  - Chinese: https://toolgarden.xyz/zh/blog/free-online-mp3-recording-video-to-text-tools
+- Cluster articles:
+  - online audio stem splitter: https://toolgarden.xyz/en/blog/split-song-into-vocals-instrumental-stems-browser
+    - Chinese: https://toolgarden.xyz/zh/blog/split-song-into-vocals-instrumental-stems-browser
+  - best online stem splitter: https://toolgarden.xyz/en/blog/best-online-audio-stem-splitter-websites
+    - Chinese: https://toolgarden.xyz/zh/blog/best-online-audio-stem-splitter-websites
 <!-- blog-topic-clusters:end -->
 
 <!-- blog-articles:start -->
@@ -392,6 +402,13 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - Chinese title: 在线音频分轨网站推荐：5 款人声、伴奏与乐器分离工具对比
 - Summary: Compare ToolGarden, Moises, BandLab Splitter, VocalRemover.org, and LALAL.AI by free access, local or cloud processing, output stems, privacy, and workflow.
 - Published: 2026-07-30; updated: 2026-07-30
+
+### Best Free Online MP3, Recording, and Video-to-Text Tools Compared
+- English: https://toolgarden.xyz/en/blog/free-online-mp3-recording-video-to-text-tools
+- Chinese: https://toolgarden.xyz/zh/blog/free-online-mp3-recording-video-to-text-tools
+- Chinese title: 免费在线 MP3、录音、视频转文本工具推荐对比
+- Summary: Compare free online speech-to-text options for MP3 files, voice recordings, interviews, and video audio tracks, with a privacy-first browser-local workflow.
+- Published: 2026-09-03; updated: 2026-09-03
 
 ### How to Remove Vocals and Extract an Instrumental Online
 - English: https://toolgarden.xyz/en/blog/remove-vocals-extract-instrumental-online

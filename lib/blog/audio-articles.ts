@@ -1019,4 +1019,403 @@ export const audioBlogArticles = [
       },
     },
   },
+  {
+    slug: 'free-online-mp3-recording-video-to-text-tools',
+    publishedAt: '2026-09-03',
+    updatedAt: '2026-09-03',
+    translations: {
+      zh: {
+        title: '免费在线 MP3、录音、视频转文本工具推荐对比',
+        excerpt: '想把 MP3、会议录音、采访音频或视频里的讲话整理成文字？这篇对比免费在线语音转文字工具的隐私、准确率、文件流程和适用场景。',
+        metaTitle: '免费在线 MP3/录音/视频转文本工具推荐对比',
+        metaDescription: '对比免费在线 MP3 转文字、录音转文本和视频转文本工具，说明 ToolGarden 浏览器本地 Whisper 转写、隐私边界、模型选择、视频音轨提取流程和使用建议。',
+        readingTime: '约 8 分钟阅读',
+        tags: ['音频转文字', 'MP3 转文字', '录音转文本', '视频转文本', 'Whisper'],
+        relatedTools: [
+          {
+            label: '音频转文字',
+            href: '/audio/to-text',
+            description: '上传 MP3、WAV、M4A、WebM 等音频，在浏览器本地加载 Whisper 模型转写文本。',
+          },
+          {
+            label: '提取视频音频',
+            href: '/audio/extract',
+            description: '先从 MP4、MOV、WebM 等视频中提取 MP3 音轨，再进入音频转文字流程。',
+          },
+          {
+            label: '在线录音',
+            href: '/audio/recorder',
+            description: '直接在浏览器录制语音，导出 MP3 后可继续转写为文本。',
+          },
+          {
+            label: '音频剪辑',
+            href: '/audio/trim',
+            description: '转写前截取关键片段，减少等待时间并提升长录音处理稳定性。',
+          },
+        ],
+        blocks: [
+          {
+            type: 'lead',
+            text: '如果你只是想把一段 MP3、课堂录音、采访素材或视频里的发言转成文字，最理想的工具不是功能越多越好，而是流程短、隐私边界清楚、结果能直接复制，并且不强迫你先注册账号。',
+          },
+          {
+            type: 'paragraph',
+            text: 'ToolGarden 的音频转文字工具适合这种轻量场景：上传音频后，页面会在浏览器中加载开源 Whisper 模型进行转写，识别结果直接显示在页面上，并提供一键复制。音频文件不需要传到 ToolGarden 的转写服务器；第一次使用会下载模型文件，之后通常会被浏览器缓存。',
+          },
+          {
+            type: 'callout',
+            title: '开始免费音频转文字',
+            text: '上传 MP3、WAV、M4A、WebM、FLAC 等音频文件，选择默认高准确率模型，把识别出的文案一键复制出来。',
+            href: '/audio/to-text',
+            linkLabel: '打开音频转文字工具',
+          },
+          {
+            type: 'heading',
+            level: 2,
+            text: '先说结论：不同工具适合不同转写任务',
+          },
+          {
+            type: 'table',
+            headers: ['需求', '推荐方式', '原因'],
+            rows: [
+              ['短 MP3、语音备忘、采访片段', 'ToolGarden 音频转文字', '免注册、浏览器本地处理、结果可一键复制'],
+              ['会议纪要和团队协作', '带协作空间的云端转写工具', '适合多人评论、摘要、说话人管理和持续归档'],
+              ['视频转文本', '先提取音频，再转写', '视频本质上要处理其中的音轨，拆成两步更稳定'],
+              ['法律、医疗、合同等高风险内容', '人工校对或专业转写服务', '自动识别可能漏词、错词或误判专有名词'],
+              ['很长的播客或课程', '先剪辑分段，再逐段转写', '本地模型更依赖设备内存和浏览器稳定性'],
+            ],
+          },
+          {
+            type: 'heading',
+            level: 2,
+            text: '为什么推荐 ToolGarden 做免费在线音频转文字？',
+          },
+          {
+            type: 'list',
+            items: [
+              '浏览器本地转写：音频解码、模型推理和结果生成在当前浏览器会话中完成，减少把原始录音上传到第三方 API 的暴露。',
+              '默认高准确率模型：当前默认使用 Whisper small，识别质量优先；也可切换到 Whisper base，在速度和准确率之间做平衡。',
+              '无需账号和额度：适合偶尔处理 MP3、录音、语音备忘、采访片段和字幕草稿。',
+              '识别结果可一键复制：转写完成后直接复制文案，方便粘贴到笔记、文档、字幕编辑器或 AI 总结工具。',
+              '同站工具可串联：视频先用“提取视频音频”导出 MP3，长录音先用“音频剪辑”截取关键部分，再进入转写。',
+            ],
+          },
+          {
+            type: 'heading',
+            level: 2,
+            text: 'MP3、录音、视频分别怎么转成文字？',
+          },
+          {
+            type: 'heading',
+            level: 3,
+            text: 'MP3 转文字',
+          },
+          {
+            type: 'paragraph',
+            text: '打开音频转文字页面，上传 MP3 文件，保持默认的高准确率 Whisper small 模型，点击开始转写即可。短音频通常最适合直接处理；如果录音很长，建议先截取最重要的部分，或者分成几段分别识别。',
+          },
+          {
+            type: 'heading',
+            level: 3,
+            text: '录音转文本',
+          },
+          {
+            type: 'paragraph',
+            text: '如果已有录音文件，直接上传即可。如果还没有文件，可以先用在线录音工具录制并导出 MP3，再回到音频转文字页面识别。录音时尽量靠近麦克风、减少背景音乐、避免多人同时说话，准确率会明显更好。',
+          },
+          {
+            type: 'heading',
+            level: 3,
+            text: '视频转文本',
+          },
+          {
+            type: 'paragraph',
+            text: '视频转文本的关键其实是“提取音轨”。先用 ToolGarden 的音频提取工具从 MP4、MOV、WebM 等视频中导出 MP3，再把这个 MP3 上传到音频转文字工具。两步处理比直接把视频交给转写模型更清楚，也更容易定位问题。',
+          },
+          {
+            type: 'heading',
+            level: 2,
+            text: '免费在线转写工具对比',
+          },
+          {
+            type: 'table',
+            headers: ['工具类型', '优势', '限制', '更适合'],
+            rows: [
+              ['ToolGarden 浏览器本地转写', '免注册、无上传转写 API、可复制结果、适合 MP3 和录音', '首次需要下载模型，长音频依赖本机性能', '个人笔记、采访整理、短音频转文字'],
+              ['云端会议转写工具', '说话人区分、协作、摘要和搜索通常更完善', '通常需要上传音频，免费额度有限', '团队会议、长期知识库、多人协作'],
+              ['视频平台内置字幕', '不需要单独导出音频，和视频播放器结合紧密', '平台限制多，下载或编辑字幕不一定方便', '公开视频字幕、内容浏览'],
+              ['专业人工转写服务', '对专有名词、口音、多人对话和高风险内容更稳', '价格更高，交付更慢', '法律、医疗、出版、正式记录'],
+            ],
+          },
+          {
+            type: 'heading',
+            level: 2,
+            text: '提高识别准确率的实用建议',
+          },
+          {
+            type: 'list',
+            ordered: true,
+            items: [
+              '优先使用清晰人声，避免背景音乐盖过讲话。',
+              '多人对话尽量分开录，或者每次只处理一个说话人比较清楚的片段。',
+              '长音频先剪成 5 到 15 分钟的小段，失败后也更容易重试。',
+              '专有名词、人名、数字、金额和时间必须人工复核。',
+              '如果结果出现重复句，先换更高准确率模型，并检查原音频是否有长时间静音、噪声或回声。',
+            ],
+          },
+          {
+            type: 'heading',
+            level: 2,
+            text: '隐私边界：本地处理不等于完全离线',
+          },
+          {
+            type: 'paragraph',
+            text: '浏览器本地转写的意思是：你的音频文件在浏览器中被读取和推理，不会作为转写任务上传到 ToolGarden 服务器。与此同时，网页代码、运行库和 Whisper 模型文件仍需要从网络下载。看到模型下载请求是正常现象，它和上传你的录音不是同一件事。',
+          },
+          {
+            type: 'paragraph',
+            text: '如果你的录音包含商业机密、客户资料、医疗信息或法律证据，仍应按组织内部的数据规范处理。自动转写适合生成草稿和提升效率，不应该替代必要的保密流程和人工复核。',
+          },
+          {
+            type: 'heading',
+            level: 2,
+            text: '推荐工作流',
+          },
+          {
+            type: 'list',
+            ordered: true,
+            items: [
+              'MP3 或 M4A：直接打开音频转文字页面上传。',
+              '自拍视频或会议录像：先打开音频提取工具，把视频导出为 MP3。',
+              '长录音：先用音频剪辑工具截取重点片段。',
+              '转写完成：点击复制文案，粘贴到文档里做校对、摘要和排版。',
+              '发布前：复核人名、数字、专业术语和上下文含义。',
+            ],
+          },
+          {
+            type: 'paragraph',
+            text: '所以，如果你的目标是快速把 MP3、录音或视频音轨转成可编辑文字，可以先试 ToolGarden。它不是企业会议管理系统，也不是人工校对服务；它更像一个打开即用的本地转写工作台，适合把原始语音快速变成可复制、可整理、可继续加工的文本草稿。',
+          },
+        ],
+        faq: [
+          {
+            question: 'ToolGarden 音频转文字免费吗？',
+            answer: '是。音频转文字页面可免费使用，不要求注册账号。首次使用需要下载浏览器本地 Whisper 模型，下载完成后通常会被浏览器缓存。',
+          },
+          {
+            question: 'MP3 转文字会上传音频文件吗？',
+            answer: '不会作为转写任务上传到 ToolGarden 服务器。音频在浏览器本地解码和识别，但页面代码、运行库和模型文件需要从网络下载。',
+          },
+          {
+            question: '视频可以直接转文字吗？',
+            answer: '推荐先用音频提取工具从视频中导出 MP3，再把 MP3 上传到音频转文字页面。这样流程更稳定，也更容易控制文件大小。',
+          },
+          {
+            question: 'Whisper small 和 Whisper base 怎么选？',
+            answer: '默认建议使用 Whisper small，它更重但准确率更好。设备较慢、网络较弱或只需要快速草稿时，可以切换到 Whisper base。',
+          },
+          {
+            question: '自动转写结果可以直接发布吗？',
+            answer: '不建议直接发布。人名、数字、术语、引用和关键结论都需要人工校对，尤其是法律、医疗、财务和正式记录场景。',
+          },
+        ],
+      },
+      en: {
+        title: 'Best Free Online MP3, Recording, and Video-to-Text Tools Compared',
+        excerpt: 'Compare free online speech-to-text options for MP3 files, voice recordings, interviews, and video audio tracks, with a privacy-first browser-local workflow.',
+        metaTitle: 'Best Free Online MP3, Recording, and Video-to-Text Tools',
+        metaDescription: 'Compare free MP3-to-text, recording transcription, and video-to-text workflows. See when to use ToolGarden browser-local Whisper transcription, cloud meeting tools, captions, or human review.',
+        readingTime: '8 min read',
+        tags: ['audio to text', 'MP3 to text', 'recording transcription', 'video to text', 'Whisper'],
+        relatedTools: [
+          {
+            label: 'Audio to Text',
+            href: '/audio/to-text',
+            description: 'Transcribe MP3, WAV, M4A, WebM, and other audio files with a browser-local Whisper model.',
+          },
+          {
+            label: 'Extract Audio from Video',
+            href: '/audio/extract',
+            description: 'Extract an MP3 audio track from MP4, MOV, WebM, and similar video files before transcription.',
+          },
+          {
+            label: 'Voice Recorder',
+            href: '/audio/recorder',
+            description: 'Record speech in the browser, export MP3, then transcribe it to editable text.',
+          },
+          {
+            label: 'Audio Trim',
+            href: '/audio/trim',
+            description: 'Cut long recordings into focused sections before running speech recognition.',
+          },
+        ],
+        blocks: [
+          {
+            type: 'lead',
+            text: 'When you need to turn an MP3, voice memo, interview, class recording, or video soundtrack into text, the best tool is not necessarily the one with the longest feature list. It is the one that matches your privacy needs, file type, editing workflow, and tolerance for review.',
+          },
+          {
+            type: 'paragraph',
+            text: 'ToolGarden Audio to Text is built for quick, privacy-aware transcription. It loads an open-source Whisper model in the browser, shows the transcript on the page, and lets you copy the result with one click. Your selected audio is not sent to a ToolGarden transcription API; the model files download to your browser and are usually cached for later use.',
+          },
+          {
+            type: 'callout',
+            title: 'Start Free Audio Transcription',
+            text: 'Upload MP3, WAV, M4A, WebM, FLAC, and similar audio files, use the default high-accuracy model, then copy the generated text.',
+            href: '/audio/to-text',
+            linkLabel: 'Open Audio to Text',
+          },
+          {
+            type: 'heading',
+            level: 2,
+            text: 'Quick Recommendation',
+          },
+          {
+            type: 'table',
+            headers: ['Need', 'Recommended workflow', 'Why'],
+            rows: [
+              ['Short MP3 files, voice memos, interviews', 'ToolGarden Audio to Text', 'No account, browser-local processing, copy-ready transcript'],
+              ['Meetings and team notes', 'Cloud meeting transcription tool', 'Better collaboration, summaries, speaker workflows, and archives'],
+              ['Video to text', 'Extract audio first, then transcribe', 'The speech lives in the audio track, and a two-step workflow is easier to control'],
+              ['Legal, medical, or contractual material', 'Human review or professional transcription', 'Automatic speech recognition can miss words and names'],
+              ['Very long podcasts or courses', 'Trim or split first', 'Browser-local models depend on device memory and tab stability'],
+            ],
+          },
+          {
+            type: 'heading',
+            level: 2,
+            text: 'Why ToolGarden is a strong free option',
+          },
+          {
+            type: 'list',
+            items: [
+              'Browser-local transcription: decoding, model inference, and transcript generation happen in the current browser session.',
+              'High-accuracy default: the tool now defaults to Whisper small, with Whisper base available for a lighter balanced mode.',
+              'No account flow: useful for occasional MP3 files, voice notes, interviews, and subtitle drafts.',
+              'One-click copy: copy the recognized text directly into notes, docs, subtitle editors, or AI summarization tools.',
+              'Composable audio tools: extract audio from video first, trim long recordings, then transcribe the focused audio.',
+            ],
+          },
+          {
+            type: 'heading',
+            level: 2,
+            text: 'How to transcribe MP3, recordings, and videos',
+          },
+          {
+            type: 'heading',
+            level: 3,
+            text: 'MP3 to text',
+          },
+          {
+            type: 'paragraph',
+            text: 'Open Audio to Text, upload the MP3 file, keep the default high-accuracy Whisper small model, and start transcription. Short audio is the easiest case. For long recordings, trim the important section or split the file into smaller parts first.',
+          },
+          {
+            type: 'heading',
+            level: 3,
+            text: 'Recording to text',
+          },
+          {
+            type: 'paragraph',
+            text: 'If you already have a recording file, upload it directly. If you still need to capture audio, use the browser voice recorder first, export MP3, then transcribe that file. Clear speech, less background noise, and fewer overlapping speakers all improve recognition quality.',
+          },
+          {
+            type: 'heading',
+            level: 3,
+            text: 'Video to text',
+          },
+          {
+            type: 'paragraph',
+            text: 'Video transcription is really audio-track transcription. Use the video audio extractor to export MP3 from MP4, MOV, WebM, or similar video files, then upload the MP3 to Audio to Text. The two-step process is more transparent and easier to retry.',
+          },
+          {
+            type: 'heading',
+            level: 2,
+            text: 'Free transcription tool comparison',
+          },
+          {
+            type: 'table',
+            headers: ['Tool type', 'Strengths', 'Limits', 'Best for'],
+            rows: [
+              ['ToolGarden browser-local transcription', 'No account, no transcription API upload, copy-ready output', 'First run downloads a model; long audio depends on local device performance', 'Personal notes, interview cleanup, short audio drafts'],
+              ['Cloud meeting transcription', 'Speaker workflows, collaboration, summaries, and search', 'Usually uploads audio and limits free usage', 'Team meetings and shared archives'],
+              ['Platform captions', 'Integrated with video playback', 'Export and editing options vary by platform', 'Public video caption review'],
+              ['Professional human transcription', 'Best review quality for names, accents, and high-stakes material', 'Costs more and takes longer', 'Legal, medical, publishing, and official records'],
+            ],
+          },
+          {
+            type: 'heading',
+            level: 2,
+            text: 'Tips for better accuracy',
+          },
+          {
+            type: 'list',
+            ordered: true,
+            items: [
+              'Use audio where the speech is louder than the background.',
+              'Avoid overlapping speakers when possible, or transcribe cleaner sections separately.',
+              'Split long recordings into 5 to 15 minute segments.',
+              'Always review names, numbers, amounts, dates, and domain-specific terms.',
+              'If the transcript repeats a phrase, use the higher-accuracy model and check for long silence, echo, or noise in the source.',
+            ],
+          },
+          {
+            type: 'heading',
+            level: 2,
+            text: 'Privacy: local processing is not the same as offline',
+          },
+          {
+            type: 'paragraph',
+            text: 'Browser-local transcription means your selected audio is read and recognized in the browser rather than uploaded to a ToolGarden transcription server. The page code, runtime assets, and Whisper model files still come from the network. Model downloads are normal; they are not the same data flow as uploading your recording.',
+          },
+          {
+            type: 'paragraph',
+            text: 'For confidential business, customer, medical, legal, or evidentiary recordings, follow your organization’s data handling rules. Automatic transcription is excellent for drafting and searchability, but it does not replace human review where accuracy matters.',
+          },
+          {
+            type: 'heading',
+            level: 2,
+            text: 'Recommended workflow',
+          },
+          {
+            type: 'list',
+            ordered: true,
+            items: [
+              'MP3 or M4A: upload directly to Audio to Text.',
+              'Phone video or meeting recording: extract the audio track to MP3 first.',
+              'Long recording: trim the important section before transcription.',
+              'After transcription: copy the text into a document for review, summary, and formatting.',
+              'Before publishing: proofread names, numbers, technical terms, and context.',
+            ],
+          },
+          {
+            type: 'paragraph',
+            text: 'If your goal is to quickly turn MP3 files, recordings, or video audio tracks into editable text, ToolGarden is a practical first stop. It is not a full enterprise meeting platform or a human proofreading service; it is a fast browser-local transcription workbench for getting speech into copyable text.',
+          },
+        ],
+        faq: [
+          {
+            question: 'Is ToolGarden Audio to Text free?',
+            answer: 'Yes. The Audio to Text page is free to use and does not require an account. The first run downloads a browser-local Whisper model, which is usually cached afterward.',
+          },
+          {
+            question: 'Does MP3-to-text upload my audio?',
+            answer: 'Not to a ToolGarden transcription API. The audio is decoded and recognized in your browser, while the page code, runtime files, and model assets are downloaded from the network.',
+          },
+          {
+            question: 'Can I transcribe a video directly?',
+            answer: 'The recommended workflow is to extract MP3 audio from the video first, then upload that MP3 to Audio to Text. This is easier to control and retry.',
+          },
+          {
+            question: 'Should I choose Whisper small or Whisper base?',
+            answer: 'Use Whisper small by default for better accuracy. Switch to Whisper base when you want a lighter balanced mode or your device struggles with the larger model.',
+          },
+          {
+            question: 'Can I publish automatic transcripts without review?',
+            answer: 'You should proofread before publishing. Names, numbers, technical terms, quotes, and high-stakes content need human checking.',
+          },
+        ],
+      },
+    },
+  },
 ] satisfies BlogArticle[];

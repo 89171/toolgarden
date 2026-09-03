@@ -83,5 +83,18 @@
       "SRT to VTT converter"
     ],
     "toolPathPrefixes": ["/qr-code", "/subtitle-maker"]
+  },
+  {
+    "id": "audio-tools",
+    "pillarSlug": "free-online-mp3-recording-video-to-text-tools",
+    "clusterSlugs": [
+      "split-song-into-vocals-instrumental-stems-browser",
+      "best-online-audio-stem-splitter-websites"
+    ],
+    "targetKeywords": [
+      "online audio stem splitter",
+      "best online stem splitter"
+    ],
+    "toolPathPrefixes": ["/audio/"]
   }
 ]

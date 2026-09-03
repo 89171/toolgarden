@@ -6,6 +6,7 @@ import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
 import type { ToolContent } from '@/lib/tools/content';
+import { copyText } from '@/lib/utils/markdown-browser';
 import {
   BALANCED_TRANSCRIPTION_MODEL,
   DEFAULT_TRANSCRIPTION_MODEL,
@@ -103,6 +104,7 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
   const [error, setError] = useState('');
   const [output, setOutput] = useState<OutputState | null>(null);
   const [transcript, setTranscript] = useState('');
+  const [transcriptCopyStatus, setTranscriptCopyStatus] = useState<'idle' | 'copied' | 'failed'>('idle');
   const [bitrate, setBitrate] = useState(mode === 'compress' ? 96 : 192);
   const [volumeGain, setVolumeGain] = useState(1);
   const [playbackRate, setPlaybackRate] = useState(1);
@@ -225,9 +227,19 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
       return null;
     });
     setTranscript('');
+    setTranscriptCopyStatus('idle');
     setProgress(null);
     setError('');
   }, []);
+
+  const copyTranscript = useCallback(async () => {
+    const text = transcript.trim();
+    if (!text) return;
+
+    const copied = await copyText(text);
+    setTranscriptCopyStatus(copied ? 'copied' : 'failed');
+    window.setTimeout(() => setTranscriptCopyStatus('idle'), 1800);
+  }, [transcript]);
 
   useEffect(() => () => {
     if (output) URL.revokeObjectURL(output.url);
@@ -1096,12 +1108,33 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
               {errorBlock}
 
               {isTranscribe ? (
-                <textarea
-                  value={transcript}
-                  readOnly
-                  placeholder={t('empty_transcript')}
-                  className="min-h-72 flex-grow resize-none rounded border border-border-input bg-surface-raised p-3 text-sm leading-6 text-content-secondary placeholder:text-content-faint focus:outline-none"
-                />
+                <>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="text-xs text-content-muted">
+                      {transcriptCopyStatus === 'copied'
+                        ? t('transcript_copied')
+                        : transcriptCopyStatus === 'failed'
+                          ? t('transcript_copy_failed')
+                          : transcript
+                            ? t('transcript_ready')
+                            : t('empty_transcript')}
+                    </div>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={copyTranscript}
+                      disabled={!transcript.trim()}
+                    >
+                      {transcriptCopyStatus === 'copied' ? t('copied') : t('copy_transcript')}
+                    </Button>
+                  </div>
+                  <textarea
+                    value={transcript}
+                    readOnly
+                    placeholder={t('empty_transcript')}
+                    className="min-h-72 flex-grow resize-none rounded border border-border-input bg-surface-raised p-3 text-sm leading-6 text-content-secondary placeholder:text-content-faint focus:outline-none"
+                  />
+                </>
               ) : output ? (
                 <div className="flex flex-col gap-4">
                   <audio controls src={output.url} className="w-full" />
