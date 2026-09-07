@@ -336,6 +336,26 @@ Canonical examples:
 - English URL: https://toolgarden.xyz/en/image/compress
 - Chinese URL: https://toolgarden.xyz/zh/image/compress
 
+#### ZIP Compressor / ZIP 压缩 (/zip-compress)
+- ID: `zip-compress`
+- Category: Convert / 转换
+- Icon label: `ZIP`
+- Featured: yes
+- English description: Select multiple files and compress them into a ZIP archive entirely in your browser. Files are never uploaded.
+- Chinese description: 选择多个文件并在浏览器本地压缩为 ZIP 包，文件不会上传服务器，适合临时打包资料和附件。
+- English URL: https://toolgarden.xyz/en/zip-compress
+- Chinese URL: https://toolgarden.xyz/zh/zip-compress
+
+#### ZIP Extractor / ZIP 解压 (/zip-extract)
+- ID: `zip-extract`
+- Category: Convert / 转换
+- Icon label: `UNZ`
+- Featured: yes
+- English description: Extract a ZIP file locally in your browser, browse folders and subfolders, and click to download individual files.
+- Chinese description: 上传 ZIP 文件后在浏览器本地解压，按目录和子目录查看文件，并可点击下载单个文件。
+- English URL: https://toolgarden.xyz/en/zip-extract
+- Chinese URL: https://toolgarden.xyz/zh/zip-extract
+
 #### Image Upscale / 图片无损放大 (/image/upscale)
 - ID: `image-upscale`
 - Category: Convert / 转换

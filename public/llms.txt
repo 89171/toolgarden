@@ -109,6 +109,12 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - **Image Compressor / 图片压缩** (`/image/compress`): Free online image compressor for JPG, PNG, WebP, and other images locally in your browser, preserving the original format by default with optional WebP output
   - English: https://toolgarden.xyz/en/image/compress
   - Chinese: https://toolgarden.xyz/zh/image/compress
+- **ZIP Compressor / ZIP 压缩** (`/zip-compress`): Select multiple files and compress them into a ZIP archive entirely in your browser. Files are never uploaded.
+  - English: https://toolgarden.xyz/en/zip-compress
+  - Chinese: https://toolgarden.xyz/zh/zip-compress
+- **ZIP Extractor / ZIP 解压** (`/zip-extract`): Extract a ZIP file locally in your browser, browse folders and subfolders, and click to download individual files.
+  - English: https://toolgarden.xyz/en/zip-extract
+  - Chinese: https://toolgarden.xyz/zh/zip-extract
 - **Image Upscale / 图片无损放大** (`/image/upscale`): Free online image upscaler for JPG, PNG, WebP, and other images at 2x, 3x, 4x, or custom dimensions with pixel-perfect, Smooth HD, and Sharp enhance modes
   - English: https://toolgarden.xyz/en/image/upscale
   - Chinese: https://toolgarden.xyz/zh/image/upscale

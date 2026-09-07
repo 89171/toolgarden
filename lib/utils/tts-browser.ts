@@ -23,10 +23,15 @@ type TtsWorkerResponse =
   | { id: string; type: 'result'; blob: Blob; durationMs: number }
   | { id: string; type: 'error'; detail?: string };
 
+export type BrowserTtsOutcome =
+  | { ok: true }
+  | { ok: false; code: 'tts_unsupported' | 'tts_cancelled' | 'tts_generation_failed'; detail?: string };
+
 let ttsWorker: Worker | null = null;
 let ttsWorkerUnavailable = false;
 let requestCounter = 0;
 let pendingCancellation: (() => void) | null = null;
+let pendingBrowserSpeechCancellation: (() => void) | null = null;
 
 function getTtsWorker(): Worker | null {
   if (ttsWorkerUnavailable || typeof Worker === 'undefined') return null;
@@ -49,6 +54,91 @@ export function cancelTtsSynthesis(): void {
   const cancel = pendingCancellation;
   pendingCancellation = null;
   cancel?.();
+  const cancelBrowserSpeech = pendingBrowserSpeechCancellation;
+  pendingBrowserSpeechCancellation = null;
+  cancelBrowserSpeech?.();
+}
+
+function findBrowserVoice(language: TtsLanguage): SpeechSynthesisVoice | null {
+  if (typeof window === 'undefined' || !window.speechSynthesis) return null;
+  const voices = window.speechSynthesis.getVoices();
+  const preferredPrefix = language === 'zh' ? 'zh' : 'en';
+  return voices.find((voice) => voice.lang.toLowerCase().startsWith(preferredPrefix)) ?? null;
+}
+
+function waitForBrowserVoices(): Promise<void> {
+  if (typeof window === 'undefined' || !window.speechSynthesis) return Promise.resolve();
+  if (window.speechSynthesis.getVoices().length > 0) return Promise.resolve();
+
+  return new Promise((resolve) => {
+    const timeout = window.setTimeout(resolve, 800);
+    window.speechSynthesis.addEventListener('voiceschanged', () => {
+      window.clearTimeout(timeout);
+      resolve();
+    }, { once: true });
+  });
+}
+
+export async function speakTtsWithBrowserVoice({
+  text,
+  language,
+  speed,
+  onProgress,
+}: Omit<SynthesizeTtsOptions, 'voiceId'>): Promise<BrowserTtsOutcome> {
+  const validation = validateTtsText(text);
+  if (validation) {
+    return validation.code === 'tts_text_too_long'
+      ? { ok: false, code: 'tts_generation_failed', detail: validation.code }
+      : { ok: false, code: 'tts_generation_failed', detail: validation.code };
+  }
+
+  if (
+    typeof window === 'undefined'
+    || typeof SpeechSynthesisUtterance === 'undefined'
+    || !window.speechSynthesis
+  ) {
+    return { ok: false, code: 'tts_unsupported' };
+  }
+
+  await waitForBrowserVoices();
+
+  return new Promise((resolve) => {
+    let settled = false;
+    const utterance = new SpeechSynthesisUtterance(text.trim());
+    utterance.lang = language === 'zh' ? 'zh-CN' : 'en-US';
+    utterance.rate = normalizeTtsSpeed(speed);
+    utterance.voice = findBrowserVoice(language);
+
+    const cleanup = () => {
+      if (pendingBrowserSpeechCancellation === cancel) pendingBrowserSpeechCancellation = null;
+    };
+
+    const settle = (outcome: BrowserTtsOutcome) => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      resolve(outcome);
+    };
+
+    const cancel = () => {
+      window.speechSynthesis.cancel();
+      settle({ ok: false, code: 'tts_cancelled' });
+    };
+
+    pendingBrowserSpeechCancellation = cancel;
+    onProgress?.({ stage: 'processing', label: 'tts_browser_speaking', percent: 80 });
+
+    utterance.onend = () => {
+      onProgress?.({ stage: 'done', label: 'tts_browser_ready', percent: 100 });
+      settle({ ok: true });
+    };
+    utterance.onerror = (event) => {
+      settle({ ok: false, code: 'tts_generation_failed', detail: event.error });
+    };
+
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+  });
 }
 
 export async function synthesizeTts({

@@ -24,7 +24,7 @@ import {
   type AudioProcessingProgress,
   type AudioToolMode,
 } from '@/lib/utils/audio';
-import { cancelTtsSynthesis, synthesizeTts } from '@/lib/utils/tts-browser';
+import { cancelTtsSynthesis, speakTtsWithBrowserVoice, synthesizeTts } from '@/lib/utils/tts-browser';
 import {
   MAX_TTS_TEXT_LENGTH,
   getDefaultTtsVoice,
@@ -118,6 +118,7 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
   const [liveTranscriptionState, setLiveTranscriptionState] = useState<'idle' | 'recording' | 'stopping'>('idle');
   const [ttsText, setTtsText] = useState('');
   const [ttsRate, setTtsRate] = useState(1);
+  const [ttsFallbackNotice, setTtsFallbackNotice] = useState('');
   const [transcriptionModel, setTranscriptionModel] = useState<AudioTranscriptionModel>(DEFAULT_TRANSCRIPTION_MODEL);
   const [ttsLanguage, setTtsLanguage] = useState<TtsLanguage>(locale === 'en' ? 'en' : 'zh');
   const [ttsVoiceId, setTtsVoiceId] = useState<TtsVoiceId>(
@@ -228,6 +229,7 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
     });
     setTranscript('');
     setTranscriptCopyStatus('idle');
+    setTtsFallbackNotice('');
     setProgress(null);
     setError('');
   }, []);
@@ -591,7 +593,24 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
       });
 
       if (!result.ok) {
-        if (result.code !== 'tts_cancelled') setError(getErrorMessage(result));
+        if (result.code === 'tts_cancelled') return;
+
+        setProgress({ stage: 'processing', label: 'tts_browser_speaking', percent: 72 });
+        const fallback = await speakTtsWithBrowserVoice({
+          text: ttsText,
+          language: ttsLanguage,
+          speed: ttsRate,
+          onProgress: setProgress,
+        });
+
+        if (fallback.ok) {
+          setTtsFallbackNotice(t('tts_browser_fallback_notice'));
+          return;
+        }
+
+        if (fallback.code !== 'tts_cancelled') {
+          setError(`${getErrorMessage(result)} ${t('errors.tts_browser_fallback_failed')}`);
+        }
         return;
       }
 
@@ -606,7 +625,7 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
     } finally {
       setIsProcessing(false);
     }
-  }, [clearOutput, getErrorMessage, ttsLanguage, ttsRate, ttsText, ttsVoiceId]);
+  }, [clearOutput, getErrorMessage, t, ttsLanguage, ttsRate, ttsText, ttsVoiceId]);
 
   const stopTts = useCallback(() => {
     cancelTtsSynthesis();
@@ -643,6 +662,12 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
     </div>
   ) : null;
 
+  const ttsFallbackBlock = ttsFallbackNotice ? (
+    <div className="rounded-lg border border-border-base bg-surface p-4 text-sm leading-6 text-content-secondary">
+      {ttsFallbackNotice}
+    </div>
+  ) : null;
+
   return (
     <ToolLayout toolId={toolId} content={content}>
       <div className={[
@@ -664,6 +689,9 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
                 <span>{t('tts_model_hint')}</span>
                 <span>{t('tts_character_count', { current: ttsText.length, max: MAX_TTS_TEXT_LENGTH })}</span>
               </div>
+              <p className="text-xs leading-5 text-content-faint">
+                {t('tts_browser_fallback_hint')}
+              </p>
 
               <div className="grid gap-3 rounded-lg border border-border-base bg-surface p-4 sm:grid-cols-2">
                 <label className="text-sm font-medium text-content-secondary">
@@ -1106,6 +1134,7 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
             <div className="flex min-h-80 flex-grow flex-col gap-4">
               {progressBlock}
               {errorBlock}
+              {isTts && ttsFallbackBlock}
 
               {isTranscribe ? (
                 <>
