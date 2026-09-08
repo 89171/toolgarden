@@ -850,7 +850,8 @@ export function getInfoCodecTools(): ToolMeta[] {
 
 /** 获取其他工具集合 */
 export function getOtherTools(): ToolMeta[] {
-  return toolRegistry.filter((tool) => tool.path.startsWith('/other/'));
+  const extraToolIds = new Set(['zip-compress', 'zip-extract']);
+  return toolRegistry.filter((tool) => tool.path.startsWith('/other/') || extraToolIds.has(tool.id));
 }
 
 function isNonJsonTopLevelTool(tool: ToolMeta): boolean {

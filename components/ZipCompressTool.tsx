@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
+import Link from '@/components/ui/AppLink';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
@@ -26,6 +27,7 @@ function createFileId(file: File, index: number): string {
 
 export function ZipCompressTool() {
   const t = useTranslations('tools.zip-compress');
+  const locale = useLocale();
   const inputRef = useRef<HTMLInputElement>(null);
   const downloadUrlRef = useRef('');
   const [files, setFiles] = useState<SelectedZipFile[]>([]);
@@ -85,6 +87,15 @@ export function ZipCompressTool() {
 
   return (
     <ToolLayout toolId="zip-compress" content={zipCompressContent}>
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded border border-border-subtle bg-surface p-3 text-sm">
+        <span className="text-content-muted">{t('switch_hint')}</span>
+        <Link
+          href={`/${locale}/zip-extract`}
+          className="inline-flex min-h-9 items-center justify-center rounded border border-border-base bg-surface-hover px-3 py-1.5 font-medium text-content-secondary transition-colors hover:border-border-strong"
+        >
+          {t('switch_to_extract')}
+        </Link>
+      </div>
       <div className="grid min-h-0 flex-1 gap-4 lg:grid-cols-[minmax(0,1.05fr)_minmax(320px,0.95fr)]">
         <Panel
           title={t('input_title')}
