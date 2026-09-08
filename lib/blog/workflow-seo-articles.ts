@@ -4055,6 +4055,38 @@ ZIP File
             type: 'paragraph',
             text: 'RAR 和 7z 的情况不同。它们的解压生态可以评估，但创建端并不像 ZIP 那样开放、轻量、浏览器友好。为了避免功能看似支持、实际兼容性脆弱，压缩工具只生成 ZIP，解压工具也先聚焦 ZIP。',
           },
+          { type: 'heading', level: 2, text: '用了哪些第三方包？' },
+          {
+            type: 'paragraph',
+            text: '这个 ZIP 功能真正依赖的第三方包很少。压缩和解压的核心由 fflate 完成；React、Next.js 和 next-intl 负责页面、路由和多语言文案；Vitest 用来覆盖 ZIP 工具函数。没有引入服务端上传、云存储、RAR 创建器或 7z WASM 运行时。',
+          },
+          {
+            type: 'table',
+            headers: ['包', '在这里实现什么', '怎么使用'],
+            rows: [
+              ['fflate', '生成 ZIP、解压 ZIP、处理 Deflate / Store 等 ZIP 条目数据。', '在 lib/utils/zip.ts 中导入 zipSync 和 unzipSync：压缩时把路径到 Uint8Array 的映射交给 zipSync；解压时把 ZIP Uint8Array 交给 unzipSync。'],
+              ['React', '管理文件选择、压缩/解压状态、目录展开状态、错误提示和下载按钮。', '在 ZipCompressTool 与 ZipExtractTool 中使用 useState、useMemo、useEffect 和 useRef。React 不直接做 ZIP 算法，只编排 UI。'],
+              ['Next.js App Router', '提供本地化页面路由、静态导出和 metadata 生成。', '分别创建 app/[locale]/zip-compress 与 app/[locale]/zip-extract 页面和 layout，并通过 createToolMetadata 派生 SEO 信息。'],
+              ['next-intl', '提供中文、英文界面文案和按钮文本。', '页面用 useTranslations 读取 messages/zh.json 与 messages/en.json 中的 tools.zip-compress / tools.zip-extract 文案。'],
+              ['Vitest', '验证 ZIP 工具函数行为，避免后续改动破坏目录路径或中文文件名。', 'tests/zip.test.ts 里覆盖嵌套路径 round-trip，并手工构造 GBK 文件名 ZIP 检查 GB18030 fallback。'],
+            ],
+          },
+          {
+            type: 'code',
+            language: 'typescript',
+            code: `import { unzipSync, zipSync } from 'fflate';
+
+const zipped = zipSync({
+  'docs/readme.txt': new TextEncoder().encode('hello'),
+});
+
+const files = unzipSync(zipped);
+const readme = files['docs/readme.txt'];`,
+          },
+          {
+            type: 'paragraph',
+            text: '注意这里没有使用 file-saver。下载只需要浏览器原生能力：URL.createObjectURL 生成临时地址，a 标签设置 download 文件名后触发点击即可。少一个下载库，打包体积和运行路径都更简单。',
+          },
           { type: 'heading', level: 2, text: '压缩：从多个 File 生成 ZIP Blob' },
           {
             type: 'paragraph',
@@ -4227,6 +4259,38 @@ ZIP File
           {
             type: 'paragraph',
             text: 'RAR and 7z are different. Extraction can be evaluated separately, but archive creation is not as open, lightweight, or browser-friendly as ZIP creation. Rather than shipping fragile format support, the compressor exports ZIP only and the extractor focuses on ZIP first.',
+          },
+          { type: 'heading', level: 2, text: 'Which Third-Party Packages Are Used?' },
+          {
+            type: 'paragraph',
+            text: 'The ZIP feature has a deliberately small dependency surface. fflate does the archive work; React, Next.js, and next-intl handle UI, routing, and localized copy; Vitest protects the utility behavior. There is no server upload pipeline, cloud storage SDK, RAR writer, or 7z WASM runtime in this implementation.',
+          },
+          {
+            type: 'table',
+            headers: ['Package', 'What it does here', 'How it is used'],
+            rows: [
+              ['fflate', 'Creates ZIP archives, extracts ZIP archives, and handles Deflate / Store ZIP entry data.', 'lib/utils/zip.ts imports zipSync and unzipSync. Compression passes a path-to-Uint8Array map into zipSync; extraction passes the ZIP Uint8Array into unzipSync.'],
+              ['React', 'Tracks selected files, processing state, expanded folders, error messages, and download actions.', 'ZipCompressTool and ZipExtractTool use useState, useMemo, useEffect, and useRef. React orchestrates UI but does not implement the ZIP algorithm.'],
+              ['Next.js App Router', 'Provides localized routes, static export, and metadata generation.', 'app/[locale]/zip-compress and app/[locale]/zip-extract define pages and layouts, while createToolMetadata derives SEO metadata.'],
+              ['next-intl', 'Provides Chinese and English UI copy.', 'Pages call useTranslations to read tools.zip-compress and tools.zip-extract from messages/zh.json and messages/en.json.'],
+              ['Vitest', 'Tests ZIP utility behavior so future edits do not break paths or Chinese filenames.', 'tests/zip.test.ts covers nested-path round trips and a hand-built GBK filename ZIP for the GB18030 fallback.'],
+            ],
+          },
+          {
+            type: 'code',
+            language: 'typescript',
+            code: `import { unzipSync, zipSync } from 'fflate';
+
+const zipped = zipSync({
+  'docs/readme.txt': new TextEncoder().encode('hello'),
+});
+
+const files = unzipSync(zipped);
+const readme = files['docs/readme.txt'];`,
+          },
+          {
+            type: 'paragraph',
+            text: 'This implementation does not need file-saver. Browser-native download behavior is enough: create a temporary URL with URL.createObjectURL, assign it to an anchor, set the download filename, and click it. Avoiding another download dependency keeps the bundle and runtime path simpler.',
           },
           { type: 'heading', level: 2, text: 'Compression: Multiple Files to One ZIP Blob' },
           {
