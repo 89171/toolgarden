@@ -1396,6 +1396,13 @@ Canonical examples:
 - Summary: Chinese text often focuses on characters, English text often focuses on words, and technical systems often care about UTF-8 bytes.
 - Published: 2026-07-02; updated: 2026-07-03
 
+### How to Build Online File Compression and Extraction with Browser-Local ZIP
+- English: https://toolgarden.xyz/en/blog/how-to-build-online-file-compress-and-extract
+- Chinese: https://toolgarden.xyz/zh/blog/how-to-build-online-file-compress-and-extract
+- Chinese title: 怎么实现文件在线压缩和解压：基于浏览器本地 ZIP 的完整思路
+- Summary: Online compression and extraction do not always need a server upload. File API, fflate, Blob URLs, and a folder-tree model are enough to create ZIP files, extract archives, browse directories, and download individual files in the browser.
+- Published: 2026-09-08; updated: 2026-09-08
+
 ### How to Make an Icon from a Picture
 - English: https://toolgarden.xyz/en/blog/how-to-make-icon-from-picture
 - Chinese: https://toolgarden.xyz/zh/blog/how-to-make-icon-from-picture

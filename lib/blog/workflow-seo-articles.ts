@@ -3988,4 +3988,357 @@ export const workflowSeoBlogArticles = [
       },
     },
   },
+  {
+    slug: 'how-to-build-online-file-compress-and-extract',
+    publishedAt: '2026-09-08',
+    updatedAt: '2026-09-08',
+    translations: {
+      zh: {
+        title: '怎么实现文件在线压缩和解压：基于浏览器本地 ZIP 的完整思路',
+        excerpt: '在线压缩和解压不一定要上传服务器。用 File API、fflate、Blob URL 和目录树建模，就可以在浏览器里完成 ZIP 打包、解包、预览目录和单文件下载。',
+        metaTitle: '怎么实现文件在线压缩和解压：浏览器本地 ZIP 实现方案',
+        metaDescription: '讲解如何实现文件在线压缩和解压：File API 读取本地文件、fflate 生成和解压 ZIP、Blob URL 下载、目录树展示、中文文件名编码、Zip Slip 和大文件风险处理。',
+        readingTime: '约 9 分钟阅读',
+        tags: ['ZIP', '文件压缩', '文件解压', '浏览器本地处理', '前端工程'],
+        relatedTools: [
+          {
+            label: 'ZIP 压缩',
+            href: '/zip-compress',
+            description: '选择多个文件，在浏览器本地压缩为 ZIP 包，文件不会上传服务器。',
+          },
+          {
+            label: 'ZIP 解压',
+            href: '/zip-extract',
+            description: '上传 ZIP 后在浏览器本地解压，查看目录结构并下载单个文件。',
+          },
+        ],
+        blocks: [
+          {
+            type: 'lead',
+            text: '在线压缩和在线解压听起来像服务端任务：上传文件、服务器打包、再下载结果。但如果目标格式是 ZIP，现代浏览器已经足够完成大部分日常场景。文件可以留在用户设备上，页面只负责读取本地文件、运行压缩算法、生成下载链接。',
+          },
+          {
+            type: 'paragraph',
+            text: 'ToolGarden 的 ZIP 压缩和 ZIP 解压工具就是这个思路：压缩页把多个 File 对象转成 ZIP Blob；解压页读取 ZIP 字节，解析出条目，按路径还原目录树，并给每个文件生成单独下载。整个过程没有 API route 接收文件内容。',
+          },
+          { type: 'heading', level: 2, text: '整体数据流' },
+          {
+            type: 'code',
+            language: 'text',
+            code: `压缩：
+File input / drag drop
+  -> File API 读取 Blob
+  -> 规范化 ZIP 内路径
+  -> fflate zipSync
+  -> Blob(application/zip)
+  -> URL.createObjectURL 下载
+
+解压：
+ZIP File
+  -> arrayBuffer
+  -> 读取中央目录修正文件名编码
+  -> fflate unzipSync
+  -> 过滤不安全路径
+  -> 构建目录树
+  -> 每个文件生成 Blob 下载`,
+          },
+          {
+            type: 'paragraph',
+            text: '这个数据流里最关键的边界是：页面可以读取用户通过文件选择器授权的本地文件，但不会把这些字节发送给服务器。服务端只提供 JavaScript、CSS 和静态资源，真正的处理发生在浏览器进程中。',
+          },
+          { type: 'heading', level: 2, text: '为什么选择 ZIP，而不是 RAR 或 7z？' },
+          {
+            type: 'paragraph',
+            text: 'ZIP 的创建和解压都有成熟的 JavaScript 实现，系统兼容性也最好。用户下载后的 .zip 可以被 Windows、macOS、Linux 和常见手机系统直接打开。对在线工具来说，这是最稳的默认格式。',
+          },
+          {
+            type: 'paragraph',
+            text: 'RAR 和 7z 的情况不同。它们的解压生态可以评估，但创建端并不像 ZIP 那样开放、轻量、浏览器友好。为了避免功能看似支持、实际兼容性脆弱，压缩工具只生成 ZIP，解压工具也先聚焦 ZIP。',
+          },
+          { type: 'heading', level: 2, text: '压缩：从多个 File 生成 ZIP Blob' },
+          {
+            type: 'paragraph',
+            text: '压缩端页面只做 UI 状态：用户选择文件、设置输出文件名、选择压缩等级、点击按钮。真正的处理放在 lib/utils/zip.ts 中，函数接收一组 filename + blob，返回判别联合类型，而不是直接操作 React state。',
+          },
+          {
+            type: 'code',
+            language: 'typescript',
+            code: `type ZipCompressionOutcome =
+  | {
+      ok: true;
+      blob: Blob;
+      filename: string;
+      fileCount: number;
+      originalSize: number;
+      outputSize: number;
+      durationMs: number;
+    }
+  | { ok: false; code: 'empty_selection' | 'empty_file' | 'zip_failed' };`,
+          },
+          {
+            type: 'paragraph',
+            text: '压缩前需要处理 ZIP 内路径。拖入文件夹时，浏览器可能提供 webkitRelativePath；普通多文件选择只有 file.name。路径要统一替换反斜杠、过滤空片段、过滤 . 和 ..，重复文件名要加后缀，避免后一个文件覆盖前一个文件。',
+          },
+          {
+            type: 'paragraph',
+            text: '压缩算法使用 fflate 的 zipSync。压缩等级 0 到 9，0 更像“只打包不压缩”，9 通常体积更小但耗时更长。默认 6 是比较合理的速度和体积平衡。',
+          },
+          { type: 'heading', level: 2, text: '解压：先得到文件条目，再构建目录树' },
+          {
+            type: 'paragraph',
+            text: '解压端不是把所有文件平铺成列表，而是把 ZIP 内部路径拆成目录树。例如 docs/readme.txt 和 docs/assets/logo.png 会共享 docs 目录，assets 是 docs 的子目录。UI 里目录行可以展开折叠，文件行显示大小和下载按钮。',
+          },
+          {
+            type: 'code',
+            language: 'typescript',
+            code: `interface ZipExtractedEntry {
+  path: string;
+  name: string;
+  size: number;
+  blob: Blob;
+}
+
+interface TreeNode {
+  name: string;
+  path: string;
+  children: Map<string, TreeNode>;
+  entry?: ZipExtractedEntry;
+}`,
+          },
+          {
+            type: 'paragraph',
+            text: '目录树最好在页面层用纯数据结构生成，避免把展示状态和解压逻辑搅在一起。解压函数只返回 entries；React 组件再根据 entries 构建 TreeNode，并维护 expanded 这类交互状态。',
+          },
+          { type: 'heading', level: 2, text: '中文文件名为什么会乱码？' },
+          {
+            type: 'paragraph',
+            text: '很多 ZIP 文件名是 UTF-8，但并不是所有 ZIP 都会设置 UTF-8 标志。国内常见压缩软件生成的旧 ZIP，文件名可能实际是 GBK 或 GB18030 字节。如果解压库按 Latin-1 或错误编码解释这些字节，中文名就会变成乱码。',
+          },
+          {
+            type: 'paragraph',
+            text: '解决办法是读取 ZIP 中央目录里的原始文件名字节：如果条目没有 UTF-8 filename flag，就把这些字节用 GB18030 解码，再映射回解压库返回的 Latin-1 名称。这样既不破坏标准 UTF-8 ZIP，也能兼容中文 Windows 环境里常见的旧压缩包。',
+          },
+          { type: 'heading', level: 2, text: '下载：用 Blob URL，而不是服务器文件' },
+          {
+            type: 'paragraph',
+            text: '无论压缩还是解压，下载都可以用 Blob URL。压缩结果是 application/zip Blob；解压后的每个文件是 application/octet-stream Blob。页面调用 URL.createObjectURL，放到 a 标签的 href 上，再设置 download 文件名即可。',
+          },
+          {
+            type: 'paragraph',
+            text: 'Blob URL 是临时资源，页面关闭后会消失。长期运行的工具页还要在清空结果或组件卸载时调用 URL.revokeObjectURL，避免用户连续处理多个大文件时堆积内存。',
+          },
+          { type: 'heading', level: 2, text: '必须处理的安全和稳定性边界' },
+          {
+            type: 'list',
+            items: [
+              'Zip Slip：ZIP 条目路径里可能包含 ../，展示和下载前必须过滤上级目录片段。',
+              'zip bomb：压缩包体积很小但解压后极大，浏览器端应提示大文件风险，并在后续版本加入数量和总大小上限。',
+              '加密 ZIP：密码交互和兼容性复杂，当前工具应明确提示不支持，而不是吞掉错误。',
+              '内存压力：几百 MB 的 ZIP 或大量文件会占用浏览器内存，应优先保持 UI 可恢复、错误可理解。',
+              '文件名冲突：压缩时同名文件必须自动重命名，解压下载时至少要保留基础文件名。',
+            ],
+          },
+          { type: 'heading', level: 2, text: '工程分层怎么放？' },
+          {
+            type: 'paragraph',
+            text: '在 ToolGarden 里，ZIP 能力遵循 Harness Engineering：工具元数据进 registry，文案进 messages，ZIP 算法进 lib/utils/zip.ts，页面组件只处理 useState、文件选择、目录展开和下载点击。这样首页、Other tools 菜单、面包屑、SEO、sitemap 和 llms 文件都能从同一套元数据自动派生。',
+          },
+          {
+            type: 'callout',
+            title: '试试浏览器本地 ZIP 工具',
+            text: '你可以直接选择文件压缩成 ZIP，也可以上传 ZIP 查看目录结构并下载其中的单个文件。文件内容不会上传到服务器。',
+            href: '/zip-compress',
+            linkLabel: '打开 ZIP 压缩',
+          },
+        ],
+        faq: [
+          {
+            question: '在线压缩和解压一定需要服务器吗？',
+            answer: '不一定。ZIP 这类格式可以在浏览器里用 File API 读取、用 JavaScript 库压缩或解压，再用 Blob URL 下载。服务器只负责提供页面资源，不必接收用户文件。',
+          },
+          {
+            question: '为什么 ZIP 解压后的中文文件名会乱码？',
+            answer: '因为一些 ZIP 没有设置 UTF-8 文件名标志，但文件名字节实际是 GBK 或 GB18030。需要读取中央目录里的原始文件名字节，并在没有 UTF-8 标志时使用 GB18030 fallback 解码。',
+          },
+          {
+            question: '浏览器本地 ZIP 工具适合处理多大的文件？',
+            answer: '取决于设备内存和浏览器。普通附件和资料包通常没问题；几百 MB 以上、大量文件或可疑压缩包可能变慢或失败，应提示用户风险并考虑分批处理。',
+          },
+        ],
+      },
+      en: {
+        title: 'How to Build Online File Compression and Extraction with Browser-Local ZIP',
+        excerpt: 'Online compression and extraction do not always need a server upload. File API, fflate, Blob URLs, and a folder-tree model are enough to create ZIP files, extract archives, browse directories, and download individual files in the browser.',
+        metaTitle: 'How to Build Online File Compression and Extraction in the Browser',
+        metaDescription: 'Learn how browser-local ZIP compression and extraction work with File API, fflate, Blob URLs, folder trees, filename encoding fallback, Zip Slip protection, and large-file limits.',
+        readingTime: '9 min read',
+        tags: ['ZIP', 'file compression', 'file extraction', 'browser local', 'frontend engineering'],
+        relatedTools: [
+          {
+            label: 'ZIP Compressor',
+            href: '/zip-compress',
+            description: 'Select multiple files and compress them into a ZIP archive locally in your browser.',
+          },
+          {
+            label: 'ZIP Extractor',
+            href: '/zip-extract',
+            description: 'Extract a ZIP locally, browse folders, and download individual files.',
+          },
+        ],
+        blocks: [
+          {
+            type: 'lead',
+            text: 'Online file compression and extraction sound like server-side work: upload files, process them remotely, then download the result. But for ZIP archives, modern browsers can handle most everyday workflows directly. Files can stay on the user device while the page reads local data, runs the archive algorithm, and creates download links.',
+          },
+          {
+            type: 'paragraph',
+            text: 'ToolGarden ZIP Compressor and ZIP Extractor follow that model. The compressor turns multiple File objects into one ZIP Blob. The extractor reads ZIP bytes, parses entries, rebuilds a folder tree from paths, and lets users download individual files. No API route receives the file contents.',
+          },
+          { type: 'heading', level: 2, text: 'The Data Flow' },
+          {
+            type: 'code',
+            language: 'text',
+            code: `Compression:
+File input / drag drop
+  -> File API reads Blob data
+  -> normalize archive paths
+  -> fflate zipSync
+  -> Blob(application/zip)
+  -> URL.createObjectURL download
+
+Extraction:
+ZIP File
+  -> arrayBuffer
+  -> inspect central directory for filename encoding
+  -> fflate unzipSync
+  -> filter unsafe paths
+  -> build folder tree
+  -> create Blob download for each file`,
+          },
+          {
+            type: 'paragraph',
+            text: 'The important boundary is that the page can read files the user explicitly chooses, but it does not need to send those bytes to a server. The server delivers JavaScript, CSS, and static assets; the actual work happens inside the browser process.',
+          },
+          { type: 'heading', level: 2, text: 'Why ZIP, Not RAR or 7z?' },
+          {
+            type: 'paragraph',
+            text: 'ZIP has mature JavaScript implementations for both creation and extraction, and the output works almost everywhere. Windows, macOS, Linux, and mobile operating systems can usually open a .zip without extra software. For a web utility, that makes ZIP the reliable default.',
+          },
+          {
+            type: 'paragraph',
+            text: 'RAR and 7z are different. Extraction can be evaluated separately, but archive creation is not as open, lightweight, or browser-friendly as ZIP creation. Rather than shipping fragile format support, the compressor exports ZIP only and the extractor focuses on ZIP first.',
+          },
+          { type: 'heading', level: 2, text: 'Compression: Multiple Files to One ZIP Blob' },
+          {
+            type: 'paragraph',
+            text: 'The compression page should stay thin: selected files, output filename, compression level, and button state. The real implementation belongs in a utility module such as lib/utils/zip.ts, where a function receives filename + blob entries and returns a discriminated result instead of touching React state.',
+          },
+          {
+            type: 'code',
+            language: 'typescript',
+            code: `type ZipCompressionOutcome =
+  | {
+      ok: true;
+      blob: Blob;
+      filename: string;
+      fileCount: number;
+      originalSize: number;
+      outputSize: number;
+      durationMs: number;
+    }
+  | { ok: false; code: 'empty_selection' | 'empty_file' | 'zip_failed' };`,
+          },
+          {
+            type: 'paragraph',
+            text: 'Before compression, normalize archive paths. Folder uploads may expose webkitRelativePath, while normal file selection only has file.name. Replace backslashes, drop empty segments, remove . and .., and rename duplicate paths so later files do not silently overwrite earlier ones.',
+          },
+          {
+            type: 'paragraph',
+            text: 'fflate zipSync handles the archive generation. Compression levels range from 0 to 9: 0 is closer to packaging without compression, while 9 may save more space at the cost of time. A default of 6 is a practical speed-to-size balance.',
+          },
+          { type: 'heading', level: 2, text: 'Extraction: Entries First, Folder Tree Second' },
+          {
+            type: 'paragraph',
+            text: 'The extractor should not flatten every file into one long list. ZIP entries contain paths such as docs/readme.txt and docs/assets/logo.png; splitting those paths gives a natural folder tree. Folder rows can expand and collapse, while file rows show size and a download button.',
+          },
+          {
+            type: 'code',
+            language: 'typescript',
+            code: `interface ZipExtractedEntry {
+  path: string;
+  name: string;
+  size: number;
+  blob: Blob;
+}
+
+interface TreeNode {
+  name: string;
+  path: string;
+  children: Map<string, TreeNode>;
+  entry?: ZipExtractedEntry;
+}`,
+          },
+          {
+            type: 'paragraph',
+            text: 'Keep extraction and display concerns separate. The utility function returns entries; the React component builds TreeNode data and owns interaction state such as expanded folders. That keeps the archive parser testable and the UI easier to change.',
+          },
+          { type: 'heading', level: 2, text: 'Why Chinese Filenames Become Garbled' },
+          {
+            type: 'paragraph',
+            text: 'Many ZIP filenames are UTF-8, but not every archive sets the UTF-8 flag. Older archives from Chinese Windows environments often store filename bytes as GBK or GB18030. If the unzip library interprets those bytes as Latin-1 or another fallback, Chinese names become unreadable.',
+          },
+          {
+            type: 'paragraph',
+            text: 'A practical fix is to inspect raw filename bytes in the ZIP central directory. When an entry does not have the UTF-8 filename flag, decode those bytes with GB18030 and map that name back to the Latin-1 name returned by the unzip library. Standard UTF-8 ZIP files remain untouched, while legacy Chinese filenames display correctly.',
+          },
+          { type: 'heading', level: 2, text: 'Downloads Use Blob URLs' },
+          {
+            type: 'paragraph',
+            text: 'Both compression and extraction can download from Blob URLs. The compressed result is an application/zip Blob. Each extracted file is an application/octet-stream Blob. The page calls URL.createObjectURL, assigns it to an anchor href, and sets the download filename.',
+          },
+          {
+            type: 'paragraph',
+            text: 'Blob URLs are temporary browser resources. A long-running tool should revoke them when clearing results or unmounting the component, especially when users process multiple large archives in one session.',
+          },
+          { type: 'heading', level: 2, text: 'Security and Reliability Boundaries' },
+          {
+            type: 'list',
+            items: [
+              'Zip Slip: archive paths may contain ../ segments, so clean paths before showing or downloading them.',
+              'Zip bombs: a tiny archive may expand into huge output, so warn about large files and add entry-count or total-size limits in stricter deployments.',
+              'Encrypted ZIP: password flows and compatibility are complex; unsupported encrypted archives should fail clearly.',
+              'Memory pressure: hundreds of MB or thousands of files can slow down or crash a browser tab.',
+              'Filename collisions: compression should rename duplicate archive paths instead of overwriting silently.',
+            ],
+          },
+          { type: 'heading', level: 2, text: 'Where the Code Belongs' },
+          {
+            type: 'paragraph',
+            text: 'In ToolGarden, ZIP tools follow the Harness Engineering pattern: metadata in the registry, copy in messages, archive logic in lib/utils/zip.ts, and page components limited to state, file selection, folder expansion, and download clicks. Home cards, the Other tools menu, breadcrumbs, SEO metadata, sitemap, and llms files all derive from the same metadata.',
+          },
+          {
+            type: 'callout',
+            title: 'Try the browser-local ZIP tools',
+            text: 'Compress selected files into a ZIP, or upload a ZIP to browse its folder structure and download individual files. File contents are not uploaded to the server.',
+            href: '/zip-compress',
+            linkLabel: 'Open ZIP Compressor',
+          },
+        ],
+        faq: [
+          {
+            question: 'Does online ZIP compression need a server?',
+            answer: 'No. A browser can read user-selected files with File API, compress or extract ZIP archives with JavaScript, and download results through Blob URLs. The server only needs to serve the web app.',
+          },
+          {
+            question: 'Why do Chinese filenames look garbled after ZIP extraction?',
+            answer: 'Some ZIP archives omit the UTF-8 filename flag while storing names as GBK or GB18030 bytes. Inspecting the central directory and applying a GB18030 fallback fixes many legacy Chinese ZIP filenames.',
+          },
+          {
+            question: 'How large can browser-local ZIP processing go?',
+            answer: 'It depends on browser and device memory. Normal attachment-sized archives work well, but hundreds of MB, thousands of files, or suspicious archives can be slow or fail. Production tools should communicate those limits clearly.',
+          },
+        ],
+      },
+    },
+  },
 ] satisfies BlogArticle[];
