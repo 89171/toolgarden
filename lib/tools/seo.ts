@@ -51,8 +51,6 @@ export {
   toJsonLd,
 };
 export type { Locale };
-export const REPOSITORY_URL = 'https://github.com/89171/json-toolkit';
-const EXPOSE_SOURCE_METADATA = process.env.NEXT_PUBLIC_EXPOSE_SOURCE === 'true';
 
 const messages = { zh: zhMessages, en: enMessages } as const;
 
@@ -495,7 +493,6 @@ export function createSiteJsonLd(locale: string) {
           email: SITE_CONTACT_EMAIL,
           availableLanguage: ['English', 'Chinese'],
         },
-        ...(EXPOSE_SOURCE_METADATA ? { sameAs: [REPOSITORY_URL] } : {}),
       },
       {
         '@type': 'WebSite',
@@ -519,7 +516,6 @@ export function createSiteJsonLd(locale: string) {
         inLanguage: normalizedLocale === 'zh' ? 'zh-CN' : 'en',
         publisher: { '@id': organizationId },
         isPartOf: { '@id': websiteId },
-        ...(EXPOSE_SOURCE_METADATA ? { codeRepository: REPOSITORY_URL } : {}),
       },
     ],
   };
