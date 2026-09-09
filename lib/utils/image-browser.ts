@@ -269,8 +269,6 @@ const WATERMARK_AI_INPUT_SIZE = 512;
 const SVG_OUTPUT_SCALE = 3;
 const SVG_MIN_RENDER_LONG_SIDE = 2048;
 const SVG_MAX_RENDER_LONG_SIDE = 4096;
-const WATERMARK_TEXT = 'https://toolgarden.xyz';
-const WATERMARK_ALLOWED_ROOT_HOSTNAMES = ['toolgarden.xyz', 'json-toolkit.xyz'] as const;
 const WATERMARK_REPAIR_DISTANCE_POWER = 1.35;
 
 let watermarkInpaintSessionPromise:
@@ -297,13 +295,6 @@ const AI_UPSCALE_MODEL_PATHS: Record<AiUpscaleScale, string> = {
 };
 const AI_UPSCALE_PATCH_SIZE = 128;
 const AI_UPSCALE_PATCH_PADDING = 8;
-
-interface WatermarkedImageOutput {
-  blob: Blob;
-  mimeType: ImageTargetConfig['mimeType'];
-  format: ImageTargetFormat;
-  extension: ImageTargetConfig['extension'];
-}
 
 function getImageWorker(): Worker | null {
   if (imageWorkerUnavailable || typeof Worker === 'undefined') return null;
@@ -1777,27 +1768,6 @@ function canvasToBlob(
   });
 }
 
-function shouldWatermarkImageOutput(): boolean {
-  if (typeof window === 'undefined') return false;
-  return !isWatermarkAllowedHostname(window.location.hostname);
-}
-
-function isWatermarkAllowedHostname(hostname: string): boolean {
-  const normalizedHostname = hostname.toLowerCase().replace(/\.$/, '');
-
-  return WATERMARK_ALLOWED_ROOT_HOSTNAMES.some(
-    (allowedHostname) =>
-      normalizedHostname === allowedHostname || normalizedHostname.endsWith(`.${allowedHostname}`)
-  );
-}
-
-function getWatermarkTargetConfig(mimeType: string): ImageTargetConfig {
-  if (mimeType === 'image/jpeg') return getImageTargetConfig('jpg');
-  if (mimeType === 'image/webp') return getImageTargetConfig('webp');
-  if (mimeType === 'image/avif') return getImageTargetConfig('avif');
-  return getImageTargetConfig('png');
-}
-
 async function importPublicEsmModule<T>(url: string): Promise<T> {
   const runtimeImport = new Function('moduleUrl', 'return import(moduleUrl)') as (moduleUrl: string) => Promise<T>;
   return runtimeImport(url);
@@ -1877,173 +1847,6 @@ function bytesMatchMime(bytes: Uint8Array, mimeType: string): boolean {
 async function blobMatchesMime(blob: Blob, mimeType: string): Promise<boolean> {
   const bytes = new Uint8Array(await blob.slice(0, 32).arrayBuffer());
   return bytesMatchMime(bytes, mimeType);
-}
-
-function drawWatermark(context: CanvasRenderingContext2D, width: number, height: number) {
-  if (!width || !height) return;
-
-  let fontSize = clampNumber(Math.round(Math.min(width, height) * 0.08), 14, 72);
-
-  do {
-    context.font = `600 ${fontSize}px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
-    if (context.measureText(WATERMARK_TEXT).width <= width * 0.86 || fontSize <= 8) break;
-    fontSize -= 1;
-  } while (fontSize > 8);
-
-  const diagonal = Math.hypot(width, height);
-
-  context.save();
-  context.translate(width / 2, height / 2);
-  context.rotate(-Math.PI / 6);
-  context.font = `600 ${fontSize}px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
-  context.textAlign = 'center';
-  context.textBaseline = 'middle';
-
-  const textWidth = context.measureText(WATERMARK_TEXT).width;
-  const stepX = clampNumber(textWidth + fontSize * 7.2, 220, 720);
-  const stepY = clampNumber(fontSize * 7.5, 120, 420);
-  const startX = -diagonal - stepX;
-  const endX = diagonal + stepX;
-  const startY = -diagonal - stepY;
-  const endY = diagonal + stepY;
-
-  context.fillStyle = 'rgba(255, 255, 255, 0.42)';
-
-  for (let y = startY; y <= endY; y += stepY) {
-    const rowOffset = Math.round(y / stepY) % 2 === 0 ? 0 : stepX / 2;
-
-    for (let x = startX + rowOffset; x <= endX; x += stepX) {
-      context.fillText(WATERMARK_TEXT, x, y);
-    }
-  }
-
-  context.restore();
-}
-
-async function addWatermarkToCanvasBlob(
-  canvas: HTMLCanvasElement,
-  target: ImageTargetConfig,
-  quality?: number
-): Promise<WatermarkedImageOutput> {
-  const context = canvas.getContext('2d');
-  if (!context) throw new Error('Canvas context failed');
-
-  drawWatermark(context, canvas.width, canvas.height);
-  const blob = target.mimeType === 'image/avif'
-    ? await encodeCanvasToAvifBlob(canvas, quality)
-    : await canvasToBlob(canvas, target.mimeType, quality);
-
-  if ((!blob.type || blob.type === target.mimeType) && await blobMatchesMime(blob, target.mimeType)) {
-    return {
-      blob,
-      mimeType: target.mimeType,
-      format: target.format,
-      extension: target.extension,
-    };
-  }
-
-  const pngTarget = getImageTargetConfig('png');
-  return {
-    blob: await canvasToBlob(canvas, pngTarget.mimeType),
-    mimeType: pngTarget.mimeType,
-    format: pngTarget.format,
-    extension: pngTarget.extension,
-  };
-}
-
-async function addWatermarkToImageBlob(
-  blob: Blob,
-  preferredMimeType: string,
-  options: { jpegBackground?: string; quality?: number } = {}
-): Promise<WatermarkedImageOutput> {
-  const target = getWatermarkTargetConfig(preferredMimeType);
-  const image = await loadBlobImage(blob);
-  const canvas = document.createElement('canvas');
-  canvas.width = image.width;
-  canvas.height = image.height;
-  const context = canvas.getContext('2d');
-  if (!context) throw new Error('Canvas context failed');
-
-  if (target.mimeType === 'image/jpeg') {
-    context.fillStyle = options.jpegBackground ?? '#ffffff';
-    context.fillRect(0, 0, canvas.width, canvas.height);
-  }
-
-  context.drawImage(image.element, 0, 0);
-  return addWatermarkToCanvasBlob(canvas, target, options.quality ?? target.defaultQuality);
-}
-
-async function maybeWatermarkImageBlob(
-  blob: Blob,
-  preferredMimeType: string,
-  options: { jpegBackground?: string; quality?: number } = {}
-): Promise<WatermarkedImageOutput> {
-  const target = getWatermarkTargetConfig(preferredMimeType);
-
-  if (!shouldWatermarkImageOutput()) {
-    return {
-      blob,
-      mimeType: target.mimeType,
-      format: target.format,
-      extension: target.extension,
-    };
-  }
-
-  return addWatermarkToImageBlob(blob, preferredMimeType, options);
-}
-
-function ensureFilenameExtension(filename: string, extension: string): string {
-  const nextExtension = `.${extension}`;
-  if (filename.toLowerCase().endsWith(nextExtension)) return filename;
-  return `${filename.replace(/\.[^.]+$/, '')}${nextExtension}`;
-}
-
-async function watermarkConversionSuccess(
-  result: ImageConversionOutcome,
-  options: { preferredMimeType: string; jpegBackground?: string; quality?: number }
-): Promise<ImageConversionOutcome> {
-  if (!result.ok || !shouldWatermarkImageOutput()) return result;
-
-  try {
-    const watermarked = await addWatermarkToImageBlob(result.blob, options.preferredMimeType, options);
-    return {
-      ...result,
-      blob: watermarked.blob,
-      filename: ensureFilenameExtension(result.filename, watermarked.extension),
-      mimeType: watermarked.mimeType,
-      outputSize: watermarked.blob.size,
-    };
-  } catch {
-    return { ok: false, code: 'canvas_export' };
-  }
-}
-
-async function watermarkCompressionSuccess(
-  file: File,
-  result: ImageCompressionOutcome,
-  options: { preferredMimeType: string; jpegBackground?: string; quality?: number }
-): Promise<ImageCompressionOutcome> {
-  if (!result.ok || !shouldWatermarkImageOutput()) return result;
-
-  try {
-    const watermarked = await addWatermarkToImageBlob(result.blob, options.preferredMimeType, options);
-    const filename = result.strategy === 'kept-original' || result.format === 'original'
-      ? createCompressedImageFilename(file.name, watermarked.extension)
-      : ensureFilenameExtension(result.filename, watermarked.extension);
-
-    return {
-      ...result,
-      blob: watermarked.blob,
-      filename,
-      mimeType: watermarked.mimeType,
-      format: watermarked.format,
-      outputSize: watermarked.blob.size,
-      savingsRatio: calculateSavingsRatio(result.originalSize, watermarked.blob.size),
-      strategy: 'reencoded',
-    };
-  } catch {
-    return { ok: false, code: 'canvas_export' };
-  }
 }
 
 async function normalizeLoadedImageToPng(image: LoadedImage): Promise<Blob | null> {
@@ -3049,27 +2852,6 @@ async function compressImageFileOnMainThread(
         return { ok: false, code: 'unsupported_output', detail: 'WebP' };
       }
 
-      const watermarked = await maybeWatermarkImageBlob(file, sourceType || file.type, {
-        jpegBackground,
-      });
-
-      if (shouldWatermarkImageOutput()) {
-        return {
-          ok: true,
-          blob: watermarked.blob,
-          filename: createCompressedImageFilename(file.name, watermarked.extension),
-          mimeType: watermarked.mimeType,
-          format: watermarked.format,
-          width: image.width,
-          height: image.height,
-          originalSize: file.size,
-          outputSize: watermarked.blob.size,
-          durationMs: Math.round(performance.now() - startedAt),
-          savingsRatio: calculateSavingsRatio(file.size, watermarked.blob.size),
-          strategy: 'reencoded',
-        };
-      }
-
       return {
         ok: true,
         blob: file,
@@ -3086,23 +2868,18 @@ async function compressImageFileOnMainThread(
       };
     }
 
-    const watermarked = await maybeWatermarkImageBlob(best.blob, best.candidate.mimeType, {
-      jpegBackground,
-      quality: best.quality,
-    });
-
     return {
       ok: true,
-      blob: watermarked.blob,
-      filename: createCompressedImageFilename(file.name, watermarked.extension),
-      mimeType: watermarked.mimeType,
-      format: watermarked.format,
+      blob: best.blob,
+      filename: createCompressedImageFilename(file.name, best.candidate.extension),
+      mimeType: best.candidate.mimeType,
+      format: best.candidate.format,
       width: image.width,
       height: image.height,
       originalSize: file.size,
-      outputSize: watermarked.blob.size,
+      outputSize: best.blob.size,
       durationMs: Math.round(performance.now() - startedAt),
-      savingsRatio: calculateSavingsRatio(file.size, watermarked.blob.size),
+      savingsRatio: calculateSavingsRatio(file.size, best.blob.size),
       quality: best.quality,
       quantizedColors: best.quantizedColors,
       strategy: 'reencoded',
@@ -3244,15 +3021,13 @@ async function convertImageFileOnMainThread(
     const quality = target.supportsQuality
       ? normalizeImageQuality(options.quality ?? target.defaultQuality)
       : undefined;
-    const output = shouldWatermarkImageOutput()
-      ? await addWatermarkToCanvasBlob(canvas, target, quality)
-      : {
-          blob: target.mimeType === 'image/avif'
-            ? await encodeCanvasToAvifBlob(canvas, quality)
-            : await canvasToBlob(canvas, target.mimeType, quality),
-          mimeType: target.mimeType,
-          extension: target.extension,
-        };
+    const output = {
+      blob: target.mimeType === 'image/avif'
+        ? await encodeCanvasToAvifBlob(canvas, quality)
+        : await canvasToBlob(canvas, target.mimeType, quality),
+      mimeType: target.mimeType,
+      extension: target.extension,
+    };
     const blob = output.blob;
 
     if ((blob.type && blob.type !== output.mimeType) || !(await blobMatchesMime(blob, output.mimeType))) {
@@ -3412,18 +3187,17 @@ export async function removeImageBackground(
     } else {
       blob = await removeBackgroundWithImgly(modelInput, selectedModel, options.onProgress);
     }
-    const pngBlob = blob.type === 'image/png' ? blob : new Blob([blob], { type: 'image/png' });
-    const output = await maybeWatermarkImageBlob(pngBlob, 'image/png');
+    const outputBlob = blob.type === 'image/png' ? blob : new Blob([blob], { type: 'image/png' });
 
     return {
       ok: true,
-      blob: output.blob,
+      blob: outputBlob,
       filename: createBackgroundRemovedImageFilename(file.name),
       mimeType: 'image/png',
       width: image.width,
       height: image.height,
       originalSize: file.size,
-      outputSize: output.blob.size,
+      outputSize: outputBlob.size,
       durationMs: Math.round(performance.now() - startedAt),
       model: actualModel,
       fallbackFrom,
@@ -3536,14 +3310,12 @@ export async function upscaleImageFile(
     const quality = target.supportsQuality
       ? normalizeImageQuality(options.quality ?? target.defaultQuality)
       : undefined;
-    const output = shouldWatermarkImageOutput()
-      ? await addWatermarkToCanvasBlob(canvas, target, quality)
-      : {
-          blob: await canvasToBlob(canvas, target.mimeType, quality),
-          mimeType: target.mimeType,
-          format: target.format,
-          extension: target.extension,
-        };
+    const output = {
+      blob: await canvasToBlob(canvas, target.mimeType, quality),
+      mimeType: target.mimeType,
+      format: target.format,
+      extension: target.extension,
+    };
     const blob = output.blob;
     const outputMimeType = output.mimeType as ImageUpscaleSuccess['mimeType'];
     const outputFormat = output.format as BasicImageTargetFormat;
@@ -3641,14 +3413,12 @@ export async function enhanceImageFile(
     const quality = target.supportsQuality
       ? normalizeImageQuality(options.quality ?? target.defaultQuality)
       : undefined;
-    const output = shouldWatermarkImageOutput()
-      ? await addWatermarkToCanvasBlob(canvas, target, quality)
-      : {
-          blob: await canvasToBlob(canvas, target.mimeType, quality),
-          mimeType: target.mimeType,
-          format: target.format,
-          extension: target.extension,
-        };
+    const output = {
+      blob: await canvasToBlob(canvas, target.mimeType, quality),
+      mimeType: target.mimeType,
+      format: target.format,
+      extension: target.extension,
+    };
     options.onProgress?.(createImageEnhanceProgress('encode', 100));
 
     if (output.blob.type && output.blob.type !== output.mimeType) {
@@ -3769,14 +3539,12 @@ export async function cropResizeImageFile(
     const quality = target.supportsQuality
       ? normalizeImageQuality(options.quality ?? target.defaultQuality)
       : undefined;
-    const output = shouldWatermarkImageOutput()
-      ? await addWatermarkToCanvasBlob(canvas, target, quality)
-      : {
-          blob: await canvasToBlob(canvas, target.mimeType, quality),
-          mimeType: target.mimeType,
-          format: target.format,
-          extension: target.extension,
-        };
+    const output = {
+      blob: await canvasToBlob(canvas, target.mimeType, quality),
+      mimeType: target.mimeType,
+      format: target.format,
+      extension: target.extension,
+    };
     const blob = output.blob;
 
     if (blob.type && blob.type !== output.mimeType) {
@@ -3900,14 +3668,12 @@ export async function removeImageWatermark(
     const quality = target.supportsQuality
       ? normalizeImageQuality(options.quality ?? target.defaultQuality)
       : undefined;
-    const output = shouldWatermarkImageOutput()
-      ? await addWatermarkToCanvasBlob(outputCanvas, target, quality)
-      : {
-          blob: await canvasToBlob(outputCanvas, target.mimeType, quality),
-          mimeType: target.mimeType,
-          format: target.format,
-          extension: target.extension,
-        };
+    const output = {
+      blob: await canvasToBlob(outputCanvas, target.mimeType, quality),
+      mimeType: target.mimeType,
+      format: target.format,
+      extension: target.extension,
+    };
     const blob = output.blob;
 
     if (blob.type && blob.type !== output.mimeType) {
@@ -3962,15 +3728,7 @@ export async function convertImageFile(
 
   const workerResult = await convertImageFileInWorker(file, targetFormat, options);
   if (workerResult) {
-    const target = getImageTargetConfig(targetFormat);
-    const quality = target.supportsQuality
-      ? normalizeImageQuality(options.quality ?? target.defaultQuality)
-      : undefined;
-    return watermarkConversionSuccess(workerResult, {
-      preferredMimeType: target.mimeType,
-      jpegBackground: options.jpegBackground ?? '#ffffff',
-      quality,
-    });
+    return workerResult;
   }
 
   return convertImageFileOnMainThread(file, targetFormat, options);
@@ -4007,11 +3765,7 @@ export async function compressImageFile(
   const shouldUseWorker = !(sourceType === 'image/png' && outputMode === 'preserve');
   const workerResult = shouldUseWorker ? await compressImageFileInWorker(file, options) : null;
   if (workerResult) {
-    const preferredMimeType = workerResult.ok ? workerResult.mimeType : sourceType;
-    return watermarkCompressionSuccess(file, workerResult, {
-      preferredMimeType,
-      jpegBackground: options.jpegBackground ?? '#ffffff',
-    });
+    return workerResult;
   }
 
   return compressImageFileOnMainThread(file, options);
