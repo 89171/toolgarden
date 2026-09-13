@@ -3,6 +3,8 @@ import path from 'path';
 import securityHeaders from './lib/security/static-headers.json';
 
 const nextIntlRequestConfig = './i18n/request.ts';
+const paddleOcrOrtBundle = './node_modules/@paddleocr/paddleocr-js/node_modules/onnxruntime-web/dist/ort.bundle.min.mjs';
+const emptyModule = './lib/shims/empty-module.ts';
 const sharedSecurityHeaders = securityHeaders as Array<{ key: string; value: string }>;
 
 /**
@@ -57,6 +59,8 @@ const nextConfig: NextConfig = {
   turbopack: {
     resolveAlias: {
       'next-intl/config': nextIntlRequestConfig,
+      fs: emptyModule,
+      'ort.bundle.min.mjs': paddleOcrOrtBundle,
     },
   },
   webpack(config) {
@@ -64,6 +68,15 @@ const nextConfig: NextConfig = {
       config.context,
       nextIntlRequestConfig,
     );
+    config.resolve.alias['ort.bundle.min.mjs'] = path.resolve(
+      config.context,
+      paddleOcrOrtBundle,
+    );
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      path: false,
+    };
     return config;
   },
   productionBrowserSourceMaps: false,
