@@ -2,8 +2,10 @@ import { PaddleOCR } from '@paddleocr/paddleocr-js';
 import type {
   OcrResult,
   OcrResultItem,
+  OcrPipelineRunnerOptions,
   OcrRuntimeParamsInput,
   PaddleOCRCreateOptions,
+  SourceMatResult,
 } from '@paddleocr/paddleocr-js';
 import type {
   OcrLanguage,
@@ -32,6 +34,9 @@ type PaddleOcrInstance = Awaited<ReturnType<typeof PaddleOCR.create>>;
 type OrtWasmPaths = PaddleOCRCreateOptions['ortOptions'] extends { wasmPaths?: infer Paths }
   ? Paths
   : never;
+type SourceToMatFn = NonNullable<OcrPipelineRunnerOptions['sourceToMat']>;
+type OpenCv = Parameters<SourceToMatFn>[0];
+type OpenCvMatLike = InstanceType<OpenCv['Mat']>;
 
 const workerScope = self as unknown as {
   location: Location;
@@ -59,6 +64,56 @@ const OCR_PREDICT_PARAMS: OcrRuntimeParamsInput = {
 };
 
 const ocrPromises = new Map<string, Promise<PaddleOcrInstance>>();
+
+async function toImageBitmapInWorker(source: unknown): Promise<ImageBitmap> {
+  if (typeof ImageBitmap !== 'undefined' && source instanceof ImageBitmap) return source;
+  if (source instanceof Blob) return createImageBitmap(source);
+  if (typeof ImageData !== 'undefined' && source instanceof ImageData) return createImageBitmap(source);
+
+  throw new Error('Unsupported image source. Use a Blob, ImageBitmap, or ImageData.');
+}
+
+async function sourceToMatInWorker(cv: OpenCv, source: unknown): Promise<SourceMatResult> {
+  if (typeof cv.Mat === 'function' && source instanceof cv.Mat) {
+    const sourceMat = source as OpenCvMatLike;
+    const cloned = sourceMat.clone();
+    return {
+      width: sourceMat.cols,
+      height: sourceMat.rows,
+      mat: cloned,
+      dispose() {
+        cloned.delete();
+      },
+    };
+  }
+
+  if (typeof OffscreenCanvas === 'undefined') {
+    throw new Error('OCR requires OffscreenCanvas support in this browser.');
+  }
+
+  const imageBitmap = await toImageBitmapInWorker(source);
+  const canvas = new OffscreenCanvas(imageBitmap.width, imageBitmap.height);
+  const context = canvas.getContext('2d', { willReadFrequently: true });
+
+  if (!context) {
+    imageBitmap.close();
+    throw new Error('Failed to create a 2D canvas context.');
+  }
+
+  context.drawImage(imageBitmap, 0, 0);
+  const imageData = context.getImageData(0, 0, imageBitmap.width, imageBitmap.height);
+  const mat = cv.matFromImageData(imageData);
+
+  return {
+    width: imageBitmap.width,
+    height: imageBitmap.height,
+    mat,
+    dispose() {
+      mat.delete();
+      imageBitmap.close();
+    },
+  };
+}
 
 function postProgress(id: string, stage: OcrProgressStage, percent: number, processed?: number, total?: number) {
   const progress: OcrProgress = {
@@ -100,6 +155,7 @@ async function getOcr(id: string, language: OcrLanguage): Promise<PaddleOcrInsta
       textDetectionBatchSize: 2,
       textRecognitionBatchSize: 8,
       unsupportedBehavior: 'ignore',
+      sourceToMat: sourceToMatInWorker,
       ortOptions: {
         backend: 'wasm',
         wasmPaths: ONNX_WASM_PATHS as unknown as OrtWasmPaths,
