@@ -3,7 +3,7 @@ import path from 'path';
 import securityHeaders from './lib/security/static-headers.json';
 
 const nextIntlRequestConfig = './i18n/request.ts';
-const paddleOcrOrtBundle = './node_modules/@paddleocr/paddleocr-js/node_modules/onnxruntime-web/dist/ort.bundle.min.mjs';
+const paddleOcrOrtBundle = './node_modules/onnxruntime-web/dist/ort.bundle.min.mjs';
 const emptyModule = './lib/shims/empty-module.ts';
 const sharedSecurityHeaders = securityHeaders as Array<{ key: string; value: string }>;
 
