@@ -65,21 +65,36 @@ const OCR_PREDICT_PARAMS: OcrRuntimeParamsInput = {
 
 const ocrPromises = new Map<string, Promise<PaddleOcrInstance>>();
 
-function installWorkerCanvasDocumentShim() {
-  if (typeof document !== 'undefined' || typeof OffscreenCanvas === 'undefined') return;
+function installWorkerCanvasDomShim() {
+  if (typeof OffscreenCanvas === 'undefined') return;
 
-  Object.defineProperty(globalThis, 'document', {
-    configurable: true,
-    value: {
-      createElement(tagName: string) {
-        if (tagName.toLowerCase() !== 'canvas') {
-          throw new Error(`Unsupported worker document element: ${tagName}`);
-        }
+  const workerDomElement = class {};
+  const globals: Array<[string, unknown]> = [
+    ['HTMLCanvasElement', OffscreenCanvas],
+    ['HTMLImageElement', workerDomElement],
+    ['HTMLVideoElement', workerDomElement],
+  ];
 
-        return new OffscreenCanvas(1, 1);
+  for (const [name, value] of globals) {
+    if (typeof (globalThis as unknown as Record<string, unknown>)[name] === 'undefined') {
+      Object.defineProperty(globalThis, name, { configurable: true, value });
+    }
+  }
+
+  if (typeof document === 'undefined') {
+    Object.defineProperty(globalThis, 'document', {
+      configurable: true,
+      value: {
+        createElement(tagName: string) {
+          if (tagName.toLowerCase() !== 'canvas') {
+            throw new Error(`Unsupported worker document element: ${tagName}`);
+          }
+
+          return new OffscreenCanvas(1, 1);
+        },
       },
-    },
-  });
+    });
+  }
 }
 
 async function toImageBitmapInWorker(source: unknown): Promise<ImageBitmap> {
@@ -166,7 +181,7 @@ async function getOcr(id: string, language: OcrLanguage): Promise<PaddleOcrInsta
   let ocrPromise = ocrPromises.get(paddleLanguage);
 
   if (!ocrPromise) {
-    installWorkerCanvasDocumentShim();
+    installWorkerCanvasDomShim();
 
     const options: PaddleOCRCreateOptions = {
       lang: paddleLanguage,
