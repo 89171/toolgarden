@@ -65,6 +65,23 @@ const OCR_PREDICT_PARAMS: OcrRuntimeParamsInput = {
 
 const ocrPromises = new Map<string, Promise<PaddleOcrInstance>>();
 
+function installWorkerCanvasDocumentShim() {
+  if (typeof document !== 'undefined' || typeof OffscreenCanvas === 'undefined') return;
+
+  Object.defineProperty(globalThis, 'document', {
+    configurable: true,
+    value: {
+      createElement(tagName: string) {
+        if (tagName.toLowerCase() !== 'canvas') {
+          throw new Error(`Unsupported worker document element: ${tagName}`);
+        }
+
+        return new OffscreenCanvas(1, 1);
+      },
+    },
+  });
+}
+
 async function toImageBitmapInWorker(source: unknown): Promise<ImageBitmap> {
   if (typeof ImageBitmap !== 'undefined' && source instanceof ImageBitmap) return source;
   if (source instanceof Blob) return createImageBitmap(source);
@@ -149,6 +166,8 @@ async function getOcr(id: string, language: OcrLanguage): Promise<PaddleOcrInsta
   let ocrPromise = ocrPromises.get(paddleLanguage);
 
   if (!ocrPromise) {
+    installWorkerCanvasDocumentShim();
+
     const options: PaddleOCRCreateOptions = {
       lang: paddleLanguage,
       ocrVersion: OCR_VERSION,
