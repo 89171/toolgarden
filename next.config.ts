@@ -3,7 +3,7 @@ import path from 'path';
 import securityHeaders from './lib/security/static-headers.json';
 
 const nextIntlRequestConfig = './i18n/request.ts';
-const paddleOcrOrtBundle = './node_modules/onnxruntime-web/dist/ort.bundle.min.mjs';
+const paddleOcrOrtExternal = './node_modules/onnxruntime-web/dist/ort.min.mjs';
 const emptyModule = './lib/shims/empty-module.ts';
 const sharedSecurityHeaders = securityHeaders as Array<{ key: string; value: string }>;
 
@@ -60,17 +60,26 @@ const nextConfig: NextConfig = {
     resolveAlias: {
       'next-intl/config': nextIntlRequestConfig,
       fs: emptyModule,
-      'ort.bundle.min.mjs': paddleOcrOrtBundle,
+      'onnxruntime-web': paddleOcrOrtExternal,
+      'ort.bundle.min.mjs': paddleOcrOrtExternal,
     },
   },
   webpack(config) {
+    config.resolve.conditionNames = [
+      'onnxruntime-web-use-extern-wasm',
+      ...(config.resolve.conditionNames || []),
+    ];
     config.resolve.alias['next-intl/config'] = path.resolve(
       config.context,
       nextIntlRequestConfig,
     );
+    config.resolve.alias['onnxruntime-web'] = path.resolve(
+      config.context,
+      paddleOcrOrtExternal,
+    );
     config.resolve.alias['ort.bundle.min.mjs'] = path.resolve(
       config.context,
-      paddleOcrOrtBundle,
+      paddleOcrOrtExternal,
     );
     config.resolve.fallback = {
       ...config.resolve.fallback,

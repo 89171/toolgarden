@@ -179,6 +179,24 @@ function pruneNextSegmentPrefetchFiles() {
   return removedFiles;
 }
 
+function pruneBundledOrtWasmFiles() {
+  const mediaDir = path.join(outDir, '_next/static/media');
+  if (!fs.existsSync(mediaDir)) return 0;
+
+  let removedFiles = 0;
+
+  for (const file of walkFiles(mediaDir)) {
+    const filename = path.basename(file);
+
+    if (filename.startsWith('ort-wasm-') && filename.endsWith('.wasm')) {
+      fs.rmSync(file);
+      removedFiles += 1;
+    }
+  }
+
+  return removedFiles;
+}
+
 function getExportFileCount() {
   return walkFiles(outDir).length;
 }
@@ -193,6 +211,7 @@ const updatedReferences = removeSourceMapComments(walkFiles(outDir));
 writeStaticHeaders();
 const removedRedirectsFile = removeStaticRedirectsFile();
 const prunedNextPrefetchFiles = pruneNextSegmentPrefetchFiles();
+const prunedBundledOrtWasmFiles = pruneBundledOrtWasmFiles();
 const copiedPublicHtmlFiles = copyPublicRootHtmlFiles();
 const serviceWorkerCacheName = stampServiceWorkerCacheName();
 
@@ -204,5 +223,5 @@ if (remainingMaps.length > 0) {
 const exportFileCount = getExportFileCount();
 
 console.log(
-  `Hardened static export: removed ${removedMaps} source map file(s), stripped ${updatedReferences} source map reference(s), wrote out/_headers, ${removedRedirectsFile ? 'removed stale out/_redirects' : 'confirmed out/_redirects is absent'}, pruned ${prunedNextPrefetchFiles} Next segment prefetch file(s), copied ${copiedPublicHtmlFiles} root public HTML file(s), service worker cache ${serviceWorkerCacheName ?? 'not stamped (sw.js missing)'}, final file count ${exportFileCount}.`
+  `Hardened static export: removed ${removedMaps} source map file(s), stripped ${updatedReferences} source map reference(s), wrote out/_headers, ${removedRedirectsFile ? 'removed stale out/_redirects' : 'confirmed out/_redirects is absent'}, pruned ${prunedNextPrefetchFiles} Next segment prefetch file(s), pruned ${prunedBundledOrtWasmFiles} bundled ORT wasm file(s), copied ${copiedPublicHtmlFiles} root public HTML file(s), service worker cache ${serviceWorkerCacheName ?? 'not stamped (sw.js missing)'}, final file count ${exportFileCount}.`
 );
