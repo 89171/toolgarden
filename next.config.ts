@@ -3,7 +3,7 @@ import path from 'path';
 import securityHeaders from './lib/security/static-headers.json';
 
 const nextIntlRequestConfig = './i18n/request.ts';
-const paddleOcrOrtExternal = './node_modules/onnxruntime-web/dist/ort.min.mjs';
+const paddleOcrOrtExternal = './node_modules/onnxruntime-web/dist/ort.wasm.min.mjs';
 const emptyModule = './lib/shims/empty-module.ts';
 const sharedSecurityHeaders = securityHeaders as Array<{ key: string; value: string }>;
 

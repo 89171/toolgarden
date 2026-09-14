@@ -29,6 +29,9 @@ interface OcrWorkerRequest {
 }
 
 type PaddleOcrInstance = Awaited<ReturnType<typeof PaddleOCR.create>>;
+type OrtWasmPaths = PaddleOCRCreateOptions['ortOptions'] extends { wasmPaths?: infer Paths }
+  ? Paths
+  : never;
 
 const workerScope = self as unknown as {
   location: Location;
@@ -40,6 +43,10 @@ const workerScope = self as unknown as {
 };
 
 const ONNX_WASM_PUBLIC_PATH = `${workerScope.location.origin}/models/paddleocr/onnxruntime-web/`;
+const ONNX_WASM_PATHS = {
+  mjs: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.mjs`,
+  wasm: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.wasm`,
+};
 const OCR_VERSION = 'PP-OCRv5';
 const MIN_RECOGNITION_SCORE = 0.28;
 const OCR_PREDICT_PARAMS: OcrRuntimeParamsInput = {
@@ -95,7 +102,7 @@ async function getOcr(id: string, language: OcrLanguage): Promise<PaddleOcrInsta
       unsupportedBehavior: 'ignore',
       ortOptions: {
         backend: 'wasm',
-        wasmPaths: ONNX_WASM_PUBLIC_PATH,
+        wasmPaths: ONNX_WASM_PATHS as unknown as OrtWasmPaths,
         numThreads: 1,
         simd: true,
         proxy: false,
