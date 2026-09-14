@@ -1,6 +1,6 @@
 {
     "name": "json-toolkit",
-    "installCommand": "npm install",
+    "installCommand": "npm install --legacy-peer-deps",
     "assets": {
       "directory": "./out",
       "notFoundStrategy": "404Page"
