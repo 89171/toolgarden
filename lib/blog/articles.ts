@@ -3,6 +3,7 @@ import { audioBlogArticles } from './audio-articles';
 import { audioStemGuideArticles } from './audio-stem-guides';
 import { harnessEngineeringArticles } from './harness-engineering-articles';
 import { implementationEngineeringArticles } from './implementation-engineering-articles';
+import { ocrEngineeringArticles } from './ocr-engineering-articles';
 import { creativeToolEngineeringArticles } from './creative-tool-engineering-articles';
 import { topicClusterBlogArticles } from './topic-cluster-articles';
 import { growthSeoBlogArticles } from './growth-seo-articles';
@@ -188,6 +189,7 @@ export const blogArticles: BlogArticle[] = [
   ...audioStemGuideArticles,
   ...seoOptimizationGuideArticles,
   ...implementationEngineeringArticles,
+  ...ocrEngineeringArticles,
   ...creativeToolEngineeringArticles,
   ...topicClusterBlogArticles,
   ...growthSeoBlogArticles,

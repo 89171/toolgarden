@@ -1102,13 +1102,6 @@ Canonical examples:
 - Summary: Build browser speech recognition with Transformers.js, ONNX WebAssembly, model caching, chunked decoding, microphone snapshots, and honest privacy boundaries.
 - Published: 2026-07-22; updated: 2026-07-22
 
-### How to Build Browser OCR with ONNX Runtime Web
-- English: https://toolgarden.xyz/en/blog/build-browser-ocr-with-onnx-runtime-web
-- Chinese: https://toolgarden.xyz/zh/blog/build-browser-ocr-with-onnx-runtime-web
-- Chinese title: 怎么用 ONNX Runtime Web 实现浏览器本地 OCR
-- Summary: A complete browser OCR pipeline using a Web Worker, ONNX WASM, text detection, orientation classification, recognition, language-aware decoding, and reading-order merging.
-- Published: 2026-07-22; updated: 2026-07-22
-
 ### How to Merge Word and PowerPoint Files in the Browser with Open XML
 - English: https://toolgarden.xyz/en/blog/merge-word-ppt-in-browser-openxml
 - Chinese: https://toolgarden.xyz/zh/blog/merge-word-ppt-in-browser-openxml
@@ -1129,6 +1122,13 @@ Canonical examples:
 - Chinese title: 怎么在浏览器生成 ICO 和 ICNS 图标文件
 - Summary: Render a source image at multiple sizes, write ICO directory and DIB bytes, build big-endian ICNS chunks, and export portable icon packages without a server.
 - Published: 2026-07-22; updated: 2026-07-22
+
+### How We Built Browser OCR with PP-OCRv5 and PaddleOCR JS
+- English: https://toolgarden.xyz/en/blog/pp-ocrv5-paddleocr-js-browser-ocr-production
+- Chinese: https://toolgarden.xyz/zh/blog/pp-ocrv5-paddleocr-js-browser-ocr-production
+- Chinese title: 我们如何用 PP-OCRv5 和 PaddleOCR JS 实现浏览器本地 OCR
+- Summary: A production PP-OCRv5 browser implementation with Web Workers, PaddleOCR JS, ONNX Runtime Web, same-origin models, runtime pinning, heartbeat timeouts, and deployment checks.
+- Published: 2026-09-15; updated: 2026-09-15
 
 ### How to Build an Online Font Subsetter with fonteditor-core
 - English: https://toolgarden.xyz/en/blog/build-online-font-subsetter-fonteditor-core
@@ -1410,13 +1410,6 @@ Canonical examples:
 - Summary: Learn how to turn a picture into a clean icon for favicons, desktop shortcuts, apps, and PWA assets with the ToolGarden Image to Icon converter.
 - Published: 2026-07-17; updated: 2026-07-17
 
-### How to Convert JSON to a TypeScript Interface
-- English: https://toolgarden.xyz/en/blog/convert-json-to-typescript-interface
-- Chinese: https://toolgarden.xyz/zh/blog/convert-json-to-typescript-interface
-- Chinese title: 如何把 JSON 转成 TypeScript Interface？
-- Summary: Converting a JSON sample into TypeScript interfaces saves repetitive typing and gives frontend code better autocomplete and safer API handling.
-- Published: 2026-07-02; updated: 2026-07-03
-
 ### Unexpected token in JSON at position 0: Causes and Fixes
 - English: https://toolgarden.xyz/en/blog/fix-json-unexpected-token-error
 - Chinese: https://toolgarden.xyz/zh/blog/fix-json-unexpected-token-error
@@ -1438,33 +1431,12 @@ Canonical examples:
 - Summary: A JWT has three parts: Header, Payload, and Signature. Header and Payload are Base64URL encoded, not encrypted, so anyone with the token can decode them.
 - Published: 2026-07-02; updated: 2026-08-03
 
-### How to Generate QR Codes for URLs, Wi-Fi, and Contact Cards
-- English: https://toolgarden.xyz/en/blog/how-to-generate-qr-code-url-wifi-contact
-- Chinese: https://toolgarden.xyz/zh/blog/how-to-generate-qr-code-url-wifi-contact
-- Chinese title: 如何生成二维码？网址、Wi-Fi、联系方式二维码格式怎么写
-- Summary: A QR code can store URLs, plain text, Wi-Fi credentials, and contact cards. The key is writing the content in a format scanners understand.
-- Published: 2026-07-02; updated: 2026-07-03
-
 ### Why Can a QR Code Fail to Decode and How Can You Improve Scan Rate?
 - English: https://toolgarden.xyz/en/blog/why-qr-code-cannot-be-decoded
 - Chinese: https://toolgarden.xyz/zh/blog/why-qr-code-cannot-be-decoded
 - Chinese title: 二维码识别不出来是什么原因？如何提高识别率
 - Summary: QR codes fail to scan when the image is blurry, too small, cropped, low contrast, heavily compressed, too dense, or physically damaged.
 - Published: 2026-07-02; updated: 2026-08-03
-
-### How to Use a Text Diff Tool to Find Differences Quickly
-- English: https://toolgarden.xyz/en/blog/how-to-use-text-diff-tool
-- Chinese: https://toolgarden.xyz/zh/blog/how-to-use-text-diff-tool
-- Chinese title: 文本对比工具怎么用？如何快速找出两段内容差异
-- Summary: A text diff tool compares two blocks of text and highlights additions, removals, and edits. It is useful for configs, copy, logs, generated output, and more.
-- Published: 2026-07-02; updated: 2026-07-03
-
-### Word Count, Character Count, and Byte Count: What Is the Difference?
-- English: https://toolgarden.xyz/en/blog/word-count-character-byte-difference
-- Chinese: https://toolgarden.xyz/zh/blog/word-count-character-byte-difference
-- Chinese title: 字数、词数、字符数、字节数有什么区别？
-- Summary: Word count, character count, and byte count measure different things. Language, spaces, emoji, line breaks, and UTF-8 encoding all affect the result.
-- Published: 2026-07-02; updated: 2026-07-03
 
 ### How to Convert JSON to a TypeScript Interface
 - English: https://toolgarden.xyz/en/blog/json-to-typescript-interface-guide

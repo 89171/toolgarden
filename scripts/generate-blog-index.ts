@@ -1,9 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { blogArticles } from '../lib/blog/articles';
+import { isConsolidatedBlogSlug } from '../lib/blog/consolidations';
 
 const outputPath = path.join(process.cwd(), 'scripts', '.blog-index.generated.json');
-const index = blogArticles.map((article) => ({
+const index = blogArticles.filter((article) => !isConsolidatedBlogSlug(article.slug)).map((article) => ({
   slug: article.slug,
   publishedAt: article.publishedAt,
   updatedAt: article.updatedAt,

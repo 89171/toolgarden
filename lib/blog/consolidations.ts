@@ -10,6 +10,7 @@ export const blogConsolidations = {
   'how-to-use-text-diff-tool': 'text-diff-algorithm-add-delete-change',
   'word-count-character-byte-difference': 'chinese-english-word-count-character-byte',
   'how-to-generate-qr-code-url-wifi-contact': 'qr-code-subtitle-tools-guide',
+  'build-browser-ocr-with-onnx-runtime-web': 'pp-ocrv5-paddleocr-js-browser-ocr-production',
 } as const;
 
 export type ConsolidatedBlogSlug = keyof typeof blogConsolidations;
