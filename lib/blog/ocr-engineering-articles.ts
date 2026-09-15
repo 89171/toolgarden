@@ -1,9 +1,4 @@
-import type {
-  BlogArticle,
-  BlogArticleTranslation,
-  BlogBlock,
-  BlogFaqItem,
-} from './articles';
+import type { BlogArticle, BlogArticleTranslation, BlogBlock, BlogFaqItem } from './articles';
 
 interface ArticleSection {
   heading: string;
@@ -43,11 +38,7 @@ function buildTranslation(copy: ArticleCopy, summaryHeading: string): BlogArticl
     if (section.items?.length) blocks.push({ type: 'list', items: section.items });
   }
 
-  blocks.push(
-    copy.callout,
-    { type: 'heading', level: 2, text: summaryHeading },
-    { type: 'paragraph', text: copy.conclusion },
-  );
+  blocks.push(copy.callout, { type: 'heading', level: 2, text: summaryHeading }, { type: 'paragraph', text: copy.conclusion });
 
   return {
     title: copy.title,
@@ -74,6 +65,22 @@ worker.postMessage({
   file: { data, type: file.type, name: file.name, size: file.size },
   language,
 }, [data]);`;
+
+const workerCanvasCode = `function installWorkerCanvasDomShim() {
+  Object.defineProperty(globalThis, 'HTMLCanvasElement', {
+    configurable: true,
+    value: OffscreenCanvas,
+  });
+  Object.defineProperty(globalThis, 'document', {
+    configurable: true,
+    value: {
+      createElement(tagName: string) {
+        if (tagName.toLowerCase() !== 'canvas') throw new Error('Unsupported element');
+        return new OffscreenCanvas(1, 1);
+      },
+    },
+  });
+}`;
 
 const paddlePipelineCode = `const ocr = await PaddleOCR.create({
   lang: toPaddleLanguage(language),
@@ -128,10 +135,6 @@ function failTimeout() {
 }`;
 
 const assetCheckCode = `for (const asset of pinnedOcrAssets) {
-  if (!existsSync(asset.path)) {
-    throw new Error(\`Pinned OCR asset is missing: \${asset.path}\`);
-  }
-
   const actual = createHash('sha256')
     .update(readFileSync(asset.path))
     .digest('hex');
@@ -141,220 +144,281 @@ const assetCheckCode = `for (const asset of pinnedOcrAssets) {
   }
 }`;
 
-export const ocrEngineeringArticles: BlogArticle[] = [
-  {
-    slug: 'pp-ocrv5-paddleocr-js-browser-ocr-production',
-    publishedAt: '2026-09-15',
-    updatedAt: '2026-09-15',
-    translations: {
-      en: buildTranslation({
-        title: 'How We Built Browser OCR with PP-OCRv5 and PaddleOCR JS',
-        excerpt: 'A production PP-OCRv5 browser implementation with Web Workers, PaddleOCR JS, ONNX Runtime Web, same-origin models, runtime pinning, heartbeat timeouts, and deployment checks.',
-        metaTitle: 'PP-OCRv5 Browser OCR with PaddleOCR JS',
-        metaDescription: 'Build production browser OCR with PP-OCRv5, PaddleOCR JS, Web Workers, ONNX Runtime Web, same-origin models, heartbeat timeouts, and build checks.',
-        readingTime: '16 min read',
-        tags: ['PP-OCRv5', 'PaddleOCR JS', 'ONNX Runtime Web', 'Web Worker', 'browser OCR'],
-        relatedTools: [
-          { label: 'Image OCR', href: '/image/ocr', description: 'Recognize English, simplified Chinese, traditional Chinese, or Japanese text locally in the browser.' },
-          { label: 'Image Tools', href: '/image', description: 'Process, inspect, convert, and export images with browser-local workflows.' },
-        ],
-        lead: 'Running a model locally is the easy part of browser OCR. Shipping a reliable feature means delivering the model and its runtime as one compatible unit, adapting a DOM-oriented library to a Worker, keeping the page responsive, and distinguishing a slow first load from a genuinely stalled task.',
-        intro: 'ToolGarden now runs the PP-OCRv5 mobile detection and recognition pipeline through PaddleOCR JS inside a module Web Worker. The selected image never goes to an OCR API. This article explains the production architecture and the failures that shaped it, including a JavaScript/WASM ABI mismatch that originally appeared to users as a harmless timeout.',
-        sections: [
-          {
-            heading: 'Use the complete PP-OCRv5 pipeline instead of a single recognizer',
-            paragraphs: [
-              'A recognition network expects an already cropped text line. Real screenshots and document photos first need text detection, geometric cropping, resizing, normalization, recognition, dictionary decoding, confidence filtering, and reading-order reconstruction. Calling one recognizer over the full image loses both resolution and layout.',
-              'The production path delegates model-specific preprocessing and post-processing to PaddleOCR JS and uses the PP-OCRv5 mobile detection and recognition archives. This replaced an earlier hand-built ONNX pipeline. Reusing the maintained Paddle implementation reduced the thresholding, tensor shaping, crop handling, and decoder logic that the application had to own.',
-            ],
-            table: { type: 'table', headers: ['Layer', 'Responsibility', 'Production choice'], rows: [
-              ['Application', 'Requests, progress, errors, and result formatting', 'Typed messages and request IDs'],
-              ['PaddleOCR JS', 'Image conversion, model orchestration, and OCR post-processing', 'PP-OCRv5 pipeline'],
-              ['ONNX Runtime Web', 'Execute ONNX graphs in the browser', 'WASM, SIMD, one thread'],
-              ['Static delivery', 'Serve runtime and model bytes', 'Pinned same-origin assets'],
-            ] },
-          },
-          {
-            heading: 'Keep decoding and inference inside a module Worker',
-            paragraphs: [
-              'OpenCV preprocessing and ONNX inference are CPU-heavy enough to freeze input, scrolling, and React updates when they run on the main thread. The page therefore maintains a reusable module Worker. Every recognition request gets an ID, and responses that do not match that ID are ignored.',
-              'The image enters the Worker as a transferable ArrayBuffer. Ownership moves instead of cloning the whole file, which avoids a second large allocation. Temporary listeners are removed when the Promise settles, while a failed Worker is terminated and removed from the cache so the next click starts from a clean runtime.',
-            ],
-            code: { type: 'code', language: 'typescript', code: workerRequestCode },
-          },
-          {
-            heading: 'Bridge browser DOM assumptions inside the Worker',
-            paragraphs: [
-              'A Worker has Blob, createImageBitmap, ImageData, and OffscreenCanvas, but it does not have document, HTMLCanvasElement, HTMLImageElement, or HTMLVideoElement. Some image libraries still perform instanceof checks against those globals even when the actual source is a Blob. That caused the sequence of document is not defined and HTMLImageElement is not defined failures.',
-              'The Worker installs a narrow compatibility shim before PaddleOCR initializes. Canvas creation maps to OffscreenCanvas, image decoding uses createImageBitmap, and the custom sourceToMat adapter draws into a 2D offscreen context before calling OpenCV matFromImageData. The adapter returns a dispose function that deletes the Mat and closes the ImageBitmap, because WASM and bitmap memory should not wait for ordinary JavaScript garbage collection.',
-            ],
-            items: [
-              'Only emulate the DOM members the dependency actually reads.',
-              'Reject unsupported source types instead of creating a broad fake document.',
-              'Delete every OpenCV Mat and close every ImageBitmap after use.',
-              'Treat OffscreenCanvas support as a browser capability requirement.',
-            ],
-          },
-          {
-            heading: 'Configure PP-OCRv5 and ONNX Runtime explicitly',
-            paragraphs: [
-              'The detection and recognition archive URLs are passed explicitly instead of allowing the package to discover remote defaults. UI languages map to Paddle language identifiers, while OCR instances are cached by language. The first request pays the initialization cost and later requests reuse the prepared pipeline.',
-              'ONNX Runtime uses its WASM backend with SIMD enabled, proxy mode disabled, and one thread. A single thread works without cross-origin isolation and is easier to deploy on static hosting. The 1280-pixel detection limit retains useful text detail; relaxed detection thresholds reduce missed small text, while the recognition score threshold removes weak output.',
-            ],
-            code: { type: 'code', language: 'typescript', code: paddlePipelineCode },
-          },
-          {
-            heading: 'Ship model and runtime files from the same origin',
-            paragraphs: [
-              'Depending on a third-party model host makes OCR availability depend on CORS policy, regional routing, CDN uptime, and whether that host keeps the same files forever. The PP-OCRv5 detection and recognition archives are therefore published under the application model path. They are about 4.8 MB and 16.7 MB, so each remains below the hosting platform single-file limit.',
-              'The ONNX Runtime JavaScript entry and WASM loader must also be delivered as a matched set. Their APIs form an ABI. During debugging, a hoisted 1.21 JavaScript entry loaded a 1.24.3 WASM binary and failed with _OrtGetInputName is not a function. The UI only showed OCR worker timed out because no result message escaped failed initialization. Vendoring the exact 1.24.3 browser entry removed dependency-hoisting ambiguity.',
-            ],
-            table: { type: 'table', headers: ['Asset', 'Delivery rule', 'Reason'], rows: [
-              ['PP-OCRv5 detection model', 'Same-origin static file', 'No third-party runtime dependency'],
-              ['PP-OCRv5 recognition model', 'Same-origin static file', 'Predictable caching and availability'],
-              ['ORT JavaScript entry', 'Vendored exact version', 'Prevents package-hoisting drift'],
-              ['ORT MJS and WASM', 'Pinned matching pair', 'Preserves JS/WASM ABI compatibility'],
-            ] },
-          },
-          {
-            heading: 'Model progress, inactivity, and total duration are different clocks',
-            paragraphs: [
-              'A single four-minute timer looked simple but was semantically wrong. On a slow first visit, model download, archive extraction, OpenCV startup, and session compilation can take a long time while the task remains healthy. Conversely, a dead Worker should not occupy the UI until a generous total timer expires.',
-              'The Worker now emits a progress heartbeat every ten seconds around long model initialization and prediction calls. The page resets a three-minute inactivity timer whenever a matching message arrives. It also maintains separate hard limits for the model and processing phases. This permits slow but active work while still bounding a task that keeps emitting stale heartbeats forever.',
-            ],
-            code: { type: 'code', language: 'typescript', code: heartbeatCode },
-          },
-          {
-            heading: 'Convert Paddle results into a stable application contract',
-            paragraphs: [
-              'Library output is translated into an application-owned discriminated union. A successful response contains plain text, individual blocks, confidence, axis-aligned boxes, source dimensions, and duration. Failures use stable codes such as model_load_failed, worker_timeout, recognition_failed, and no_text_detected, so the UI can localize messages without parsing exception strings.',
-              'Paddle polygons are reduced to display boxes, blank and low-confidence items are removed, and remaining blocks are grouped into rows using vertical center and average line height. Each row is sorted left to right and rows are sorted top to bottom before their text is joined with newlines. This is deliberately modest layout reconstruction: predictable for common documents, but not a claim of perfect table or multi-column recovery.',
-            ],
-          },
-          {
-            heading: 'Make deployment verify the OCR supply chain',
-            paragraphs: [
-              'Pinning package.json is not enough when static binaries can be copied, cached, or replaced independently. The production hardening step computes SHA-256 for the vendored ONNX Runtime entry, its MJS and WASM files, and both PP-OCRv5 archives. A missing or changed asset fails the build instead of producing a deployment that breaks only after a user uploads an image.',
-              'The export also checks hosting limits and stamps the Service Worker cache name from the built static contents. Without a content-derived cache generation, an old Worker bundle can survive a deployment under a stable chunk URL and continue reporting errors after the source has been fixed.',
-            ],
-            code: { type: 'code', language: 'javascript', code: assetCheckCode },
-          },
-        ],
-        callout: { type: 'callout', title: 'Run the production PP-OCRv5 pipeline', text: 'Upload a screenshot or document photo, choose a language, and watch the model and recognition stages run locally without sending the image to an OCR API.', href: '/image/ocr', linkLabel: 'Open Image OCR' },
-        conclusion: 'Reliable browser OCR is a systems problem as much as a model problem. PP-OCRv5 supplies recognition quality, while the surrounding engineering supplies responsiveness, deterministic assets, ABI compatibility, recoverable failures, truthful progress, and deployment safety. Treating those pieces as one pipeline is what turns a local demo into a usable product.',
-        faq: [
-          { question: 'Does the selected image leave the browser?', answer: 'No. The application downloads model and runtime assets, then transfers the image bytes to a Worker in the same page. It does not post the image to a remote OCR service.' },
-          { question: 'Why use a Web Worker for OCR?', answer: 'Image preprocessing, OpenCV operations, and ONNX inference are CPU-heavy. A Worker keeps the main thread responsive and allows OffscreenCanvas preprocessing away from React rendering.' },
-          { question: 'Why not use a fixed total timeout?', answer: 'A slow first load may still be making progress, while a crashed Worker may be completely silent. Heartbeats plus inactivity and phase limits distinguish those cases and give each one the correct recovery behavior.' },
-          { question: 'Why must ONNX Runtime JavaScript and WASM versions match?', answer: 'The JavaScript wrapper calls exported functions in the WASM binary. Different releases can expose different symbols and calling conventions, so mixing versions can fail during session initialization even though both files load successfully.' },
-          { question: 'Why self-host the PP-OCRv5 models?', answer: 'Same-origin assets remove runtime dependence on a third-party host, CORS configuration, regional routing, and mutable remote files. They also make cache policy and integrity verification part of the application deployment.' },
-          { question: 'Will it preserve tables and document layout?', answer: 'It returns text blocks and approximate reading order, not a full document reconstruction. Tables, columns, handwriting, curved text, perspective distortion, and low-contrast photos still require review or a more specialized pipeline.' },
-        ],
-      }, 'Key takeaways'),
-      zh: buildTranslation({
-        title: '我们如何用 PP-OCRv5 和 PaddleOCR JS 实现浏览器本地 OCR',
-        excerpt: '一套可用于生产环境的 PP-OCRv5 浏览器实现，涵盖 Web Worker、PaddleOCR JS、ONNX Runtime Web、模型同源托管、运行时锁定、心跳超时和部署校验。',
-        metaTitle: 'PP-OCRv5 浏览器 OCR 技术实现',
-        metaDescription: '介绍生产级浏览器 OCR：PP-OCRv5、PaddleOCR JS、Web Worker、ONNX Runtime Web、模型同源托管、心跳超时与构建校验。',
-        readingTime: '约 16 分钟阅读',
-        tags: ['PP-OCRv5', 'PaddleOCR JS', 'ONNX Runtime Web', 'Web Worker', '浏览器 OCR'],
-        relatedTools: [
-          { label: '图片 OCR', href: '/image/ocr', description: '在浏览器本地识别英文、简体中文、繁体中文或日文。' },
-          { label: '图片工具', href: '/image', description: '通过浏览器本地流程处理、检查、转换和导出图片。' },
-        ],
-        lead: '让模型在浏览器里跑起来，只是本地 OCR 最容易的一步。真正稳定的功能还要把模型和运行时作为一个兼容整体交付，让偏向 DOM 的库适配 Worker，保持页面响应，并能区分首次加载较慢和任务已经失去响应。',
-        intro: 'ToolGarden 目前通过 PaddleOCR JS，在 module Web Worker 中运行 PP-OCRv5 移动端检测与识别产线，用户选择的图片不会提交给 OCR API。本文基于真实生产代码，介绍这套架构以及排障过程中暴露的问题，包括一个最终表现为普通超时的 JavaScript/WASM ABI 不匹配。',
-        sections: [
-          {
-            heading: '使用完整 PP-OCRv5 产线，而不是单独识别模型',
-            paragraphs: [
-              '识别网络接收的是已经裁好的文本行。真实截图和文档照片还需要先完成文本检测、几何裁剪、尺寸调整、归一化、文字识别、字典解码、置信度过滤和阅读顺序重建。直接对整张图调用一个识别模型，会同时损失文字分辨率和版面结构。',
-              '生产实现把与模型强相关的预处理和后处理交给 PaddleOCR JS，并使用 PP-OCRv5 移动端检测与识别模型。这套方案替代了早期手写的 ONNX 流水线，应用不再自己维护大量阈值处理、张量整形、裁剪和解码代码。',
-            ],
-            table: { type: 'table', headers: ['层级', '职责', '生产实现'], rows: [
-              ['应用层', '请求、进度、错误和结果格式', '类型化消息与请求 ID'],
-              ['PaddleOCR JS', '图片转换、模型编排和 OCR 后处理', 'PP-OCRv5 完整产线'],
-              ['ONNX Runtime Web', '在浏览器执行 ONNX 图', 'WASM、SIMD、单线程'],
-              ['静态资源交付', '提供运行时和模型文件', '锁定版本的同源资源'],
-            ] },
-          },
-          {
-            heading: '把图片解码与推理留在 module Worker',
-            paragraphs: [
-              'OpenCV 预处理和 ONNX 推理都足以阻塞输入、滚动和 React 更新，因此页面只维护一个可复用的 module Worker。每次识别都会生成请求 ID，不匹配当前 ID 的响应不会结束错误的 Promise。',
-              '图片以可转移 ArrayBuffer 进入 Worker，所有权直接转移，避免结构化克隆再复制一份大文件。请求结束时移除临时监听器；如果 Worker 崩溃或超时，则终止实例并清空缓存，让下一次点击从干净的运行时重新开始。',
-            ],
-            code: { type: 'code', language: 'typescript', code: workerRequestCode },
-          },
-          {
-            heading: '在 Worker 中补齐必要的 DOM 边界',
-            paragraphs: [
-              'Worker 有 Blob、createImageBitmap、ImageData 和 OffscreenCanvas，却没有 document、HTMLCanvasElement、HTMLImageElement 或 HTMLVideoElement。部分图片库即使输入是 Blob，也会先对这些浏览器全局对象做 instanceof 检查，这正是 document is not defined 和 HTMLImageElement is not defined 两类报错的来源。',
-              'PaddleOCR 初始化前，Worker 会安装一层很窄的兼容适配：canvas 创建映射到 OffscreenCanvas，图片通过 createImageBitmap 解码，自定义 sourceToMat 把像素画入离屏 2D context，再调用 OpenCV 的 matFromImageData。适配器同时返回 dispose，负责删除 Mat 并关闭 ImageBitmap，因为 WASM 和位图内存不能只等待普通 JavaScript 垃圾回收。',
-            ],
-            items: [
-              '只模拟依赖真正读取的 DOM 成员。',
-              '不支持的图片来源直接拒绝，不伪造完整 document。',
-              '每个 OpenCV Mat 都要 delete，每个 ImageBitmap 都要 close。',
-              '把 OffscreenCanvas 明确列为浏览器能力要求。',
-            ],
-          },
-          {
-            heading: '显式配置 PP-OCRv5 和 ONNX Runtime',
-            paragraphs: [
-              '检测与识别模型地址全部显式传入，不让依赖包自行发现远程默认文件。界面语言映射成 Paddle 的语言标识，OCR 实例按语言缓存，所以第一张图片承担初始化成本，后续请求直接复用准备好的产线。',
-              'ONNX Runtime 使用 WASM 后端，开启 SIMD，关闭 proxy，并固定为一个线程。单线程不要求跨源隔离，在静态托管环境更容易部署，内存表现也更可控。检测最长边设为 1280，配合偏宽松的检测阈值保留小字；识别置信度阈值再过滤非常不可靠的结果。',
-            ],
-            code: { type: 'code', language: 'typescript', code: paddlePipelineCode },
-          },
-          {
-            heading: '模型与运行时全部改为同源交付',
-            paragraphs: [
-              '运行时依赖第三方模型站点，会把 OCR 可用性同时交给 CORS、区域网络、CDN 状态以及对方是否长期保留同一文件。PP-OCRv5 检测和识别归档因此发布在应用自己的模型路径下，大小约为 4.8 MB 和 16.7 MB，均低于托管平台的单文件限制。',
-              'ONNX Runtime 的 JavaScript 入口与 WASM loader 也必须作为匹配的一组资源交付。两者之间存在 ABI 契约：排障时，依赖提升让 1.21 的 JavaScript 入口加载了 1.24.3 的 WASM，最终报出 _OrtGetInputName is not a function。由于初始化没有返回结果消息，界面只显示 OCR worker timed out。把准确的 1.24.3 浏览器入口内置到仓库后，依赖提升不再能改变运行时组合。',
-            ],
-            table: { type: 'table', headers: ['资源', '交付规则', '目的'], rows: [
-              ['PP-OCRv5 检测模型', '同源静态文件', '不依赖第三方模型站'],
-              ['PP-OCRv5 识别模型', '同源静态文件', '缓存和可用性可控'],
-              ['ORT JavaScript 入口', '内置精确版本', '避免依赖提升造成漂移'],
-              ['ORT MJS 与 WASM', '锁定为匹配组合', '维持 JS/WASM ABI 兼容'],
-            ] },
-          },
-          {
-            heading: '模型进度、无响应和总时长是三种时钟',
-            paragraphs: [
-              '一个固定四分钟计时器看似简单，语义却不正确。首次访问时，模型下载、归档解包、OpenCV 启动和 session 编译可能很慢，但任务仍在健康推进；反过来，已经崩溃的 Worker 不应该等到一个宽松总时限结束才释放界面。',
-              'Worker 现在会在模型初始化和 predict 这类长操作外，每十秒发送一次进度心跳。页面收到当前请求的任意消息后，就重置三分钟无响应计时器；同时，模型阶段和处理阶段各有独立硬上限。这样既允许缓慢但仍活跃的任务继续，也能阻止只发送陈旧心跳的异常任务无限运行。',
-            ],
-            code: { type: 'code', language: 'typescript', code: heartbeatCode },
-          },
-          {
-            heading: '把 Paddle 结果转换成稳定的应用契约',
-            paragraphs: [
-              '依赖库输出会转换成应用自己拥有的判别联合类型。成功结果包含纯文本、各文字块、置信度、轴对齐坐标框、原图尺寸和耗时；失败则使用 model_load_failed、worker_timeout、recognition_failed、no_text_detected 等稳定代码，界面不需要解析异常字符串就能显示对应的本地化提示。',
-              'Paddle 多边形会转换成展示用矩形框，空文本和低置信度结果会被过滤。剩余文本按垂直中心和平均行高归到不同行内，每行从左到右排序，各行再从上到下排序，最后用换行合并。这是一种克制的版面重建：常规文档结果稳定，但不会假装能完美还原表格或复杂分栏。',
-            ],
-          },
-          {
-            heading: '让部署过程校验 OCR 供应链',
-            paragraphs: [
-              '只在 package.json 锁定版本还不够，因为静态二进制文件可能被单独复制、缓存或替换。生产构建会对内置 ONNX Runtime 入口、MJS、WASM，以及两个 PP-OCRv5 模型归档计算 SHA-256。任一资源缺失或内容变化都会让构建失败，而不是部署一个只有用户上传图片后才会暴露问题的版本。',
-              '静态导出还会检查托管文件限制，并根据实际构建内容给 Service Worker 缓存名打指纹。如果缓存代际不是由内容决定，旧 Worker bundle 可能在部署后继续命中稳定 chunk URL，让已经修复的代码看起来仍然报错。',
-            ],
-            code: { type: 'code', language: 'javascript', code: assetCheckCode },
-          },
-        ],
-        callout: { type: 'callout', title: '运行生产版 PP-OCRv5 产线', text: '上传截图或文档照片，选择识别语言，观察模型和识别阶段在本地执行，图片不会发送给 OCR API。', href: '/image/ocr', linkLabel: '打开图片 OCR' },
-        conclusion: '可靠的浏览器 OCR 既是模型问题，也是系统工程问题。PP-OCRv5 提供识别质量，外围工程则负责页面响应、资源确定性、ABI 兼容、错误恢复、真实进度和部署安全。只有把这些部分视为同一条产线，本地模型演示才能变成真正可用的产品。',
-        faq: [
-          { question: '用户选择的图片会离开浏览器吗？', answer: '不会。应用只从网络下载模型和运行时资源，图片字节会被转移到同一页面的 Worker，不会提交给远程 OCR 服务。' },
-          { question: '为什么要把 OCR 放进 Web Worker？', answer: '图片预处理、OpenCV 操作和 ONNX 推理都很消耗 CPU。Worker 能保持主线程响应，并允许使用 OffscreenCanvas 远离 React 渲染完成像素处理。' },
-          { question: '为什么不能只设置一个固定总超时？', answer: '缓慢的首次加载可能一直有进展，而崩溃的 Worker 可能完全沉默。心跳、无响应时限和阶段硬上限组合后，才能区分这两种情况并执行正确恢复。' },
-          { question: '为什么 ONNX Runtime JavaScript 和 WASM 必须版本一致？', answer: 'JavaScript 包装层会调用 WASM 导出的函数。不同版本可能使用不同符号和调用约定，即使两个文件都能成功下载，也可能在创建 session 时失败。' },
-          { question: '为什么要自己托管 PP-OCRv5 模型？', answer: '同源资源消除了第三方站点、CORS、区域网络和远程文件变化带来的运行时风险，也让缓存策略和完整性校验能够进入应用自己的部署流程。' },
-          { question: 'OCR 能保留表格和原始文档版式吗？', answer: '当前输出包含文字块和近似阅读顺序，不是完整文档重建。表格、分栏、手写、曲线文字、透视变形和低对比照片仍需要人工检查或更专业的产线。' },
-        ],
-      }, '总结'),
-    },
+export const ocrEngineeringArticles: BlogArticle[] = [{
+  slug: 'pp-ocrv5-paddleocr-js-browser-ocr-production',
+  publishedAt: '2026-09-15',
+  updatedAt: '2026-09-15',
+  translations: {
+    en: buildTranslation({
+      title: 'OCR Technology Choices and a Production PP-OCRv5 Implementation',
+      excerpt: 'Compare cloud OCR, PaddleOCR, Tesseract, and custom ONNX pipelines, then follow a real PP-OCRv5 implementation from model delivery and Workers to debugging and deployment.',
+      metaTitle: 'OCR Choices and PP-OCRv5 Implementation',
+      metaDescription: 'Compare OCR architectures, choose by accuracy, privacy and deployment needs, then implement PP-OCRv5 with PaddleOCR JS, ONNX Runtime, Workers and reliable asset delivery.',
+      readingTime: '22 min read',
+      tags: ['OCR architecture', 'PP-OCRv5', 'PaddleOCR JS', 'ONNX Runtime', 'technical selection'],
+      relatedTools: [
+        { label: 'Image OCR', href: '/image/ocr', description: 'Run the PP-OCRv5 implementation described in this article on an image.' },
+        { label: 'Image Tools', href: '/image', description: 'Prepare, rotate, crop, resize, and inspect images before recognition.' },
+      ],
+      lead: 'There is no universally best OCR engine. The right choice depends on document complexity, language coverage, privacy constraints, traffic, latency, available infrastructure, and how much of the recognition pipeline a team is prepared to maintain.',
+      intro: 'This article starts with the decision rather than the code. It compares common OCR approaches, explains which environments each one fits, and then records how ToolGarden implemented PP-OCRv5 with PaddleOCR JS and ONNX Runtime. The browser is the concrete case study, not a restriction on the conclusions: the same evaluation method applies to servers, desktop applications, mobile clients, internal systems, and public web products.',
+      sections: [
+        {
+          heading: 'Start with requirements, not a model name',
+          paragraphs: [
+            'OCR quality is not one number. A model can read a clean English scan well and fail on Chinese storefront text, rotated receipts, dense tables, handwriting, or a low-light phone photo. Before selecting a stack, build a representative evaluation set and define what a useful output means: plain text, positioned blocks, tables, key-value fields, searchable PDF, or a fully reconstructed document.',
+            'Operational constraints are equally important. Ask whether images may leave the device, whether the product must work offline, how much first-load download is acceptable, which browsers or operating systems must be supported, whether GPUs are available, and who will update models and runtime binaries. These answers often eliminate more options than an accuracy demo does.',
+          ],
+          items: [
+            'Accuracy: languages, fonts, rotation, perspective, handwriting, tables, and small text.',
+            'Output: plain text, coordinates, reading order, structured fields, or layout recovery.',
+            'Operations: latency, throughput, cold start, memory, package size, and offline behavior.',
+            'Governance: upload policy, data region, retention, auditability, and vendor dependency.',
+            'Ownership: integration effort, model upgrades, preprocessing, post-processing, and testing.',
+          ],
+        },
+        {
+          heading: 'Compare the main OCR implementation routes',
+          paragraphs: [
+            'The useful comparison is not simply local versus cloud. A cloud document API, a Python PaddleOCR service, Tesseract, PaddleOCR JS, and a custom ONNX pipeline expose different abstraction levels. They move cost between infrastructure, network transfer, client resources, engineering time, and vendor dependency.',
+            'This table is a selection guide, not a universal ranking. Accuracy must be measured on the same images, languages, preprocessing, and output requirements. Comparing a cloud table parser with a local plain-text recognizer answers the wrong question.',
+          ],
+          table: { type: 'table', headers: ['Route', 'Best fit', 'Strengths', 'Costs and limits'], rows: [
+            ['Cloud OCR or document API', 'Forms, tables, IDs, receipts, rapid delivery', 'Managed scaling, structured extraction, little client compute', 'Uploads, recurring cost, latency, retention review, lock-in'],
+            ['PaddleOCR Python or native service', 'Servers, desktop backends, private infrastructure', 'Complete open pipeline, broad controls, easier GPU use', 'Native dependencies, service operations, larger deployment'],
+            ['PaddleOCR JS with PP-OCRv5', 'Web, Electron, offline-first, no-upload products', 'Local inference, reusable pipeline, static delivery', 'WASM speed, model download, browser memory and compatibility'],
+            ['Tesseract or Tesseract.js', 'Clean scans, simple layouts, established language packs', 'Mature ecosystem and predictable classic workflow', 'Usually weaker on scene text and complex layouts'],
+            ['Custom ONNX pipeline', 'Special models, hardware, or strict control', 'Maximum control over tensors, batching, and output', 'Highest pre/post-processing and compatibility maintenance'],
+          ] },
+        },
+        {
+          heading: 'Choose by environment and product boundary',
+          paragraphs: [
+            'When uploads are acceptable and structured tables or form semantics are required immediately, a managed document API is often the shortest path. When data must remain inside controlled infrastructure and GPU throughput matters, PaddleOCR Python or another native stack is usually a better server foundation than forcing a browser runtime onto the backend.',
+            'Electron can reuse JavaScript and WASM, while a desktop sidecar can run Python or C++. Mobile products should benchmark native runtimes and device acceleration. Tesseract remains reasonable for clean, predictable scans. A custom ONNX pipeline is justified only when the extra control solves a measured problem.',
+            'ToolGarden chose PaddleOCR JS with PP-OCRv5 because its boundary was explicit: static hosting, no image upload, no OCR backend, multilingual printed text, and an acceptable one-time model download. Under different constraints, the recommendation changes.',
+          ],
+        },
+        {
+          heading: 'Implementation path: establish a baseline first',
+          paragraphs: [
+            'Build a small golden set before writing adapters. Include screenshots, phone photos, simplified and traditional Chinese, English, Japanese, small type, rotation, low contrast, and at least one layout the product does not promise to preserve. Record expected text and critical fields rather than relying on visual impression.',
+            'Measure cold initialization, warm recognition, peak memory, model transfer size, detected blocks, and character or field accuracy. Run every candidate on the same originals. This is the only fair way to compare a website or model because preprocessing, detection, decoding, and reading order can matter as much as archive size.',
+          ],
+          table: { type: 'table', headers: ['Measurement', 'Why it matters', 'Test condition'], rows: [
+            ['Cold start', 'Includes runtime, download, extraction, and sessions', 'Fresh cache and slow network'],
+            ['Warm latency', 'Represents repeated use', 'Second and later images'],
+            ['Recognition quality', 'Shows substitutions, omissions, and ordering errors', 'Each language and image category'],
+            ['Resource use', 'Reveals mobile instability', 'Large image and many text boxes'],
+            ['Failure recovery', 'Confirms retry really works', 'Offline, corrupt asset, terminated Worker'],
+          ] },
+        },
+        {
+          heading: 'Implementation path: isolate expensive work and define a protocol',
+          paragraphs: [
+            'The page owns UI state, validation, progress, and localized errors. A module Worker owns decoding, OpenCV preprocessing, model initialization, inference, and result conversion. Every message carries an ID so stale progress cannot settle a newer request.',
+            'The file becomes a transferable ArrayBuffer, moving ownership instead of cloning a large image. Temporary listeners are removed on completion. A crashed or timed-out Worker is terminated and uncached so retry starts from clean WASM state.',
+          ],
+          code: { type: 'code', language: 'typescript', code: workerRequestCode },
+        },
+        {
+          heading: 'Implementation path: adapt decoding to the runtime',
+          paragraphs: [
+            'A Worker provides Blob, createImageBitmap, ImageData, and OffscreenCanvas, but not document or HTML element constructors. Some image dependencies still check those globals. That difference caused document is not defined and HTMLImageElement is not defined.',
+            'The adapter installs only the globals the dependency reads. Canvas maps to OffscreenCanvas; sourceToMat decodes a Blob, draws it offscreen, reads ImageData, and creates an OpenCV Mat. Disposal deletes the Mat and closes the bitmap. Node, Electron main processes, and native applications should replace this adapter with their own decoder rather than expanding the shim.',
+          ],
+          code: { type: 'code', language: 'typescript', code: workerCanvasCode },
+        },
+        {
+          heading: 'Implementation path: load PP-OCRv5 as one versioned unit',
+          paragraphs: [
+            'Exact detection and recognition assets are passed to PaddleOCR JS instead of relying on remote defaults. Languages map to Paddle identifiers and initialized OCR instances are cached by language. Detection and recognition batch sizes can be tuned separately.',
+            'ONNX Runtime uses WASM with SIMD, no proxy, and one thread. One thread avoids cross-origin-isolation requirements. The shown side limit and thresholds are product tuning values, not universal constants; tiny text, scene images, and mobile memory limits need their own benchmark.',
+          ],
+          code: { type: 'code', language: 'typescript', code: paddlePipelineCode },
+        },
+        {
+          heading: 'Implementation path: own the result contract',
+          paragraphs: [
+            'Library output is converted into an application-owned discriminated union. Success contains text, blocks, confidence, boxes, source dimensions, and duration. Failures use stable codes such as model_load_failed, worker_timeout, recognition_failed, and no_text_detected, so UI copy never parses exceptions.',
+            'Polygons become display boxes, weak items are filtered, and blocks are grouped into rows by vertical center and average height. Rows sort top to bottom and blocks left to right. This provides useful plain text, but it does not claim to reconstruct tables, columns, or original document styling.',
+          ],
+        },
+        {
+          heading: 'Important details: liveness, delivery, caching, and memory',
+          paragraphs: [
+            'A fixed timeout confuses slow progress with failure. The Worker sends a heartbeat every ten seconds around initialization and prediction. The page resets an inactivity timer on each matching message and maintains separate hard limits for model and processing phases. Every failure path discards the Worker, so retry is defined.',
+            'Self-hosted models remove third-party CORS and availability risk, but URLs, MIME types, cache updates, file limits, and first-load UX remain. ONNX Runtime JavaScript and WASM must come from the same release. OpenCV Mats, ImageBitmaps, URLs, listeners, timers, rejected initialization Promises, and Service Worker caches all require explicit lifecycle management.',
+          ],
+          code: { type: 'code', language: 'typescript', code: heartbeatCode },
+          items: [
+            'Pin package and binary versions together and inspect the final bundle.',
+            'Serve models, MJS, and WASM with stable URLs and correct content types.',
+            'Cache successful initialization but remove rejected Promises.',
+            'Limit image pixels before canvas allocation and avoid default concurrency.',
+            'Version Service Worker caches from built content, not a handwritten constant.',
+          ],
+        },
+        {
+          heading: 'Problems encountered and what they actually meant',
+          paragraphs: [
+            'Failures occurred at installation, bundling, asset delivery, Worker compatibility, runtime ABI, and caching layers. Treating every message as an isolated npm issue caused rework. The useful debugging move was to identify the layer before changing dependencies.',
+            'The final timeout was deceptive. A longer timer could never fix an incompatible runtime. A deterministic image with known text, sent through the production Worker and public asset paths, exposed the hidden _OrtGetInputName failure.',
+          ],
+          table: { type: 'table', headers: ['Symptom', 'Root cause', 'Durable fix'], rows: [
+            ['npm edgesOut failure', 'Installer dependency-tree failure', 'Use exact compatible dependencies and reproducible install mode'],
+            ['Cannot resolve ort.bundle.min.mjs', 'Expected runtime entry was unavailable', 'Alias a real browser entry from the selected release'],
+            ['No matching ORT version', 'Requested release did not exist', 'Verify the registry and pin a published version'],
+            ['WASM exceeded file limit', 'Wrong runtime variant entered output', 'Ship only required files and check build sizes'],
+            ['Dynamic MJS fetch failed', 'URL or module deployment was wrong', 'Use same-origin explicit URLs and verify responses'],
+            ['document or HTMLImageElement missing', 'DOM code ran inside a Worker', 'Provide a narrow OffscreenCanvas adapter'],
+            ['_OrtGetInputName missing', 'JavaScript and WASM ABIs differed', 'Vendor and checksum one matching runtime set'],
+            ['Worker timed out', 'Fixed timer hid initialization failure', 'Expose layer errors and use heartbeat liveness'],
+          ] },
+        },
+        {
+          heading: 'Verify the complete path, not only the build',
+          paragraphs: [
+            'Type checking cannot prove that archives download, MJS locates WASM, or a Worker decodes an image. Verification must use production public paths, cache behavior, Worker entry, and OCR API. Start with a generated image containing known text, then use the golden set for quality.',
+            'Test cold and warm caches, slow network, offline-after-cache, rotation, languages, large images, forced Worker termination, and retry. Validate deployments on a fresh origin or after clearing the Service Worker. Build-time SHA-256 checks prevent missing or mixed assets from reaching users.',
+          ],
+          code: { type: 'code', language: 'javascript', code: assetCheckCode },
+        },
+      ],
+      callout: { type: 'callout', title: 'Try the concrete PP-OCRv5 implementation', text: 'Run it on your own representative files and judge it against your accuracy, privacy, latency, and layout requirements.', href: '/image/ocr', linkLabel: 'Open Image OCR' },
+      conclusion: 'Choose OCR by task and operating boundary, not by model size or one demo. Cloud document APIs fit managed structured extraction. Native PaddleOCR fits controlled servers and GPU workloads. Tesseract remains useful for predictable scans. PaddleOCR JS with PP-OCRv5 fits local web delivery. In every route, preprocessing, runtime compatibility, result contracts, liveness, caching, memory, and end-to-end verification are parts of the OCR system. That decision trail is more reusable than any single code sample.',
+      faq: [
+        { question: 'Is PP-OCRv5 always more accurate than Tesseract or cloud OCR?', answer: 'No. Evaluate candidates on the same representative files and score the languages, layouts, and fields that matter to the product.' },
+        { question: 'Should a server project use PaddleOCR JS?', answer: 'Not by default. Servers with Python or native support can usually use the full PaddleOCR stack and acceleration more directly. JavaScript and WASM fit code sharing, sandboxing, Electron, or browser delivery.' },
+        { question: 'Does local OCR mean completely offline?', answer: 'Only after the application, runtime, models, and related assets are cached or bundled. First use normally requires a download.' },
+        { question: 'Why can a smaller model appear better?', answer: 'Detection, crop quality, vocabulary, decoding, thresholds, reading order, preprocessing, and quantization can matter more than archive size on a particular image.' },
+        { question: 'Why use a Worker?', answer: 'It isolates expensive image and WASM work from rendering and provides a boundary that can be terminated and recreated after failure.' },
+        { question: 'What must be checked after an OCR dependency update?', answer: 'Verify the deployed JavaScript, MJS, WASM, model hashes, URLs, MIME types, cold start, real recognition, retry, and Service Worker replacement.' },
+      ],
+    }, 'Summary'),
+    zh: buildTranslation({
+      title: 'OCR 技术选型与 PP-OCRv5 生产落地实践',
+      excerpt: '先对比云 OCR、PaddleOCR、Tesseract 与自研 ONNX 产线，再完整记录 PP-OCRv5 从模型交付、Worker 集成到故障排查和部署验证的实现路径。',
+      metaTitle: 'OCR 技术选型与 PP-OCRv5 落地实践',
+      metaDescription: '对比常见 OCR 技术方案，按准确率、隐私和部署条件完成选型，并记录 PP-OCRv5、PaddleOCR JS、ONNX Runtime 与 Worker 的生产实现。',
+      readingTime: '约 22 分钟阅读',
+      tags: ['OCR 技术选型', 'PP-OCRv5', 'PaddleOCR JS', 'ONNX Runtime', '工程实践'],
+      relatedTools: [
+        { label: '图片 OCR', href: '/image/ocr', description: '用实际图片运行本文介绍的 PP-OCRv5 实现。' },
+        { label: '图片工具', href: '/image', description: '识别前对图片进行旋转、裁剪、缩放和检查。' },
+      ],
+      lead: 'OCR 没有适用于所有场景的最佳引擎。正确选择取决于文档复杂度、语言、隐私边界、流量、延迟、基础设施，以及团队愿意维护多少识别流程。',
+      intro: '本文不从代码开始，而是先建立选型逻辑：对比常见 OCR 方案，说明它们分别适合什么环境，再记录 ToolGarden 如何使用 PaddleOCR JS、PP-OCRv5 和 ONNX Runtime 完成一次生产落地。浏览器只是本文的具体案例，不是结论的边界；同一套判断方法也适用于服务端、桌面应用、移动端、内部系统和公开网站。',
+      sections: [
+        {
+          heading: '先定义需求，不要先决定模型',
+          paragraphs: [
+            'OCR 准确率不是一个脱离场景的数字。同一个模型可能擅长清晰英文扫描件，却不适合中文店铺招牌、旋转小票、密集表格、手写内容或弱光手机照片。选型前应准备有代表性的测试集，并明确什么才算可用结果：纯文本、带坐标文字块、表格、键值字段、可搜索 PDF，还是完整文档重建。',
+            '运行约束同样重要。需要确认图片能否离开设备、是否必须离线、首次允许下载多大模型、支持哪些浏览器或操作系统、是否有 GPU、并发量有多大，以及由谁负责更新模型和运行时二进制文件。这些问题通常比一次准确率演示更能决定技术路线。',
+          ],
+          items: ['识别质量：语言、字体、旋转、透视、手写、表格与小字。', '输出要求：纯文本、坐标、阅读顺序、结构化字段或版面恢复。', '运行成本：延迟、吞吐、冷启动、内存、包体和离线能力。', '数据治理：上传策略、数据区域、保留周期、审计与供应商依赖。', '维护责任：集成、模型升级、预处理、后处理和测试由谁承担。'],
+        },
+        {
+          heading: '对比几条常见 OCR 技术路线',
+          paragraphs: [
+            '有价值的比较不能只分成本地和云端。云文档 API、PaddleOCR Python 服务、Tesseract、PaddleOCR JS 和自研 ONNX 流水线提供了不同抽象层，也分别把成本放在基础设施、网络传输、客户端资源、研发维护和供应商依赖上。',
+            '下表是选型参考，不是绝对排名。最终准确率必须在同一批图片、语言、预处理和输出要求下测量。拿云端表格解析器与本地纯文本模型直接比较，会因为任务不一致而得到没有意义的结论。',
+          ],
+          table: { type: 'table', headers: ['技术路线', '更适合的场景', '主要优势', '成本与限制'], rows: [
+            ['云 OCR 或文档 API', '复杂表单、表格、证件、小票和快速上线', '托管扩缩容、结构化能力成熟、客户端负担小', '文件上传、持续费用、网络延迟、留存审查、供应商锁定'],
+            ['PaddleOCR Python 或原生服务', '服务端、桌面后端、私有基础设施', '开源完整产线、可调能力强、更容易使用 GPU', '原生依赖、需要运维、部署体积较大'],
+            ['PaddleOCR JS 与 PP-OCRv5', '网页、Electron、离线优先和不上传产品', '本地推理、复用 Paddle 产线、可静态交付', 'WASM 性能、首次模型下载、浏览器内存与兼容性'],
+            ['Tesseract 或 Tesseract.js', '清晰扫描件、简单版式、已有语言包场景', '生态成熟、经典 OCR 流程稳定', '场景文字与复杂版式通常较弱，依赖预处理'],
+            ['自研 ONNX 流水线', '特殊模型、特殊硬件或强控制要求', '模型、张量、批处理与输出完全可控', '预处理、后处理和兼容性维护成本最高'],
+          ] },
+        },
+        {
+          heading: '根据运行环境和产品边界做选择',
+          paragraphs: [
+            '如果允许上传文件，并且必须快速获得表格结构、表单字段或文档语义，托管式文档 OCR API 往往是最短路径。如果数据必须留在受控基础设施内，而且需要 GPU 吞吐，PaddleOCR Python 或其他原生产线通常比强行把浏览器运行时搬到服务端更合适。',
+            'Electron 可以复用 JavaScript 与 WASM，桌面 sidecar 也可以运行 Python/C++。移动端应评估原生推理和设备加速。对于清晰、规则扫描件，只要实测达到要求，Tesseract 仍然合理。只有额外控制能解决明确问题时，才值得承担自研 ONNX 流水线的维护成本。',
+            'ToolGarden 选择 PaddleOCR JS 与 PP-OCRv5，是因为产品边界明确：静态网站、图片不上传、没有 OCR 后端、需要识别多语言印刷体，并且能接受首次模型下载。约束改变时，推荐方案也应改变。',
+          ],
+        },
+        {
+          heading: '实现路径一：先建立基准，再开始集成',
+          paragraphs: [
+            '编写适配代码前，先准备一组小而稳定的基准图片。至少包含清晰截图、手机拍照、简体中文、繁体中文、英文、日文、小字号、旋转、低对比度，以及一种产品明确不承诺还原的复杂版式。应记录期望文本和关键字段，不能只凭肉眼判断看起来不错。',
+            '同时测量首次初始化、缓存后识别、峰值内存、模型传输量、检测框数量，以及字符或关键字段准确率。所有候选方案必须使用相同原图比较。模型更大不保证更好，因为预处理、检测、裁剪、字典、解码和阅读顺序都会影响结果。',
+          ],
+          table: { type: 'table', headers: ['指标', '意义', '测试方式'], rows: [
+            ['冷启动', '包含运行时、模型下载、解包和 session 创建', '空缓存与慢速网络'], ['热启动耗时', '代表重复使用体验', '第二张及后续图片'], ['识别质量', '发现错字、漏字与顺序错误', '按语言和图片类型统计'], ['资源使用', '发现移动端不稳定', '大图与大量文本框'], ['错误恢复', '确认失败后能够重试', '断网、损坏资源、终止 Worker'],
+          ] },
+        },
+        {
+          heading: '实现路径二：隔离重计算并定义通信协议',
+          paragraphs: [
+            '页面负责 UI 状态、文件校验、进度展示和本地化错误；module Worker 负责图片解码、OpenCV 预处理、模型初始化、推理和结果转换。每条请求和响应都携带 ID，旧请求的延迟进度不能结束新请求。',
+            '文件转换成 ArrayBuffer 并加入 transfer list，所有权移动到 Worker，避免大图片再次克隆。任务结束后移除监听器。Worker 崩溃或超时时，终止实例并清空缓存，重试会创建干净运行时。',
+          ],
+          code: { type: 'code', language: 'typescript', code: workerRequestCode },
+        },
+        {
+          heading: '实现路径三：按运行环境适配图片解码',
+          paragraphs: [
+            'Web Worker 有 Blob、createImageBitmap、ImageData 和 OffscreenCanvas，却没有 document、HTMLCanvasElement、HTMLImageElement 或 HTMLVideoElement。部分图片依赖仍会检查这些对象，这就是 document is not defined 和 HTMLImageElement is not defined 的来源。',
+            '适配层只补充依赖实际读取的对象：canvas 映射到 OffscreenCanvas，sourceToMat 解码 Blob、绘制离屏画布、读取 ImageData 并创建 OpenCV Mat，dispose 删除 Mat 并关闭 bitmap。Node、Electron 主进程或原生应用应替换为各自的解码器，而不是扩大 DOM shim。',
+          ],
+          code: { type: 'code', language: 'typescript', code: workerCanvasCode },
+        },
+        {
+          heading: '实现路径四：把 PP-OCRv5 作为完整版本单元加载',
+          paragraphs: [
+            '应用显式传入检测和识别模型，不依赖远程默认地址。语言映射成 Paddle 标识，OCR 实例按语言缓存，检测与识别批量大小可以分别调节。',
+            'ONNX Runtime 使用 WASM、SIMD、单线程并关闭 proxy。单线程不要求跨源隔离。示例阈值是针对当前图片场景的调优结果，并非通用常量；小字、场景文字和移动端限制都需要重新基准测试。',
+          ],
+          code: { type: 'code', language: 'typescript', code: paddlePipelineCode },
+        },
+        {
+          heading: '实现路径五：在应用边界统一结果',
+          paragraphs: [
+            '依赖输出被转换成应用自己的判别联合类型。成功包含文本、文字块、置信度、坐标、图片尺寸和耗时；失败使用 model_load_failed、worker_timeout、recognition_failed、no_text_detected 等稳定代码，UI 不需要解析异常字符串。',
+            '多边形转换成展示矩形，过滤空内容和低置信度项，再按垂直中心和平均行高归并。行内从左到右，各行从上到下，最后用换行连接。结果适合纯文本复制，但不承诺重建表格、分栏和原文档样式。',
+          ],
+        },
+        {
+          heading: '需要注意：存活、交付、缓存和内存',
+          paragraphs: [
+            '固定总超时会混淆缓慢进展与真正失败。Worker 在初始化和识别期间每十秒发送心跳；页面收到消息后重置无响应计时器，并对模型和处理阶段设置独立硬上限。每条失败路径都丢弃 Worker，确保可以干净重试。',
+            '同源模型消除了第三方 CORS 和可用性风险，但 URL、MIME、缓存更新、文件限制和首次下载仍要治理。ONNX Runtime JavaScript 与 WASM 必须同版本。OpenCV Mat、ImageBitmap、URL、监听器、定时器、失败 Promise 和 Service Worker 缓存都要管理生命周期。',
+          ],
+          code: { type: 'code', language: 'typescript', code: heartbeatCode },
+          items: ['把 npm 依赖与二进制资源作为一组锁定，并检查最终 bundle。', '用稳定 URL 和正确 Content-Type 提供模型、MJS 与 WASM。', '缓存成功初始化，失败 Promise 必须移除。', '分配 Canvas 前限制像素，默认不要并发识别。', '根据构建内容生成 Service Worker 缓存版本。'],
+        },
+        {
+          heading: '遇到的问题，以及报错真正说明什么',
+          paragraphs: [
+            '故障分别来自安装、打包、资源交付、Worker 兼容、运行时 ABI 和缓存。把所有消息当成孤立 npm 问题会持续返工。有效方法是先判断症状属于哪一层，再决定是否改依赖。',
+            '最后的超时最容易误导。延长时间无法修复不兼容运行时。真正定位依靠一张带固定文字的最小图片，通过生产 Worker 和公开路径完成全链路识别，最终暴露隐藏的 _OrtGetInputName 错误。',
+          ],
+          table: { type: 'table', headers: ['表面报错', '根因', '长期解决方式'], rows: [
+            ['npm edgesOut 错误', '安装器解析依赖树失败', '使用确切兼容依赖和可复现安装模式'], ['找不到 ort.bundle.min.mjs', '运行时入口不存在', '映射到所选版本真实入口'], ['找不到 ORT 指定版本', '请求了未发布版本', '确认 registry 后锁定版本'], ['WASM 超过文件限制', '错误运行时变体进入产物', '只交付所需文件并检查体积'], ['动态 MJS 加载失败', 'URL 或模块部署错误', '使用同源 URL 并检查生产响应'], ['document 或 HTMLImageElement 缺失', 'DOM 代码进入 Worker', '使用受限 OffscreenCanvas 适配'], ['_OrtGetInputName 缺失', 'JS 与 WASM ABI 不同', '内置并校验匹配运行时'], ['Worker 超时', '固定计时器掩盖异常', '分层错误与心跳存活判断'],
+          ] },
+        },
+        {
+          heading: '验证完整路径，而不是只验证构建',
+          paragraphs: [
+            '类型检查不能证明模型能下载、MJS 能找到 WASM、Worker 能解码图片。验证必须经过生产公开路径、缓存层、Worker 入口和 OCR API。先用带固定短语的生成图片做确定性冒烟，再用基准集评估质量。',
+            '测试空缓存、热缓存、慢网络、缓存后离线、旋转、语言、大图、强制终止和再次识别。部署验证使用新 origin 或清除 Service Worker。构建期 SHA-256 校验可以阻止资源缺失或混合版本进入生产。',
+          ],
+          code: { type: 'code', language: 'javascript', code: assetCheckCode },
+        },
+      ],
+      callout: { type: 'callout', title: '体验本文的 PP-OCRv5 实现', text: '用自己的代表性图片运行实际产线，再根据准确率、隐私、延迟和版式要求判断它是否适合你的项目。', href: '/image/ocr', linkLabel: '打开图片 OCR' },
+      conclusion: 'OCR 应按任务和运行边界选型，而不是按模型大小或单张演示图决定。需要托管式结构化文档能力时可选云文档 API；受控服务端和 GPU 场景优先评估原生 PaddleOCR；规则扫描件仍可评估 Tesseract；本地处理与 Web 交付是硬要求时，PaddleOCR JS 与 PP-OCRv5 是合理选择。无论哪条路线，预处理、运行时兼容、结果契约、存活判断、缓存、内存和端到端验证都是 OCR 系统的一部分。完整记录这条决策链，比复制某段代码更有长期价值。',
+      faq: [
+        { question: 'PP-OCRv5 一定比 Tesseract 或云 OCR 更准确吗？', answer: '不一定。必须让候选方案处理同一批代表性文件，并统计业务真正关心的语言、版式和字段。' },
+        { question: '服务端项目应该使用 PaddleOCR JS 吗？', answer: '通常不应默认这样选。支持 Python 或原生部署的服务端可更直接使用完整 PaddleOCR 和硬件加速。代码复用、沙箱、Electron 或浏览器交付是要求时，JavaScript 与 WASM 才更有优势。' },
+        { question: '本地 OCR 是否意味着完全离线？', answer: '只有应用、运行时、模型和相关资源已经缓存或随产品打包后才可能离线。第一次通常需要下载。' },
+        { question: '为什么更小的模型有时效果更好？', answer: '检测、裁剪、字典、解码、阈值、阅读顺序、预处理和量化方式，都可能比归档大小更影响某张图的结果。' },
+        { question: '为什么使用 Worker？', answer: 'Worker 把图片和 WASM 重计算与渲染隔离，也提供可终止的边界，超时或异常后能重建执行环境。' },
+        { question: '升级 OCR 依赖后至少检查什么？', answer: '检查部署的 JavaScript、MJS、WASM、模型哈希、URL、MIME、冷启动、真实识别、失败重试和 Service Worker 更新。' },
+      ],
+    }, '总结'),
   },
-];
+}];

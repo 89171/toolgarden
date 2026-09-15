@@ -1123,11 +1123,11 @@ Canonical examples:
 - Summary: Render a source image at multiple sizes, write ICO directory and DIB bytes, build big-endian ICNS chunks, and export portable icon packages without a server.
 - Published: 2026-07-22; updated: 2026-07-22
 
-### How We Built Browser OCR with PP-OCRv5 and PaddleOCR JS
+### OCR Technology Choices and a Production PP-OCRv5 Implementation
 - English: https://toolgarden.xyz/en/blog/pp-ocrv5-paddleocr-js-browser-ocr-production
 - Chinese: https://toolgarden.xyz/zh/blog/pp-ocrv5-paddleocr-js-browser-ocr-production
-- Chinese title: 我们如何用 PP-OCRv5 和 PaddleOCR JS 实现浏览器本地 OCR
-- Summary: A production PP-OCRv5 browser implementation with Web Workers, PaddleOCR JS, ONNX Runtime Web, same-origin models, runtime pinning, heartbeat timeouts, and deployment checks.
+- Chinese title: OCR 技术选型与 PP-OCRv5 生产落地实践
+- Summary: Compare cloud OCR, PaddleOCR, Tesseract, and custom ONNX pipelines, then follow a real PP-OCRv5 implementation from model delivery and Workers to debugging and deployment.
 - Published: 2026-09-15; updated: 2026-09-15
 
 ### How to Build an Online Font Subsetter with fonteditor-core
