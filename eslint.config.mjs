@@ -12,6 +12,7 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "lib/vendor/**",
     "public/vendor/**",
     // Vendored ONNX Runtime builds and model weights — third-party artifacts, not source.
     "public/models/**",

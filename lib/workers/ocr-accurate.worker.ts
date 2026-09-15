@@ -52,6 +52,10 @@ const ONNX_WASM_PATHS = {
   mjs: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.mjs`,
   wasm: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.wasm`,
 };
+const PADDLE_MODEL_PUBLIC_PATH = `${workerScope.location.origin}/models/paddleocr/ppocr-v5/`;
+const TEXT_DETECTION_MODEL_NAME = 'PP-OCRv5_mobile_det';
+const TEXT_RECOGNITION_MODEL_NAME = 'PP-OCRv5_mobile_rec';
+const WORKER_HEARTBEAT_INTERVAL_MS = 10_000;
 const OCR_VERSION = 'PP-OCRv5';
 const MIN_RECOGNITION_SCORE = 0.28;
 const OCR_PREDICT_PARAMS: OcrRuntimeParamsInput = {
@@ -162,6 +166,23 @@ function postResult(id: string, result: OcrOutcome) {
   workerScope.postMessage({ id, type: 'result', result });
 }
 
+async function withProgressHeartbeat<T>(
+  id: string,
+  progress: OcrProgress,
+  operation: () => Promise<T>
+): Promise<T> {
+  postProgress(id, progress.stage, progress.percent, progress.processed, progress.total);
+  const heartbeat = setInterval(() => {
+    postProgress(id, progress.stage, progress.percent, progress.processed, progress.total);
+  }, WORKER_HEARTBEAT_INTERVAL_MS);
+
+  try {
+    return await operation();
+  } finally {
+    clearInterval(heartbeat);
+  }
+}
+
 function clampInteger(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, Math.round(value)));
 }
@@ -186,6 +207,14 @@ async function getOcr(id: string, language: OcrLanguage): Promise<PaddleOcrInsta
     const options: PaddleOCRCreateOptions = {
       lang: paddleLanguage,
       ocrVersion: OCR_VERSION,
+      textDetectionModelName: TEXT_DETECTION_MODEL_NAME,
+      textDetectionModelAsset: {
+        url: `${PADDLE_MODEL_PUBLIC_PATH}PP-OCRv5_mobile_det_onnx_infer.tar`,
+      },
+      textRecognitionModelName: TEXT_RECOGNITION_MODEL_NAME,
+      textRecognitionModelAsset: {
+        url: `${PADDLE_MODEL_PUBLIC_PATH}PP-OCRv5_mobile_rec_onnx_infer.tar`,
+      },
       textDetectionBatchSize: 2,
       textRecognitionBatchSize: 8,
       unsupportedBehavior: 'ignore',
@@ -206,7 +235,11 @@ async function getOcr(id: string, language: OcrLanguage): Promise<PaddleOcrInsta
     ocrPromises.set(paddleLanguage, ocrPromise);
   }
 
-  const ocr = await ocrPromise;
+  const ocr = await withProgressHeartbeat(
+    id,
+    { stage: 'model', percent: 12 },
+    () => ocrPromise
+  );
   postProgress(id, 'model', 38);
   return ocr;
 }
@@ -292,7 +325,11 @@ async function runPaddleOcr(request: OcrWorkerRequest): Promise<OcrOutcome> {
   postProgress(request.id, 'prepare', 42);
   postProgress(request.id, 'detect', 48);
 
-  const [result] = await ocr.predict(image, OCR_PREDICT_PARAMS);
+  const [result] = await withProgressHeartbeat(
+    request.id,
+    { stage: 'detect', percent: 48 },
+    () => ocr.predict(image, OCR_PREDICT_PARAMS)
+  );
   if (!result) return { ok: false, code: 'recognition_failed', detail: 'PaddleOCR returned no result.' };
 
   postProgress(request.id, 'recognize', 92, result.metrics.recognizedCount, result.metrics.detectedBoxes);
@@ -326,7 +363,7 @@ workerScope.addEventListener('message', (event: MessageEvent<OcrWorkerRequest>) 
     .catch((error) => {
       postResult(request.id, {
         ok: false,
-        code: /model|fetch|session|onnx|opencv|wasm/i.test(error instanceof Error ? error.message : '')
+        code: /model|fetch|session|onnx|opencv|wasm|_Ort/i.test(error instanceof Error ? error.message : '')
           ? 'model_load_failed'
           : 'recognition_failed',
         detail: error instanceof Error ? error.message : undefined,

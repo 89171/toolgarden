@@ -4927,6 +4927,7 @@
         "empty_file": "The file is empty. Choose a valid image.",
         "load_failed": "The image could not be read. The file may be damaged or unsupported by this browser.",
         "worker_unavailable": "This browser could not start the local OCR Worker. Try another browser.",
+        "worker_timeout": "Local OCR did not respond in time and was restarted. Please try again. {detail}",
         "model_load_failed": "The model could not be loaded. Check your network and try again. {detail}",
         "canvas_context": "Could not create a Canvas drawing context.",
         "recognition_failed": "Recognition failed. Try a clearer image. {detail}",

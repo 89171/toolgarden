@@ -4927,6 +4927,7 @@
         "empty_file": "文件为空，请选择有效图片。",
         "load_failed": "图片读取失败，文件可能已损坏或当前浏览器不支持该格式。",
         "worker_unavailable": "当前浏览器无法启动本地识别 Worker，请更换浏览器后重试。",
+        "worker_timeout": "本地 OCR 长时间没有响应，已重启识别引擎，请重试。{detail}",
         "model_load_failed": "模型加载失败，请检查网络后重试。{detail}",
         "canvas_context": "无法创建 Canvas 绘图上下文。",
         "recognition_failed": "识别失败，请换一张更清晰的图片后重试。{detail}",

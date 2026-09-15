@@ -42,6 +42,7 @@ export type OcrErrorCode =
   | 'empty_file'
   | 'load_failed'
   | 'worker_unavailable'
+  | 'worker_timeout'
   | 'model_load_failed'
   | 'canvas_context'
   | 'recognition_failed'

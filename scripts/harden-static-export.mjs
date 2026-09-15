@@ -8,6 +8,28 @@ const rootDir = path.resolve(scriptDir, '..');
 const outDir = path.join(rootDir, 'out');
 const publicDir = path.join(rootDir, 'public');
 const headersConfigPath = path.join(rootDir, 'lib/security/static-headers.json');
+const pinnedOcrAssets = [
+  {
+    path: 'lib/vendor/onnxruntime-web/ort.wasm.min.mjs',
+    sha256: 'd5a6d7bc8ee587648fb3742dde8c0094d17cbd3822a68bbec8ddfcd4f2adb88e',
+  },
+  {
+    path: 'out/models/paddleocr/onnxruntime-web/ort-wasm-simd-threaded.mjs',
+    sha256: '5687566b1bc1c8cf628d76c2ddb16b2a3b81a7997273d4666564880495088e57',
+  },
+  {
+    path: 'out/models/paddleocr/onnxruntime-web/ort-wasm-simd-threaded.wasm',
+    sha256: 'be0e129949062ad50290ef94683fac8be5bb6156f709e030b7a5f1661a2f6c17',
+  },
+  {
+    path: 'out/models/paddleocr/ppocr-v5/PP-OCRv5_mobile_det_onnx_infer.tar',
+    sha256: '781056046c9ed77a15c94681605db6a0f62317c2e9cce6931c71da2478d4bc30',
+  },
+  {
+    path: 'out/models/paddleocr/ppocr-v5/PP-OCRv5_mobile_rec_onnx_infer.tar',
+    sha256: 'f7e792bc836f36e7ef895ad47c426d75b0b75b1650caa6d63fe9418441ffba8c',
+  },
+];
 
 const sourceMapCommentPattern = /(?:^|\n)\s*(?:\/\/# sourceMappingURL=.*\.map\s*|\/\*# sourceMappingURL=.*\.map\s*\*\/\s*)$/gm;
 const sourceMapReferencePattern = /sourceMappingURL=.*\.map/;
@@ -92,6 +114,20 @@ function formatHeadersFile(headers) {
 
 function writeStaticHeaders() {
   fs.writeFileSync(path.join(outDir, '_headers'), formatHeadersFile(readSecurityHeaders()));
+}
+
+function verifyPinnedOcrAssets() {
+  for (const asset of pinnedOcrAssets) {
+    const assetPath = path.join(rootDir, asset.path);
+    if (!fs.existsSync(assetPath)) {
+      throw new Error(`Pinned OCR asset is missing: ${asset.path}`);
+    }
+
+    const actual = crypto.createHash('sha256').update(fs.readFileSync(assetPath)).digest('hex');
+    if (actual !== asset.sha256) {
+      throw new Error(`Pinned OCR asset checksum mismatch: ${asset.path}`);
+    }
+  }
 }
 
 /**
@@ -205,6 +241,7 @@ if (!fs.existsSync(outDir)) {
   throw new Error(`Static export directory not found: ${outDir}`);
 }
 
+verifyPinnedOcrAssets();
 const filesBeforeCleanup = walkFiles(outDir);
 const removedMaps = removeSourceMaps(filesBeforeCleanup);
 const updatedReferences = removeSourceMapComments(walkFiles(outDir));
@@ -223,5 +260,5 @@ if (remainingMaps.length > 0) {
 const exportFileCount = getExportFileCount();
 
 console.log(
-  `Hardened static export: removed ${removedMaps} source map file(s), stripped ${updatedReferences} source map reference(s), wrote out/_headers, ${removedRedirectsFile ? 'removed stale out/_redirects' : 'confirmed out/_redirects is absent'}, pruned ${prunedNextPrefetchFiles} Next segment prefetch file(s), pruned ${prunedBundledOrtWasmFiles} bundled ORT wasm file(s), copied ${copiedPublicHtmlFiles} root public HTML file(s), service worker cache ${serviceWorkerCacheName ?? 'not stamped (sw.js missing)'}, final file count ${exportFileCount}.`
+  `Hardened static export: verified ${pinnedOcrAssets.length} pinned OCR asset(s), removed ${removedMaps} source map file(s), stripped ${updatedReferences} source map reference(s), wrote out/_headers, ${removedRedirectsFile ? 'removed stale out/_redirects' : 'confirmed out/_redirects is absent'}, pruned ${prunedNextPrefetchFiles} Next segment prefetch file(s), pruned ${prunedBundledOrtWasmFiles} bundled ORT wasm file(s), copied ${copiedPublicHtmlFiles} root public HTML file(s), service worker cache ${serviceWorkerCacheName ?? 'not stamped (sw.js missing)'}, final file count ${exportFileCount}.`
 );
