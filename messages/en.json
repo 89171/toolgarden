@@ -4604,7 +4604,7 @@
       "schema_title": "Record schema",
       "result_title": "Generated result",
       "endpoint_label": "Needle 2 endpoint",
-      "endpoint_hint": "Development defaults to a same-origin proxy for the local playground; enter a compatible /complete URL for a remote service.",
+      "endpoint_hint": "Development uses a same-origin proxy for the local playground; configure NEXT_PUBLIC_NEEDLE2_ENDPOINT for static deployments.",
       "input_placeholder": "Paste text to extract, for example: Order A-1042 belongs to Li Ming, totals CNY 328, and is paid.",
       "schema_placeholder": "Paste a JSON Schema, such as object, properties, and required rules",
       "characters": "characters",
@@ -4623,6 +4623,7 @@
       "errors": {
         "empty_input": "Enter text to extract first.",
         "invalid_schema": "Invalid schema: {detail}",
+        "proxy_missing": "This deployment has no local Needle 2 proxy. Run npm run dev locally or configure a CORS-enabled NEXT_PUBLIC_NEEDLE2_ENDPOINT.",
         "request_failed": "Needle 2 request failed: {detail}"
       }
     },

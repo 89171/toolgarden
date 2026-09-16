@@ -4604,7 +4604,7 @@
       "schema_title": "结构化 Schema",
       "result_title": "生成结果",
       "endpoint_label": "Needle 2 endpoint",
-      "endpoint_hint": "开发环境默认通过同源代理连接本机 playground；远程服务请填写兼容 /complete 的地址。",
+      "endpoint_hint": "开发环境默认通过同源代理连接本机 playground；静态部署请配置 NEXT_PUBLIC_NEEDLE2_ENDPOINT。",
       "input_placeholder": "粘贴要提取的文本，例如：订单号 A-1042，客户是李明，总额 328 元，状态已支付。",
       "schema_placeholder": "粘贴 JSON Schema，例如 object、properties 和 required 规则",
       "characters": "个字符",
@@ -4623,6 +4623,7 @@
       "errors": {
         "empty_input": "请先输入要提取的文本。",
         "invalid_schema": "Schema 无效：{detail}",
+        "proxy_missing": "当前部署没有 Needle 2 本地代理，请在本地运行 npm run dev，或配置可跨域访问的 NEXT_PUBLIC_NEEDLE2_ENDPOINT。",
         "request_failed": "请求 Needle 2 失败：{detail}"
       }
     },

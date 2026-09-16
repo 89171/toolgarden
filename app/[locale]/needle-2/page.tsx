@@ -96,7 +96,11 @@ export default function Needle2Page() {
     const result = await completeWithNeedle2(endpoint, input, schemaResult.schema, controller.signal)
       .catch((requestError: unknown) => {
         if (requestError instanceof DOMException && requestError.name === 'AbortError') return null;
-        return { ok: false as const, message: requestError instanceof Error ? requestError.message : String(requestError) };
+        return {
+          ok: false as const,
+          code: undefined,
+          message: requestError instanceof Error ? requestError.message : String(requestError),
+        };
       });
 
     if (!result) {
@@ -107,7 +111,10 @@ export default function Needle2Page() {
       setResponse(result.response);
       setOutput(result.output);
     } else {
-      setError(t('errors.request_failed', { detail: result.message }));
+      const detail = result.code === 'proxy_missing'
+        ? t('errors.proxy_missing')
+        : result.message;
+      setError(t('errors.request_failed', { detail }));
     }
     setLoading(false);
   };

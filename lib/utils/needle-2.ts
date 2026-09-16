@@ -37,6 +37,7 @@ export type Needle2CompletionOutcome =
     }
   | {
       ok: false;
+      code?: 'proxy_missing';
       message: string;
     };
 
@@ -112,6 +113,14 @@ export async function completeWithNeedle2(
       signal,
     });
     const rawPayload = await response.text();
+    if (response.status === 404 && endpoint.trim() === '/api/needle-2') {
+      return {
+        ok: false,
+        code: 'proxy_missing',
+        message: 'The local proxy is unavailable in this deployment.',
+      };
+    }
+
     let payload: Needle2Response;
     try {
       const parsedPayload = parseLooseJSON(rawPayload);
