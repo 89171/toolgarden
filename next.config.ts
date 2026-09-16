@@ -52,6 +52,14 @@ const developmentHeaderConfig = process.env.NODE_ENV === 'production'
           },
         ];
       },
+      async rewrites() {
+        return [
+          {
+            source: '/api/needle-2',
+            destination: 'http://127.0.0.1:7860/complete',
+          },
+        ];
+      },
     };
 
 const nextConfig: NextConfig = {

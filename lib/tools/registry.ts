@@ -632,6 +632,15 @@ export const toolRegistry: ToolMeta[] = [
     category: 'validate',
   },
   {
+    id: 'needle-2',
+    name: 'Needle 2 结构化数据',
+    description: '调用 Needle 2，将自然语言按 JSON Schema 提取为结构化数据',
+    path: '/needle-2',
+    icon: 'N2',
+    category: 'convert',
+    featured: true,
+  },
+  {
     id: 'json-schema-validate',
     name: 'JSON Schema 校验',
     description: '使用 JSON Schema 校验 JSON 数据，输出错误路径和原因',

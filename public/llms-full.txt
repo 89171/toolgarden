@@ -776,6 +776,16 @@ Canonical examples:
 - English URL: https://toolgarden.xyz/en/pdf/to-image
 - Chinese URL: https://toolgarden.xyz/zh/pdf/to-image
 
+#### Needle 2 Structured Data / Needle 2 结构化数据 (/needle-2)
+- ID: `needle-2`
+- Category: Convert / 转换
+- Icon label: `N2`
+- Featured: yes
+- English description: Call Needle 2 to extract natural language into structured data with a JSON Schema and a constrained tool call.
+- Chinese description: 调用 Needle 2，按 JSON Schema 将自然语言提取为结构化数据，结果由受约束的工具调用返回。
+- English URL: https://toolgarden.xyz/en/needle-2
+- Chinese URL: https://toolgarden.xyz/zh/needle-2
+
 #### Font Subset / 字体提取 (/other/font-subset)
 - ID: `font-subset`
 - Category: Convert / 转换
