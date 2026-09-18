@@ -241,9 +241,6 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - **PDF to Image / PDF 转图片** (`/pdf/to-image`): Free online PDF to image converter that exports each page as high-resolution PNG or JPG
   - English: https://toolgarden.xyz/en/pdf/to-image
   - Chinese: https://toolgarden.xyz/zh/pdf/to-image
-- **Needle 2 Structured Data / Needle 2 结构化数据** (`/needle-2`): Call Needle 2 to extract natural language into structured data with a JSON Schema and a constrained tool call.
-  - English: https://toolgarden.xyz/en/needle-2
-  - Chinese: https://toolgarden.xyz/zh/needle-2
 - **Font Subset / 字体提取** (`/other/font-subset`): Extract selected characters from TTF / WOFF fonts and generate a smaller TTF or WOFF subset font
   - English: https://toolgarden.xyz/en/other/font-subset
   - Chinese: https://toolgarden.xyz/zh/other/font-subset
