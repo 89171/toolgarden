@@ -4,7 +4,7 @@ export const imageEnhanceContent = defineToolContent({
   zh: {
     overview: [
       '图片清晰增强使用 Real-ESRGAN x4plus 修复低清照片中的模糊边缘、噪点和压缩纹理。模型会先在浏览器中以高分辨率重建画面，再按所选尺寸输出原尺寸、2 倍或 4 倍图片。',
-      'PyTorch FP32 官方权重只用于离线转换和结果校验；页面实际下载经过验证的 ONNX FP16 模型，并通过 WebGPU 在本地分块推理。图片不会上传到服务器。',
+      'PyTorch FP32 官方权重只用于离线转换和结果校验；页面实际下载经过验证的 ONNX FP16 模型，并优先通过 WebGPU、必要时回退到 WebAssembly 在本地分块推理。图片不会上传到服务器。',
     ],
     steps: [
       ['上传需要修复的图片', '优先使用原始文件，避免先截图或反复压缩。模型适合照片、旧图和带有 JPEG 压缩痕迹的图片。'],
@@ -19,20 +19,20 @@ export const imageEnhanceContent = defineToolContent({
     notes: [
       '模型生成的是视觉上合理的估计，不是恢复原图从未记录的信息。证件、档案、医疗、司法或取证图片不能把增强结果当作事实依据。',
       '低分辨率人脸、文字和规则图案最容易出现错误重建，必须与原图逐处比较。',
-      '高清模型需要 WebGPU。首次使用会下载约 32.2 MiB 模型资源，之后通常由浏览器缓存。',
+      '高清模型优先使用 WebGPU；不支持 WebGPU 时会回退到 CPU WebAssembly，但处理速度可能明显变慢。首次使用会下载约 32.2 MiB 模型资源，之后通常由浏览器缓存。',
     ],
     specs: [
       ['浏览器模型', 'RealESRGAN_x4plus ONNX FP16，约 32.2 MiB'],
       ['转换基准', '官方 PyTorch FP32 权重；仅用于离线导出和数值校验，不发送给浏览器'],
       ['输出倍率', '原尺寸、2 倍或 4 倍；模型内部按 4 倍修复，较小倍率使用高质量缩放输出'],
-      ['运行方式', 'ONNX Runtime Web + WebGPU，128px 分块并保留重叠边界'],
+      ['运行方式', 'ONNX Runtime Web + WebGPU/WASM 回退，128px 分块并保留重叠边界'],
       ['输入限制', '最多约 4 MP，最终输出最多约 40 MP，具体速度取决于显卡和图片尺寸'],
       ['隐私', '图片解码、模型推理和导出均在浏览器本地完成'],
     ],
     faq: [
       { question: '图片清晰增强与图片放大有什么区别？', answer: '图片放大提供像素复制、平滑、锐化和轻量 AI 等多种尺寸处理方式；图片清晰增强专门使用 Real-ESRGAN 修复真实照片的模糊、噪点和压缩痕迹，也可以保持原尺寸。' },
       { question: '增强后能看清原本无法辨认的文字吗？', answer: '不能保证。模型会估计可能的边缘和纹理，可能生成看似清楚但实际错误的字符，因此不能用于恢复证据、号码或其它要求事实准确的信息。' },
-      { question: '为什么需要 WebGPU？', answer: 'Real-ESRGAN x4plus 的计算量远高于普通插值。WebGPU 可以调用设备显卡完成分块推理；仅使用 CPU 或普通 WebAssembly 会非常慢。' },
+      { question: '没有 WebGPU 还能使用吗？', answer: '可以。浏览器会自动回退到 CPU WebAssembly，但速度会明显慢于 WebGPU，处理大图时需要更长时间。' },
     ],
     reference: [
       ['Real-ESRGAN', '面向真实世界未知退化图片的盲超分辨率与图像修复模型。'],
@@ -43,7 +43,7 @@ export const imageEnhanceContent = defineToolContent({
   en: {
     overview: [
       'Image Enhance uses Real-ESRGAN x4plus to reduce soft edges, noise, and compression texture in low-quality photographs. The model first reconstructs the image at high resolution in the browser, then exports at the original size, 2x, or 4x.',
-      'The official PyTorch FP32 checkpoint is used only for offline conversion and output validation. The page downloads a verified ONNX FP16 model and runs tiled WebGPU inference locally; the image is never uploaded.',
+      'The official PyTorch FP32 checkpoint is used only for offline conversion and output validation. The page downloads a verified ONNX FP16 model and runs tiled inference locally with WebGPU first and WebAssembly as a fallback; the image is never uploaded.',
     ],
     steps: [
       ['Upload the image to restore', 'Use the original file when possible instead of a screenshot or repeatedly compressed copy. The model suits photographs, older images, and JPEG artifacts.'],
@@ -58,20 +58,20 @@ export const imageEnhanceContent = defineToolContent({
     notes: [
       'The model generates visually plausible estimates; it does not recover information the source never recorded. Do not treat enhanced identity, archival, medical, legal, or forensic images as factual evidence.',
       'Low-resolution faces, text, and regular patterns are most likely to be reconstructed incorrectly and must be compared closely with the source.',
-      'The HD model requires WebGPU. First use downloads about 32.2 MiB of model assets, which the browser will usually cache.',
+      'The HD model prefers WebGPU and falls back to CPU WebAssembly when WebGPU is unavailable, although processing can be much slower. First use downloads about 32.2 MiB of model assets, which the browser will usually cache.',
     ],
     specs: [
       ['Browser model', 'RealESRGAN_x4plus ONNX FP16, about 32.2 MiB'],
       ['Conversion reference', 'Official PyTorch FP32 checkpoint, used only for offline export and numerical validation'],
       ['Output scales', 'Original size, 2x, or 4x; the model restores internally at 4x and smaller outputs use high-quality downsampling'],
-      ['Runtime', 'ONNX Runtime Web + WebGPU with 128px overlapping tiles'],
+      ['Runtime', 'ONNX Runtime Web + WebGPU/WASM fallback with 128px overlapping tiles'],
       ['Input limits', 'About 4 MP maximum input and 40 MP maximum output; speed depends on the GPU and image dimensions'],
       ['Privacy', 'Image decoding, model inference, and export all run locally in the browser'],
     ],
     faq: [
       { question: 'How is Image Enhance different from Image Upscale?', answer: 'Image Upscale offers pixel copying, smoothing, sharpening, and a lightweight AI option for changing dimensions. Image Enhance specifically uses Real-ESRGAN to restore blur, noise, and compression artifacts in real photographs and can preserve the original dimensions.' },
       { question: 'Can enhancement recover text that was unreadable?', answer: 'Not reliably. The model estimates plausible edges and texture and may produce a clear-looking but incorrect character, so it must not be used to recover evidence, numbers, or other fact-critical information.' },
-      { question: 'Why is WebGPU required?', answer: 'Real-ESRGAN x4plus is much more compute-intensive than normal interpolation. WebGPU uses the device GPU for tiled inference; CPU-only WebAssembly would be impractically slow.' },
+      { question: 'Can I use it without WebGPU?', answer: 'Yes. The browser automatically falls back to CPU WebAssembly, but it is substantially slower than WebGPU and may take longer on large images.' },
     ],
     reference: [
       ['Real-ESRGAN', 'A blind super-resolution and restoration model for images with unknown real-world degradation.'],

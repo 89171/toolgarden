@@ -86,7 +86,7 @@ export function ImageEnhancer() {
   const sourceTooLarge = Boolean(image && image.width * image.height > IMAGE_ENHANCE_MAX_SOURCE_PIXELS);
   const outputTooLarge = Boolean(image && outputWidth * outputHeight > MAX_IMAGE_PIXELS);
   const canProcess = Boolean(
-    file && image && !sourceTooLarge && !outputTooLarge && webGpuSupported === true && !isLoading
+    file && image && !sourceTooLarge && !outputTooLarge && !isLoading
   );
   const progressPercent = getOverallProgress(progress);
   const inputFormatLabels = useMemo(() => getSupportedImageInputLabel().split(' / '), []);
@@ -307,13 +307,13 @@ export function ImageEnhancer() {
                   <span className="text-content-muted">{ti('model_size')}</span>
                   <span className="text-right font-medium text-content-secondary">32.2 MiB</span>
                   <span className="text-content-muted">{ti('runtime')}</span>
-                  <span className="text-right font-medium text-content-secondary">WebGPU</span>
+                  <span className="text-right font-medium text-content-secondary">WebGPU / WASM</span>
                 </div>
               </div>
 
               {webGpuSupported === false ? (
-                <p className="rounded border border-danger-border bg-danger-surface p-3 text-sm leading-relaxed text-danger-content">
-                  {ti('errors.webgpu_unavailable')}
+                <p className="rounded border border-border-subtle bg-surface p-3 text-sm leading-relaxed text-content-muted">
+                  {ti('wasm_fallback')}
                 </p>
               ) : null}
 

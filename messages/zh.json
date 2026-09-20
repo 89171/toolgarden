@@ -666,7 +666,7 @@
     "progress_model": "加载并编译模型 {value}%",
     "progress_compute": "分块增强 {current}/{total}",
     "progress_encode": "导出图片 {value}%",
-    "first_download_note": "首次使用需要下载约 32.2 MiB 的 ONNX FP16 模型并编译 WebGPU 图，之后通常会明显更快。",
+    "first_download_note": "首次使用需要下载约 32.2 MiB 的 ONNX FP16 模型；支持 WebGPU 时优先使用显卡，否则自动回退到 CPU WebAssembly。",
     "empty_title": "上传图片开始增强",
     "empty_body": "适合低清照片、旧图、噪点和 JPEG 压缩痕迹。处理后请放大检查人脸、文字和细线。",
     "file_size": "文件大小",
@@ -681,6 +681,7 @@
     "duration_value": "{value}ms",
     "result_scale": "输出倍率",
     "result_model": "模型",
+    "wasm_fallback": "当前浏览器不支持 WebGPU，将自动使用 CPU WebAssembly 推理，处理速度可能较慢。",
     "source_limit": "高清模型最多处理约 {value} MP 的原图，请先缩小图片尺寸。",
     "output_limit": "当前倍率会超过 {value} MP 输出限制，请选择较小倍率。",
     "unknown_type": "未知类型",
@@ -693,7 +694,7 @@
       "canvas_context": "无法创建 Canvas 绘图上下文。",
       "canvas_export": "图片导出失败，请换一个浏览器重试。",
       "unsupported_output": "当前浏览器不支持导出 {format}。",
-      "webgpu_unavailable": "该工具需要支持 WebGPU 的新版 Chrome 或 Edge 桌面浏览器。",
+      "webgpu_unavailable": "当前浏览器无法使用 WebGPU 或 CPU WebAssembly，请更换新版桌面浏览器后重试。",
       "model_download_failed": "Real-ESRGAN 模型下载失败，请检查网络后重试。",
       "ai_model_unavailable": "Real-ESRGAN 模型加载或推理失败，请检查浏览器兼容性、显存和网络后重试。",
       "general": "图片清晰增强失败，请重试。"
@@ -2359,7 +2360,7 @@
         },
         {
           "question": "为什么只能在部分浏览器运行？",
-          "answer": "完整 Real-ESRGAN x4plus 计算量较大，需要 WebGPU 调用设备显卡。建议使用新版桌面 Chrome 或 Edge。"
+          "answer": "完整 Real-ESRGAN x4plus 计算量较大，会优先使用 WebGPU 调用设备显卡；不支持 WebGPU 时自动回退到 CPU WebAssembly，但速度会更慢。建议使用新版桌面 Chrome 或 Edge。"
         },
         {
           "question": "原尺寸模式为什么仍然需要运行 4 倍模型？",

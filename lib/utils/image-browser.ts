@@ -286,6 +286,7 @@ const backgroundRemovalProgressListeners = new Set<(progress: ImageBackgroundRem
 let imageEnhanceSessionPromise: Promise<{
   ort: OrtWebGpuModule;
   session: OrtWebGpuInferenceSession;
+  backend: 'webgpu' | 'wasm';
 }> | null = null;
 const imageEnhanceProgressListeners = new Set<(progress: ImageEnhanceProgress) => void>();
 
@@ -1365,30 +1366,52 @@ async function fetchImageEnhanceModel(): Promise<Uint8Array> {
 async function getImageEnhanceSession(): Promise<{
   ort: OrtWebGpuModule;
   session: OrtWebGpuInferenceSession;
+  backend: 'webgpu' | 'wasm';
 }> {
-  if (!(await supportsImageEnhanceWebGpu())) {
-    throw new Error('realesrgan_webgpu_unavailable');
-  }
-
   if (!imageEnhanceSessionPromise) {
     imageEnhanceSessionPromise = (async () => {
       reportImageEnhanceProgress(createImageEnhanceProgress('model', 0));
-      const [ort, modelData] = await Promise.all([
-        import('onnxruntime-web/webgpu'),
-        fetchImageEnhanceModel(),
-      ]);
+      const modelData = await fetchImageEnhanceModel();
+      reportImageEnhanceProgress(createImageEnhanceProgress('model', 88));
+
+      if (await supportsImageEnhanceWebGpu()) {
+        try {
+          const ort = await import('onnxruntime-web/webgpu');
+          ort.env.wasm.proxy = false;
+          ort.env.wasm.wasmPaths = {
+            mjs: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.jsep.mjs`,
+            wasm: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.jsep.wasm`,
+          };
+          const session = await ort.InferenceSession.create(modelData, {
+            executionProviders: ['webgpu'],
+            graphOptimizationLevel: 'all',
+          });
+          reportImageEnhanceProgress(createImageEnhanceProgress('model', 100));
+          return { ort, session, backend: 'webgpu' as const };
+        } catch {
+          // Some browsers expose navigator.gpu but fail when creating a usable device.
+          // Fall through to the CPU WASM backend instead of failing the whole tool.
+        }
+      }
+
+      const ort = await import('onnxruntime-web/wasm');
+      ort.env.wasm.numThreads = 1;
       ort.env.wasm.proxy = false;
       ort.env.wasm.wasmPaths = {
-        mjs: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.jsep.mjs`,
-        wasm: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.jsep.wasm`,
+        mjs: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.mjs`,
+        wasm: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.wasm`,
       };
-      reportImageEnhanceProgress(createImageEnhanceProgress('model', 88));
       const session = await ort.InferenceSession.create(modelData, {
-        executionProviders: ['webgpu'],
+        executionProviders: ['wasm'],
+        executionMode: 'sequential',
         graphOptimizationLevel: 'all',
       });
       reportImageEnhanceProgress(createImageEnhanceProgress('model', 100));
-      return { ort, session };
+      return {
+        ort: ort as unknown as OrtWebGpuModule,
+        session: session as unknown as OrtWebGpuInferenceSession,
+        backend: 'wasm' as const,
+      };
     })().catch((error) => {
       imageEnhanceSessionPromise = null;
       throw error;
