@@ -262,12 +262,16 @@ const IMAGE_ENHANCE_MODEL_SIZE = 33_756_472;
 const IMAGE_ENHANCE_MODEL_SCALE = 4;
 const IMAGE_ENHANCE_TILE_SIZE = 128;
 const IMAGE_ENHANCE_TILE_PADDING = 10;
-// The regular WASM entry is vendored at 1.24.3 for PaddleOCR. Reuse its
-// matching binaries for every CPU ONNX session; the WebGPU JSEP binaries
-// remain in the separate directory prepared from the installed package.
 const ONNX_WASM_PUBLIC_PATH = '/models/paddleocr/onnxruntime-web/';
 const ONNX_WEBGPU_WASM_PUBLIC_PATH = '/models/onnxruntime-web/';
-const ONNX_RUNTIME_ASSET_VERSION = '1.24.3';
+// Cache buster for the sw.js Cache-First /models/ rule — must match the
+// installed onnxruntime-web version (package.json), not the vendored
+// binaries' history. A stale value here pins returning visitors to an old
+// cached wasm binary forever after an onnxruntime-web upgrade, since the
+// cache key (this query string) never changes.
+// ponytail: hand-maintained, onnxruntime-web's exports map blocks importing
+// its package.json directly; bump this whenever that dependency changes.
+const ONNX_RUNTIME_ASSET_VERSION = '1.21.0';
 const WATERMARK_MIGAN_MODEL_URL = 'https://huggingface.co/andraniksargsyan/migan/resolve/main/migan_pipeline_v2.onnx';
 const WATERMARK_AI_MODEL_URL = 'https://huggingface.co/Carve/LaMa-ONNX/resolve/main/lama_fp32.onnx';
 const WATERMARK_AI_INPUT_SIZE = 512;
