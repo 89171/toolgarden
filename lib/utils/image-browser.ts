@@ -262,7 +262,11 @@ const IMAGE_ENHANCE_MODEL_SIZE = 33_756_472;
 const IMAGE_ENHANCE_MODEL_SCALE = 4;
 const IMAGE_ENHANCE_TILE_SIZE = 128;
 const IMAGE_ENHANCE_TILE_PADDING = 10;
-const ONNX_WASM_PUBLIC_PATH = '/models/onnxruntime-web/';
+// The regular WASM entry is vendored at 1.24.3 for PaddleOCR. Reuse its
+// matching binaries for every CPU ONNX session; the WebGPU JSEP binaries
+// remain in the separate directory prepared from the installed package.
+const ONNX_WASM_PUBLIC_PATH = '/models/paddleocr/onnxruntime-web/';
+const ONNX_WEBGPU_WASM_PUBLIC_PATH = '/models/onnxruntime-web/';
 const ONNX_RUNTIME_ASSET_VERSION = '1.24.3';
 const WATERMARK_MIGAN_MODEL_URL = 'https://huggingface.co/andraniksargsyan/migan/resolve/main/migan_pipeline_v2.onnx';
 const WATERMARK_AI_MODEL_URL = 'https://huggingface.co/Carve/LaMa-ONNX/resolve/main/lama_fp32.onnx';
@@ -272,8 +276,11 @@ const SVG_MIN_RENDER_LONG_SIDE = 2048;
 const SVG_MAX_RENDER_LONG_SIDE = 4096;
 const WATERMARK_REPAIR_DISTANCE_POWER = 1.35;
 
-function getVersionedOnnxRuntimeAsset(filename: string): string {
-  return `${ONNX_WASM_PUBLIC_PATH}${filename}?v=${ONNX_RUNTIME_ASSET_VERSION}`;
+function getVersionedOnnxRuntimeAsset(
+  filename: string,
+  publicPath = ONNX_WASM_PUBLIC_PATH,
+): string {
+  return `${publicPath}${filename}?v=${ONNX_RUNTIME_ASSET_VERSION}`;
 }
 
 let watermarkInpaintSessionPromise:
@@ -1389,8 +1396,14 @@ async function getImageEnhanceSession(): Promise<{
           const ort = await import('onnxruntime-web/webgpu');
           ort.env.wasm.proxy = false;
           ort.env.wasm.wasmPaths = {
-            mjs: getVersionedOnnxRuntimeAsset('ort-wasm-simd-threaded.jsep.mjs'),
-            wasm: getVersionedOnnxRuntimeAsset('ort-wasm-simd-threaded.jsep.wasm'),
+            mjs: getVersionedOnnxRuntimeAsset(
+              'ort-wasm-simd-threaded.jsep.mjs',
+              ONNX_WEBGPU_WASM_PUBLIC_PATH,
+            ),
+            wasm: getVersionedOnnxRuntimeAsset(
+              'ort-wasm-simd-threaded.jsep.wasm',
+              ONNX_WEBGPU_WASM_PUBLIC_PATH,
+            ),
           };
           const session = await ort.InferenceSession.create(modelData, {
             executionProviders: ['webgpu'],
