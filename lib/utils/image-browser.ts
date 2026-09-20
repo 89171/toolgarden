@@ -263,6 +263,7 @@ const IMAGE_ENHANCE_MODEL_SCALE = 4;
 const IMAGE_ENHANCE_TILE_SIZE = 128;
 const IMAGE_ENHANCE_TILE_PADDING = 10;
 const ONNX_WASM_PUBLIC_PATH = '/models/onnxruntime-web/';
+const ONNX_RUNTIME_ASSET_VERSION = '1.24.3';
 const WATERMARK_MIGAN_MODEL_URL = 'https://huggingface.co/andraniksargsyan/migan/resolve/main/migan_pipeline_v2.onnx';
 const WATERMARK_AI_MODEL_URL = 'https://huggingface.co/Carve/LaMa-ONNX/resolve/main/lama_fp32.onnx';
 const WATERMARK_AI_INPUT_SIZE = 512;
@@ -270,6 +271,10 @@ const SVG_OUTPUT_SCALE = 3;
 const SVG_MIN_RENDER_LONG_SIDE = 2048;
 const SVG_MAX_RENDER_LONG_SIDE = 4096;
 const WATERMARK_REPAIR_DISTANCE_POWER = 1.35;
+
+function getVersionedOnnxRuntimeAsset(filename: string): string {
+  return `${ONNX_WASM_PUBLIC_PATH}${filename}?v=${ONNX_RUNTIME_ASSET_VERSION}`;
+}
 
 let watermarkInpaintSessionPromise:
   | Promise<{ ort: OrtWasmModule; session: OrtInferenceSession }>
@@ -1384,8 +1389,8 @@ async function getImageEnhanceSession(): Promise<{
           const ort = await import('onnxruntime-web/webgpu');
           ort.env.wasm.proxy = false;
           ort.env.wasm.wasmPaths = {
-            mjs: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.jsep.mjs`,
-            wasm: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.jsep.wasm`,
+            mjs: getVersionedOnnxRuntimeAsset('ort-wasm-simd-threaded.jsep.mjs'),
+            wasm: getVersionedOnnxRuntimeAsset('ort-wasm-simd-threaded.jsep.wasm'),
           };
           const session = await ort.InferenceSession.create(modelData, {
             executionProviders: ['webgpu'],
@@ -1404,8 +1409,8 @@ async function getImageEnhanceSession(): Promise<{
         ort.env.wasm.numThreads = 1;
         ort.env.wasm.proxy = false;
         ort.env.wasm.wasmPaths = {
-          mjs: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.mjs`,
-          wasm: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.wasm`,
+          mjs: getVersionedOnnxRuntimeAsset('ort-wasm-simd-threaded.mjs'),
+          wasm: getVersionedOnnxRuntimeAsset('ort-wasm-simd-threaded.wasm'),
         };
         const session = await ort.InferenceSession.create(modelData, {
           executionProviders: ['wasm'],
@@ -2116,8 +2121,8 @@ async function getWatermarkInpaintSession(
       ort.env.wasm.numThreads = 1;
       ort.env.wasm.proxy = false;
       ort.env.wasm.wasmPaths = {
-        wasm: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.wasm`,
-        mjs: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.mjs`,
+        wasm: getVersionedOnnxRuntimeAsset('ort-wasm-simd-threaded.wasm'),
+        mjs: getVersionedOnnxRuntimeAsset('ort-wasm-simd-threaded.mjs'),
       };
 
       const session = await ort.InferenceSession.create(WATERMARK_AI_MODEL_URL, {
@@ -2150,8 +2155,8 @@ async function getWatermarkMiganSession(
       ort.env.wasm.numThreads = 1;
       ort.env.wasm.proxy = false;
       ort.env.wasm.wasmPaths = {
-        wasm: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.wasm`,
-        mjs: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.mjs`,
+        wasm: getVersionedOnnxRuntimeAsset('ort-wasm-simd-threaded.wasm'),
+        mjs: getVersionedOnnxRuntimeAsset('ort-wasm-simd-threaded.mjs'),
       };
 
       const session = await ort.InferenceSession.create(WATERMARK_MIGAN_MODEL_URL, {
