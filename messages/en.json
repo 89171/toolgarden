@@ -16,6 +16,14 @@
     "error_placeholder": "Enter JSON to start",
     "download_json": "Download JSON"
   },
+  "privacy_trust": {
+    "label": "Privacy by default",
+    "local": "Runs locally in your browser",
+    "no_upload": "Your files are not uploaded",
+    "no_server": "No server-side processing",
+    "no_account": "No account required",
+    "details": "How local processing works"
+  },
   "markdown_converter": {
     "switch_label": "Switch Markdown conversion tool",
     "to_pdf": "Markdown to PDF",

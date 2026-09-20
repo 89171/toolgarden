@@ -199,14 +199,37 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children, conten
 
         {/* 工具标题 */}
         {tool && (
-          <div className="mb-4 flex min-w-0 flex-col gap-1 sm:flex-row sm:flex-wrap sm:items-end sm:gap-x-2">
-            <h1 className="flex min-w-0 items-center gap-2 text-xl font-bold text-content sm:text-2xl">
-              <span aria-hidden="true" className="shrink-0 font-mono text-content-faint">{tool.icon}</span>
-              <span className="min-w-0 break-words">{toolName}</span>
-            </h1>
-            {toolDesc ? (
-              <p className="min-w-0 text-sm leading-relaxed text-content-muted">{toolDesc}</p>
-            ) : null}
+          <div className="mb-4 min-w-0">
+            <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:flex-wrap sm:items-end sm:gap-x-2">
+              <h1 className="flex min-w-0 items-center gap-2 text-xl font-bold text-content sm:text-2xl">
+                <span aria-hidden="true" className="shrink-0 font-mono text-content-faint">{tool.icon}</span>
+                <span className="min-w-0 break-words">{toolName}</span>
+              </h1>
+              {toolDesc ? (
+                <p className="min-w-0 text-sm leading-relaxed text-content-muted">{toolDesc}</p>
+              ) : null}
+            </div>
+            <aside className="mt-3 border-y border-border-subtle py-2.5" aria-label={t('privacy_trust.label')}>
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-content-secondary sm:text-sm">
+                {[
+                  t('privacy_trust.local'),
+                  t('privacy_trust.no_upload'),
+                  t('privacy_trust.no_server'),
+                  t('privacy_trust.no_account'),
+                ].map((item) => (
+                  <span key={item} className="inline-flex items-center gap-1.5">
+                    <span aria-hidden="true" className="font-bold text-syntax-boolean">✓</span>
+                    {item}
+                  </span>
+                ))}
+                <Link
+                  href={`/${locale}/privacy-first-tools`}
+                  className="font-semibold text-content underline decoration-border-strong underline-offset-4 hover:text-content-secondary"
+                >
+                  {t('privacy_trust.details')}
+                </Link>
+              </div>
+            </aside>
           </div>
         )}
 

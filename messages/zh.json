@@ -16,6 +16,14 @@
     "error_placeholder": "输入 JSON 后自动处理",
     "download_json": "下载 JSON"
   },
+  "privacy_trust": {
+    "label": "默认保护隐私",
+    "local": "在你的浏览器本地运行",
+    "no_upload": "你的文件不会上传",
+    "no_server": "不经过服务器处理",
+    "no_account": "无需注册账号",
+    "details": "了解本地处理原理"
+  },
   "markdown_converter": {
     "switch_label": "切换 Markdown 转换工具",
     "to_pdf": "Markdown 转 PDF",

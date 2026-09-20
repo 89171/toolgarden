@@ -16,6 +16,8 @@ import {
 import { workflowSeoBlogArticles } from './workflow-seo-articles';
 import { seoBlogArticles } from './seo-articles';
 import { longTailBlogArticles } from './long-tail-articles';
+import { privacyFirstToolsArticles } from './privacy-first-tools';
+import { browserFileSeoArticles } from './browser-file-seo-articles';
 import { isConsolidatedBlogSlug } from './consolidations';
 
 export const BLOG_INDEX_PATH = '/blog';
@@ -55,6 +57,7 @@ export interface BlogArticleTranslation {
 
 export interface BlogArticle {
   slug: string;
+  path?: string;
   publishedAt: string;
   updatedAt: string;
   translations: Record<BlogLocale, BlogArticleTranslation>;
@@ -184,6 +187,8 @@ const faviconHtmlSnippet = `<link rel="icon" href="/favicon.ico">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">`;
 
 export const blogArticles: BlogArticle[] = [
+  ...privacyFirstToolsArticles,
+  ...browserFileSeoArticles,
   ...harnessEngineeringArticles,
   ...audioBlogArticles,
   ...audioStemGuideArticles,
@@ -4039,7 +4044,7 @@ function toLocalizedArticle(article: BlogArticle, locale: BlogLocale): Localized
   return {
     ...article.translations[locale],
     slug: article.slug,
-    path: `${BLOG_INDEX_PATH}/${article.slug}`,
+    path: article.path ?? `${BLOG_INDEX_PATH}/${article.slug}`,
     publishedAt: article.publishedAt,
     updatedAt: article.updatedAt,
     locale,
@@ -4047,11 +4052,16 @@ function toLocalizedArticle(article: BlogArticle, locale: BlogLocale): Localized
 }
 
 export function getBlogSlugs(): string[] {
-  return blogArticles.map((article) => article.slug);
+  return blogArticles
+    .filter((article) => !article.path || article.path.startsWith(`${BLOG_INDEX_PATH}/`))
+    .map((article) => article.slug);
 }
 
 export function getBlogPaths(): string[] {
-  return [BLOG_INDEX_PATH, ...getBlogSlugs().map((slug) => `${BLOG_INDEX_PATH}/${slug}`)];
+  return [
+    BLOG_INDEX_PATH,
+    ...blogArticles.map((article) => article.path ?? `${BLOG_INDEX_PATH}/${article.slug}`),
+  ];
 }
 
 export function getLocalizedBlogArticles(locale: string): LocalizedBlogArticle[] {

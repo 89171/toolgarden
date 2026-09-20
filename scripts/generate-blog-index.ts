@@ -6,6 +6,7 @@ import { isConsolidatedBlogSlug } from '../lib/blog/consolidations';
 const outputPath = path.join(process.cwd(), 'scripts', '.blog-index.generated.json');
 const index = blogArticles.filter((article) => !isConsolidatedBlogSlug(article.slug)).map((article) => ({
   slug: article.slug,
+  path: article.path ?? `/blog/${article.slug}`,
   publishedAt: article.publishedAt,
   updatedAt: article.updatedAt,
   en: {

@@ -54,4 +54,12 @@ describe('sitemap', () => {
       `${BASE_URL}/en/blog/chinese-english-word-count-character-byte`
     );
   });
+
+  it('uses the canonical custom path for standalone editorial pages', () => {
+    const urls = getSitemapEntries().map((entry) => entry.url);
+
+    expect(urls).toContain(`${BASE_URL}/en/privacy-first-tools`);
+    expect(urls).toContain(`${BASE_URL}/zh/privacy-first-tools`);
+    expect(urls).not.toContain(`${BASE_URL}/en/blog/privacy-first-tools`);
+  });
 });

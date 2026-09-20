@@ -19,10 +19,10 @@ const currentBlogArticles = blogArticles.filter(
 );
 const blogPaths = [
   BLOG_INDEX_PATH,
-  ...currentBlogArticles.map((article) => `${BLOG_INDEX_PATH}/${article.slug}`),
+  ...currentBlogArticles.map((article) => article.path ?? `${BLOG_INDEX_PATH}/${article.slug}`),
 ];
 const blogArticleByPath = new Map(
-  currentBlogArticles.map((article) => [`${BLOG_INDEX_PATH}/${article.slug}`, article])
+  currentBlogArticles.map((article) => [article.path ?? `${BLOG_INDEX_PATH}/${article.slug}`, article])
 );
 const blogIndexUpdatedAt = currentBlogArticles.reduce(
   (latest, article) => article.updatedAt > latest ? article.updatedAt : latest,

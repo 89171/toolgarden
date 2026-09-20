@@ -287,9 +287,10 @@ function renderGeneratedBlogArticleIndex(articles) {
   ];
 
   for (const article of articles) {
+    const articlePath = article.path ?? `/blog/${article.slug}`;
     lines.push(`### ${article.en.title}`);
-    lines.push(`- English: ${BASE_URL}/en/blog/${article.slug}`);
-    lines.push(`- Chinese: ${BASE_URL}/zh/blog/${article.slug}`);
+    lines.push(`- English: ${BASE_URL}/en${articlePath}`);
+    lines.push(`- Chinese: ${BASE_URL}/zh${articlePath}`);
     lines.push(`- Chinese title: ${article.zh.title}`);
     lines.push(`- Summary: ${article.en.excerpt}`);
     lines.push(`- Published: ${article.publishedAt}; updated: ${article.updatedAt}`);

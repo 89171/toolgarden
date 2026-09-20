@@ -1032,6 +1032,76 @@ Canonical examples:
 
 > Generated from the complete `blogArticles` registry during `npm run build`.
 
+### Privacy-First Online Tools: How ToolGarden Processes Files in Your Browser
+- English: https://toolgarden.xyz/en/privacy-first-tools
+- Chinese: https://toolgarden.xyz/zh/privacy-first-tools
+- Chinese title: 隐私优先的在线工具：ToolGarden 如何在浏览器本地处理文件
+- Summary: See how ToolGarden uses fflate, Canvas, Web APIs, browser JavaScript, WebAssembly, and local models to process everyday files without uploading tool input to a server.
+- Published: 2026-09-20; updated: 2026-09-20
+
+### Blob vs File vs ArrayBuffer: What Is the Difference?
+- English: https://toolgarden.xyz/en/blog/blob-file-arraybuffer-differences
+- Chinese: https://toolgarden.xyz/zh/blog/blob-file-arraybuffer-differences
+- Chinese title: Blob、File 和 ArrayBuffer 有什么区别？
+- Summary: Understand how Blob, File, ArrayBuffer, Uint8Array, and streams represent browser data, when copies happen, and which type belongs at each stage.
+- Published: 2026-09-20; updated: 2026-09-20
+
+### How Does a JSON Formatter Work?
+- English: https://toolgarden.xyz/en/blog/how-json-formatter-works
+- Chinese: https://toolgarden.xyz/zh/blog/how-json-formatter-works
+- Chinese title: JSON Formatter 是怎么实现的？
+- Summary: Build a reliable formatter with JSON.parse, JSON.stringify, errors, JSON5 fallback, tree views, and large-input limits.
+- Published: 2026-09-20; updated: 2026-09-20
+
+### JSON Formatter vs JSON Validator: What Is the Difference?
+- English: https://toolgarden.xyz/en/blog/json-formatter-vs-json-validator
+- Chinese: https://toolgarden.xyz/zh/blog/json-formatter-vs-json-validator
+- Chinese title: JSON Formatter 和 JSON Validator 有什么区别？
+- Summary: Separate formatting, syntax validation, schema validation, linting, and repair with practical examples.
+- Published: 2026-09-20; updated: 2026-09-20
+
+### Why Does Base64 Increase File Size by About 33%?
+- English: https://toolgarden.xyz/en/blog/why-base64-increases-file-size-33-percent
+- Chinese: https://toolgarden.xyz/zh/blog/why-base64-increases-file-size-33-percent
+- Chinese title: Base64 为什么会让文件变大约 33%？
+- Summary: Derive Base64 expansion from bits, bytes, padding, line wrapping, and container overhead.
+- Published: 2026-09-20; updated: 2026-09-20
+
+### Base64 vs URL Encoding vs Text Encoding
+- English: https://toolgarden.xyz/en/blog/base64-vs-url-encoding-vs-text-encoding
+- Chinese: https://toolgarden.xyz/zh/blog/base64-vs-url-encoding-vs-text-encoding
+- Chinese title: Base64、URL Encode 和普通文本编码有什么区别？
+- Summary: Compare Base64, percent-encoding, UTF-8, Unicode escapes, and HTML entities by data layer and purpose.
+- Published: 2026-09-20; updated: 2026-09-20
+
+### What Is a Blob URL? How URL.createObjectURL() Works
+- English: https://toolgarden.xyz/en/blog/blob-url-createobjecturl-explained
+- Chinese: https://toolgarden.xyz/zh/blog/blob-url-createobjecturl-explained
+- Chinese title: Blob URL 是什么？URL.createObjectURL() 工作原理
+- Summary: Learn how blob: URLs expose in-memory data to browser elements, differ from Base64 Data URLs, and require explicit lifetime management.
+- Published: 2026-09-20; updated: 2026-09-20
+
+### How Does Browser Image Compression Work?
+- English: https://toolgarden.xyz/en/blog/browser-image-compression-canvas-blob
+- Chinese: https://toolgarden.xyz/zh/blog/browser-image-compression-canvas-blob
+- Chinese title: 浏览器如何实现图片压缩？
+- Summary: Follow an image from File input through decode, Canvas resize, quality settings, Blob output, metadata changes, and visual checks.
+- Published: 2026-09-20; updated: 2026-09-20
+
+### How Is UUID v4 Generated, and Why Is It Unlikely to Repeat?
+- English: https://toolgarden.xyz/en/blog/uuid-v4-generation-and-collision-probability
+- Chinese: https://toolgarden.xyz/zh/blog/uuid-v4-generation-and-collision-probability
+- Chinese title: UUID v4 是怎么生成的？为什么几乎不会重复？
+- Summary: Understand UUID v4 bit layout, browser crypto, birthday-bound collision math, unsafe generators, and database constraints.
+- Published: 2026-09-20; updated: 2026-09-20
+
+### What Is a Unix Timestamp? Seconds vs Milliseconds
+- English: https://toolgarden.xyz/en/blog/unix-timestamp-seconds-vs-milliseconds
+- Chinese: https://toolgarden.xyz/zh/blog/unix-timestamp-seconds-vs-milliseconds
+- Chinese title: Unix Timestamp 是什么？秒和毫秒时间戳有什么区别？
+- Summary: Understand epoch time, seconds, milliseconds, microseconds, timezone display, digit heuristics, precision, and conversion bugs.
+- Published: 2026-09-20; updated: 2026-09-20
+
 ### Harness Engineering in Practice: How Claude Helped Transform My Next.js Project
 - English: https://toolgarden.xyz/en/blog/harness-engineering-with-claude
 - Chinese: https://toolgarden.xyz/zh/blog/harness-engineering-with-claude

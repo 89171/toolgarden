@@ -3,6 +3,7 @@ import enMessages from '../messages/en.json';
 import zhMessages from '../messages/zh.json';
 import {
   blogArticles,
+  getBlogSlugs,
   getLocalizedBlogArticles,
   getLocalizedBlogTopics,
 } from '../lib/blog/articles';
@@ -65,6 +66,31 @@ describe('registry and localization harness', () => {
 });
 
 describe('blog topic harness', () => {
+  it('keeps the browser-file SEO series complete and uniquely routed', () => {
+    const slugs = new Set(blogArticles.map((article) => article.slug));
+    const series = [
+      'how-to-build-online-file-compress-and-extract',
+      'complete-guide-browser-local-data-processing',
+      'blob-file-arraybuffer-differences',
+      'blob-url-createobjecturl-explained',
+      'base64-encoding-explained-common-pitfalls',
+      'why-base64-increases-file-size-33-percent',
+      'base64-vs-url-encoding-vs-text-encoding',
+      'how-json-formatter-works',
+      'json-formatter-vs-json-validator',
+      'fix-json-unexpected-token-error',
+      'browser-image-compression-canvas-blob',
+      'jpg-png-webp-avif-differences',
+      'uuid-v4-generation-and-collision-probability',
+      'unix-timestamp-seconds-vs-milliseconds',
+      'privacy-first-tools',
+    ];
+
+    expect(series).toHaveLength(15);
+    expect(new Set(series).size).toBe(series.length);
+    for (const slug of series) expect(slugs.has(slug)).toBe(true);
+  });
+
   it('keeps every topic pillar and cluster in the complete article registry', () => {
     const slugs = new Set(blogArticles.map((article) => article.slug));
     expect(slugs.size).toBe(blogArticles.length);
@@ -89,6 +115,13 @@ describe('blog topic harness', () => {
       expect(indexableSlugs.has(source)).toBe(false);
       expect(indexableSlugs.has(target)).toBe(true);
     }
+  });
+
+  it('keeps standalone editorial pages in the article registry but out of blog dynamic routes', () => {
+    const article = getLocalizedBlogArticles('en').find((item) => item.slug === 'privacy-first-tools');
+
+    expect(article?.path).toBe('/privacy-first-tools');
+    expect(getBlogSlugs()).not.toContain('privacy-first-tools');
   });
 });
 
