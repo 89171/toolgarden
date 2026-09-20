@@ -1377,6 +1377,11 @@ async function getImageEnhanceSession(): Promise<{
         import('onnxruntime-web/webgpu'),
         fetchImageEnhanceModel(),
       ]);
+      ort.env.wasm.proxy = false;
+      ort.env.wasm.wasmPaths = {
+        mjs: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.jsep.mjs`,
+        wasm: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.jsep.wasm`,
+      };
       reportImageEnhanceProgress(createImageEnhanceProgress('model', 88));
       const session = await ort.InferenceSession.create(modelData, {
         executionProviders: ['webgpu'],
