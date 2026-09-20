@@ -696,6 +696,8 @@
       "unsupported_output": "This browser cannot export {format}.",
       "webgpu_unavailable": "This browser cannot use WebGPU or CPU WebAssembly. Try a recent desktop browser and retry.",
       "model_download_failed": "The Real-ESRGAN model download failed. Check your connection and try again.",
+      "session_failed": "The Real-ESRGAN runtime could not start. Update your browser or disable extensions that restrict WebAssembly, then retry.",
+      "inference_failed": "Real-ESRGAN inference failed, possibly because available memory or GPU memory is too low. Close other resource-heavy pages or retry with a smaller image.",
       "ai_model_unavailable": "Real-ESRGAN failed to load or run. Check browser compatibility, GPU memory, and the network, then try again.",
       "general": "Image enhancement failed. Please try again."
     }

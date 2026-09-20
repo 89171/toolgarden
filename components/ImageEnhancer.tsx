@@ -144,6 +144,8 @@ export function ImageEnhancer() {
       case 'ai_model_unavailable':
         if (imageError.detail === 'realesrgan_webgpu_unavailable') return ti('errors.webgpu_unavailable');
         if (imageError.detail === 'realesrgan_model_download_failed') return ti('errors.model_download_failed');
+        if (imageError.detail === 'realesrgan_session_failed') return ti('errors.session_failed');
+        if (imageError.detail === 'realesrgan_inference_failed') return ti('errors.inference_failed');
         return ti('errors.ai_model_unavailable');
       default:
         return ti('errors.general');

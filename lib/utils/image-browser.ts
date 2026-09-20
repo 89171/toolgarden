@@ -1298,7 +1298,12 @@ async function fetchImageEnhanceModelPart(
   partIndex: number,
   loadedParts: number[]
 ): Promise<Uint8Array> {
-  const response = await fetch(url);
+  let response: Response;
+  try {
+    response = await fetch(url);
+  } catch {
+    throw new Error('realesrgan_model_download_failed');
+  }
   if (!response.ok) throw new Error('realesrgan_model_download_failed');
 
   if (!response.body) {
@@ -1394,24 +1399,29 @@ async function getImageEnhanceSession(): Promise<{
         }
       }
 
-      const ort = await import('onnxruntime-web/wasm');
-      ort.env.wasm.numThreads = 1;
-      ort.env.wasm.proxy = false;
-      ort.env.wasm.wasmPaths = {
-        mjs: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.mjs`,
-        wasm: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.wasm`,
-      };
-      const session = await ort.InferenceSession.create(modelData, {
-        executionProviders: ['wasm'],
-        executionMode: 'sequential',
-        graphOptimizationLevel: 'all',
-      });
-      reportImageEnhanceProgress(createImageEnhanceProgress('model', 100));
-      return {
-        ort: ort as unknown as OrtWebGpuModule,
-        session: session as unknown as OrtWebGpuInferenceSession,
-        backend: 'wasm' as const,
-      };
+      try {
+        const ort = await import('onnxruntime-web/wasm');
+        ort.env.wasm.numThreads = 1;
+        ort.env.wasm.proxy = false;
+        ort.env.wasm.wasmPaths = {
+          mjs: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.mjs`,
+          wasm: `${ONNX_WASM_PUBLIC_PATH}ort-wasm-simd-threaded.wasm`,
+        };
+        const session = await ort.InferenceSession.create(modelData, {
+          executionProviders: ['wasm'],
+          executionMode: 'sequential',
+          graphOptimizationLevel: 'all',
+        });
+        reportImageEnhanceProgress(createImageEnhanceProgress('model', 100));
+        return {
+          ort: ort as unknown as OrtWebGpuModule,
+          session: session as unknown as OrtWebGpuInferenceSession,
+          backend: 'wasm' as const,
+        };
+      } catch (error) {
+        console.error('Real-ESRGAN session initialization failed', error);
+        throw new Error('realesrgan_session_failed');
+      }
     })().catch((error) => {
       imageEnhanceSessionPromise = null;
       throw error;
@@ -1602,15 +1612,29 @@ async function enhanceImageToCanvas(
         let outputTensor: OrtWebGpuTensor | undefined;
         let predictionCanvas: HTMLCanvasElement | null = null;
         try {
-          const results = await session.run({ [inputName]: inputTensor });
+          let results: Awaited<ReturnType<typeof session.run>>;
+          try {
+            results = await session.run({ [inputName]: inputTensor });
+          } catch (error) {
+            console.error('Real-ESRGAN inference failed', error);
+            throw new Error('realesrgan_inference_failed');
+          }
           outputTensor = results[outputName];
           if (!outputTensor) throw new Error('realesrgan_invalid_output');
 
           const dimensions = Array.from(outputTensor.dims);
           const predictionHeight = dimensions.at(-2) ?? 0;
           const predictionWidth = dimensions.at(-1) ?? 0;
+          if (
+            dimensions.length !== 4
+            || predictionWidth !== sourceWidth * IMAGE_ENHANCE_MODEL_SCALE
+            || predictionHeight !== sourceHeight * IMAGE_ENHANCE_MODEL_SCALE
+          ) {
+            throw new Error('realesrgan_invalid_output');
+          }
+          const outputData = await outputTensor.getData();
           predictionCanvas = renderImageEnhanceOutput(
-            outputTensor.data as ArrayLike<number>,
+            outputData as ArrayLike<number>,
             predictionWidth,
             predictionHeight
           );
