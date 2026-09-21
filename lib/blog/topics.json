@@ -27,12 +27,14 @@
     "pillarSlug": "json-tools-master-guide",
     "clusterSlugs": [
       "json-json5-jsonc-differences",
+      "what-is-jsonl-format",
       "format-and-validate-json-in-browser",
       "common-json-errors-and-fixes",
       "json-to-typescript-interface-guide"
     ],
     "targetKeywords": [
       "JSONC vs JSON5",
+      "JSONL format",
       "JSON formatter online",
       "JSON syntax error fix",
       "JSON to TypeScript interface"

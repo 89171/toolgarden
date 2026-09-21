@@ -18,6 +18,7 @@ import { seoBlogArticles } from './seo-articles';
 import { longTailBlogArticles } from './long-tail-articles';
 import { privacyFirstToolsArticles } from './privacy-first-tools';
 import { browserFileSeoArticles } from './browser-file-seo-articles';
+import { jsonFormatBlogArticles } from './json-format-articles';
 import { isConsolidatedBlogSlug } from './consolidations';
 
 export const BLOG_INDEX_PATH = '/blog';
@@ -189,6 +190,7 @@ const faviconHtmlSnippet = `<link rel="icon" href="/favicon.ico">
 export const blogArticles: BlogArticle[] = [
   ...privacyFirstToolsArticles,
   ...browserFileSeoArticles,
+  ...jsonFormatBlogArticles,
   ...harnessEngineeringArticles,
   ...audioBlogArticles,
   ...audioStemGuideArticles,

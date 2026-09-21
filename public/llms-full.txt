@@ -973,6 +973,8 @@ Canonical examples:
 - Cluster articles:
   - JSONC vs JSON5: https://toolgarden.xyz/en/blog/json-json5-jsonc-differences
     - Chinese: https://toolgarden.xyz/zh/blog/json-json5-jsonc-differences
+  - JSONL format: https://toolgarden.xyz/en/blog/what-is-jsonl-format
+    - Chinese: https://toolgarden.xyz/zh/blog/what-is-jsonl-format
   - JSON formatter online: https://toolgarden.xyz/en/blog/format-and-validate-json-in-browser
     - Chinese: https://toolgarden.xyz/zh/blog/format-and-validate-json-in-browser
   - JSON syntax error fix: https://toolgarden.xyz/en/blog/common-json-errors-and-fixes
@@ -1101,6 +1103,13 @@ Canonical examples:
 - Chinese title: Unix Timestamp 是什么？秒和毫秒时间戳有什么区别？
 - Summary: Understand epoch time, seconds, milliseconds, microseconds, timezone display, digit heuristics, precision, and conversion bugs.
 - Published: 2026-09-20; updated: 2026-09-20
+
+### What Is JSONL? Examples, Comparisons, and When to Use It
+- English: https://toolgarden.xyz/en/blog/what-is-jsonl-format
+- Chinese: https://toolgarden.xyz/zh/blog/what-is-jsonl-format
+- Chinese title: JSONL 是什么格式？示例、对比和适用场景
+- Summary: JSONL stores one valid JSON value per line, making it a better fit than normal JSON for logs, AI training data, large imports and exports, and streaming pipelines.
+- Published: 2026-09-21; updated: 2026-09-21
 
 ### Harness Engineering in Practice: How Claude Helped Transform My Next.js Project
 - English: https://toolgarden.xyz/en/blog/harness-engineering-with-claude
