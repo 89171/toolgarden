@@ -7,6 +7,7 @@ import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
 import type { ToolContent } from '@/lib/tools/content';
+import { useClipboardFiles } from '@/lib/hooks/useClipboardFiles';
 import { convertImageFile } from '@/lib/utils/image-browser';
 import {
   formatFileSize,
@@ -180,6 +181,10 @@ export function ImageTargetConverter({ toolId, targetFormat, content }: ImageTar
     setItems(nextItems);
     void convertItems(nextItems);
   }, [convertItems]);
+
+  useClipboardFiles(addFiles, {
+    accept: useCallback((file: File) => file.type.startsWith('image/'), []),
+  });
 
   const reconvert = useCallback(() => {
     if (itemsRef.current.length === 0) return;

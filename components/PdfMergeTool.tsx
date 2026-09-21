@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
+import { useClipboardFiles } from '@/lib/hooks/useClipboardFiles';
 import { formatFileSize } from '@/lib/utils/image';
 import { inspectPdfFile, mergePdfFiles, type PdfOperationError } from '@/lib/utils/pdf-browser';
 import { PDF_FILE_ACCEPT_VALUE } from '@/lib/utils/pdf';
@@ -107,6 +108,12 @@ export function PdfMergeTool() {
       });
     });
   }, [result]);
+
+  useClipboardFiles(addFiles, {
+    accept: useCallback((file: File) => (
+      file.type === 'application/pdf' || /\.pdf$/i.test(file.name)
+    ), []),
+  });
 
   const clearItems = useCallback(() => {
     if (result?.url) URL.revokeObjectURL(result.url);

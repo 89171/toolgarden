@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
+import { useClipboardFiles } from '@/lib/hooks/useClipboardFiles';
 import type { ToolContent } from '@/lib/tools/content';
 import { formatFileSize } from '@/lib/utils/image';
 import {
@@ -295,6 +296,20 @@ export function FileMergeTool({ mode, content }: FileMergeToolProps) {
       })),
     ]);
   };
+
+  const acceptClipboardFile = useCallback((file: File) => {
+    if (mode === 'images') return file.type.startsWith('image/');
+    if (mode === 'csv') return file.type.includes('csv') || /\.(csv)$/i.test(file.name);
+    if (mode === 'text') return file.type.startsWith('text/') || /\.(txt)$/i.test(file.name);
+    if (mode === 'markdown') return /\.(md|markdown)$/i.test(file.name);
+    if (mode === 'rtf') return file.type === 'application/rtf' || /\.(rtf)$/i.test(file.name);
+    if (mode === 'excel') return /\.(xlsx|xls|csv)$/i.test(file.name);
+    if (mode === 'word') return /\.(docx)$/i.test(file.name);
+    if (mode === 'ppt') return /\.(pptx)$/i.test(file.name);
+    return true;
+  }, [mode]);
+
+  useClipboardFiles(addFiles, { accept: acceptClipboardFile });
 
   const clearFiles = () => {
     updateFiles(() => []);

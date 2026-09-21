@@ -8,6 +8,7 @@ import { ImagePreviewDialog } from '@/components/ImagePreviewDialog';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
+import { useClipboardFiles } from '@/lib/hooks/useClipboardFiles';
 import { inspectImageFile, upscaleImageFile } from '@/lib/utils/image-browser';
 import {
   AI_UPSCALE_SCALES,
@@ -187,6 +188,10 @@ export function ImageUpscaler() {
     syncDimensionsFromScale(2, inspected);
     setOutputFormat('png');
   }, [clearOutput, getErrorMessage, sourceUrl, syncDimensionsFromScale]);
+
+  useClipboardFiles(handleFiles, {
+    accept: useCallback((file: File) => file.type.startsWith('image/'), []),
+  });
 
   const handleWidthChange = useCallback((value: string) => {
     setOutputWidth(value);

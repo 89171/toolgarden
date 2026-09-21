@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
+import { useClipboardFiles } from '@/lib/hooks/useClipboardFiles';
 import { PDF_FILE_ACCEPT_VALUE } from '@/lib/utils/pdf';
 import {
   convertPdfToWord,
@@ -135,6 +136,12 @@ export function PdfToWordConverter() {
     if (!selectedFile) return;
     void convertFile(selectedFile);
   }, [convertFile]);
+
+  useClipboardFiles(addFiles, {
+    accept: useCallback((selectedFile: File) => (
+      selectedFile.type === 'application/pdf' || /\.pdf$/i.test(selectedFile.name)
+    ), []),
+  });
 
   const downloadResult = useCallback(() => {
     if (!result) return;

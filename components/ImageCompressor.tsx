@@ -7,6 +7,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
+import { useClipboardFiles } from '@/lib/hooks/useClipboardFiles';
 import { compressImageFile } from '@/lib/utils/image-browser';
 import {
   formatFileSize,
@@ -210,6 +211,10 @@ export function ImageCompressor() {
     setItems(nextItems);
     void compressItems(nextItems, outputModeRef.current);
   }, [compressItems]);
+
+  useClipboardFiles(addFiles, {
+    accept: useCallback((file: File) => file.type.startsWith('image/'), []),
+  });
 
   const recompress = useCallback(() => {
     if (itemsRef.current.length === 0) return;

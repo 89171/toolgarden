@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
+import { useClipboardFiles } from '@/lib/hooks/useClipboardFiles';
 import { convertFileToPdf } from '@/lib/utils/pdf-browser';
 import {
   getPdfAcceptValue,
@@ -161,6 +162,8 @@ export function PdfToPdfConverter() {
     setPreviewId(null);
     void convertItems(nextItems);
   }, [convertItems]);
+
+  useClipboardFiles(addFiles);
 
   const clearItems = useCallback(() => {
     itemsRef.current.forEach(revokeItemUrl);

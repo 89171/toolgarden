@@ -33,6 +33,28 @@ interface ToolFaqItem {
   answer: string;
 }
 
+const TOOL_IDS_WITH_FILE_INPUT = new Set([
+  'excel-to-json',
+  'json-to-excel',
+  'markdown-to-html',
+  'markdown-to-pdf',
+  'qr-code-decoder',
+  'zip-compress',
+  'zip-extract',
+  'font-subset',
+]);
+
+function shouldShowPrivacyTrust(toolId: string, toolPath?: string): boolean {
+  if (!toolPath) return false;
+  return (
+    toolPath.startsWith('/image/') ||
+    toolPath.startsWith('/audio/') ||
+    toolPath.startsWith('/pdf/') ||
+    toolPath.startsWith('/file-merge/') ||
+    TOOL_IDS_WITH_FILE_INPUT.has(toolId)
+  );
+}
+
 export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children, content }) => {
   const t = useTranslations();
   const locale = useLocale();
@@ -90,6 +112,7 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children, conten
   const relatedTools = tool ? getRelatedTools(tool.id) : [];
   const faqTitleId = `${toolId}-faq-title`;
   const relatedToolsTitleId = `${toolId}-related-tools-title`;
+  const showPrivacyTrust = shouldShowPrivacyTrust(toolId, tool?.path);
 
   return (
     <>
@@ -209,6 +232,7 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children, conten
                 <p className="min-w-0 text-sm leading-relaxed text-content-muted">{toolDesc}</p>
               ) : null}
             </div>
+            {showPrivacyTrust ? (
             <aside className="mt-3 border-y border-border-subtle py-2.5" aria-label={t('privacy_trust.label')}>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-content-secondary sm:text-sm">
                 {[
@@ -230,6 +254,7 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({ toolId, children, conten
                 </Link>
               </div>
             </aside>
+            ) : null}
           </div>
         )}
 

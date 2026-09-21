@@ -8,6 +8,7 @@ import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
 import { imageEnhanceContent } from '@/lib/tools/content/image-enhance';
+import { useClipboardFiles } from '@/lib/hooks/useClipboardFiles';
 import {
   enhanceImageFile,
   inspectImageFile,
@@ -200,6 +201,10 @@ export function ImageEnhancer() {
     setScale(1);
     setOutputFormat('png');
   }, [clearOutput, getErrorMessage]);
+
+  useClipboardFiles(handleFiles, {
+    accept: useCallback((file: File) => file.type.startsWith('image/'), []),
+  });
 
   const handleProcess = useCallback(async () => {
     if (!file || !image || !canProcess || isProcessing) return;
