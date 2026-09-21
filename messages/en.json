@@ -1257,6 +1257,7 @@
     "pdf-merge": "merge PDF online,PDF merger,combine PDF files,join PDF documents,merge multiple PDFs,merge PDF online free,combine PDF without upload,merge multiple PDF into one,reorder pages merge PDF,join PDF files offline",
     "pdf-split": "split PDF online, PDF splitter, separate PDF pages, split PDF by page range, divide PDF file",
     "pdf-extract-pages": "extract PDF pages, PDF page extractor, save selected PDF pages, extract pages from PDF online, copy PDF pages",
+    "pdf-edit": "edit pdf online,pdf editor,add text to pdf,sign pdf online,annotate pdf,free pdf editor,pdf markup,highlight pdf,fill pdf form",
     "pdf-organize": "organize PDF pages, reorder PDF pages, delete PDF pages, duplicate PDF pages, PDF page organizer",
     "word-merge": "merge Word documents, Word document merger, combine DOCX files, merge DOCX online, join Word files",
     "ppt-merge": "merge PowerPoint files, PPT merger, combine PPTX files, merge presentations online, join PowerPoint slides",
@@ -1269,6 +1270,7 @@
     "image-compress": "compress image online, image compressor, reduce image file size, compress JPG, compress PNG, compress WebP",
     "zip-compress": "compress ZIP online, create ZIP online, browser local ZIP compressor, compress files without upload, zip files online",
     "zip-extract": "extract ZIP online, unzip ZIP online, browser local ZIP extractor, view ZIP folders, download ZIP files, unzip without upload",
+    "file-preview": "file preview online, browser local file viewer, preview ZIP files, PDF preview, Word preview, Excel preview",
     "image-upscale": "upscale image online, image upscaler, enlarge image without losing quality, increase image resolution, 2x image upscale, 4x image upscale",
     "image-enhance": "enhance image online, make image clearer, fix blurry photo, AI photo restoration, Real-ESRGAN online, improve image quality",
     "image-remove-bg": "remove image background, background remover, transparent background maker, AI background removal, remove background online",
@@ -1539,6 +1541,22 @@
         {
           "question": "Does extracting affect the original file?",
           "answer": "No. The source PDF is only read; the result is saved as a new file and the original is unchanged."
+        }
+      ]
+    },
+    "pdf-edit": {
+      "items": [
+        {
+          "question": "Is the PDF uploaded anywhere?",
+          "answer": "No. The PDF is rendered in your browser and the annotations are written back locally. Nothing is sent to a server."
+        },
+        {
+          "question": "Can I change the existing text in the PDF?",
+          "answer": "No. This tool layers text, pen strokes, highlights, and boxes over the page; the original text and layout stay as they are. Edit the source document and re-export when the wording has to change."
+        },
+        {
+          "question": "How do I sign a PDF?",
+          "answer": "Draw the signature with the pen tool, or use Insert image to place a signature image with a transparent background, then drag and resize it onto the signature line before saving."
         }
       ]
     },
@@ -4342,6 +4360,52 @@
         "empty_archive": "This ZIP archive does not contain downloadable files."
       }
     },
+    "file-preview": {
+      "name": "File Preview",
+      "description": "Preview images, documents, spreadsheets, PDFs, text, media, and ZIP entries locally in your browser without uploading files.",
+      "input_title": "Choose a file",
+      "output_title": "Preview",
+      "drop_title": "Click or drag a file to upload",
+      "drop_hint": "Supports common images, audio/video, PDF, text, Markdown, DOCX, XLSX/CSV, and ZIP files",
+      "choose_another": "Choose another",
+      "clear": "Clear",
+      "empty_input": "Choose a file to start previewing.",
+      "file_meta": "{size} · {type}",
+      "local_note": "The file stays in this browser's memory and is never uploaded.",
+      "processing": "Reading file…",
+      "empty_title": "Waiting for a file",
+      "empty_body": "Upload a file to show its preview here. ZIP files can be expanded and their entries previewed.",
+      "select_entry": "Select a file from the ZIP tree to preview it.",
+      "archive_meta": "{count} files · {size} extracted",
+      "expand_folder": "Expand folder",
+      "collapse_folder": "Collapse folder",
+      "folder_items": "{count} items",
+      "download_file": "Download file",
+      "media_unsupported": "This browser does not support this media format.",
+      "pdf_title": "PDF preview: {name}",
+      "text_meta": "{characters} characters",
+      "text_truncated": "File is long; showing the first 300,000 characters",
+      "document_note": "DOCX is rendered locally with docx-preview. Complex layouts may differ slightly from desktop Office.",
+      "empty_sheet": "This worksheet has no previewable data.",
+      "sheet_meta": "Showing {shownRows}/{totalRows} rows and {shownColumns}/{totalColumns} columns",
+      "binary_title": "Direct preview is not available",
+      "binary_body": "This is an unknown or browser-unrenderable binary file. Download it to inspect it locally.",
+      "kinds": {
+        "image": "Image",
+        "audio": "Audio",
+        "video": "Video",
+        "pdf": "PDF",
+        "text": "Text",
+        "markdown": "Markdown",
+        "spreadsheet": "Spreadsheet",
+        "document": "DOCX",
+        "zip": "ZIP",
+        "binary": "File"
+      },
+      "errors": {
+        "preview_failed": "The file could not be previewed. Check that it is valid and try another browser."
+      }
+    },
     "image-upscale": {
       "name": "Image Upscale",
       "description": "Free online image upscaler for JPG, PNG, WebP, and other images at 2x, 3x, 4x, or custom dimensions with pixel-perfect, Smooth HD, and Sharp enhance modes"
@@ -4453,6 +4517,42 @@
     "pdf-extract-pages": {
       "name": "Extract pages",
       "description": "Free online tool to extract specific pages from a PDF and save selected pages or ranges as a new document"
+    },
+    "pdf-edit": {
+      "name": "Edit PDF",
+      "description": "Add text, signature images, freehand markup, highlights, and cover boxes to a PDF online. Browser-local editing that leaves the original text layer intact.",
+      "drop_title": "Click or drop a PDF here",
+      "replace_file": "Replace PDF",
+      "drop_hint": "Processed locally in your browser, never uploaded",
+      "empty_state": "Upload a PDF to add text, signatures, markup, and cover boxes",
+      "rendering": "Rendering the PDF…",
+      "rendering_progress": "Rendering page {current} of {total}…",
+      "tool_select": "Select",
+      "tool_text": "Text",
+      "tool_draw": "Pen",
+      "tool_highlight": "Highlight",
+      "tool_rect": "Box",
+      "tool_image": "Insert image",
+      "text_placeholder": "Type here",
+      "color_label": "Color",
+      "stroke_label": "Width",
+      "font_size_label": "Font size",
+      "fill_label": "Filled box",
+      "delete_selected": "Delete selected",
+      "clear_page": "Clear this page",
+      "page_prev": "Previous",
+      "page_next": "Next",
+      "page_indicator": "Page {current} of {total}",
+      "hint": "Click the page to add text or a box; in select mode you can drag, resize, and press Delete",
+      "save_download": "Save and download PDF",
+      "saving": "Building the PDF…",
+      "errors": {
+        "not_pdf": "Please choose a PDF file.",
+        "render_failed": "This PDF could not be opened. Check that it is not encrypted or damaged.",
+        "image_failed": "That image could not be inserted. Try a different image file.",
+        "nothing_to_save": "Nothing has been added yet. Mark up a page first.",
+        "save_failed": "Building the PDF failed. Reload the page and try again."
+      }
     },
     "pdf-organize": {
       "name": "Organize PDF",

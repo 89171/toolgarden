@@ -64,6 +64,16 @@ Canonical examples:
 - English URL: https://toolgarden.xyz/en/json-diff
 - Chinese URL: https://toolgarden.xyz/zh/json-diff
 
+#### File Preview / 文件预览 (/file-preview)
+- ID: `file-preview`
+- Category: Format / 格式化
+- Icon label: `PRE`
+- Featured: yes
+- English description: Preview images, documents, spreadsheets, PDFs, text, media, and ZIP entries locally in your browser without uploading files.
+- Chinese description: 在浏览器本地预览图片、文档、表格、PDF、文本、媒体和 ZIP 内部文件，文件不会上传服务器。
+- English URL: https://toolgarden.xyz/en/file-preview
+- Chinese URL: https://toolgarden.xyz/zh/file-preview
+
 #### Text Diff / 文本对比 (/text/diff)
 - ID: `text-diff`
 - Category: Format / 格式化
@@ -235,6 +245,16 @@ Canonical examples:
 - Chinese description: 从 PDF 中挑出指定的单页或页码范围，保存为一份新文档，不重新渲染，页面画质与排版保持不变。
 - English URL: https://toolgarden.xyz/en/pdf/extract-pages
 - Chinese URL: https://toolgarden.xyz/zh/pdf/extract-pages
+
+#### Edit PDF / 编辑 PDF (/pdf/edit)
+- ID: `pdf-edit`
+- Category: Convert / 转换
+- Icon label: `EDT`
+- Featured: yes
+- English description: Add text, signature images, freehand markup, highlights, and cover boxes to a PDF online. Browser-local editing that leaves the original text layer intact.
+- Chinese description: 在线编辑 PDF：添加文字、插入签名图片、画笔批注、高亮标记、方框遮盖写错的内容，浏览器本地处理不上传，导出后原有文字层和排版保持不变，正文仍可选中复制。
+- English URL: https://toolgarden.xyz/en/pdf/edit
+- Chinese URL: https://toolgarden.xyz/zh/pdf/edit
 
 #### Organize PDF / 整理 PDF (/pdf/organize)
 - ID: `pdf-organize`

@@ -149,6 +149,15 @@ export const toolRegistry: ToolMeta[] = [
     category: 'convert',
   },
   {
+    id: 'pdf-edit',
+    name: '编辑 PDF',
+    description: '在浏览器本地为 PDF 添加文字、签名图片、画笔批注、高亮和方框，导出时不改动原文字层',
+    path: '/pdf/edit',
+    icon: 'EDT',
+    category: 'convert',
+    featured: true,
+  },
+  {
     id: 'pdf-organize',
     name: '整理 PDF',
     description: '重新排序、复制和删除 PDF 页面，导出整理后的文档',
@@ -245,6 +254,15 @@ export const toolRegistry: ToolMeta[] = [
     path: '/zip-extract',
     icon: 'UNZ',
     category: 'convert',
+    featured: true,
+  },
+  {
+    id: 'file-preview',
+    name: '文件预览',
+    description: '在浏览器本地预览图片、文档、表格、PDF、文本、媒体和 ZIP 内部文件',
+    path: '/file-preview',
+    icon: 'PRE',
+    category: 'format',
     featured: true,
   },
   {
@@ -850,7 +868,7 @@ export function getInfoCodecTools(): ToolMeta[] {
 
 /** 获取其他工具集合 */
 export function getOtherTools(): ToolMeta[] {
-  const extraToolIds = new Set(['zip-compress', 'zip-extract']);
+  const extraToolIds = new Set(['zip-compress', 'zip-extract', 'file-preview']);
   return toolRegistry.filter((tool) => tool.path.startsWith('/other/') || extraToolIds.has(tool.id));
 }
 
@@ -864,7 +882,8 @@ function isNonJsonTopLevelTool(tool: ToolMeta): boolean {
     tool.path.startsWith('/audio/') ||
     tool.path.startsWith('/qr-code/') ||
     tool.path.startsWith('/info-codec') ||
-    tool.path.startsWith('/other/')
+    tool.path.startsWith('/other/') ||
+    tool.id === 'file-preview'
   );
 }
 

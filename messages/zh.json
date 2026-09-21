@@ -1257,6 +1257,7 @@
     "pdf-merge": "PDF合并,在线合并PDF,PDF合并工具,多个PDF合成一个,拼接PDF,免费合并PDF,在线PDF合并不上传,多个PDF合并成一个,PDF拖动排序合并,手机合并PDF",
     "pdf-split": "PDF拆分,在线拆分PDF,PDF分割,按页拆分PDF,PDF分页",
     "pdf-extract-pages": "提取PDF页面,PDF页面提取,保存PDF指定页,在线提取PDF页,复制PDF页面",
+    "pdf-edit": "在线编辑PDF,PDF编辑器,PDF添加文字,PDF签名,PDF批注,PDF在线修改,免费PDF编辑,PDF涂改,PDF高亮",
     "pdf-organize": "PDF页面整理,PDF页面排序,删除PDF页面,复制PDF页面,PDF页面管理",
     "word-merge": "Word合并,合并Word文档,DOCX合并,多个Word合成一个,在线合并Word",
     "ppt-merge": "PPT合并,合并PPT文件,PPTX合并,多个PPT合成一个,在线合并演示文稿",
@@ -1269,6 +1270,7 @@
     "image-compress": "图片压缩,在线压缩图片,减小图片大小,JPG压缩,PNG压缩,WebP压缩",
     "zip-compress": "ZIP压缩,在线压缩ZIP,在线打包文件,文件压缩工具,浏览器本地压缩,压缩文件不上传",
     "zip-extract": "ZIP解压,在线解压ZIP,浏览器本地解压,查看ZIP目录,下载ZIP文件,解压文件不上传",
+    "file-preview": "文件预览,在线文件预览,浏览器本地预览,ZIP文件预览,PDF预览,Word预览,Excel预览",
     "image-upscale": "图片无损放大,图片放大不模糊,提高图片分辨率,2倍放大图片,4倍放大图片,图片超分辨率",
     "image-enhance": "图片变清晰,图片清晰增强,模糊图片修复,照片变清晰,老照片清晰修复,Real-ESRGAN在线,AI图片修复",
     "image-remove-bg": "图片去背景,一键抠图,背景移除,透明背景图片,AI抠图,在线去背景",
@@ -1539,6 +1541,22 @@
         {
           "question": "提取会影响原文件吗？",
           "answer": "不会。原 PDF 只被读取，提取结果保存为新文件，原始文档保持不变。"
+        }
+      ]
+    },
+    "pdf-edit": {
+      "items": [
+        {
+          "question": "在线编辑 PDF 会上传文件吗？",
+          "answer": "不会。PDF 在浏览器里渲染，标注也在本地写回文件，全程不经过服务器。"
+        },
+        {
+          "question": "可以修改 PDF 里原有的文字吗？",
+          "answer": "不能。本工具是在原页面上叠加文字、画笔、高亮和方框，原有文字和排版保持不变。需要改正文请回到源文件重新导出。"
+        },
+        {
+          "question": "怎么给 PDF 签名？",
+          "answer": "用画笔直接手写签名，或用「插入图片」放入透明背景的签名图片，拖动缩放到签字栏位置后保存下载。"
         }
       ]
     },
@@ -4342,6 +4360,52 @@
         "empty_archive": "这个 ZIP 中没有可下载的文件。"
       }
     },
+    "file-preview": {
+      "name": "文件预览",
+      "description": "在浏览器本地预览图片、文档、表格、PDF、文本、媒体和 ZIP 内部文件，文件不会上传服务器。",
+      "input_title": "选择文件",
+      "output_title": "预览内容",
+      "drop_title": "点击或拖拽文件上传",
+      "drop_hint": "支持图片、音视频、PDF、文本、Markdown、DOCX、XLSX/CSV 和 ZIP 等常见格式",
+      "choose_another": "更换文件",
+      "clear": "清空",
+      "empty_input": "选择一个文件开始预览。",
+      "file_meta": "{size} · {type}",
+      "local_note": "文件只在当前浏览器内存中处理，不会上传服务器。",
+      "processing": "正在读取文件…",
+      "empty_title": "等待文件",
+      "empty_body": "上传文件后，预览内容会显示在这里。ZIP 文件可以展开目录并预览内部文件。",
+      "select_entry": "从左侧 ZIP 目录中选择一个文件预览。",
+      "archive_meta": "{count} 个文件 · 解压后 {size}",
+      "expand_folder": "展开文件夹",
+      "collapse_folder": "折叠文件夹",
+      "folder_items": "{count} 项",
+      "download_file": "下载文件",
+      "media_unsupported": "当前浏览器不支持此媒体格式。",
+      "pdf_title": "PDF 预览：{name}",
+      "text_meta": "共 {characters} 个字符",
+      "text_truncated": "内容过长，仅显示前 300,000 个字符",
+      "document_note": "DOCX 由 docx-preview 在浏览器本地渲染。复杂版式可能与桌面 Office 略有差异。",
+      "empty_sheet": "这个工作表没有可预览数据。",
+      "sheet_meta": "显示 {shownRows}/{totalRows} 行、{shownColumns}/{totalColumns} 列",
+      "binary_title": "暂不支持直接预览",
+      "binary_body": "这是未知或浏览器无法渲染的二进制文件，可以先下载到本地。",
+      "kinds": {
+        "image": "图片",
+        "audio": "音频",
+        "video": "视频",
+        "pdf": "PDF",
+        "text": "文本",
+        "markdown": "Markdown",
+        "spreadsheet": "表格",
+        "document": "DOCX",
+        "zip": "ZIP",
+        "binary": "文件"
+      },
+      "errors": {
+        "preview_failed": "文件预览失败，请确认文件未损坏并换一个浏览器重试。"
+      }
+    },
     "image-upscale": {
       "name": "图片无损放大",
       "description": "将 JPG、PNG、WebP 等图片按 2x、3x、4x 或自定义尺寸放大，提供像素无损、平滑高清和清晰增强模式，浏览器本地处理。"
@@ -4453,6 +4517,42 @@
     "pdf-extract-pages": {
       "name": "提取页面",
       "description": "从 PDF 中挑出指定的单页或页码范围，保存为一份新文档，不重新渲染，页面画质与排版保持不变。"
+    },
+    "pdf-edit": {
+      "name": "编辑 PDF",
+      "description": "在线编辑 PDF：添加文字、插入签名图片、画笔批注、高亮标记、方框遮盖写错的内容，浏览器本地处理不上传，导出后原有文字层和排版保持不变，正文仍可选中复制。",
+      "drop_title": "点击或拖拽 PDF 到这里",
+      "replace_file": "更换 PDF",
+      "drop_hint": "文件只在本地处理，不会上传服务器",
+      "empty_state": "上传 PDF 后即可在页面上添加文字、签名、批注和遮盖",
+      "rendering": "正在渲染 PDF…",
+      "rendering_progress": "正在渲染第 {current} / {total} 页…",
+      "tool_select": "选择",
+      "tool_text": "文字",
+      "tool_draw": "画笔",
+      "tool_highlight": "高亮",
+      "tool_rect": "方框",
+      "tool_image": "插入图片",
+      "text_placeholder": "输入文字",
+      "color_label": "颜色",
+      "stroke_label": "粗细",
+      "font_size_label": "字号",
+      "fill_label": "填充方框",
+      "delete_selected": "删除所选",
+      "clear_page": "清空本页标注",
+      "page_prev": "上一页",
+      "page_next": "下一页",
+      "page_indicator": "第 {current} / {total} 页",
+      "hint": "在页面上点击即可添加文字或方框，选择模式下可拖动、缩放和按 Delete 删除",
+      "save_download": "保存并下载 PDF",
+      "saving": "正在生成 PDF…",
+      "errors": {
+        "not_pdf": "请选择 PDF 文件。",
+        "render_failed": "无法打开这个 PDF，请确认文件未加密且未损坏。",
+        "image_failed": "无法插入这张图片，请换一个图片文件重试。",
+        "nothing_to_save": "还没有任何标注，请先在页面上添加内容。",
+        "save_failed": "生成 PDF 失败，请刷新页面后重试。"
+      }
     },
     "pdf-organize": {
       "name": "整理 PDF",

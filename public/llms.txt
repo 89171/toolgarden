@@ -25,6 +25,9 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - **JSON Diff / JSON 对比** (`/json-diff`): Free online JSON / JSONC / JSON5 diff tool to visually compare two documents, highlighting additions, removals, and changes
   - English: https://toolgarden.xyz/en/json-diff
   - Chinese: https://toolgarden.xyz/zh/json-diff
+- **File Preview / 文件预览** (`/file-preview`): Preview images, documents, spreadsheets, PDFs, text, media, and ZIP entries locally in your browser without uploading files.
+  - English: https://toolgarden.xyz/en/file-preview
+  - Chinese: https://toolgarden.xyz/zh/file-preview
 - **Text Diff / 文本对比** (`/text/diff`): Free online text diff using an open-source diff algorithm to highlight line and word changes
   - English: https://toolgarden.xyz/en/text/diff
   - Chinese: https://toolgarden.xyz/zh/text/diff
@@ -79,6 +82,9 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - **Extract pages / 提取页面** (`/pdf/extract-pages`): Free online tool to extract specific pages from a PDF and save selected pages or ranges as a new document
   - English: https://toolgarden.xyz/en/pdf/extract-pages
   - Chinese: https://toolgarden.xyz/zh/pdf/extract-pages
+- **Edit PDF / 编辑 PDF** (`/pdf/edit`): Add text, signature images, freehand markup, highlights, and cover boxes to a PDF online. Browser-local editing that leaves the original text layer intact.
+  - English: https://toolgarden.xyz/en/pdf/edit
+  - Chinese: https://toolgarden.xyz/zh/pdf/edit
 - **Organize PDF / 整理 PDF** (`/pdf/organize`): Free online tool to reorder, duplicate, and delete PDF pages before exporting a new document
   - English: https://toolgarden.xyz/en/pdf/organize
   - Chinese: https://toolgarden.xyz/zh/pdf/organize

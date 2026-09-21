@@ -1,0 +1,1150 @@
+[
+  {
+    "slug": "privacy-first-tools",
+    "path": "/privacy-first-tools",
+    "publishedAt": "2026-09-20",
+    "updatedAt": "2026-09-20",
+    "en": {
+      "title": "Privacy-First Online Tools: How ToolGarden Processes Files in Your Browser",
+      "excerpt": "See how ToolGarden uses fflate, Canvas, Web APIs, browser JavaScript, WebAssembly, and local models to process everyday files without uploading tool input to a server."
+    },
+    "zh": {
+      "title": "隐私优先的在线工具：ToolGarden 如何在浏览器本地处理文件",
+      "excerpt": "了解 ToolGarden 如何使用 fflate、Canvas、Web API、浏览器 JavaScript、WebAssembly 与本地模型处理日常文件，同时避免把工具输入上传到服务器。"
+    }
+  },
+  {
+    "slug": "blob-file-arraybuffer-differences",
+    "path": "/blog/blob-file-arraybuffer-differences",
+    "publishedAt": "2026-09-20",
+    "updatedAt": "2026-09-20",
+    "en": {
+      "title": "Blob vs File vs ArrayBuffer: What Is the Difference?",
+      "excerpt": "Understand how Blob, File, ArrayBuffer, Uint8Array, and streams represent browser data, when copies happen, and which type belongs at each stage."
+    },
+    "zh": {
+      "title": "Blob、File 和 ArrayBuffer 有什么区别？",
+      "excerpt": "理解 Blob、File、ArrayBuffer、Uint8Array 与 Stream 在浏览器文件处理中的职责、转换关系和内存成本。"
+    }
+  },
+  {
+    "slug": "how-json-formatter-works",
+    "path": "/blog/how-json-formatter-works",
+    "publishedAt": "2026-09-20",
+    "updatedAt": "2026-09-20",
+    "en": {
+      "title": "How Does a JSON Formatter Work?",
+      "excerpt": "Build a reliable formatter with JSON.parse, JSON.stringify, errors, JSON5 fallback, tree views, and large-input limits."
+    },
+    "zh": {
+      "title": "JSON Formatter 是怎么实现的？",
+      "excerpt": "从 JSON.parse、JSON.stringify 讲到错误处理、JSON5 fallback、树形视图和大文件边界。"
+    }
+  },
+  {
+    "slug": "json-formatter-vs-json-validator",
+    "path": "/blog/json-formatter-vs-json-validator",
+    "publishedAt": "2026-09-20",
+    "updatedAt": "2026-09-20",
+    "en": {
+      "title": "JSON Formatter vs JSON Validator: What Is the Difference?",
+      "excerpt": "Separate formatting, syntax validation, schema validation, linting, and repair with practical examples."
+    },
+    "zh": {
+      "title": "JSON Formatter 和 JSON Validator 有什么区别？",
+      "excerpt": "区分格式化、语法校验、Schema 校验、Lint 与修复，并用实例解释边界。"
+    }
+  },
+  {
+    "slug": "why-base64-increases-file-size-33-percent",
+    "path": "/blog/why-base64-increases-file-size-33-percent",
+    "publishedAt": "2026-09-20",
+    "updatedAt": "2026-09-20",
+    "en": {
+      "title": "Why Does Base64 Increase File Size by About 33%?",
+      "excerpt": "Derive Base64 expansion from bits, bytes, padding, line wrapping, and container overhead."
+    },
+    "zh": {
+      "title": "Base64 为什么会让文件变大约 33%？",
+      "excerpt": "从位、字节、6-bit 分组、padding、换行和容器开销推导 Base64 体积。"
+    }
+  },
+  {
+    "slug": "base64-vs-url-encoding-vs-text-encoding",
+    "path": "/blog/base64-vs-url-encoding-vs-text-encoding",
+    "publishedAt": "2026-09-20",
+    "updatedAt": "2026-09-20",
+    "en": {
+      "title": "Base64 vs URL Encoding vs Text Encoding",
+      "excerpt": "Compare Base64, percent-encoding, UTF-8, Unicode escapes, and HTML entities by data layer and purpose."
+    },
+    "zh": {
+      "title": "Base64、URL Encode 和普通文本编码有什么区别？",
+      "excerpt": "从数据层次和用途对比 Base64、百分号编码、UTF-8、Unicode 转义与 HTML 实体。"
+    }
+  },
+  {
+    "slug": "blob-url-createobjecturl-explained",
+    "path": "/blog/blob-url-createobjecturl-explained",
+    "publishedAt": "2026-09-20",
+    "updatedAt": "2026-09-20",
+    "en": {
+      "title": "What Is a Blob URL? How URL.createObjectURL() Works",
+      "excerpt": "Learn how blob: URLs expose in-memory data to browser elements, differ from Base64 Data URLs, and require explicit lifetime management."
+    },
+    "zh": {
+      "title": "Blob URL 是什么？URL.createObjectURL() 工作原理",
+      "excerpt": "解释 blob: 临时地址如何把内存数据交给浏览器元素、与 Base64 Data URL 的区别，以及生命周期管理。"
+    }
+  },
+  {
+    "slug": "browser-image-compression-canvas-blob",
+    "path": "/blog/browser-image-compression-canvas-blob",
+    "publishedAt": "2026-09-20",
+    "updatedAt": "2026-09-20",
+    "en": {
+      "title": "How Does Browser Image Compression Work?",
+      "excerpt": "Follow an image from File input through decode, Canvas resize, quality settings, Blob output, metadata changes, and visual checks."
+    },
+    "zh": {
+      "title": "浏览器如何实现图片压缩？",
+      "excerpt": "跟踪图片从 File 输入到解码、Canvas 缩放、质量参数、Blob 输出、元数据变化和视觉检查。"
+    }
+  },
+  {
+    "slug": "uuid-v4-generation-and-collision-probability",
+    "path": "/blog/uuid-v4-generation-and-collision-probability",
+    "publishedAt": "2026-09-20",
+    "updatedAt": "2026-09-20",
+    "en": {
+      "title": "How Is UUID v4 Generated, and Why Is It Unlikely to Repeat?",
+      "excerpt": "Understand UUID v4 bit layout, browser crypto, birthday-bound collision math, unsafe generators, and database constraints."
+    },
+    "zh": {
+      "title": "UUID v4 是怎么生成的？为什么几乎不会重复？",
+      "excerpt": "理解 UUID v4 位布局、浏览器 Crypto、生日碰撞计算、不安全随机数和数据库约束。"
+    }
+  },
+  {
+    "slug": "unix-timestamp-seconds-vs-milliseconds",
+    "path": "/blog/unix-timestamp-seconds-vs-milliseconds",
+    "publishedAt": "2026-09-20",
+    "updatedAt": "2026-09-20",
+    "en": {
+      "title": "What Is a Unix Timestamp? Seconds vs Milliseconds",
+      "excerpt": "Understand epoch time, seconds, milliseconds, microseconds, timezone display, digit heuristics, precision, and conversion bugs."
+    },
+    "zh": {
+      "title": "Unix Timestamp 是什么？秒和毫秒时间戳有什么区别？",
+      "excerpt": "理解 Epoch、秒、毫秒、微秒、时区显示、位数判断、精度与转换错误。"
+    }
+  },
+  {
+    "slug": "what-is-jsonl-format",
+    "path": "/blog/what-is-jsonl-format",
+    "publishedAt": "2026-09-21",
+    "updatedAt": "2026-09-21",
+    "en": {
+      "title": "What Is JSONL? Examples, Comparisons, and When to Use It",
+      "excerpt": "JSONL stores one valid JSON value per line, making it a better fit than normal JSON for logs, AI training data, large imports and exports, and streaming pipelines."
+    },
+    "zh": {
+      "title": "JSONL 是什么格式？示例、对比和适用场景",
+      "excerpt": "JSONL 把每一行都作为一个独立 JSON 值，特别适合日志、AI 训练数据、大规模导入导出和流式处理。"
+    }
+  },
+  {
+    "slug": "harness-engineering-with-claude",
+    "path": "/blog/harness-engineering-with-claude",
+    "publishedAt": "2026-08-04",
+    "updatedAt": "2026-08-04",
+    "en": {
+      "title": "Harness Engineering in Practice: How Claude Helped Transform My Next.js Project",
+      "excerpt": "A real AI-assisted refactoring journey from one JSON formatter to a multilingual toolbox with 80+ utilities, registry-driven discovery, automated SEO, and repeatable validation."
+    },
+    "zh": {
+      "title": "Harness Engineering 实践：我让 Claude 对项目做了一次改造",
+      "excerpt": "一次真实的 AI 辅助重构：从单个 JSON 格式化页面，到拥有 80+ 工具、注册表驱动发现、自动化 SEO 和固定验证流程的双语 Next.js 工具箱。"
+    }
+  },
+  {
+    "slug": "split-song-into-vocals-instrumental-stems-browser",
+    "path": "/blog/split-song-into-vocals-instrumental-stems-browser",
+    "publishedAt": "2026-07-30",
+    "updatedAt": "2026-07-30",
+    "en": {
+      "title": "How to Split a Song into Vocals, Drums, Bass, Guitar, Piano, and Instrumental Stems",
+      "excerpt": "Learn how browser-local stem separation works, when to choose the four- or six-stem model, and how to export vocals, drums, bass, guitar, piano, and other parts as WAV files."
+    },
+    "zh": {
+      "title": "在线音频分轨怎么用？本地分离人声、伴奏、鼓、贝斯、吉他和钢琴",
+      "excerpt": "了解音频分轨的原理、4 轨与 6 轨模型的区别，并在浏览器本地把歌曲拆分成人声、鼓、贝斯、吉他、钢琴和其他声部。"
+    }
+  },
+  {
+    "slug": "best-online-audio-stem-splitter-websites",
+    "path": "/blog/best-online-audio-stem-splitter-websites",
+    "publishedAt": "2026-07-30",
+    "updatedAt": "2026-07-30",
+    "en": {
+      "title": "5 Best Online Audio Stem Splitter Websites for Vocals and Instruments",
+      "excerpt": "Compare ToolGarden, Moises, BandLab Splitter, VocalRemover.org, and LALAL.AI by free access, local or cloud processing, output stems, privacy, and workflow."
+    },
+    "zh": {
+      "title": "在线音频分轨网站推荐：5 款人声、伴奏与乐器分离工具对比",
+      "excerpt": "对比 ToolGarden、Moises、BandLab Splitter、VocalRemover.org 和 LALAL.AI，按免费额度、本地或云端处理、输出轨道与使用场景选择合适的在线分轨工具。"
+    }
+  },
+  {
+    "slug": "free-online-mp3-recording-video-to-text-tools",
+    "path": "/blog/free-online-mp3-recording-video-to-text-tools",
+    "publishedAt": "2026-09-03",
+    "updatedAt": "2026-09-03",
+    "en": {
+      "title": "Best Free Online MP3, Recording, and Video-to-Text Tools Compared",
+      "excerpt": "Compare free online speech-to-text options for MP3 files, voice recordings, interviews, and video audio tracks, with a privacy-first browser-local workflow."
+    },
+    "zh": {
+      "title": "免费在线 MP3、录音、视频转文本工具推荐对比",
+      "excerpt": "想把 MP3、会议录音、采访音频或视频里的讲话整理成文字？这篇对比免费在线语音转文字工具的隐私、准确率、文件流程和适用场景。"
+    }
+  },
+  {
+    "slug": "remove-vocals-extract-instrumental-online",
+    "path": "/blog/remove-vocals-extract-instrumental-online",
+    "publishedAt": "2026-07-30",
+    "updatedAt": "2026-07-30",
+    "en": {
+      "title": "How to Remove Vocals and Extract an Instrumental Online",
+      "excerpt": "Use browser-local stem separation to remove vocals, export drums, bass, and other parts, and recombine them into an instrumental for practice, karaoke, or editing."
+    },
+    "zh": {
+      "title": "在线提取伴奏教程：如何去除歌曲人声",
+      "excerpt": "使用浏览器本地音频分轨模型去除歌曲人声，导出鼓、贝斯和其他声部，并重新组合成适合练唱、卡拉 OK 或剪辑的伴奏。"
+    }
+  },
+  {
+    "slug": "extract-vocals-make-acapella-online",
+    "path": "/blog/extract-vocals-make-acapella-online",
+    "publishedAt": "2026-07-30",
+    "updatedAt": "2026-07-30",
+    "en": {
+      "title": "How to Extract Vocals and Make an Acapella Online",
+      "excerpt": "Separate lead vocals from a song and export a vocal WAV while learning how to choose a model, judge quality, reduce bleed, clean the result, and respect usage rights."
+    },
+    "zh": {
+      "title": "在线提取人声教程：如何制作 Acapella",
+      "excerpt": "从歌曲中分离主唱并导出纯人声 WAV，了解 Acapella 提取步骤、4 轨与 6 轨选择、音质判断、后期清理和版权边界。"
+    }
+  },
+  {
+    "slug": "why-separated-audio-stems-have-noise-and-bleed",
+    "path": "/blog/why-separated-audio-stems-have-noise-and-bleed",
+    "publishedAt": "2026-07-30",
+    "updatedAt": "2026-07-30",
+    "en": {
+      "title": "Why Do Separated Audio Stems Still Have Noise and Bleed?",
+      "excerpt": "Learn where vocal residue, instrument bleed, metallic artifacts, watery sound, dropouts, and missing bass come from, and how source quality, model choice, and cleanup can help."
+    },
+    "zh": {
+      "title": "为什么音频分轨后还有杂音和串音？",
+      "excerpt": "了解分轨结果中的人声残留、乐器串音、金属感、水声、断裂和低频缺失从何而来，以及如何通过音源、模型选择和后期处理改善。"
+    }
+  },
+  {
+    "slug": "2026-seo-optimization-guide",
+    "path": "/blog/2026-seo-optimization-guide",
+    "publishedAt": "2026-07-23",
+    "updatedAt": "2026-07-23",
+    "en": {
+      "title": "2026 SEO Optimization Guide: Technical SEO, Content, AEO, and GEO",
+      "excerpt": "A practical guide based on ToolGarden’s production architecture, covering localized URLs, canonical and hreflang, structured data, topic clusters, performance, and what AI search does and does not change."
+    },
+    "zh": {
+      "title": "2026年SEO优化指南：技术SEO、内容、AEO与GEO实战",
+      "excerpt": "以 ToolGarden 的真实工程实践为例，系统讲解双语 URL、canonical、hreflang、结构化数据、内容集群、性能，以及 AI 搜索时代应该做和不必做的优化。"
+    }
+  },
+  {
+    "slug": "build-browser-audio-tools-with-ffmpeg-wasm",
+    "path": "/blog/build-browser-audio-tools-with-ffmpeg-wasm",
+    "publishedAt": "2026-07-22",
+    "updatedAt": "2026-07-22",
+    "en": {
+      "title": "How to Build Browser Audio Tools with FFmpeg.wasm",
+      "excerpt": "An engineering guide to loading FFmpeg WebAssembly, managing its virtual file system, building audio commands, reporting progress, and cleaning up browser memory."
+    },
+    "zh": {
+      "title": "怎么用 FFmpeg.wasm 实现浏览器在线音频处理工具",
+      "excerpt": "完整拆解 FFmpeg WebAssembly 的动态加载、虚拟文件系统、音频命令构造、进度映射、超时与浏览器内存清理。"
+    }
+  },
+  {
+    "slug": "run-whisper-speech-to-text-in-browser",
+    "path": "/blog/run-whisper-speech-to-text-in-browser",
+    "publishedAt": "2026-07-22",
+    "updatedAt": "2026-07-22",
+    "en": {
+      "title": "How to Run Whisper Speech-to-Text in the Browser",
+      "excerpt": "Build browser speech recognition with Transformers.js, ONNX WebAssembly, model caching, chunked decoding, microphone snapshots, and honest privacy boundaries."
+    },
+    "zh": {
+      "title": "怎么在浏览器运行 Whisper 实现语音转文字",
+      "excerpt": "使用 Transformers.js 和 ONNX WASM 实现浏览器语音识别，覆盖模型缓存、音频分块、麦克风快照转写和隐私边界。"
+    }
+  },
+  {
+    "slug": "merge-word-ppt-in-browser-openxml",
+    "path": "/blog/merge-word-ppt-in-browser-openxml",
+    "publishedAt": "2026-07-22",
+    "updatedAt": "2026-07-22",
+    "en": {
+      "title": "How to Merge Word and PowerPoint Files in the Browser with Open XML",
+      "excerpt": "Merge DOCX and PPTX without Office automation by unpacking Open XML ZIP packages, copying relationship graphs, resolving part collisions, and rebuilding valid documents."
+    },
+    "zh": {
+      "title": "怎么在浏览器合并 Word 和 PPT：Open XML 实现原理",
+      "excerpt": "无需 Office 自动化，通过解压 Open XML ZIP、复制关系图、解决 part 冲突并重建有效 DOCX 与 PPTX。"
+    }
+  },
+  {
+    "slug": "convert-pdf-to-word-in-browser",
+    "path": "/blog/convert-pdf-to-word-in-browser",
+    "publishedAt": "2026-07-22",
+    "updatedAt": "2026-07-22",
+    "en": {
+      "title": "How to Convert PDF to Word in the Browser with pdf.js and Open XML",
+      "excerpt": "Extract positioned PDF text with pdf.js, rebuild readable lines, preserve page breaks, and generate a minimal editable DOCX package entirely in the browser."
+    },
+    "zh": {
+      "title": "怎么用 pdf.js 在浏览器把 PDF 转成 Word",
+      "excerpt": "使用 pdf.js 提取带坐标的 PDF 文本，重建可读行、保留分页，并在浏览器中生成最小可编辑 DOCX。"
+    }
+  },
+  {
+    "slug": "generate-ico-icns-in-browser",
+    "path": "/blog/generate-ico-icns-in-browser",
+    "publishedAt": "2026-07-22",
+    "updatedAt": "2026-07-22",
+    "en": {
+      "title": "How to Generate ICO and ICNS Files in the Browser",
+      "excerpt": "Render a source image at multiple sizes, write ICO directory and DIB bytes, build big-endian ICNS chunks, and export portable icon packages without a server."
+    },
+    "zh": {
+      "title": "怎么在浏览器生成 ICO 和 ICNS 图标文件",
+      "excerpt": "从多尺寸 Canvas 渲染到 ICO 目录、DIB 像素、ICNS 大端序 Chunk 和 ZIP 导出，完整实现无需服务端的图标生成。"
+    }
+  },
+  {
+    "slug": "pp-ocrv5-paddleocr-js-browser-ocr-production",
+    "path": "/blog/pp-ocrv5-paddleocr-js-browser-ocr-production",
+    "publishedAt": "2026-09-15",
+    "updatedAt": "2026-09-15",
+    "en": {
+      "title": "OCR Technology Choices and a Production PP-OCRv5 Implementation",
+      "excerpt": "Compare cloud OCR, PaddleOCR, Tesseract, and custom ONNX pipelines, then follow a real PP-OCRv5 implementation from model delivery and Workers to debugging and deployment."
+    },
+    "zh": {
+      "title": "OCR 技术选型与 PP-OCRv5 生产落地实践",
+      "excerpt": "先对比云 OCR、PaddleOCR、Tesseract 与自研 ONNX 产线，再完整记录 PP-OCRv5 从模型交付、Worker 集成到故障排查和部署验证的实现路径。"
+    }
+  },
+  {
+    "slug": "build-online-font-subsetter-fonteditor-core",
+    "path": "/blog/build-online-font-subsetter-fonteditor-core",
+    "publishedAt": "2026-07-22",
+    "updatedAt": "2026-07-22",
+    "en": {
+      "title": "How to Build an Online Font Subsetter with fonteditor-core",
+      "excerpt": "A practical browser-only implementation for extracting used characters from TTF or WOFF files, previewing the result, and exporting a smaller web font."
+    },
+    "zh": {
+      "title": "怎么实现在线字体裁剪？基于 fonteditor-core 的浏览器方案",
+      "excerpt": "从 TTF/WOFF 解析、Unicode 去重、字体表裁剪到预览和下载，完整实现一个无需上传文件的在线字体子集工具。"
+    }
+  },
+  {
+    "slug": "wrap-tldraw-react-whiteboard",
+    "path": "/blog/wrap-tldraw-react-whiteboard",
+    "publishedAt": "2026-07-22",
+    "updatedAt": "2026-07-22",
+    "en": {
+      "title": "How to Wrap tldraw into a Production React Whiteboard",
+      "excerpt": "A practical tldraw integration for Next.js covering client-only loading, self-hosted assets, persistence, toolbar layout, page scrolling, fullscreen, and cleanup."
+    },
+    "zh": {
+      "title": "怎么封装 tldraw 实现在线白板：从动态加载到本地持久化",
+      "excerpt": "基于 Next.js 和 React 封装 tldraw，完整处理客户端加载、静态资源、本地持久化、工具栏、页面滚动与全屏适配。"
+    }
+  },
+  {
+    "slug": "wrap-excalidraw-nextjs",
+    "path": "/blog/wrap-excalidraw-nextjs",
+    "publishedAt": "2026-07-22",
+    "updatedAt": "2026-07-22",
+    "en": {
+      "title": "How to Embed Excalidraw in Next.js without Asset or SSR Problems",
+      "excerpt": "A focused Excalidraw wrapper for Next.js covering dynamic import, local asset paths, editor options, localization, fullscreen fallback, export, and persistence choices."
+    },
+    "zh": {
+      "title": "怎么封装 Excalidraw：解决 Next.js SSR、资源路径与全屏问题",
+      "excerpt": "在 Next.js 中稳定集成 Excalidraw，解决动态加载、静态资源路径、工具配置、国际化、全屏降级、导出与持久化取舍。"
+    }
+  },
+  {
+    "slug": "build-online-mind-map-with-mind-elixir",
+    "path": "/blog/build-online-mind-map-with-mind-elixir",
+    "publishedAt": "2026-07-22",
+    "updatedAt": "2026-07-22",
+    "en": {
+      "title": "How to Build an Online Mind Map with MindElixir and Markdown",
+      "excerpt": "Build a browser-local MindElixir editor with a Markdown outline, lifecycle cleanup, selection synchronization, keyboard behavior, panning, fullscreen, and multi-format export."
+    },
+    "zh": {
+      "title": "怎么使用 MindElixir 实现在线思维导图：Markdown、交互与导出",
+      "excerpt": "用 React 封装 MindElixir，实现 Markdown 大纲转换、节点状态同步、快捷键、画布拖动、全屏与多格式导出。"
+    }
+  },
+  {
+    "slug": "complete-guide-browser-local-data-processing",
+    "path": "/blog/complete-guide-browser-local-data-processing",
+    "publishedAt": "2026-07-20",
+    "updatedAt": "2026-07-20",
+    "en": {
+      "title": "The Complete Guide to Browser-Local Data Processing",
+      "excerpt": "Learn how browser-local tools process JSON, images, PDFs, and other files on your device, where the privacy benefits come from, and what limits still matter."
+    },
+    "zh": {
+      "title": "浏览器本地数据处理完整指南",
+      "excerpt": "了解 JSON、图片、PDF 等文件如何在设备上完成处理，本地方案的隐私收益来自哪里，以及仍需注意哪些安全和性能边界。"
+    }
+  },
+  {
+    "slug": "why-browser-local-processing-matters-for-privacy",
+    "path": "/blog/why-browser-local-processing-matters-for-privacy",
+    "publishedAt": "2026-07-20",
+    "updatedAt": "2026-07-20",
+    "en": {
+      "title": "Why Browser-Local Processing Matters for Privacy",
+      "excerpt": "Local processing removes an avoidable data transfer from everyday tool workflows and makes privacy claims easier to inspect."
+    },
+    "zh": {
+      "title": "为什么浏览器本地处理对隐私很重要",
+      "excerpt": "本地处理能从日常工具流程中移除一次不必要的数据传输，也让隐私声明更容易被用户验证。"
+    }
+  },
+  {
+    "slug": "edit-json-without-uploading-to-server",
+    "path": "/blog/edit-json-without-uploading-to-server",
+    "publishedAt": "2026-07-20",
+    "updatedAt": "2026-07-20",
+    "en": {
+      "title": "How to Edit Sensitive JSON Data Without Uploading to a Server",
+      "excerpt": "Use an offline JSON editor to format, validate, redact, and inspect sensitive API samples or configuration files without sending them to a backend."
+    },
+    "zh": {
+      "title": "如何在不上传服务器的情况下编辑敏感 JSON 数据",
+      "excerpt": "使用离线 JSON 编辑器在本地脱敏、格式化、验证、修复和检查接口样本或配置文件。"
+    }
+  },
+  {
+    "slug": "privacy-risks-online-file-converters",
+    "path": "/blog/privacy-risks-online-file-converters",
+    "publishedAt": "2026-07-20",
+    "updatedAt": "2026-07-20",
+    "en": {
+      "title": "5 Privacy Risks of Online File Converters (And How to Avoid Them)",
+      "excerpt": "Before uploading a document or image, understand where copies can be created and use a practical checklist to reduce each privacy risk."
+    },
+    "zh": {
+      "title": "在线文件转换器的 5 个隐私风险，以及如何规避",
+      "excerpt": "上传文档或图片前，了解副本可能出现在哪里，并用一份实用清单逐项降低隐私风险。"
+    }
+  },
+  {
+    "slug": "gdpr-compliance-client-side-tools",
+    "path": "/blog/gdpr-compliance-client-side-tools",
+    "publishedAt": "2026-07-20",
+    "updatedAt": "2026-07-20",
+    "en": {
+      "title": "GDPR Compliance: Why Client-Side Tools Win",
+      "excerpt": "Client-side tools can support data minimization and privacy by design by avoiding unnecessary collection, but GDPR compliance still depends on the full processing context."
+    },
+    "zh": {
+      "title": "GDPR 合规：为什么客户端工具更有优势",
+      "excerpt": "客户端工具可以通过避免不必要收集来支持数据最小化和隐私设计，但 GDPR 合规仍取决于完整处理场景。"
+    }
+  },
+  {
+    "slug": "json-tools-master-guide",
+    "path": "/blog/json-tools-master-guide",
+    "publishedAt": "2026-07-20",
+    "updatedAt": "2026-07-20",
+    "en": {
+      "title": "JSON Tools Master Guide",
+      "excerpt": "A practical map of JSON formatting, validation, repair, conversion, schema, path queries, diffing, and safe browser-local workflows."
+    },
+    "zh": {
+      "title": "JSON 工具大师指南",
+      "excerpt": "系统掌握 JSON 格式化、验证、修复、转换、Schema、路径查询、差异对比和浏览器本地安全工作流。"
+    }
+  },
+  {
+    "slug": "format-and-validate-json-in-browser",
+    "path": "/blog/format-and-validate-json-in-browser",
+    "publishedAt": "2026-07-20",
+    "updatedAt": "2026-07-20",
+    "en": {
+      "title": "How to Format and Validate JSON in Your Browser",
+      "excerpt": "Format JSON for readability, identify syntax errors, and verify data contracts in a no-upload browser workflow."
+    },
+    "zh": {
+      "title": "如何在浏览器中格式化和验证 JSON",
+      "excerpt": "通过无需上传的浏览器流程提升 JSON 可读性、定位语法错误，并验证数据契约。"
+    }
+  },
+  {
+    "slug": "common-json-errors-and-fixes",
+    "path": "/blog/common-json-errors-and-fixes",
+    "publishedAt": "2026-07-20",
+    "updatedAt": "2026-07-20",
+    "en": {
+      "title": "Common JSON Errors and How to Fix Them",
+      "excerpt": "Diagnose trailing commas, quote problems, unexpected tokens, invalid escapes, truncated payloads, and schema failures in a repeatable order."
+    },
+    "zh": {
+      "title": "常见 JSON 错误及修复方法",
+      "excerpt": "按可重复的顺序诊断尾逗号、引号问题、Unexpected token、无效转义、数据截断和 Schema 失败。"
+    }
+  },
+  {
+    "slug": "image-processing-without-upload",
+    "path": "/blog/image-processing-without-upload",
+    "publishedAt": "2026-07-20",
+    "updatedAt": "2026-07-20",
+    "en": {
+      "title": "Image Processing Without Upload",
+      "excerpt": "A complete guide to resizing, compressing, converting, cropping, and editing images locally in the browser, with practical privacy and quality checks."
+    },
+    "zh": {
+      "title": "无需上传的图片处理完整指南",
+      "excerpt": "完整了解如何在浏览器本地调整尺寸、压缩、转换、裁剪和编辑图片，并做好隐私与画质检查。"
+    }
+  },
+  {
+    "slug": "resize-images-locally-no-upload",
+    "path": "/blog/resize-images-locally-no-upload",
+    "publishedAt": "2026-07-20",
+    "updatedAt": "2026-07-20",
+    "en": {
+      "title": "How to Resize Images Locally (No Server Upload)",
+      "excerpt": "Resize an image without upload by choosing dimensions, preserving aspect ratio, selecting a resampling mode, and checking the local export."
+    },
+    "zh": {
+      "title": "如何在本地调整图片尺寸（无需上传）",
+      "excerpt": "通过选择尺寸、保持比例、使用合适重采样方式并检查本地导出，在不上传的情况下调整图片大小。"
+    }
+  },
+  {
+    "slug": "batch-image-compression-browser",
+    "path": "/blog/batch-image-compression-browser",
+    "publishedAt": "2026-07-20",
+    "updatedAt": "2026-07-20",
+    "en": {
+      "title": "Batch Image Compression in the Browser",
+      "excerpt": "Compress a folder of images with consistent local settings, previews, format decisions, and quality checks, even in a privacy-sensitive workflow."
+    },
+    "zh": {
+      "title": "在浏览器中批量压缩图片",
+      "excerpt": "使用一致的本地设置、预览、格式策略和画质检查批量压缩图片，也适合隐私敏感流程。"
+    }
+  },
+  {
+    "slug": "pdf-tools-guide",
+    "path": "/blog/pdf-tools-guide",
+    "publishedAt": "2026-07-20",
+    "updatedAt": "2026-07-20",
+    "en": {
+      "title": "PDF Tools Guide",
+      "excerpt": "Choose the right browser-local workflow for merging, splitting, organizing, extracting, converting, encrypting, and watermarking PDF files."
+    },
+    "zh": {
+      "title": "PDF 工具完整指南",
+      "excerpt": "为 PDF 合并、拆分、整理、提取、转换、加密和水印选择合适的浏览器本地工作流。"
+    }
+  },
+  {
+    "slug": "extract-text-from-pdf-in-browser",
+    "path": "/blog/extract-text-from-pdf-in-browser",
+    "publishedAt": "2026-07-20",
+    "updatedAt": "2026-07-20",
+    "en": {
+      "title": "Extract Text from PDF in Your Browser",
+      "excerpt": "Use a local PDF text extractor, understand selectable text versus OCR, preserve privacy, and review reading order before reusing the output."
+    },
+    "zh": {
+      "title": "在浏览器中提取 PDF 文本",
+      "excerpt": "使用本地 PDF 文本提取工具，理解可选文本与 OCR 的区别，保护隐私，并在复用前检查阅读顺序。"
+    }
+  },
+  {
+    "slug": "qr-code-subtitle-tools-guide",
+    "path": "/blog/qr-code-subtitle-tools-guide",
+    "publishedAt": "2026-07-20",
+    "updatedAt": "2026-08-03",
+    "en": {
+      "title": "QR Code & Subtitle Tools Guide",
+      "excerpt": "Create reliable QR codes and edit or convert timed subtitles locally, with practical guidance for payloads, scan quality, timing, formats, and privacy."
+    },
+    "zh": {
+      "title": "二维码与字幕工具指南",
+      "excerpt": "在本地生成可靠二维码并编辑或转换时间轴字幕，掌握 payload、扫描质量、时间、格式与隐私要点。"
+    }
+  },
+  {
+    "slug": "srt-to-vtt-browser-workflow",
+    "path": "/blog/srt-to-vtt-browser-workflow",
+    "publishedAt": "2026-07-20",
+    "updatedAt": "2026-07-20",
+    "en": {
+      "title": "SRT to VTT Converter: Browser-Based Workflow",
+      "excerpt": "Convert SRT to WebVTT locally by parsing cues, changing timestamp syntax, adding the WEBVTT header, and checking web-player compatibility."
+    },
+    "zh": {
+      "title": "SRT 转 VTT：浏览器本地转换流程",
+      "excerpt": "在本地解析 cue、修改时间戳语法、添加 WEBVTT 文件头，并检查网页播放器兼容性。"
+    }
+  },
+  {
+    "slug": "developer-client-side-image-processing",
+    "path": "/blog/developer-client-side-image-processing",
+    "publishedAt": "2026-07-20",
+    "updatedAt": "2026-07-20",
+    "en": {
+      "title": "The Developer's Guide to Client-Side Image Processing",
+      "excerpt": "A practical architecture guide to decoding, resizing, compressing, and exporting images in the browser with Canvas, workers, and modern codecs."
+    },
+    "zh": {
+      "title": "开发者客户端图片处理指南",
+      "excerpt": "从工程角度介绍如何使用 Canvas、Worker 和现代编码器，在浏览器中完成图片解码、缩放、压缩与导出。"
+    }
+  },
+  {
+    "slug": "toolgarden-vs-online-converters",
+    "path": "/blog/toolgarden-vs-online-converters",
+    "publishedAt": "2026-07-20",
+    "updatedAt": "2026-07-20",
+    "en": {
+      "title": "ToolGarden vs Online Converters: Why Local Processing Matters",
+      "excerpt": "Compare a browser-local workflow with conventional upload-and-convert services using observable criteria instead of privacy slogans."
+    },
+    "zh": {
+      "title": "ToolGarden 与在线转换器对比：为什么本地处理很重要",
+      "excerpt": "基于可观察的数据路径、速度、离线能力和限制，对比浏览器本地工具与传统上传型在线转换器。"
+    }
+  },
+  {
+    "slug": "developer-privacy-toolkit",
+    "path": "/blog/developer-privacy-toolkit",
+    "publishedAt": "2026-07-20",
+    "updatedAt": "2026-07-20",
+    "en": {
+      "title": "The Complete Privacy Toolkit for Developers in 2026",
+      "excerpt": "A practical privacy-first toolkit for inspecting, transforming, and sharing developer data while minimizing unnecessary copies and uploads."
+    },
+    "zh": {
+      "title": "2026 开发者隐私工具箱完整指南",
+      "excerpt": "一套面向开发者的隐私优先工作流，用于检查、转换和分享数据，同时减少不必要的副本与上传。"
+    }
+  },
+  {
+    "slug": "wifi-qr-code-generator-guide",
+    "path": "/blog/wifi-qr-code-generator-guide",
+    "publishedAt": "2026-07-20",
+    "updatedAt": "2026-07-20",
+    "en": {
+      "title": "Building QR Codes for WiFi: A Step-by-Step Guide",
+      "excerpt": "Create reliable WiFi QR codes for WPA, open, and hidden networks, including correct payload syntax, escaping rules, security checks, and scan testing."
+    },
+    "zh": {
+      "title": "WiFi 二维码生成：从格式到扫码测试的完整步骤",
+      "excerpt": "正确生成 WPA、开放和隐藏网络的 WiFi 二维码，掌握载荷格式、特殊字符转义、安全检查与扫码测试。"
+    }
+  },
+  {
+    "slug": "how-i-built-browser-local-online-tool-site",
+    "path": "/blog/how-i-built-browser-local-online-tool-site",
+    "publishedAt": "2026-07-07",
+    "updatedAt": "2026-07-20",
+    "en": {
+      "title": "How We Built ToolGarden: Architecture of a Browser-Local Tool Suite",
+      "excerpt": "See how ToolGarden uses a registry, static pages, pure utilities, Workers, Canvas, Web Crypto, and WASM to build a browser-local tool suite."
+    },
+    "zh": {
+      "title": "ToolGarden 是如何构建的：浏览器本地工具套件架构",
+      "excerpt": "深入了解 ToolGarden 如何通过注册中心、静态页面、纯函数、Worker、Canvas、Web Crypto 和 WASM 构建浏览器本地工具套件。"
+    }
+  },
+  {
+    "slug": "make-id-photo-online-size-background-guide",
+    "path": "/blog/make-id-photo-online-size-background-guide",
+    "publishedAt": "2026-07-06",
+    "updatedAt": "2026-07-06",
+    "en": {
+      "title": "How to Choose ID Photo Size and Background: 1-Inch, 2-Inch, China Passport, and U.S. Passport Guide",
+      "excerpt": "Before making a digital ID photo, confirm the use case, size, background color, head position, and whether digital edits are allowed."
+    },
+    "zh": {
+      "title": "证件照尺寸和底色怎么选？一寸、二寸、中国护照、美国护照在线制作指南",
+      "excerpt": "制作电子版证件照前，先确认用途、尺寸、底色、头部比例和是否允许数字处理。不同证件的要求并不完全相同。"
+    }
+  },
+  {
+    "slug": "remove-image-watermark-local-ai-inpainting",
+    "path": "/blog/remove-image-watermark-local-ai-inpainting",
+    "publishedAt": "2026-07-02",
+    "updatedAt": "2026-08-03",
+    "en": {
+      "title": "How Does Online Image Watermark Removal Work with Local AI Inpainting?",
+      "excerpt": "Removing a watermark is usually image inpainting: select the watermark area, then reconstruct the background from surrounding pixels locally in the browser."
+    },
+    "zh": {
+      "title": "如何在线去除图片水印？浏览器本地 AI 补全原理",
+      "excerpt": "去除图片水印通常不是简单擦除，而是先选中水印区域，再根据周围纹理补全背景。浏览器本地处理可以减少上传隐私风险。"
+    }
+  },
+  {
+    "slug": "add-watermark-to-image-text-tile-diagonal",
+    "path": "/blog/add-watermark-to-image-text-tile-diagonal",
+    "publishedAt": "2026-07-02",
+    "updatedAt": "2026-08-03",
+    "en": {
+      "title": "How to Add Text, Image, Tiled, and Diagonal Watermarks to Images",
+      "excerpt": "Image watermarks can be text or logos. Position, opacity, rotation, and tiling decide whether the mark is useful without distracting from the image."
+    },
+    "zh": {
+      "title": "如何给图片加水印：文字/图片、九宫格、平铺、对角线",
+      "excerpt": "图片水印可以是文字，也可以是 Logo 图片。位置、透明度、旋转、平铺方式会直接影响版权提示和图片可读性。"
+    }
+  },
+  {
+    "slug": "remove-image-background-browser-local-model",
+    "path": "/blog/remove-image-background-browser-local-model",
+    "publishedAt": "2026-07-02",
+    "updatedAt": "2026-07-07",
+    "en": {
+      "title": "How One-Click Background Removal Works with a Browser-Local Model",
+      "excerpt": "Background removal detects the foreground subject and creates an alpha mask. A browser-local model can export transparent PNGs without uploading images."
+    },
+    "zh": {
+      "title": "如何一键去除图片背景？在浏览器本地跑模型的原理",
+      "excerpt": "图片去背景通常会先识别前景主体，再生成透明 alpha mask。浏览器本地模型可以在不上传图片的情况下导出透明 PNG。"
+    }
+  },
+  {
+    "slug": "base64-encoding-explained-common-pitfalls",
+    "path": "/blog/base64-encoding-explained-common-pitfalls",
+    "publishedAt": "2026-07-02",
+    "updatedAt": "2026-08-03",
+    "en": {
+      "title": "Base64 Encoding Explained and Common Pitfalls",
+      "excerpt": "Base64 turns binary data into text for Data URLs, APIs, and embedded configuration. It is encoding, not encryption."
+    },
+    "zh": {
+      "title": "Base64 编码原理和常见坑",
+      "excerpt": "Base64 是把二进制数据转成文本的一种编码方式，常用于图片 Data URL、接口传输和配置嵌入，但它不是加密。"
+    }
+  },
+  {
+    "slug": "lrc-vs-srt-subtitle-format-edit-online",
+    "path": "/blog/lrc-vs-srt-subtitle-format-edit-online",
+    "publishedAt": "2026-07-02",
+    "updatedAt": "2026-07-03",
+    "en": {
+      "title": "LRC vs SRT Subtitle Formats and How to Edit Them Online",
+      "excerpt": "LRC is often used for synced lyrics, while SRT is common for video subtitles. Their timing structure and editing needs are different."
+    },
+    "zh": {
+      "title": "LRC vs SRT 字幕格式区别，如何在线编辑",
+      "excerpt": "LRC 常用于歌词逐行同步，SRT 常用于视频字幕。两者时间格式、结构和适用场景不同，但都可以在线解析、校准和导出。"
+    }
+  },
+  {
+    "slug": "convert-excel-data-to-json-online",
+    "path": "/blog/convert-excel-data-to-json-online",
+    "publishedAt": "2026-07-02",
+    "updatedAt": "2026-07-03",
+    "en": {
+      "title": "How to Convert Excel Data to JSON Online",
+      "excerpt": "Excel to JSON usually turns the first row into field names and each following row into a JSON object for mock APIs, imports, and config migration."
+    },
+    "zh": {
+      "title": "Excel 数据如何一键转成 JSON",
+      "excerpt": "Excel 转 JSON 通常会读取第一行作为字段名，再把后续每一行转换成对象，适合接口 mock、数据导入和配置迁移。"
+    }
+  },
+  {
+    "slug": "text-diff-algorithm-add-delete-change",
+    "path": "/blog/text-diff-algorithm-add-delete-change",
+    "publishedAt": "2026-07-02",
+    "updatedAt": "2026-08-03",
+    "en": {
+      "title": "How Text Diff Algorithms Find Additions, Deletions, and Changes",
+      "excerpt": "Diff algorithms look for shared subsequences between two texts, then mark the remaining parts as additions, deletions, or changes."
+    },
+    "zh": {
+      "title": "文本对比工具原理：diff 算法怎么找出增删改",
+      "excerpt": "diff 算法会寻找两段文本之间尽量长的共同部分，再把剩余内容标记为新增、删除或修改，用于代码、日志、文案和配置对比。"
+    }
+  },
+  {
+    "slug": "json-json5-jsonc-differences",
+    "path": "/blog/json-json5-jsonc-differences",
+    "publishedAt": "2026-07-02",
+    "updatedAt": "2026-07-20",
+    "en": {
+      "title": "JSON vs JSONC vs JSON5: A Complete Guide",
+      "excerpt": "JSON is strict data interchange, JSONC adds comments mainly for config files, and JSON5 allows more JavaScript-like syntax."
+    },
+    "zh": {
+      "title": "JSON vs JSONC vs JSON5：完整对比指南",
+      "excerpt": "JSON 是严格数据格式，JSONC 主要给配置文件增加注释，JSON5 则放宽了更多 JavaScript 风格语法。"
+    }
+  },
+  {
+    "slug": "convert-word-excel-ppt-image-to-pdf-free",
+    "path": "/blog/convert-word-excel-ppt-image-to-pdf-free",
+    "publishedAt": "2026-07-02",
+    "updatedAt": "2026-07-03",
+    "en": {
+      "title": "How to Convert Word, Excel, PowerPoint, and Images to PDF for Free",
+      "excerpt": "PDF is useful for archiving, submissions, and cross-device viewing. Browser-local conversion is convenient for common document and image formats."
+    },
+    "zh": {
+      "title": "如何免费把 Word / Excel / PPT / 图片 转成 PDF",
+      "excerpt": "把文档和图片转成 PDF，适合归档、提交材料和跨设备查看。浏览器本地转换适合快速处理常见格式。"
+    }
+  },
+  {
+    "slug": "merge-multiple-pdf-files-keep-order-bookmarks",
+    "path": "/blog/merge-multiple-pdf-files-keep-order-bookmarks",
+    "publishedAt": "2026-07-02",
+    "updatedAt": "2026-07-20",
+    "en": {
+      "title": "How to Merge PDFs Without Uploading Files: A Privacy-First Approach",
+      "excerpt": "Merge multiple PDFs locally in your browser without uploading source files, then verify page order, bookmarks, forms, signatures, and output."
+    },
+    "zh": {
+      "title": "如何在不上传文件的情况下合并 PDF：隐私优先方法",
+      "excerpt": "在浏览器本地合并多个 PDF，避免上传源文件，同时检查页面顺序、书签、表单、签名和最终结果。"
+    }
+  },
+  {
+    "slug": "split-pdf-by-pages-ranges-size",
+    "path": "/blog/split-pdf-by-pages-ranges-size",
+    "publishedAt": "2026-07-02",
+    "updatedAt": "2026-07-03",
+    "en": {
+      "title": "How to Split a PDF by Pages, Ranges, or File Size",
+      "excerpt": "PDF splitting can export every page, split selected page ranges, or create smaller parts to satisfy upload size limits."
+    },
+    "zh": {
+      "title": "如何拆分 PDF：按页数、按范围、按大小",
+      "excerpt": "PDF 拆分可以按每页导出、按页码范围导出，也可以通过拆成多个部分来满足平台大小限制。"
+    }
+  },
+  {
+    "slug": "extract-selected-pages-from-pdf",
+    "path": "/blog/extract-selected-pages-from-pdf",
+    "publishedAt": "2026-07-02",
+    "updatedAt": "2026-07-03",
+    "en": {
+      "title": "How to Extract Selected Pages from a PDF",
+      "excerpt": "Extracting selected PDF pages is useful when you only need a few contract pages, attachments, scans, or a section of a larger document."
+    },
+    "zh": {
+      "title": "如何从 PDF 中提取指定页面",
+      "excerpt": "从 PDF 中提取指定页面，适合只提交合同某几页、导出附件、抽取扫描页或保留文档的一部分。"
+    }
+  },
+  {
+    "slug": "chinese-english-word-count-character-byte",
+    "path": "/blog/chinese-english-word-count-character-byte",
+    "publishedAt": "2026-07-02",
+    "updatedAt": "2026-07-03",
+    "en": {
+      "title": "Chinese vs English Text Counting: Characters, Words, and Bytes",
+      "excerpt": "Chinese text often focuses on characters, English text often focuses on words, and technical systems often care about UTF-8 bytes."
+    },
+    "zh": {
+      "title": "中英文字数统计的差异：字符、词、字节各是什么",
+      "excerpt": "中文常看字数和字符数，英文常看词数。技术系统还会看 UTF-8 字节数，尤其是接口、数据库和短信限制。"
+    }
+  },
+  {
+    "slug": "how-to-build-online-file-compress-and-extract",
+    "path": "/blog/how-to-build-online-file-compress-and-extract",
+    "publishedAt": "2026-09-08",
+    "updatedAt": "2026-09-08",
+    "en": {
+      "title": "How to Build Online File Compression and Extraction with Browser-Local ZIP",
+      "excerpt": "Online compression and extraction do not always need a server upload. File API, fflate, Blob URLs, and a folder-tree model are enough to create ZIP files, extract archives, browse directories, and download individual files in the browser."
+    },
+    "zh": {
+      "title": "怎么实现文件在线压缩和解压：基于浏览器本地 ZIP 的完整思路",
+      "excerpt": "在线压缩和解压不一定要上传服务器。用 File API、fflate、Blob URL 和目录树建模，就可以在浏览器里完成 ZIP 打包、解包、预览目录和单文件下载。"
+    }
+  },
+  {
+    "slug": "how-to-make-icon-from-picture",
+    "path": "/blog/how-to-make-icon-from-picture",
+    "publishedAt": "2026-07-17",
+    "updatedAt": "2026-07-17",
+    "en": {
+      "title": "How to Make an Icon from a Picture",
+      "excerpt": "Learn how to turn a picture into a clean icon for favicons, desktop shortcuts, apps, and PWA assets with the ToolGarden Image to Icon converter."
+    },
+    "zh": {
+      "title": "如何把图片制作成 Icon？",
+      "excerpt": "从普通图片制作图标，关键是选图、裁剪、透明背景、多尺寸导出和格式选择。ToolGarden 图片转 Icon 可以在浏览器本地完成这些步骤。"
+    }
+  },
+  {
+    "slug": "fix-json-unexpected-token-error",
+    "path": "/blog/fix-json-unexpected-token-error",
+    "publishedAt": "2026-07-02",
+    "updatedAt": "2026-07-28",
+    "en": {
+      "title": "Unexpected token in JSON at position 0: Causes and Fixes",
+      "excerpt": "Trace raw responses, error positions, missing commas, invalid JSON, and decode errors, then verify the repaired result with the ToolGarden online JSON Validator."
+    },
+    "zh": {
+      "title": "Unexpected token in JSON at position 0：原因、定位与修复",
+      "excerpt": "从原始响应、错误位置和 JSON 语法入手，定位 Unexpected token、Missing comma、Invalid JSON Format 和 JSON Decode Error，并用 ToolGarden 在线 Validator 验证修复结果。"
+    }
+  },
+  {
+    "slug": "what-is-json-schema-api-validation",
+    "path": "/blog/what-is-json-schema-api-validation",
+    "publishedAt": "2026-07-02",
+    "updatedAt": "2026-08-03",
+    "en": {
+      "title": "What Is JSON Schema and How Do You Validate API Data?",
+      "excerpt": "JSON Schema is a rules document for JSON data. It can describe required fields, value types, arrays, string formats, and nested object structures."
+    },
+    "zh": {
+      "title": "JSON Schema 是什么？如何用它校验接口数据",
+      "excerpt": "JSON Schema 是描述 JSON 数据结构的规则文档，可以规定字段类型、必填项、数组元素、字符串格式和对象结构。"
+    }
+  },
+  {
+    "slug": "what-is-jwt-header-payload",
+    "path": "/blog/what-is-jwt-header-payload",
+    "publishedAt": "2026-07-02",
+    "updatedAt": "2026-08-03",
+    "en": {
+      "title": "What Is a JWT and How Do You Safely Inspect Header and Payload?",
+      "excerpt": "A JWT has three parts: Header, Payload, and Signature. Header and Payload are Base64URL encoded, not encrypted, so anyone with the token can decode them."
+    },
+    "zh": {
+      "title": "JWT 是什么？如何安全查看 Header 和 Payload",
+      "excerpt": "JWT 是由 Header、Payload 和 Signature 组成的令牌。Header 和 Payload 只是 Base64URL 编码，不是加密，任何拿到 token 的人都能解码查看。"
+    }
+  },
+  {
+    "slug": "why-qr-code-cannot-be-decoded",
+    "path": "/blog/why-qr-code-cannot-be-decoded",
+    "publishedAt": "2026-07-02",
+    "updatedAt": "2026-08-03",
+    "en": {
+      "title": "Why Can a QR Code Fail to Decode and How Can You Improve Scan Rate?",
+      "excerpt": "QR codes fail to scan when the image is blurry, too small, cropped, low contrast, heavily compressed, too dense, or physically damaged."
+    },
+    "zh": {
+      "title": "二维码识别不出来是什么原因？如何提高识别率",
+      "excerpt": "二维码扫不出来，常见原因包括图片模糊、分辨率太低、白边被裁掉、对比度不足、压缩过度、内容太密或二维码损坏。"
+    }
+  },
+  {
+    "slug": "json-to-typescript-interface-guide",
+    "path": "/blog/json-to-typescript-interface-guide",
+    "publishedAt": "2026-07-27",
+    "updatedAt": "2026-07-27",
+    "en": {
+      "title": "How to Convert JSON to a TypeScript Interface",
+      "excerpt": "Hand-writing TypeScript types for an API response is slow and error-prone. Infer an interface from a real JSON sample and get usable types in seconds."
+    },
+    "zh": {
+      "title": "如何把 JSON 转成 TypeScript 接口（interface）",
+      "excerpt": "手写 API 响应的 TypeScript 类型既慢又容易出错。用一段真实 JSON 样本自动推断 interface，几秒就能得到可直接使用的类型定义。"
+    }
+  },
+  {
+    "slug": "password-protect-pdf-without-upload",
+    "path": "/blog/password-protect-pdf-without-upload",
+    "publishedAt": "2026-07-27",
+    "updatedAt": "2026-07-27",
+    "en": {
+      "title": "How to Password-Protect a PDF Without Uploading It",
+      "excerpt": "The PDFs that most need a password — contracts, IDs, financial statements — are the ones you should least upload to an unknown server. Encrypt and decrypt them locally so the file never leaves your computer."
+    },
+    "zh": {
+      "title": "如何给 PDF 加密码保护（不上传文件）",
+      "excerpt": "给合同、证件、财务报表这类 PDF 加密码时，把文件传到陌生服务器并不安全。在浏览器本地就能完成加密和解密，文件始终留在你的电脑上。"
+    }
+  },
+  {
+    "slug": "why-image-compression-looks-blurry",
+    "path": "/blog/why-image-compression-looks-blurry",
+    "publishedAt": "2026-07-01",
+    "updatedAt": "2026-07-03",
+    "en": {
+      "title": "Why Do Images Look Blurry After Compression? How to Keep Them Sharp",
+      "excerpt": "Blurry compressed images usually come from aggressive quality settings, repeated exports, resizing, or choosing the wrong image format."
+    },
+    "zh": {
+      "title": "为什么图片压缩后会变模糊？如何尽量保持清晰度",
+      "excerpt": "图片压缩变模糊，通常不是工具坏了，而是压缩算法、质量参数、图片尺寸和格式选择共同作用的结果。"
+    }
+  },
+  {
+    "slug": "compress-image-to-target-size",
+    "path": "/blog/compress-image-to-target-size",
+    "publishedAt": "2026-07-01",
+    "updatedAt": "2026-07-03",
+    "en": {
+      "title": "How to Compress an Image to a Target File Size",
+      "excerpt": "To compress an image to 200KB, 500KB, or 1MB, you need to control format, dimensions, quality, and image complexity together."
+    },
+    "zh": {
+      "title": "如何把图片压缩到指定大小？",
+      "excerpt": "想把图片压缩到 200KB、500KB 或 1MB，需要同时控制格式、质量、尺寸和画面复杂度，而不是只调一个参数。"
+    }
+  },
+  {
+    "slug": "why-favicon-looks-blurry",
+    "path": "/blog/why-favicon-looks-blurry",
+    "publishedAt": "2026-07-01",
+    "updatedAt": "2026-07-03",
+    "en": {
+      "title": "Why Does a Favicon Look Blurry? How to Make a Sharp Website Icon",
+      "excerpt": "A blurry favicon is usually caused by the source image, missing icon sizes, transparency issues, or browser scaling rather than the browser itself."
+    },
+    "zh": {
+      "title": "为什么 favicon 看起来模糊？如何制作清晰的网站图标",
+      "excerpt": "favicon 变模糊通常不是浏览器的问题，而是源图尺寸、图标格式、多尺寸资源和缩放方式没有处理好。"
+    }
+  },
+  {
+    "slug": "convert-image-to-ico",
+    "path": "/blog/convert-image-to-ico",
+    "publishedAt": "2026-07-01",
+    "updatedAt": "2026-07-28",
+    "en": {
+      "title": "What Is an ICO File? Favicon Formats and Image to ICO Guide",
+      "excerpt": "Learn why ICO files contain multiple sizes, compare favicon.ico with SVG and PNG favicons, and convert PNG, JPG, WebP, or SVG images with ToolGarden."
+    },
+    "zh": {
+      "title": "ICO 文件是什么？favicon 格式选择与图片转 ICO 教程",
+      "excerpt": "了解 ICO 为什么能包含多个尺寸，比较 favicon.ico、SVG favicon 和 PNG favicon，并用 ToolGarden 把 PNG、JPG、WebP 或 SVG 转换成 ICO。"
+    }
+  },
+  {
+    "slug": "ico-vs-icns-vs-png-icons",
+    "path": "/blog/ico-vs-icns-vs-png-icons",
+    "publishedAt": "2026-07-01",
+    "updatedAt": "2026-07-03",
+    "en": {
+      "title": "ICO vs ICNS vs PNG Icons: Which Format Should You Use for Web, Windows, and macOS?",
+      "excerpt": "ICO, ICNS, and PNG can all be used for icons, but they target different platforms and handle sizes, containers, and transparency differently."
+    },
+    "zh": {
+      "title": "ICO、ICNS、PNG 图标有什么区别？网站、Windows 和 macOS 图标怎么选",
+      "excerpt": "ICO、ICNS 和 PNG 都能用作图标，但它们面向的系统、容器结构、尺寸管理和透明支持方式并不相同。"
+    }
+  },
+  {
+    "slug": "jpg-png-webp-avif-differences",
+    "path": "/blog/jpg-png-webp-avif-differences",
+    "publishedAt": "2026-07-01",
+    "updatedAt": "2026-07-20",
+    "en": {
+      "title": "PNG vs WebP vs AVIF: When to Use Each Format (and Where JPG Fits)",
+      "excerpt": "PNG, WebP, and AVIF each balance compression, transparency, visual quality, encoding cost, and compatibility differently, while JPG remains a practical fallback."
+    },
+    "zh": {
+      "title": "PNG vs WebP vs AVIF：什么时候该用哪种格式？",
+      "excerpt": "PNG、WebP、AVIF 在压缩、透明背景、清晰度、编码速度和兼容性上各有优势，JPG 仍可作为照片与旧环境的实用回退。"
+    }
+  },
+  {
+    "slug": "convert-images-to-webp",
+    "path": "/blog/convert-images-to-webp",
+    "publishedAt": "2026-07-01",
+    "updatedAt": "2026-07-03",
+    "en": {
+      "title": "How to Convert Images to WebP: JPG, PNG, and GIF to WebP Guide",
+      "excerpt": "WebP often keeps good visual quality at smaller file sizes, supports transparency, and works well for web images, thumbnails, and batch optimization."
+    },
+    "zh": {
+      "title": "如何把图片转换成 WebP？JPG、PNG、GIF 转 WebP 完整教程",
+      "excerpt": "WebP 通常能在较小体积下保持不错画质，也支持透明背景，适合网页图片、缩略图和批量图片优化。"
+    }
+  },
+  {
+    "slug": "convert-images-to-avif",
+    "path": "/blog/convert-images-to-avif",
+    "publishedAt": "2026-07-01",
+    "updatedAt": "2026-07-03",
+    "en": {
+      "title": "How to Convert Images to AVIF and When You Should Use AVIF",
+      "excerpt": "AVIF can be smaller than JPG and WebP, but encoding is slower and compatibility should be checked. It is best for hero images, cover images, and highly compressed web assets."
+    },
+    "zh": {
+      "title": "如何把图片转换成 AVIF？什么时候应该使用 AVIF",
+      "excerpt": "AVIF 通常能比 JPG 和 WebP 更小，但编码更慢、兼容性更需要确认。适合网页首图、封面图和需要强压缩的图片资产。"
+    }
+  },
+  {
+    "slug": "png-to-jpg-jpg-to-png-transparency",
+    "path": "/blog/png-to-jpg-jpg-to-png-transparency",
+    "publishedAt": "2026-07-01",
+    "updatedAt": "2026-07-03",
+    "en": {
+      "title": "What Happens When You Convert PNG to JPG or JPG to PNG?",
+      "excerpt": "PNG and JPG differ in more than file extensions. PNG supports transparency and lossless compression, while JPG is better for photos but does not support alpha."
+    },
+    "zh": {
+      "title": "PNG 转 JPG、JPG 转 PNG 会发生什么？透明背景和画质怎么处理",
+      "excerpt": "PNG 和 JPG 的差异不只是扩展名。PNG 支持透明和无损压缩，JPG 适合照片但不支持透明背景。"
+    }
+  },
+  {
+    "slug": "keep-image-clear-after-upscaling",
+    "path": "/blog/keep-image-clear-after-upscaling",
+    "publishedAt": "2026-07-02",
+    "updatedAt": "2026-07-03",
+    "en": {
+      "title": "How to Keep Images Clear After Upscaling",
+      "excerpt": "Image upscaling can make edges soft or details look smeared. The best result depends on scale, resampling mode, output format, and source quality."
+    },
+    "zh": {
+      "title": "图片放大后，如何尽量保持清晰",
+      "excerpt": "图片放大变糊通常不是单一原因造成的。放大倍数、重采样算法、输出格式和原图质量都会影响最终清晰度。"
+    }
+  },
+  {
+    "slug": "why-json-can-have-comments",
+    "path": "/blog/why-json-can-have-comments",
+    "publishedAt": "2026-07-01",
+    "updatedAt": "2026-07-03",
+    "en": {
+      "title": "Why Can Some JSON Files Have Comments?",
+      "excerpt": "tsconfig.json, settings.json, and launch.json look like JSON, yet they accept comments. The reason is JSONC, not strict standard JSON."
+    },
+    "zh": {
+      "title": "为什么有的 JSON 可以带注释？",
+      "excerpt": "tsconfig.json、settings.json 和 launch.json 看起来像 JSON，却能写注释。原因是它们通常使用 JSONC，而不是严格标准 JSON。"
+    }
+  }
+]
