@@ -15,12 +15,30 @@ import {
 } from 'fabric';
 import { Button } from '@/components/ui/Button';
 import { applyPdfOverlays, type PdfPageOverlay } from '@/lib/utils/pdf-edit';
+import {
+  applyPdfTextRewrites,
+  type PdfTextRewrite,
+  type PdfTextRewriteFailureReason,
+} from '@/lib/utils/pdf-text-rewrite';
 import { createPdfDerivedFilename, isPdfFile } from '@/lib/utils/pdf';
-import { renderPdfPages, type RenderedPage } from '@/lib/utils/pdf-render';
+import { renderPdfPages, type PdfTextItem, type RenderedPage } from '@/lib/utils/pdf-render';
 
-type EditorTool = 'select' | 'text' | 'draw' | 'highlight' | 'rect';
+type EditorTool = 'select' | 'edit_text' | 'text' | 'draw' | 'highlight' | 'rect';
 
-const TOOLS: EditorTool[] = ['select', 'text', 'draw', 'highlight', 'rect'];
+/** 排队中的原文改写，附带页面上的位置用于显示标记 */
+interface QueuedRewrite extends PdfTextRewrite {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+interface TextEditingState {
+  item: PdfTextItem;
+  value: string;
+}
+
+const TOOLS: EditorTool[] = ['select', 'edit_text', 'text', 'draw', 'highlight', 'rect'];
 const TEXT_FONT_FAMILY = 'system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
 /** 标注图层按页面显示尺寸的 2 倍导出，约 144-216 DPI，避免线条和文字发虚。 */
 const EXPORT_MULTIPLIER = 2;
@@ -52,6 +70,21 @@ function readFileAsDataUrl(file: File): Promise<string> {
   });
 }
 
+function findTextItemAt(items: PdfTextItem[] | undefined, x: number, y: number): PdfTextItem | null {
+  if (!items) return null;
+  // 命中判定放宽两像素：文字块高度来自字号，紧贴基线的小字不容易点中。
+  const padding = 2;
+  return (
+    items.find(
+      (item) =>
+        x >= item.x - padding &&
+        x <= item.x + item.width + padding &&
+        y >= item.y - padding &&
+        y <= item.y + item.height + padding
+    ) ?? null
+  );
+}
+
 export function PdfEditorToolImpl() {
   const t = useTranslations('tools.pdf-edit');
 
@@ -63,9 +96,12 @@ export function PdfEditorToolImpl() {
   const [strokeWidth, setStrokeWidth] = useState(3);
   const [fontSize, setFontSize] = useState(20);
   const [filled, setFilled] = useState(false);
+  const [rewrites, setRewrites] = useState<QueuedRewrite[]>([]);
+  const [editing, setEditing] = useState<TextEditingState | null>(null);
   const [progress, setProgress] = useState<{ current: number; total: number } | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [warning, setWarning] = useState('');
 
   const canvasElRef = useRef<HTMLCanvasElement | null>(null);
   const canvasRef = useRef<Canvas | null>(null);
@@ -91,6 +127,7 @@ export function PdfEditorToolImpl() {
   filledRef.current = filled;
 
   const page = pages[pageIndex];
+  const pageRewrites = rewrites.filter((entry) => entry.pageIndex === pageIndex);
 
   // 每次切页重建画布：页面尺寸不同，重建比逐项改尺寸更简单，代价只有几毫秒。
   useEffect(() => {
@@ -115,10 +152,19 @@ export function PdfEditorToolImpl() {
 
     const handleMouseDown = (event: TPointerEventInfo<TPointerEvent>) => {
       const activeTool = toolRef.current;
+      const point = event.scenePoint;
+
+      if (activeTool === 'edit_text') {
+        const item = findTextItemAt(current.textItems, point.x, point.y);
+        // 延后一帧再挂输入框：浏览器处理完这次 mousedown 会把焦点移回 body，
+        // 同步挂上的输入框会立刻 blur 并被当成「编辑取消」。
+        window.requestAnimationFrame(() => setEditing(item ? { item, value: item.text } : null));
+        return;
+      }
+
       if (activeTool !== 'text' && activeTool !== 'rect') return;
       if (event.target) return;
 
-      const point = event.scenePoint;
       if (activeTool === 'text') {
         const text = new IText(t('text_placeholder'), {
           left: point.x,
@@ -175,6 +221,10 @@ export function PdfEditorToolImpl() {
   }, [color, pageIndex, pages, strokeWidth, tool]);
 
   useEffect(() => {
+    setEditing(null);
+  }, [pageIndex, tool]);
+
+  useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key !== 'Delete' && event.key !== 'Backspace') return;
       const canvas = canvasRef.current;
@@ -193,6 +243,7 @@ export function PdfEditorToolImpl() {
 
   const loadFile = useCallback(async (nextFile: File | null) => {
     setError('');
+    setWarning('');
     if (!nextFile) return;
     if (!isPdfFile(nextFile)) {
       setError(t('errors.not_pdf'));
@@ -202,6 +253,8 @@ export function PdfEditorToolImpl() {
     setFile(nextFile);
     setPages([]);
     setPageIndex(0);
+    setRewrites([]);
+    setEditing(null);
     setProgress({ current: 0, total: 0 });
 
     // 渲染分辨率跟随容器宽度，避免小屏幕上画布横向溢出。612pt 是 Letter/A4 的常见宽度。
@@ -212,6 +265,7 @@ export function PdfEditorToolImpl() {
       const rendered = await renderPdfPages(nextFile, {
         format: 'png',
         scale,
+        extractText: true,
         onProgress: (current, total) => setProgress({ current, total }),
       });
       setPages(rendered);
@@ -222,6 +276,36 @@ export function PdfEditorToolImpl() {
       setProgress(null);
     }
   }, [t]);
+
+  const commitEditing = useCallback(() => {
+    if (!editing) return;
+    const { item, value } = editing;
+    setEditing(null);
+    setWarning('');
+
+    setRewrites((current) => {
+      const rest = current.filter(
+        (entry) =>
+          entry.pageIndex !== pageIndex ||
+          entry.original !== item.text ||
+          entry.occurrence !== item.occurrence
+      );
+      if (value === item.text) return rest;
+      return [
+        ...rest,
+        {
+          pageIndex,
+          original: item.text,
+          occurrence: item.occurrence,
+          next: value,
+          x: item.x,
+          y: item.y,
+          width: item.width,
+          height: item.height,
+        },
+      ];
+    });
+  }, [editing, pageIndex]);
 
   const insertImage = useCallback(async (imageFile: File | null) => {
     const canvas = canvasRef.current;
@@ -242,10 +326,12 @@ export function PdfEditorToolImpl() {
 
   const clearPage = useCallback(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    canvas.remove(...canvas.getObjects());
-    canvas.requestRenderAll();
-  }, []);
+    if (canvas) {
+      canvas.remove(...canvas.getObjects());
+      canvas.requestRenderAll();
+    }
+    setRewrites((current) => current.filter((entry) => entry.pageIndex !== pageIndex));
+  }, [pageIndex]);
 
   const deleteSelected = useCallback(() => {
     const canvas = canvasRef.current;
@@ -255,44 +341,78 @@ export function PdfEditorToolImpl() {
     canvas.requestRenderAll();
   }, []);
 
-  const save = useCallback(async () => {
-    if (!file) return;
+  const removeRewrite = useCallback((target: QueuedRewrite) => {
+    setRewrites((current) =>
+      current.filter(
+        (entry) =>
+          entry.pageIndex !== target.pageIndex ||
+          entry.original !== target.original ||
+          entry.occurrence !== target.occurrence
+      )
+    );
+  }, []);
+
+  const buildOverlays = useCallback(async (): Promise<PdfPageOverlay[]> => {
     const canvas = canvasRef.current;
     if (canvas) annotations.set(pageIndex, canvas.toObject().objects as object[]);
 
+    const overlays: PdfPageOverlay[] = [];
+    for (const [index, objects] of annotations) {
+      const source = pages[index];
+      if (!source || objects.length === 0) continue;
+      const staticCanvas = new StaticCanvas(undefined, {
+        width: source.width,
+        height: source.height,
+        enableRetinaScaling: false,
+      });
+      await staticCanvas.loadFromJSON({ objects });
+      overlays.push({
+        pageIndex: index,
+        dataUrl: staticCanvas.toDataURL({ format: 'png', multiplier: EXPORT_MULTIPLIER }),
+      });
+      void staticCanvas.dispose();
+    }
+    return overlays;
+  }, [annotations, pageIndex, pages]);
+
+  const save = useCallback(async () => {
+    if (!file) return;
     setSaving(true);
     setError('');
-    try {
-      const overlays: PdfPageOverlay[] = [];
-      for (const [index, objects] of annotations) {
-        const source = pages[index];
-        if (!source || objects.length === 0) continue;
-        const staticCanvas = new StaticCanvas(undefined, {
-          width: source.width,
-          height: source.height,
-          enableRetinaScaling: false,
-        });
-        await staticCanvas.loadFromJSON({ objects });
-        overlays.push({
-          pageIndex: index,
-          dataUrl: staticCanvas.toDataURL({ format: 'png', multiplier: EXPORT_MULTIPLIER }),
-        });
-        void staticCanvas.dispose();
-      }
+    setWarning('');
 
-      if (overlays.length === 0) {
+    try {
+      const overlays = await buildOverlays();
+      if (overlays.length === 0 && rewrites.length === 0) {
         setError(t('errors.nothing_to_save'));
         return;
       }
 
-      const blob = await applyPdfOverlays(await file.arrayBuffer(), overlays);
+      // 先改内容流里的原文，再把标注图层盖上去，两步共用同一份字节。
+      let bytes: ArrayBuffer | Uint8Array = await file.arrayBuffer();
+      let failed: Array<{ reason: PdfTextRewriteFailureReason }> = [];
+      if (rewrites.length > 0) {
+        const result = await applyPdfTextRewrites(bytes, rewrites);
+        bytes = result.bytes;
+        failed = result.failed;
+      }
+
+      const blob = overlays.length > 0
+        ? await applyPdfOverlays(bytes, overlays)
+        : new Blob([bytes as BlobPart], { type: 'application/pdf' });
       downloadBlob(blob, createPdfDerivedFilename(file.name, 'edited'));
-    } catch {
+
+      if (failed.length > 0) {
+        const reasons = [...new Set(failed.map((entry) => t(`rewrite_failure.${entry.reason}`)))];
+        setWarning(t('rewrite_partial', { count: failed.length, reasons: reasons.join(' / ') }));
+      }
+    } catch (cause) {
+      console.error('[pdf-edit] save failed', cause);
       setError(t('errors.save_failed'));
     } finally {
       setSaving(false);
     }
-  }, [annotations, file, pageIndex, pages, t]);
+  }, [buildOverlays, file, rewrites, t]);
 
   return (
     <div className="flex min-h-0 flex-col gap-4">
@@ -317,6 +437,12 @@ export function PdfEditorToolImpl() {
       {error && (
         <p className="rounded border border-border-base bg-danger-surface px-4 py-2 text-sm text-danger-content" role="alert">
           {error}
+        </p>
+      )}
+
+      {warning && (
+        <p className="rounded border border-border-base bg-surface-raised px-4 py-2 text-sm text-content-secondary" role="status">
+          {warning}
         </p>
       )}
 
@@ -423,12 +549,42 @@ export function PdfEditorToolImpl() {
             >
               {t('page_next')}
             </Button>
-            <span className="text-xs text-content-faint">{t('hint')}</span>
+            <span className="text-xs text-content-faint">
+              {tool === 'edit_text' ? t('edit_text_hint') : t('hint')}
+            </span>
           </div>
+
+          {rewrites.length > 0 && (
+            <div className="flex flex-col gap-1 rounded border border-border-subtle bg-surface-raised p-3">
+              <p className="text-xs font-medium text-content-secondary">
+                {t('rewrite_queue_title', { count: rewrites.length })}
+              </p>
+              <ul className="flex flex-col gap-1">
+                {rewrites.map((entry) => (
+                  <li
+                    key={`${entry.pageIndex}-${entry.occurrence}-${entry.original}`}
+                    className="flex flex-wrap items-center gap-2 text-xs text-content-muted"
+                  >
+                    <span>{t('page_indicator', { current: entry.pageIndex + 1, total: pages.length })}</span>
+                    <span className="line-through">{entry.original}</span>
+                    <span aria-hidden="true">→</span>
+                    <span className="font-medium text-content">{entry.next || t('rewrite_empty')}</span>
+                    <button
+                      type="button"
+                      className="cursor-pointer underline hover:text-content-secondary"
+                      onClick={() => removeRewrite(entry)}
+                    >
+                      {t('rewrite_remove')}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           <div ref={stageRef} className="min-h-0 overflow-auto rounded border border-border-subtle bg-surface-raised p-4">
             <div
-              className="mx-auto shadow"
+              className="relative mx-auto shadow"
               style={{
                 width: page.width,
                 height: page.height,
@@ -437,6 +593,63 @@ export function PdfEditorToolImpl() {
               }}
             >
               <canvas ref={canvasElRef} />
+
+              {/* 改原文模式下标出可点选的文字块；这两层都是纯提示，不参与导出 */}
+              {tool === 'edit_text' && (
+                <div className="pointer-events-none absolute inset-0">
+                  {page.textItems?.map((item, index) => (
+                    <span
+                      key={`${item.occurrence}-${index}-${item.text}`}
+                      className="absolute border border-dashed border-border-strong"
+                      style={{ left: item.x, top: item.y, width: item.width, height: item.height }}
+                    />
+                  ))}
+                </div>
+              )}
+
+              <div className="pointer-events-none absolute inset-0">
+                {pageRewrites.map((entry) => (
+                  <span
+                    key={`${entry.occurrence}-${entry.original}`}
+                    className="absolute overflow-hidden whitespace-pre"
+                    style={{
+                      left: entry.x,
+                      top: entry.y,
+                      minWidth: entry.width,
+                      height: entry.height,
+                      fontSize: entry.height * 0.82,
+                      lineHeight: `${entry.height}px`,
+                      color,
+                      background: 'rgba(255,255,255,0.92)',
+                      outline: `1px dashed ${color}`,
+                    }}
+                  >
+                    {entry.next}
+                  </span>
+                ))}
+              </div>
+
+              {editing && (
+                <input
+                  autoFocus
+                  value={editing.value}
+                  onChange={(event) => setEditing({ item: editing.item, value: event.target.value })}
+                  onBlur={commitEditing}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') commitEditing();
+                    if (event.key === 'Escape') setEditing(null);
+                  }}
+                  aria-label={t('edit_text_input_label')}
+                  className="absolute rounded border border-action bg-surface px-1 text-content shadow"
+                  style={{
+                    left: editing.item.x,
+                    top: editing.item.y,
+                    minWidth: Math.max(editing.item.width + 32, 96),
+                    height: Math.max(editing.item.height, 20),
+                    fontSize: Math.max(editing.item.height * 0.82, 12),
+                  }}
+                />
+              )}
             </div>
           </div>
         </section>
@@ -454,7 +667,7 @@ export function PdfEditorToolImpl() {
 function applyToolInteractivity(canvas: Canvas, tool: EditorTool) {
   const selectable = tool === 'select';
   canvas.selection = selectable;
-  canvas.defaultCursor = selectable ? 'default' : 'crosshair';
+  canvas.defaultCursor = selectable ? 'default' : tool === 'edit_text' ? 'text' : 'crosshair';
   canvas.forEachObject((object) => {
     object.selectable = selectable;
     object.evented = selectable;

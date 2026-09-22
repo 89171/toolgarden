@@ -82,7 +82,7 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - **Extract pages / 提取页面** (`/pdf/extract-pages`): Free online tool to extract specific pages from a PDF and save selected pages or ranges as a new document
   - English: https://toolgarden.xyz/en/pdf/extract-pages
   - Chinese: https://toolgarden.xyz/zh/pdf/extract-pages
-- **Edit PDF / 编辑 PDF** (`/pdf/edit`): Add text, signature images, freehand markup, highlights, and cover boxes to a PDF online. Browser-local editing that leaves the original text layer intact.
+- **Edit PDF / 编辑 PDF** (`/pdf/edit`): Edit a PDF online: rewrite existing text in place, add new text, signature images, pen markup, highlights, and cover boxes, all in your browser.
   - English: https://toolgarden.xyz/en/pdf/edit
   - Chinese: https://toolgarden.xyz/zh/pdf/edit
 - **Organize PDF / 整理 PDF** (`/pdf/organize`): Free online tool to reorder, duplicate, and delete PDF pages before exporting a new document

@@ -9,7 +9,7 @@ export const filePreviewContent = defineToolContent({
     steps: [
       ['选择或拖入文件', '上传一个文件，页面会根据 MIME 类型和扩展名自动选择预览方式。'],
       ['查看文件内容', '文本和 Markdown 显示可滚动内容，表格支持切换 Sheet，PDF、图片和媒体使用浏览器预览。'],
-      ['浏览 ZIP', '上传 ZIP 后展开目录，点击任意文件即可在右侧预览；不支持的二进制文件可以下载。'],
+      ['浏览 ZIP', '上传 ZIP 后展开目录，点击任意文件即可继续预览；不支持的二进制文件可以下载。'],
       ['清空并处理下一个文件', '预览只保留在当前页面内存中，处理结束后可以清空并选择下一个文件。'],
     ],
     scenarios: [
@@ -54,7 +54,7 @@ export const filePreviewContent = defineToolContent({
     steps: [
       ['Choose or drop a file', 'Upload one file and the tool selects a preview strategy from its MIME type and extension.'],
       ['Inspect the contents', 'Text and Markdown are scrollable, spreadsheets have sheet tabs, and PDFs, images, and media use browser previews.'],
-      ['Browse a ZIP', 'Upload a ZIP, expand the tree, and select any file to preview it. Unsupported binary entries remain downloadable.'],
+      ['Browse a ZIP', 'Upload a ZIP, expand the tree, and select any file to preview it in the same page. Unsupported binary entries remain downloadable.'],
       ['Clear and preview another file', 'The preview stays in the current page memory only; clear it before choosing another file.'],
     ],
     scenarios: [

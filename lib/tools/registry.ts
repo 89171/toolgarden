@@ -151,7 +151,7 @@ export const toolRegistry: ToolMeta[] = [
   {
     id: 'pdf-edit',
     name: '编辑 PDF',
-    description: '在浏览器本地为 PDF 添加文字、签名图片、画笔批注、高亮和方框，导出时不改动原文字层',
+    description: '在浏览器本地改写 PDF 里已有的文字，或添加文字、签名图片、画笔批注、高亮和方框',
     path: '/pdf/edit',
     icon: 'EDT',
     category: 'convert',

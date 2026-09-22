@@ -3,11 +3,30 @@ export interface RenderedPage {
   dataUrl: string;
   width: number;
   height: number;
+  /** 仅在 extractText 时返回：页面上的文字块及其在画布像素坐标中的位置 */
+  textItems?: PdfTextItem[];
+}
+
+export interface PdfTextItem {
+  /** 未做归一化的原文，必须与内容流里的字节一一对应，改写时用它定位 */
+  text: string;
+  /** 同一页内相同 text 的第几次出现，0-based */
+  occurrence: number;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 }
 
 export async function renderPdfPages(
   file: File,
-  options: { format: 'png' | 'jpeg'; scale: number; onProgress?: (current: number, total: number) => void }
+  options: {
+    format: 'png' | 'jpeg';
+    scale: number;
+    /** 额外抽取文字块位置，用于「改原文」这类需要点选原有文字的场景 */
+    extractText?: boolean;
+    onProgress?: (current: number, total: number) => void;
+  }
 ): Promise<RenderedPage[]> {
   const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
   pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -34,6 +53,9 @@ export async function renderPdfPages(
       dataUrl: canvas.toDataURL(mime, options.format === 'jpeg' ? 0.92 : undefined),
       width: viewport.width,
       height: viewport.height,
+      ...(options.extractText
+        ? { textItems: await extractTextItems(pdfjs, page, viewport, options.scale) }
+        : {}),
     });
     options.onProgress?.(pageNumber, pdf.numPages);
   }
@@ -59,4 +81,36 @@ export async function downloadPagesAsZip(pages: RenderedPage[], baseName: string
   a.download = `${baseName}-pages.zip`;
   a.click();
   URL.revokeObjectURL(url);
+}
+
+type PdfjsModule = typeof import('pdfjs-dist/legacy/build/pdf.mjs');
+
+async function extractTextItems(
+  pdfjs: PdfjsModule,
+  page: Awaited<ReturnType<Awaited<ReturnType<PdfjsModule['getDocument']>['promise']>['getPage']>>,
+  viewport: { transform: number[] },
+  scale: number
+): Promise<PdfTextItem[]> {
+  // disableNormalization: 归一化会合并空白、拆连字，改写时就对不上内容流里的字节了。
+  const content = await page.getTextContent({ disableNormalization: true });
+  const seen = new Map<string, number>();
+  const items: PdfTextItem[] = [];
+
+  for (const item of content.items) {
+    if (!('str' in item) || item.str.length === 0) continue;
+    const transform = pdfjs.Util.transform(viewport.transform, item.transform);
+    const height = Math.hypot(transform[2], transform[3]);
+    const occurrence = seen.get(item.str) ?? 0;
+    seen.set(item.str, occurrence + 1);
+    items.push({
+      text: item.str,
+      occurrence,
+      x: transform[4],
+      y: transform[5] - height,
+      width: item.width * scale,
+      height,
+    });
+  }
+
+  return items;
 }

@@ -1557,6 +1557,14 @@
         {
           "question": "How do I sign a PDF?",
           "answer": "Draw the signature with the pen tool, or use Insert image to place a signature image with a transparent background, then drag and resize it onto the signature line before saving."
+        },
+        {
+          "question": "Can it change the text already in the PDF?",
+          "answer": "Yes, within limits. Pick Rewrite text, click a line, and type: on export the page content stream itself is rewritten, so the result is still real text rather than an image. It requires the text to live in the page content stream, a single-byte font, and a glyph for every new character in the original font — subset CJK fonts often fail, and the tool then says so instead of writing blanks, leaving you the text and cover-box route."
+        },
+        {
+          "question": "Does rewriting reflow the paragraph?",
+          "answer": "No. PDF text sits at absolute coordinates with no reflow. A rewrite replaces the characters of that one run; the start position stays, a longer string does not push later text aside, and nothing wraps to a new line."
         }
       ]
     },
@@ -4520,7 +4528,7 @@
     },
     "pdf-edit": {
       "name": "Edit PDF",
-      "description": "Add text, signature images, freehand markup, highlights, and cover boxes to a PDF online. Browser-local editing that leaves the original text layer intact.",
+      "description": "Edit a PDF online: rewrite existing text in place, add new text, signature images, pen markup, highlights, and cover boxes, all in your browser.",
       "drop_title": "Click or drop a PDF here",
       "replace_file": "Replace PDF",
       "drop_hint": "Processed locally in your browser, never uploaded",
@@ -4552,6 +4560,18 @@
         "image_failed": "That image could not be inserted. Try a different image file.",
         "nothing_to_save": "Nothing has been added yet. Mark up a page first.",
         "save_failed": "Building the PDF failed. Reload the page and try again."
+      },
+      "tool_edit_text": "Rewrite text",
+      "edit_text_hint": "Click any dashed text box to rewrite the original text. Enter to confirm, Esc to cancel; it is written into the content stream on export.",
+      "edit_text_input_label": "Rewrite this text",
+      "rewrite_queue_title": "Queued text rewrites ({count})",
+      "rewrite_remove": "Undo",
+      "rewrite_empty": "(delete this text)",
+      "rewrite_partial": "{count} text rewrite(s) could not be applied ({reasons}). Everything else was written to the downloaded file.",
+      "rewrite_failure": {
+        "not_found": "that text is not in the page content stream, it may live in a form or graphics object",
+        "unsupported_font": "that text uses a multi-byte CID font, rewriting it would corrupt the encoding",
+        "unavailable_glyph": "the original font has no glyph for the new characters, such as CJK or characters unused in the original text"
       }
     },
     "pdf-organize": {
