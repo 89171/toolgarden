@@ -4564,7 +4564,7 @@
         "save_failed": "Building the PDF failed. Reload the page and try again."
       },
       "tool_edit_text": "Rewrite text",
-      "edit_text_hint": "Click any dashed text box to rewrite the original text. Enter to confirm, Esc to cancel; it is written into the content stream on export.",
+      "edit_text_hint": "Hover a line of text to outline it, then click to rewrite. Enter confirms, Esc cancels — the page shows the actual rewritten result.",
       "edit_text_input_label": "Rewrite this text",
       "rewrite_queue_title": "Queued text rewrites ({count})",
       "rewrite_remove": "Undo",
@@ -4574,7 +4574,8 @@
         "not_found": "that text is not in the page content stream, it may live in a form or graphics object",
         "unsupported_font": "that text uses a multi-byte CID font, rewriting it would corrupt the encoding",
         "unavailable_glyph": "the original font has no glyph for the new characters, such as CJK or characters unused in the original text"
-      }
+      },
+      "preview_updating": "Updating the preview…"
     },
     "pdf-organize": {
       "name": "Organize PDF",

@@ -18,6 +18,45 @@ export interface PdfTextItem {
   height: number;
 }
 
+type PdfjsModule = typeof import('pdfjs-dist/legacy/build/pdf.mjs');
+
+let pdfjsPromise: Promise<PdfjsModule> | null = null;
+
+function loadPdfjs(): Promise<PdfjsModule> {
+  pdfjsPromise ??= (async () => {
+    const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
+    pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+      'pdfjs-dist/legacy/build/pdf.worker.mjs',
+      import.meta.url
+    ).toString();
+    return pdfjs;
+  })();
+  return pdfjsPromise;
+}
+
+/** 渲染单页，用于「改写后立刻看结果」这类只需要重画一页的场景。 */
+export async function renderPdfPageImage(
+  source: Uint8Array,
+  pageNumber: number,
+  scale: number
+): Promise<string | null> {
+  const pdfjs = await loadPdfjs();
+  // pdf.js 会接管传进去的 buffer，所以每次都给它一份副本。
+  const pdf = await pdfjs.getDocument({ data: new Uint8Array(source), useSystemFonts: true }).promise;
+  if (pageNumber < 1 || pageNumber > pdf.numPages) return null;
+
+  const page = await pdf.getPage(pageNumber);
+  const viewport = page.getViewport({ scale });
+  const canvas = document.createElement('canvas');
+  canvas.width = viewport.width;
+  canvas.height = viewport.height;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return null;
+
+  await page.render({ canvasContext: ctx, viewport, canvas }).promise;
+  return canvas.toDataURL('image/png');
+}
+
 export async function renderPdfPages(
   file: File,
   options: {
@@ -28,11 +67,7 @@ export async function renderPdfPages(
     onProgress?: (current: number, total: number) => void;
   }
 ): Promise<RenderedPage[]> {
-  const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
-  pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-    'pdfjs-dist/legacy/build/pdf.worker.mjs',
-    import.meta.url
-  ).toString();
+  const pdfjs = await loadPdfjs();
   const data = new Uint8Array(await file.arrayBuffer());
   const pdf = await pdfjs.getDocument({ data, useSystemFonts: true }).promise;
   const pages: RenderedPage[] = [];
@@ -82,8 +117,6 @@ export async function downloadPagesAsZip(pages: RenderedPage[], baseName: string
   a.click();
   URL.revokeObjectURL(url);
 }
-
-type PdfjsModule = typeof import('pdfjs-dist/legacy/build/pdf.mjs');
 
 async function extractTextItems(
   pdfjs: PdfjsModule,

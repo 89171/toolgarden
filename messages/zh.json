@@ -4564,7 +4564,7 @@
         "save_failed": "生成 PDF 失败，请刷新页面后重试。"
       },
       "tool_edit_text": "改原文",
-      "edit_text_hint": "点击页面上虚线框住的文字即可改写原文，回车确认、Esc 取消，导出时写回内容流",
+      "edit_text_hint": "把鼠标移到页面文字上会出现虚线框，点击即可改写，回车确认、Esc 取消；页面显示的就是改写后的真实渲染结果",
       "edit_text_input_label": "改写这段原文",
       "rewrite_queue_title": "待改写的原文（{count} 处）",
       "rewrite_remove": "取消",
@@ -4574,7 +4574,8 @@
         "not_found": "这段文字不在页面内容流里，可能位于表单或图形对象中",
         "unsupported_font": "这段文字用的是多字节 CID 字体，改写会破坏编码",
         "unavailable_glyph": "原字体里没有新文字需要的字形，例如中文、或原文里没出现过的字符"
-      }
+      },
+      "preview_updating": "正在更新预览…"
     },
     "pdf-organize": {
       "name": "整理 PDF",

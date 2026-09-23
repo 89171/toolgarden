@@ -21,17 +21,14 @@ import {
   type PdfTextRewriteFailureReason,
 } from '@/lib/utils/pdf-text-rewrite';
 import { createPdfDerivedFilename, isPdfFile } from '@/lib/utils/pdf';
-import { renderPdfPages, type PdfTextItem, type RenderedPage } from '@/lib/utils/pdf-render';
+import {
+  renderPdfPageImage,
+  renderPdfPages,
+  type PdfTextItem,
+  type RenderedPage,
+} from '@/lib/utils/pdf-render';
 
 type EditorTool = 'select' | 'edit_text' | 'text' | 'draw' | 'highlight' | 'rect';
-
-/** 排队中的原文改写，附带页面上的位置用于显示标记 */
-interface QueuedRewrite extends PdfTextRewrite {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
 
 interface TextEditingState {
   item: PdfTextItem;
@@ -91,13 +88,17 @@ export function PdfEditorToolImpl() {
   const [file, setFile] = useState<File | null>(null);
   const [pages, setPages] = useState<RenderedPage[]>([]);
   const [pageIndex, setPageIndex] = useState(0);
-  const [tool, setTool] = useState<EditorTool>('select');
+  const [tool, setTool] = useState<EditorTool>('edit_text');
   const [color, setColor] = useState('#e11d48');
   const [strokeWidth, setStrokeWidth] = useState(3);
   const [fontSize, setFontSize] = useState(20);
   const [filled, setFilled] = useState(false);
-  const [rewrites, setRewrites] = useState<QueuedRewrite[]>([]);
+  const [rewrites, setRewrites] = useState<PdfTextRewrite[]>([]);
   const [editing, setEditing] = useState<TextEditingState | null>(null);
+  const [hovered, setHovered] = useState<PdfTextItem | null>(null);
+  /** 已应用改写后重新渲染出来的页面图，key 为 0-based 页码 */
+  const [previews, setPreviews] = useState<Map<number, string>>(new Map());
+  const [previewBusy, setPreviewBusy] = useState(false);
   const [progress, setProgress] = useState<{ current: number; total: number } | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -116,6 +117,9 @@ export function PdfEditorToolImpl() {
   const strokeWidthRef = useRef(strokeWidth);
   const fontSizeRef = useRef(fontSize);
   const filledRef = useRef(filled);
+  const rewritesRef = useRef(rewrites);
+  const sourceBytesRef = useRef<Uint8Array | null>(null);
+  const renderScaleRef = useRef(1.5);
 
   if (annotationsRef.current.key !== pages) annotationsRef.current = { key: pages, map: new Map() };
   const annotations = annotationsRef.current.map;
@@ -125,9 +129,20 @@ export function PdfEditorToolImpl() {
   strokeWidthRef.current = strokeWidth;
   fontSizeRef.current = fontSize;
   filledRef.current = filled;
+  rewritesRef.current = rewrites;
 
   const page = pages[pageIndex];
-  const pageRewrites = rewrites.filter((entry) => entry.pageIndex === pageIndex);
+  const pageImage = previews.get(pageIndex) ?? page?.dataUrl;
+
+  const describeFailures = useCallback(
+    (failed: Array<{ reason: PdfTextRewriteFailureReason }>): string => {
+      if (failed.length === 0) return '';
+      const reasons = [...new Set(failed.map((entry) => t(`rewrite_failure.${entry.reason}`)))];
+      return t('rewrite_partial', { count: failed.length, reasons: reasons.join(' / ') });
+    },
+    [t]
+  );
+
 
   // 每次切页重建画布：页面尺寸不同，重建比逐项改尺寸更简单，代价只有几毫秒。
   useEffect(() => {
@@ -156,9 +171,20 @@ export function PdfEditorToolImpl() {
 
       if (activeTool === 'edit_text') {
         const item = findTextItemAt(current.textItems, point.x, point.y);
+        // 已排队的改写要接着上次改的内容编辑，而不是回到原文。
+        const queued = item
+          ? rewritesRef.current.find(
+              (entry) =>
+                entry.pageIndex === pageIndex &&
+                entry.original === item.text &&
+                entry.occurrence === item.occurrence
+            )
+          : undefined;
         // 延后一帧再挂输入框：浏览器处理完这次 mousedown 会把焦点移回 body，
         // 同步挂上的输入框会立刻 blur 并被当成「编辑取消」。
-        window.requestAnimationFrame(() => setEditing(item ? { item, value: item.text } : null));
+        window.requestAnimationFrame(() =>
+          setEditing(item ? { item, value: queued?.next ?? item.text } : null)
+        );
         return;
       }
 
@@ -193,7 +219,15 @@ export function PdfEditorToolImpl() {
       canvas.requestRenderAll();
     };
 
+    const handleMouseMove = (event: TPointerEventInfo<TPointerEvent>) => {
+      if (toolRef.current !== 'edit_text') return;
+      const item = findTextItemAt(current.textItems, event.scenePoint.x, event.scenePoint.y);
+      setHovered((previous) => (previous === item ? previous : item));
+    };
+
     canvas.on('mouse:down', handleMouseDown);
+    canvas.on('mouse:move', handleMouseMove);
+    canvas.on('mouse:out', () => setHovered(null));
 
     const index = pageIndex;
     return () => {
@@ -222,7 +256,52 @@ export function PdfEditorToolImpl() {
 
   useEffect(() => {
     setEditing(null);
+    setHovered(null);
   }, [pageIndex, tool]);
+
+  /**
+   * 排队的改写一变就把它们真的写进 PDF，再用 pdf.js 重画受影响的页面。
+   * 预览因此和导出结果完全一致——字体、颜色、位置都来自 PDF 本身，
+   * 不是用 DOM 文字去模拟。
+   *
+   * ponytail: 每次改动都重新解析整份文档，几百 KB 的文件足够快；
+   * 真遇到很大的文件再做增量。
+   */
+  useEffect(() => {
+    const bytes = sourceBytesRef.current;
+    if (!bytes || pages.length === 0) return;
+    if (rewrites.length === 0) {
+      setPreviews(new Map());
+      setWarning('');
+      return;
+    }
+
+    let cancelled = false;
+    setPreviewBusy(true);
+
+    const timer = window.setTimeout(async () => {
+      try {
+        const result = await applyPdfTextRewrites(bytes.slice(), rewrites);
+        const next = new Map<number, string>();
+        for (const index of new Set(rewrites.map((entry) => entry.pageIndex))) {
+          const dataUrl = await renderPdfPageImage(result.bytes, index + 1, renderScaleRef.current);
+          if (dataUrl) next.set(index, dataUrl);
+        }
+        if (cancelled) return;
+        setPreviews(next);
+        setWarning(describeFailures(result.failed));
+      } catch {
+        // 预览失败不影响继续编辑，导出时会再报一次
+      } finally {
+        if (!cancelled) setPreviewBusy(false);
+      }
+    }, 250);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [describeFailures, pages, rewrites]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -255,13 +334,17 @@ export function PdfEditorToolImpl() {
     setPageIndex(0);
     setRewrites([]);
     setEditing(null);
+    setHovered(null);
+    setPreviews(new Map());
     setProgress({ current: 0, total: 0 });
 
     // 渲染分辨率跟随容器宽度，避免小屏幕上画布横向溢出。612pt 是 Letter/A4 的常见宽度。
     const stageWidth = stageRef.current?.clientWidth ?? 900;
     const scale = Math.min(2, Math.max(1, stageWidth / 612));
+    renderScaleRef.current = scale;
 
     try {
+      sourceBytesRef.current = new Uint8Array(await nextFile.arrayBuffer());
       const rendered = await renderPdfPages(nextFile, {
         format: 'png',
         scale,
@@ -291,19 +374,7 @@ export function PdfEditorToolImpl() {
           entry.occurrence !== item.occurrence
       );
       if (value === item.text) return rest;
-      return [
-        ...rest,
-        {
-          pageIndex,
-          original: item.text,
-          occurrence: item.occurrence,
-          next: value,
-          x: item.x,
-          y: item.y,
-          width: item.width,
-          height: item.height,
-        },
-      ];
+      return [...rest, { pageIndex, original: item.text, occurrence: item.occurrence, next: value }];
     });
   }, [editing, pageIndex]);
 
@@ -341,7 +412,7 @@ export function PdfEditorToolImpl() {
     canvas.requestRenderAll();
   }, []);
 
-  const removeRewrite = useCallback((target: QueuedRewrite) => {
+  const removeRewrite = useCallback((target: PdfTextRewrite) => {
     setRewrites((current) =>
       current.filter(
         (entry) =>
@@ -401,18 +472,14 @@ export function PdfEditorToolImpl() {
         ? await applyPdfOverlays(bytes, overlays)
         : new Blob([bytes as BlobPart], { type: 'application/pdf' });
       downloadBlob(blob, createPdfDerivedFilename(file.name, 'edited'));
-
-      if (failed.length > 0) {
-        const reasons = [...new Set(failed.map((entry) => t(`rewrite_failure.${entry.reason}`)))];
-        setWarning(t('rewrite_partial', { count: failed.length, reasons: reasons.join(' / ') }));
-      }
+      setWarning(describeFailures(failed));
     } catch (cause) {
       console.error('[pdf-edit] save failed', cause);
       setError(t('errors.save_failed'));
     } finally {
       setSaving(false);
     }
-  }, [buildOverlays, file, rewrites, t]);
+  }, [buildOverlays, describeFailures, file, rewrites, t]);
 
   return (
     <div className="flex min-h-0 flex-col gap-4">
@@ -549,8 +616,8 @@ export function PdfEditorToolImpl() {
             >
               {t('page_next')}
             </Button>
-            <span className="text-xs text-content-faint">
-              {tool === 'edit_text' ? t('edit_text_hint') : t('hint')}
+            <span className="text-xs text-content-faint" aria-live="polite">
+              {previewBusy ? t('preview_updating') : tool === 'edit_text' ? t('edit_text_hint') : t('hint')}
             </span>
           </div>
 
@@ -588,46 +655,20 @@ export function PdfEditorToolImpl() {
               style={{
                 width: page.width,
                 height: page.height,
-                backgroundImage: `url(${page.dataUrl})`,
+                // 有改写时显示的就是改写后重新渲染出来的页面，字体、颜色与原文一致
+                backgroundImage: `url(${pageImage})`,
                 backgroundSize: '100% 100%',
               }}
             >
               <canvas ref={canvasElRef} />
 
-              {/* 改原文模式下标出可点选的文字块；这两层都是纯提示，不参与导出 */}
-              {tool === 'edit_text' && (
-                <div className="pointer-events-none absolute inset-0">
-                  {page.textItems?.map((item, index) => (
-                    <span
-                      key={`${item.occurrence}-${index}-${item.text}`}
-                      className="absolute border border-dashed border-border-strong"
-                      style={{ left: item.x, top: item.y, width: item.width, height: item.height }}
-                    />
-                  ))}
-                </div>
+              {/* 鼠标指到哪段文字就框出哪段，纯提示，不参与导出 */}
+              {tool === 'edit_text' && hovered && !editing && (
+                <span
+                  className="pointer-events-none absolute border border-dashed border-action"
+                  style={{ left: hovered.x, top: hovered.y, width: hovered.width, height: hovered.height }}
+                />
               )}
-
-              <div className="pointer-events-none absolute inset-0">
-                {pageRewrites.map((entry) => (
-                  <span
-                    key={`${entry.occurrence}-${entry.original}`}
-                    className="absolute overflow-hidden whitespace-pre"
-                    style={{
-                      left: entry.x,
-                      top: entry.y,
-                      minWidth: entry.width,
-                      height: entry.height,
-                      fontSize: entry.height * 0.82,
-                      lineHeight: `${entry.height}px`,
-                      color,
-                      background: 'rgba(255,255,255,0.92)',
-                      outline: `1px dashed ${color}`,
-                    }}
-                  >
-                    {entry.next}
-                  </span>
-                ))}
-              </div>
 
               {editing && (
                 <input
