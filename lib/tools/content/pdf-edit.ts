@@ -4,12 +4,12 @@ export const pdfEditContent = defineToolContent({
   zh: {
     overview: [
       'PDF 不是为逐字改写设计的格式：页面记录的是「在这个坐标用这个字体画这些字形」，没有段落回流的概念。所以这个工具提供两条不同的编辑路径——改写页面内容流里已有的文字，或者在页面之上叠加新的文字、签名、批注和遮盖块。前者结果仍是真正的文字，后者不受字体限制。',
-      '改原文时，工具用 pdf.js 抽出每段文字的原始字节和位置，再在页面内容流里定位对应的文字绘制操作符（Tj / TJ）并替换其中的字符串，最后由 pdf-lib 重新写出文件。叠加标注则是在原页面之上新增一层透明图层。两者都在浏览器本地完成，文件不会上传服务器。',
+      '改原文时，工具用 pdf.js 抽出每段文字的原始字节和位置，再在页面内容流里定位对应的文字绘制操作符（Tj / TJ）并替换其中的字符串，最后由 pdf-lib 重新写出文件。叠加标注则写成 PDF 原生的注释对象（Ink / Square / FreeText / Stamp），是矢量的，放大不糊、体积很小，在其它阅读器里还能单独选中和删除。两者都在浏览器本地完成，文件不会上传服务器。',
     ],
     steps: [
       ['上传 PDF 并等待渲染', '页面逐页渲染成底图，同时抽取文字块位置，页数越多耗时越长。'],
       ['改原文：直接点页面上的文字', '默认就是改原文模式，鼠标移到文字上会出现虚线框，点击输入新内容回车确认。页面随即用改写后的 PDF 重新渲染，字体和颜色就是导出后的样子。'],
-      ['加标注：文字 / 画笔 / 高亮 / 方框 / 图片', '需要签名、手写批注或遮盖时用叠加工具，它们不受原字体限制，中文也能写。'],
+      ['加标注：文字 / 画笔 / 高亮 / 方框 / 图片', '需要签名、手写批注或遮盖时用叠加工具，它们不受原字体限制。中文会按需下载字体并只嵌入用到的字形，导出后同样是真正的文字。'],
       ['保存并下载', '导出时先改写内容流里的原文，再把标注图层盖上；无法改写的原文会明确列出原因，不会悄悄写成空白。'],
     ],
     scenarios: [
@@ -29,10 +29,10 @@ export const pdfEditContent = defineToolContent({
       ['改原文的前提', '文字在页面自己的内容流里、字体为单字节字体，且新文字每个字符在原字体中有字形'],
       ['失败时的行为', '编辑时立刻报出原因并跳过，绝不写出渲染成空白或豆腐块的 PDF'],
       ['字距处理', 'TJ 数组里的字距微调分段会被合并到第一段，新文字按字体自身宽度排布'],
-      ['叠加标注', '文字、自由画笔、半透明高亮、矩形（描边或填充）、插入图片，按页各自保存'],
+      ['叠加标注', '写成原生注释对象：画笔 / 高亮 → Ink，方框 → Square，文字 → FreeText，图片 → Stamp'],
       ['预览方式', '改完立刻把改写写进 PDF 并重新渲染该页，预览与导出结果一致'],
-      ['标注清晰度', '标注图层按页面显示尺寸的 2 倍导出，约 144–216 DPI'],
-      ['旋转页面', '按页面 /Rotate 值换算坐标，横向扫描件上的标注不会错位'],
+      ['标注清晰度', '矢量输出，与分辨率无关；只有认不出的对象和缺字形的文字才会单独栅格化'],
+      ['旋转页面与裁切页', '按 /Rotate 和 CropBox 换算坐标，横向扫描件、出血裁切稿上的标注都不会错位'],
       ['处理位置', '渲染、改写、标注和写回全部在浏览器本地完成，文件不上传'],
     ],
     faq: [
@@ -46,7 +46,7 @@ export const pdfEditContent = defineToolContent({
       },
       {
         question: '改写后的文件为什么变大或变小了？',
-        answer: '改原文只替换字符串，体积几乎不变（内容流会重新压缩）。变大主要来自标注：每个有标注的页面会多出一张整页透明 PNG，标注密集或插入高分辨率图片时增量明显。',
+        answer: '改原文只替换字符串，体积几乎不变。标注是矢量注释对象，一条画笔或一个方框只有几百字节；插入图片按图片本身大小计算，写中文时会多出一份只含所用字形的字体子集（几 KB）。',
       },
     ],
     reference: [
@@ -58,12 +58,12 @@ export const pdfEditContent = defineToolContent({
   en: {
     overview: [
       'PDF was never designed for word-processor editing: a page records "draw these glyphs at these coordinates in this font", with no notion of reflowing paragraphs. So this tool offers two distinct paths — rewrite the text already in the page content stream, or layer new text, signatures, markup, and cover boxes on top. The first keeps the result as real text; the second is not limited by the original font.',
-      'To rewrite, the tool extracts each run\'s raw bytes and position with pdf.js, locates the matching text-showing operator (Tj / TJ) in the page content stream, replaces the string inside it, and writes the file back out with pdf-lib. Annotations instead add a transparent layer above the page. Both run locally in your browser; the file is never uploaded.',
+      'To rewrite, the tool extracts each run\'s raw bytes and position with pdf.js, locates the matching text-showing operator (Tj / TJ) in the page content stream, replaces the string inside it, and writes the file back out with pdf-lib. Annotations are written as native PDF annotation objects (Ink, Square, FreeText, Stamp): vector, tiny, and still selectable or removable in other readers. Both run locally in your browser; the file is never uploaded.',
     ],
     steps: [
       ['Upload the PDF and wait for rendering', 'Pages are rendered into a backdrop while text positions are extracted; longer documents take longer.'],
       ['Rewrite: click the text on the page', 'Rewrite mode is the default. Hover a run to outline it, click, type, and press Enter — the page is then re-rendered from the rewritten PDF, so the font and color you see are what gets exported.'],
-      ['Annotate: text, pen, highlight, box, image', 'Use the overlay tools for signatures, handwriting, or covering content; they are not limited by the original font and handle any script.'],
+      ['Annotate: text, pen, highlight, box, image', 'Use the overlay tools for signatures, handwriting, or covering content. They are not limited by the original font; CJK text pulls a font on demand and embeds only the glyphs used, so it stays real text.'],
       ['Save and download', 'Export rewrites the content stream first, then stamps the annotation layer. Anything that could not be rewritten is listed with its reason rather than silently written as blanks.'],
     ],
     scenarios: [
@@ -83,10 +83,10 @@ export const pdfEditContent = defineToolContent({
       ['Requirements for rewriting', 'The text must live in the page content stream, use a single-byte font, and every new character needs a glyph in that font'],
       ['Behavior on failure', 'The run is skipped and the reason reported while you edit; the tool never writes a PDF that renders as blanks or tofu boxes'],
       ['Kerning', 'Kerned segments inside a TJ array are merged into the first piece and the new text is laid out with the font\'s own widths'],
-      ['Annotation tools', 'Text, freehand pen, translucent highlight, rectangle (outline or filled), inserted image, stored per page'],
+      ['Annotation tools', 'Written as native annotations: pen and highlight as Ink, box as Square, text as FreeText, image as Stamp'],
       ['Preview', 'Each edit is applied to the PDF and the page re-rendered, so the preview matches the exported file'],
-      ['Annotation resolution', 'The layer is exported at 2× the page display size, roughly 144–216 DPI'],
-      ['Rotated pages', 'Coordinates are converted from the page /Rotate value, so marks on landscape scans stay aligned'],
+      ['Annotation resolution', 'Vector output, resolution independent; only unknown objects and text without glyphs are rasterised individually'],
+      ['Rotated and cropped pages', 'Coordinates follow both /Rotate and the crop box, so marks on landscape scans and trimmed print files stay aligned'],
       ['Where it runs', 'Rendering, rewriting, annotating, and writing back all happen locally in the browser'],
     ],
     faq: [
@@ -100,7 +100,7 @@ export const pdfEditContent = defineToolContent({
       },
       {
         question: 'Why did the file size change?',
-        answer: 'Rewriting only swaps strings, so size barely moves once the content stream is recompressed. Growth comes from annotations: each annotated page gains one full-page transparent PNG, which is noticeable with dense markup or a high-resolution image.',
+        answer: 'Rewriting only swaps strings, so size barely moves. Annotations are vector objects — a pen stroke or a box costs a few hundred bytes. Inserted images cost what the image costs, and CJK text adds a font subset holding only the glyphs you typed, a few KB.',
       },
     ],
     reference: [

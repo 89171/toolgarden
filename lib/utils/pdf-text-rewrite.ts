@@ -282,10 +282,24 @@ export function parseShowRuns(content: string): ShowRun[] {
   return runs;
 }
 
+const stripSpaces = (text: string) => text.replace(/\s+/g, '');
+
 /**
  * pdf.js 的一条文本可能由连续几个 show 操作符拼成，所以按窗口而不是单条匹配。
+ *
+ * `normalize` 用于第二轮匹配：pdf.js 会把 TJ 数组里较大的字距位移**合成成空格**
+ * （`[(Hello)-400(world)]` 抽出来是 "Hello world"，内容流里其实是 "Helloworld"），
+ * 而用字距代替空格是 LaTeX / Ghostscript 等排版器的常规做法。只按字节精确比较，
+ * 这类文档整页都会匹配不上。
  */
-function findRunWindow(runs: ShowRun[], original: string, occurrence: number): ShowRun[] | null {
+function findRunWindow(
+  runs: ShowRun[],
+  original: string,
+  occurrence: number,
+  normalize: (text: string) => string = (text) => text
+): ShowRun[] | null {
+  const target = normalize(original);
+  if (target.length === 0) return null;
   let seen = 0;
 
   for (let start = 0; start < runs.length; start += 1) {
@@ -293,17 +307,26 @@ function findRunWindow(runs: ShowRun[], original: string, occurrence: number): S
     for (let end = start; end < Math.min(runs.length, start + MAX_RUN_WINDOW); end += 1) {
       if (runs[end].font !== runs[start].font) break;
       text += runs[end].text;
-      if (text === original) {
+      const normalized = normalize(text);
+      if (normalized === target) {
         if (seen === occurrence) return runs.slice(start, end + 1);
         seen += 1;
         start = end;
         break;
       }
-      if (text.length >= original.length) break;
+      if (normalized.length >= target.length) break;
     }
   }
 
   return null;
+}
+
+/** 先按字节精确匹配，失败再退回忽略空白的匹配。 */
+function locateRunWindow(runs: ShowRun[], rewrite: PdfTextRewrite): ShowRun[] | null {
+  return (
+    findRunWindow(runs, rewrite.original, rewrite.occurrence) ??
+    findRunWindow(runs, rewrite.original, rewrite.occurrence, stripSpaces)
+  );
 }
 
 function getPageFontDict(page: ReturnType<PDFDocument['getPages']>[number], name: string): PDFDict | undefined {
@@ -452,7 +475,7 @@ export async function applyPdfTextRewrites(
     const spans: Array<{ start: number; end: number; text: string }> = [];
 
     for (const rewrite of pageRewrites) {
-      const window = findRunWindow(runs, rewrite.original, rewrite.occurrence);
+      const window = locateRunWindow(runs, rewrite);
       if (!window) {
         failed.push({ rewrite, reason: 'not_found' });
         continue;

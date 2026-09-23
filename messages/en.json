@@ -1565,6 +1565,10 @@
         {
           "question": "Does rewriting reflow the paragraph?",
           "answer": "No. PDF text sits at absolute coordinates with no reflow. A rewrite replaces the characters of that one run; the start position stays, a longer string does not push later text aside, and nothing wraps to a new line."
+        },
+        {
+          "question": "Are annotations images or vectors?",
+          "answer": "Vectors. Pen, highlight, box and text are written as native PDF annotations (Ink, Square, FreeText, Stamp), so they stay sharp at any zoom and can still be selected or deleted in Acrobat. Only inserted images — and text whose glyphs are unavailable — are rasterised, and then only that one object."
         }
       ]
     },

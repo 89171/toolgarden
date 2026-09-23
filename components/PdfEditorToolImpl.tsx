@@ -14,7 +14,9 @@ import {
   type TPointerEvent,
 } from 'fabric';
 import { Button } from '@/components/ui/Button';
-import { applyPdfOverlays, type PdfPageOverlay } from '@/lib/utils/pdf-edit';
+import { applyPdfAnnotations, type PageAnnotations } from '@/lib/utils/pdf-annotations';
+import { collectNonWinAnsiText, fabricObjectsToShapes } from '@/lib/utils/pdf-annotation-shapes';
+import { loadCjkFontSubset } from '@/lib/utils/pdf-cjk-font';
 import {
   applyPdfTextRewrites,
   type PdfTextRewrite,
@@ -37,8 +39,6 @@ interface TextEditingState {
 
 const TOOLS: EditorTool[] = ['select', 'edit_text', 'text', 'draw', 'highlight', 'rect'];
 const TEXT_FONT_FAMILY = 'system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
-/** 标注图层按页面显示尺寸的 2 倍导出，约 144-216 DPI，避免线条和文字发虚。 */
-const EXPORT_MULTIPLIER = 2;
 
 function colorWithAlpha(hex: string, alpha: number): string {
   const normalized = hex.replace('#', '');
@@ -273,6 +273,8 @@ export function PdfEditorToolImpl() {
     if (rewrites.length === 0) {
       setPreviews(new Map());
       setWarning('');
+      // 上一轮预览可能正在途中被取消，它的 finally 不会再执行，这里兜底收尾。
+      setPreviewBusy(false);
       return;
     }
 
@@ -423,11 +425,18 @@ export function PdfEditorToolImpl() {
     );
   }, []);
 
-  const buildOverlays = useCallback(async (): Promise<PdfPageOverlay[]> => {
+  /**
+   * 把每页的标注对象转成矢量注释形状。
+   * 不再把整页压成 PNG：注释以 Ink / Square / FreeText / Stamp 写进 PDF。
+   */
+  const buildAnnotations = useCallback(async (): Promise<{
+    pages: PageAnnotations[];
+    unicodeFont: Uint8Array | null;
+  }> => {
     const canvas = canvasRef.current;
     if (canvas) annotations.set(pageIndex, canvas.toObject().objects as object[]);
 
-    const overlays: PdfPageOverlay[] = [];
+    const canvases: Array<{ index: number; staticCanvas: StaticCanvas; height: number }> = [];
     for (const [index, objects] of annotations) {
       const source = pages[index];
       if (!source || objects.length === 0) continue;
@@ -437,13 +446,27 @@ export function PdfEditorToolImpl() {
         enableRetinaScaling: false,
       });
       await staticCanvas.loadFromJSON({ objects });
-      overlays.push({
-        pageIndex: index,
-        dataUrl: staticCanvas.toDataURL({ format: 'png', multiplier: EXPORT_MULTIPLIER }),
+      canvases.push({ index, staticCanvas, height: source.height });
+    }
+
+    // 只有真的写了中文这类字符才去下载字体，并且只裁出用到的那几个字形；
+    // 拿不到字体就让转换器把这几个文字对象单独栅格化。
+    const unicodeText = canvases
+      .map((entry) => collectNonWinAnsiText(entry.staticCanvas.getObjects()))
+      .join('');
+    const unicodeFont = unicodeText ? await loadCjkFontSubset(unicodeText) : null;
+
+    const result: PageAnnotations[] = [];
+    for (const { index, staticCanvas, height } of canvases) {
+      const shapes = fabricObjectsToShapes(staticCanvas.getObjects(), {
+        scale: renderScaleRef.current,
+        canvasHeight: height,
+        allowUnicodeText: Boolean(unicodeFont),
       });
+      if (shapes.length > 0) result.push({ pageIndex: index, shapes });
       void staticCanvas.dispose();
     }
-    return overlays;
+    return { pages: result, unicodeFont };
   }, [annotations, pageIndex, pages]);
 
   const save = useCallback(async () => {
@@ -453,8 +476,8 @@ export function PdfEditorToolImpl() {
     setWarning('');
 
     try {
-      const overlays = await buildOverlays();
-      if (overlays.length === 0 && rewrites.length === 0) {
+      const { pages: pageAnnotations, unicodeFont } = await buildAnnotations();
+      if (pageAnnotations.length === 0 && rewrites.length === 0) {
         setError(t('errors.nothing_to_save'));
         return;
       }
@@ -468,9 +491,10 @@ export function PdfEditorToolImpl() {
         failed = result.failed;
       }
 
-      const blob = overlays.length > 0
-        ? await applyPdfOverlays(bytes, overlays)
-        : new Blob([bytes as BlobPart], { type: 'application/pdf' });
+      if (pageAnnotations.length > 0) {
+        bytes = await applyPdfAnnotations(bytes, pageAnnotations, { unicodeFont });
+      }
+      const blob = new Blob([bytes as BlobPart], { type: 'application/pdf' });
       downloadBlob(blob, createPdfDerivedFilename(file.name, 'edited'));
       setWarning(describeFailures(failed));
     } catch (cause) {
@@ -479,7 +503,7 @@ export function PdfEditorToolImpl() {
     } finally {
       setSaving(false);
     }
-  }, [buildOverlays, describeFailures, file, rewrites, t]);
+  }, [buildAnnotations, describeFailures, file, rewrites, t]);
 
   return (
     <div className="flex min-h-0 flex-col gap-4">

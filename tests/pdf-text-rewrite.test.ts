@@ -225,3 +225,63 @@ describe('applyPdfTextRewrites file hygiene', () => {
     expect(await readContent(result.bytes)).toContain('(Public 00000) Tj');
   });
 });
+
+describe('text split by kerning', () => {
+  it('matches text whose spaces pdf.js synthesised from TJ offsets', async () => {
+    // pdf.js 把 [(Hello)-400(world)] 抽成 "Hello world"，内容流里其实没有空格字节
+    const pdfDoc = await PDFDocument.create();
+    const page = pdfDoc.addPage([400, 600]);
+    page.node.set(
+      PDFName.of('Resources'),
+      pdfDoc.context.obj({
+        Font: {
+          F1: pdfDoc.context.register(
+            pdfDoc.context.obj({ Type: 'Font', Subtype: 'Type1', BaseFont: 'Helvetica' })
+          ),
+        },
+      })
+    );
+    page.node.set(
+      PDFName.of('Contents'),
+      pdfDoc.context.register(pdfDoc.context.stream('BT /F1 20 Tf [(Hello)-400(world)] TJ ET'))
+    );
+
+    const result = await applyPdfTextRewrites(await pdfDoc.save(), [
+      { pageIndex: 0, original: 'Hello world', occurrence: 0, next: 'Bye all' },
+    ]);
+
+    expect(result.failed).toHaveLength(0);
+    expect(result.applied).toHaveLength(1);
+    expect(await readContent(result.bytes)).toContain('[(Bye all)-400()] TJ');
+  });
+
+  it('still prefers an exact byte match over the space-insensitive one', async () => {
+    const pdfDoc = await PDFDocument.create();
+    const page = pdfDoc.addPage([400, 600]);
+    page.node.set(
+      PDFName.of('Resources'),
+      pdfDoc.context.obj({
+        Font: {
+          F1: pdfDoc.context.register(
+            pdfDoc.context.obj({ Type: 'Font', Subtype: 'Type1', BaseFont: 'Helvetica' })
+          ),
+        },
+      })
+    );
+    page.node.set(
+      PDFName.of('Contents'),
+      pdfDoc.context.register(
+        pdfDoc.context.stream('BT /F1 20 Tf [(Hello)-400(world)] TJ (Hello world) Tj ET')
+      )
+    );
+
+    const result = await applyPdfTextRewrites(await pdfDoc.save(), [
+      { pageIndex: 0, original: 'Hello world', occurrence: 0, next: 'EXACT' },
+    ]);
+    const content = await readContent(result.bytes);
+
+    // 精确匹配的那一段（第二段）被改写，靠字距拼出来的那段保持原样
+    expect(content).toContain('[(Hello)-400(world)] TJ');
+    expect(content).toContain('(EXACT) Tj');
+  });
+});
