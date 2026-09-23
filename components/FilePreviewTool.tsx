@@ -231,6 +231,7 @@ export function FilePreviewTool() {
   const [selectedPath, setSelectedPath] = useState('');
   const [sheetIndex, setSheetIndex] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const [docxError, setDocxError] = useState('');
 
   const tree = useMemo(() => (archive?.ok ? createTree(archive.entries) : null), [archive]);
@@ -345,34 +346,50 @@ export function FilePreviewTool() {
     <ToolLayout toolId="file-preview" content={filePreviewContent}>
       <input
         ref={inputRef}
+        id="file-preview-input"
         type="file"
-        className="hidden"
+        className="sr-only"
         onChange={(event) => handleFile(event.target.files?.[0])}
       />
       {!target ? (
-        <Panel title={t('input_title')} className="mx-auto w-full max-w-3xl">
+        <Panel title={t('input_title')} className="mx-auto w-full max-w-4xl">
           <label
-            className="flex min-h-64 cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-border-input bg-surface-raised p-6 text-center transition-colors hover:border-border-strong hover:bg-surface-hover"
+            htmlFor="file-preview-input"
+            className={`group flex min-h-72 cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center outline-none transition-colors focus-within:ring-2 focus-within:ring-action/40 sm:p-12 ${
+             isDragging
+               ? 'border-border-strong bg-surface-hover'
+               : 'border-border-input bg-surface-raised hover:border-border-strong hover:bg-surface-hover'
+            }`}
             onDragOver={(event) => event.preventDefault()}
+            onDragEnter={() => setIsDragging(true)}
+            onDragLeave={() => setIsDragging(false)}
             onDrop={(event) => {
               event.preventDefault();
+              setIsDragging(false);
               handleFile(event.dataTransfer.files[0]);
             }}
           >
-            <span className="font-medium text-content">{t('drop_title')}</span>
+            <span className="flex size-14 items-center justify-center rounded-xl border border-border-base bg-surface-hover font-mono text-xs font-semibold tracking-[0.18em] text-content-secondary transition-transform group-hover:-translate-y-0.5">
+              FILE
+            </span>
+            <span className="mt-5 text-base font-semibold text-content">{t('drop_title')}</span>
             <span className="mt-2 max-w-xl text-sm leading-relaxed text-content-muted">{t('drop_hint')}</span>
+            <span className="mt-5 inline-flex min-h-10 items-center rounded bg-action px-4 py-2 text-sm font-semibold text-background transition-colors group-hover:bg-action-hover">
+              {t('choose_file')}
+            </span>
           </label>
-          <div className="mt-4 rounded border border-border-subtle bg-surface-raised p-4 text-sm text-content-muted">
-            {t('empty_input')}
+          <div className="mt-4 flex flex-col gap-1 rounded border border-border-subtle bg-surface-raised px-4 py-3 text-sm text-content-muted sm:flex-row sm:items-center sm:justify-between">
+            <span>{t('empty_input')}</span>
+            <span className="text-xs text-content-faint">{t('paste_hint')}</span>
           </div>
         </Panel>
       ) : (
         <div className="flex min-h-0 flex-1 flex-col gap-4">
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded border border-border-subtle bg-surface p-3">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border-subtle bg-surface px-4 py-3">
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="min-w-0 break-all font-medium text-content">{target.name}</span>
-                <span className="shrink-0 rounded bg-surface-hover px-2 py-1 text-xs text-content-muted">
+                <span className="shrink-0 rounded-full bg-surface-hover px-2.5 py-1 text-xs font-medium text-content-muted">
                   {getKindLabel(t, selectedKind ?? 'binary')}
                 </span>
               </div>
@@ -390,7 +407,9 @@ export function FilePreviewTool() {
             </div>
           </div>
 
-          <Panel title={t('output_title')} className="min-h-[28rem] flex-1">
+          <Panel title={t('output_title')} className="min-h-[32rem] flex-1" actions={target ? (
+            <span className="text-xs text-content-muted">{t('local_note')}</span>
+          ) : null}>
           {isProcessing ? (
             <div className="flex min-h-64 items-center justify-center rounded border border-border-subtle bg-surface-raised text-sm text-content-muted">
               {t('processing')}
