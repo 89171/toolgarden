@@ -80,7 +80,7 @@ export const JsonNode: React.FC<JsonNodeProps> = ({
 
   return (
     <div
-      className={`font-mono text-sm rounded focus:outline-none focus:ring-1 focus:ring-action ${isActive ? 'bg-surface-hover' : ''}`}
+      className={`relative rounded font-mono text-sm focus:outline-none focus:ring-1 focus:ring-action ${isActive ? 'bg-surface-hover' : ''}`}
       tabIndex={isObject ? 0 : undefined}
       onMouseMove={(event) => {
         event.stopPropagation();
@@ -99,7 +99,7 @@ export const JsonNode: React.FC<JsonNodeProps> = ({
         }
       }}
     >
-      <div className="flex items-center justify-between">
+      <div className="flex items-center">
         <div className="flex items-center">
           {isObject ? (
             <>
@@ -131,7 +131,7 @@ export const JsonNode: React.FC<JsonNodeProps> = ({
         </div>
 
         {isActive && isObject && (
-          <div className="flex space-x-1 ml-2">
+          <div className="absolute right-0 top-0 z-10 flex gap-1 rounded bg-surface-raised shadow-sm">
             <Button variant="secondary" onClick={copyNode} title={actionLabels.copy}>
               {actionLabels.copy}
             </Button>
