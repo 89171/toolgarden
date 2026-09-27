@@ -1,4 +1,4 @@
-import { ToolMeta, ToolCategory } from './types';
+import { ToolMeta, ToolCategory, type ImageToolCategory } from './types';
 
 /**
  * 工具注册中心 — Harness Engineering 核心
@@ -228,6 +228,7 @@ export const toolRegistry: ToolMeta[] = [
     path: '/file-merge/images',
     icon: 'IMG',
     category: 'convert',
+    imageCategory: 'edit',
   },
   {
     id: 'image-compress',
@@ -236,6 +237,7 @@ export const toolRegistry: ToolMeta[] = [
     path: '/image/compress',
     icon: 'ZIP',
     category: 'convert',
+    imageCategory: 'optimize',
     featured: true,
   },
   {
@@ -272,6 +274,7 @@ export const toolRegistry: ToolMeta[] = [
     path: '/image/upscale',
     icon: '2X',
     category: 'convert',
+    imageCategory: 'optimize',
     featured: true,
   },
   {
@@ -281,6 +284,7 @@ export const toolRegistry: ToolMeta[] = [
     path: '/image/enhance',
     icon: 'HD',
     category: 'convert',
+    imageCategory: 'optimize',
     featured: true,
   },
   {
@@ -290,6 +294,7 @@ export const toolRegistry: ToolMeta[] = [
     path: '/image/remove-bg',
     icon: 'BG',
     category: 'convert',
+    imageCategory: 'optimize',
     featured: true,
   },
   {
@@ -299,6 +304,7 @@ export const toolRegistry: ToolMeta[] = [
     path: '/image/id-photo',
     icon: 'ID',
     category: 'convert',
+    imageCategory: 'optimize',
     featured: true,
   },
   {
@@ -308,6 +314,7 @@ export const toolRegistry: ToolMeta[] = [
     path: '/image/remove-watermark',
     icon: 'WM-',
     category: 'convert',
+    imageCategory: 'optimize',
     featured: true,
   },
   {
@@ -317,6 +324,7 @@ export const toolRegistry: ToolMeta[] = [
     path: '/image/watermark',
     icon: 'WM+',
     category: 'convert',
+    imageCategory: 'edit',
     featured: true,
   },
   {
@@ -326,6 +334,7 @@ export const toolRegistry: ToolMeta[] = [
     path: '/image/edit',
     icon: 'EDT',
     category: 'convert',
+    imageCategory: 'edit',
     featured: true,
   },
   {
@@ -335,6 +344,7 @@ export const toolRegistry: ToolMeta[] = [
     path: '/image/to-icon',
     icon: 'ICO',
     category: 'convert',
+    imageCategory: 'convert',
     featured: true,
   },
   {
@@ -344,6 +354,7 @@ export const toolRegistry: ToolMeta[] = [
     path: '/image/to-jpg',
     icon: 'JPG',
     category: 'convert',
+    imageCategory: 'convert',
   },
   {
     id: 'image-to-png',
@@ -352,6 +363,7 @@ export const toolRegistry: ToolMeta[] = [
     path: '/image/to-png',
     icon: 'PNG',
     category: 'convert',
+    imageCategory: 'convert',
   },
   {
     id: 'image-to-webp',
@@ -360,6 +372,7 @@ export const toolRegistry: ToolMeta[] = [
     path: '/image/to-webp',
     icon: 'WEB',
     category: 'convert',
+    imageCategory: 'convert',
   },
   {
     id: 'image-to-avif',
@@ -368,6 +381,7 @@ export const toolRegistry: ToolMeta[] = [
     path: '/image/to-avif',
     icon: 'AVF',
     category: 'convert',
+    imageCategory: 'convert',
   },
   {
     id: 'image-to-base64',
@@ -376,6 +390,7 @@ export const toolRegistry: ToolMeta[] = [
     path: '/image/to-base64',
     icon: 'B64',
     category: 'convert',
+    imageCategory: 'convert',
   },
   {
     id: 'base64-to-image',
@@ -384,6 +399,7 @@ export const toolRegistry: ToolMeta[] = [
     path: '/image/base64-to-image',
     icon: 'IMG',
     category: 'convert',
+    imageCategory: 'convert',
   },
   {
     id: 'image-crop',
@@ -392,6 +408,7 @@ export const toolRegistry: ToolMeta[] = [
     path: '/image/crop',
     icon: 'CUT',
     category: 'convert',
+    imageCategory: 'edit',
   },
   {
     id: 'image-resize',
@@ -400,6 +417,7 @@ export const toolRegistry: ToolMeta[] = [
     path: '/image/resize',
     icon: 'SIZ',
     category: 'convert',
+    imageCategory: 'edit',
   },
   {
     id: 'subtitle-maker',
@@ -578,6 +596,7 @@ export const toolRegistry: ToolMeta[] = [
     path: '/image/exif',
     icon: 'EXF',
     category: 'convert',
+    imageCategory: 'inspect',
   },
   {
     id: 'image-ocr',
@@ -586,6 +605,7 @@ export const toolRegistry: ToolMeta[] = [
     path: '/image/ocr',
     icon: 'OCR',
     category: 'convert',
+    imageCategory: 'inspect',
     featured: true,
   },
   {
@@ -595,6 +615,7 @@ export const toolRegistry: ToolMeta[] = [
     path: '/image/rotate',
     icon: 'ROT',
     category: 'convert',
+    imageCategory: 'edit',
   },
   {
     id: 'image-color-picker',
@@ -603,6 +624,7 @@ export const toolRegistry: ToolMeta[] = [
     path: '/image/color-picker',
     icon: 'EYE',
     category: 'convert',
+    imageCategory: 'inspect',
   },
   {
     id: 'image-gif',
@@ -611,6 +633,7 @@ export const toolRegistry: ToolMeta[] = [
     path: '/image/gif',
     icon: 'GIF',
     category: 'convert',
+    imageCategory: 'edit',
   },
   {
     id: 'pdf-encrypt',
@@ -809,6 +832,11 @@ export interface ToolGroup {
   tools: ToolMeta[];
 }
 
+export interface ImageToolGroup {
+  category: ImageToolCategory;
+  tools: ToolMeta[];
+}
+
 /** 按分类获取工具列表 */
 export function getToolsByCategory(category: ToolCategory): ToolMeta[] {
   return toolRegistry.filter((t) => t.category === category);
@@ -821,6 +849,16 @@ export function getImageTools(): ToolMeta[] {
     ...toolRegistry.filter((tool) => tool.path.startsWith('/image/')),
     ...(imageMergeTool ? [imageMergeTool] : []),
   ];
+}
+
+/** 图片工具导航使用的功能分组，顺序由用户任务流程决定 */
+export function getImageToolGroups(): ImageToolGroup[] {
+  const categories: ImageToolCategory[] = ['convert', 'optimize', 'edit', 'inspect'];
+  const imageTools = getImageTools();
+  return categories.map((category) => ({
+    category,
+    tools: imageTools.filter((tool) => tool.imageCategory === category),
+  }));
 }
 
 /** 获取 PDF 工具集合页中的工具 */

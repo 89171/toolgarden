@@ -4155,6 +4155,12 @@
     "validate": "Validate",
     "encode": "Encode / Decode"
   },
+  "image_categories": {
+    "convert": "Format conversion",
+    "optimize": "Optimize & AI",
+    "edit": "Edit & adjust",
+    "inspect": "Inspect & extract"
+  },
   "tools": {
     "font-subset": {
       "name": "Font Subset",

@@ -6,7 +6,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import {
   getAudioTools,
   getFileMergeTools,
-  getImageTools,
+  getImageToolGroups,
   getInfoCodecTools,
   getJsonToolGroups,
   getLocalizedToolPath,
@@ -124,7 +124,7 @@ function Header({ compact = false }: HeaderProps) {
   const desktopMeasureItemRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const desktopMoreMeasureRef = useRef<HTMLButtonElement | null>(null);
   const jsonGroups = getJsonToolGroups();
-  const imageTools = getImageTools();
+  const imageGroups = getImageToolGroups();
   const audioTools = getAudioTools();
   const pdfTools = getPdfTools();
   const fileMergeTools = getFileMergeTools();
@@ -183,6 +183,23 @@ function Header({ compact = false }: HeaderProps) {
     </MenuDropdownPanel>
   );
 
+  const renderImageToolsPanel = () => (
+    <MenuDropdownPanel>
+      <div className="grid grid-cols-2 gap-x-4 gap-y-4">
+        {imageGroups.map((group) => (
+          <section key={group.category} className="min-w-48">
+            <h2 className="mb-1 px-2 text-xs font-semibold uppercase tracking-normal text-content-faint">
+              {t(`image_categories.${group.category}`)}
+            </h2>
+            <div className="grid gap-1">
+              {group.tools.map(renderToolLink)}
+            </div>
+          </section>
+        ))}
+      </div>
+    </MenuDropdownPanel>
+  );
+
   const createToolsPanel = (tools: ToolMeta[], columns: 'one' | 'two' = 'one') => {
     const renderToolsPanel = () => (
       <MenuDropdownPanel>
@@ -208,7 +225,7 @@ function Header({ compact = false }: HeaderProps) {
       label: t('nav.image_toolbar'),
       href: `/${locale}/image`,
       priority: 'core',
-      renderPanel: createToolsPanel(imageTools, 'two'),
+      renderPanel: renderImageToolsPanel,
     },
     {
       id: 'audio',

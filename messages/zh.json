@@ -4155,6 +4155,12 @@
     "validate": "验证",
     "encode": "编解码"
   },
+  "image_categories": {
+    "convert": "格式转换",
+    "optimize": "优化与 AI",
+    "edit": "编辑与调整",
+    "inspect": "查看与提取"
+  },
   "tools": {
     "font-subset": {
       "name": "字体提取",

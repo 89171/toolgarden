@@ -1,4 +1,5 @@
 export type ToolCategory = 'format' | 'convert' | 'validate' | 'encode';
+export type ImageToolCategory = 'convert' | 'optimize' | 'edit' | 'inspect';
 
 export interface ToolMeta {
   /** 路由唯一标识，对应 app/<id>/page.tsx */
@@ -15,6 +16,8 @@ export interface ToolMeta {
   category: ToolCategory;
   /** 是否在首页置顶展示 */
   featured?: boolean;
+  /** 图片工具导航中的功能分组，仅图片工具使用 */
+  imageCategory?: ImageToolCategory;
 }
 
 /**
