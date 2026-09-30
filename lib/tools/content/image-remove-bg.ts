@@ -7,8 +7,8 @@ export const imageRemoveBgContent = defineToolContent({
       '分离质量取决于主体边界、前后景对比和原图分辨率。头发、透明材质、阴影、细网格及与背景颜色接近的区域最容易出现缺口或残留，导出前应在棋盘格和深浅两种背景上检查轮廓。',
     ],
     steps: [
-      ['选择清晰原图', '优先上传主体完整、光线均匀且边界与背景有明显区别的图片。'],
-      ['选择处理模型', '普通预览可优先速度模式，细发丝或商品边缘可尝试质量模式。'],
+      ['选择处理模型', '上传图片后会立即开始处理；可先选模型，普通预览优先速度模式，细发丝或商品边缘可尝试质量模式。'],
+      ['选择清晰原图', '上传主体完整、光线均匀且边界与背景有明显区别的图片，工具会自动开始处理。'],
       ['检查透明边缘', '放大观察轮廓、内部孔洞与半透明区域，确认后导出带透明通道的结果。'],
     ],
     scenarios: [
@@ -34,8 +34,8 @@ export const imageRemoveBgContent = defineToolContent({
       'Separation quality depends on boundary clarity, foreground-background contrast, and source resolution. Hair, transparent materials, shadows, fine mesh, and similarly colored regions are hardest, so inspect edges on a checkerboard and on both light and dark backgrounds before export.',
     ],
     steps: [
-      ['Choose a clear source', 'Prefer an evenly lit image with the whole subject visible and strong separation from the background.'],
-      ['Select a model', 'Use the faster model for routine previews and try the quality model for hair or detailed product edges.'],
+      ['Select a model', 'Processing starts as soon as you choose an image. Select a model first: use the faster option for routine previews or the quality model for hair and detailed product edges.'],
+      ['Choose a clear source', 'Choose an evenly lit image with the whole subject visible and strong separation from the background to start processing automatically.'],
       ['Inspect transparent edges', 'Zoom into the outline, internal gaps, and translucent regions, then export a format with alpha support.'],
     ],
     scenarios: [

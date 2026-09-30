@@ -160,67 +160,8 @@ export function ImageBackgroundRemover() {
     setImage((current) => (current ? updater(current) : current));
   }, []);
 
-  const changeModel = useCallback((model: ImageBackgroundRemovalModel) => {
-    if (imageRef.current?.status === 'processing') return;
-    setSelectedModel(model);
-    setImage((current) => {
-      if (!current?.outputUrl) return current;
-      URL.revokeObjectURL(current.outputUrl);
-      return {
-        ...current,
-        status: current.sourceInfo ? 'ready' : current.status,
-        progress: undefined,
-        outputBlob: undefined,
-        outputUrl: undefined,
-        outputName: undefined,
-        result: undefined,
-      };
-    });
-    setPreview(null);
-  }, []);
-
-  const addFile = useCallback((fileList: FileList | File[]) => {
-    const file = Array.from(fileList)[0];
-    if (!file) return;
-
-    activeJobRef.current = null;
-    revokeImageUrls(imageRef.current);
-
-    const id = createImageId(file);
-    const nextImage: RemoveBgImage = {
-      id,
-      file,
-      sourceUrl: URL.createObjectURL(file),
-      status: 'ready',
-    };
-
-    imageRef.current = nextImage;
-    setImage(nextImage);
-    setPreview(null);
-
-    void inspectImageFile(file).then((inspection) => {
-      setImage((current) => {
-        if (!current || current.id !== id) return current;
-        if (inspection.ok) {
-          return {
-            ...current,
-            sourceInfo: inspection,
-            status: 'ready',
-            error: undefined,
-          };
-        }
-
-        return {
-          ...current,
-          status: 'error',
-          error: inspection,
-        };
-      });
-    });
-  }, []);
-
-  const runRemoval = useCallback(async () => {
-    const target = imageRef.current;
+  const runRemoval = useCallback(async (selectedImage = imageRef.current) => {
+    const target = selectedImage;
     if (!target || target.status === 'processing' || !target.sourceInfo) return;
 
     const jobId = `${target.id}-${Date.now()}`;
@@ -281,6 +222,70 @@ export function ImageBackgroundRemover() {
       error: result,
     }));
   }, [selectedModel, setCurrentImage]);
+
+  const changeModel = useCallback((model: ImageBackgroundRemovalModel) => {
+    if (imageRef.current?.status === 'processing') return;
+    setSelectedModel(model);
+    setImage((current) => {
+      if (!current?.outputUrl) return current;
+      URL.revokeObjectURL(current.outputUrl);
+      return {
+        ...current,
+        status: current.sourceInfo ? 'ready' : current.status,
+        progress: undefined,
+        outputBlob: undefined,
+        outputUrl: undefined,
+        outputName: undefined,
+        result: undefined,
+      };
+    });
+    setPreview(null);
+  }, []);
+
+  const addFile = useCallback((fileList: FileList | File[]) => {
+    const file = Array.from(fileList)[0];
+    if (!file) return;
+
+    activeJobRef.current = null;
+    revokeImageUrls(imageRef.current);
+
+    const id = createImageId(file);
+    const nextImage: RemoveBgImage = {
+      id,
+      file,
+      sourceUrl: URL.createObjectURL(file),
+      status: 'ready',
+    };
+
+    imageRef.current = nextImage;
+    setImage(nextImage);
+    setPreview(null);
+
+    void inspectImageFile(file).then((inspection) => {
+      const current = imageRef.current;
+      if (!current || current.id !== id) return;
+      if (inspection.ok) {
+        const readyImage = {
+          ...current,
+          sourceInfo: inspection,
+          status: 'ready' as const,
+          error: undefined,
+        };
+        imageRef.current = readyImage;
+        setImage(readyImage);
+        void runRemoval(readyImage);
+        return;
+      }
+
+      const invalidImage = {
+        ...current,
+        status: 'error' as const,
+        error: inspection,
+      };
+      imageRef.current = invalidImage;
+      setImage(invalidImage);
+    });
+  }, [runRemoval]);
 
   const downloadOutput = useCallback(() => {
     const current = imageRef.current;

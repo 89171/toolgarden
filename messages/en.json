@@ -738,7 +738,7 @@
     "processing": "Processing",
     "download": "Download PNG",
     "empty_title": "Waiting for an image",
-    "empty_body": "Upload one image, then remove the background. The transparent PNG result will appear on the right.",
+    "empty_body": "Choose an image to automatically remove its background. The transparent PNG result will appear on the right.",
     "source": "Source",
     "output": "Output",
     "output_empty": "The transparent PNG will appear here",
