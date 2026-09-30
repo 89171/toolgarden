@@ -3,6 +3,18 @@ import path from 'path';
 import securityHeaders from './lib/security/static-headers.json';
 
 const nextIntlRequestConfig = './i18n/request.ts';
+/**
+ * PaddleOCR.js bundles its own ORT 1.24.3 into dist/assets/worker-entry-*.js and
+ * loads it at runtime as `new URL('ort.bundle.min.mjs', import.meta.url)`. That
+ * bare filename is not resolvable, so it is aliased to a vendored 1.24.3 build
+ * matching the WASM served from public/models/paddleocr/onnxruntime-web/.
+ *
+ * 不要为裸 specifier `onnxruntime-web`加同样的别名。那条别名是全局的，会把
+ * `@imgly/background-removal` 的 CPU 分支（`await import('onnxruntime-web')`）
+ * 也换成 1.24.3；而 imgly 的 WASM 来自它自己的 CDN（background-removal-data），
+ * 版本更旧，于是 session 创建时报 `_OrtGetInputOutputMetadata is not a function`，
+ * 图片去背景整个工具不可用。裸 specifier 必须解析到 package.json 里装的版本。
+ */
 const paddleOcrOrtExternal = './lib/vendor/onnxruntime-web/ort.wasm.min.mjs';
 const emptyModule = './lib/shims/empty-module.ts';
 const sharedSecurityHeaders = securityHeaders as Array<{ key: string; value: string }>;
@@ -60,7 +72,6 @@ const nextConfig: NextConfig = {
     resolveAlias: {
       'next-intl/config': nextIntlRequestConfig,
       fs: emptyModule,
-      'onnxruntime-web': paddleOcrOrtExternal,
       'ort.bundle.min.mjs': paddleOcrOrtExternal,
     },
   },
@@ -72,10 +83,6 @@ const nextConfig: NextConfig = {
     config.resolve.alias['next-intl/config'] = path.resolve(
       config.context,
       nextIntlRequestConfig,
-    );
-    config.resolve.alias['onnxruntime-web'] = path.resolve(
-      config.context,
-      paddleOcrOrtExternal,
     );
     config.resolve.alias['ort.bundle.min.mjs'] = path.resolve(
       config.context,

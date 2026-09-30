@@ -262,16 +262,20 @@ const IMAGE_ENHANCE_MODEL_SIZE = 33_756_472;
 const IMAGE_ENHANCE_MODEL_SCALE = 4;
 const IMAGE_ENHANCE_TILE_SIZE = 128;
 const IMAGE_ENHANCE_TILE_PADDING = 10;
-const ONNX_WASM_PUBLIC_PATH = '/models/paddleocr/onnxruntime-web/';
-const ONNX_WEBGPU_WASM_PUBLIC_PATH = '/models/onnxruntime-web/';
-// Cache buster for the sw.js Cache-First /models/ rule — must match the
-// installed onnxruntime-web version (package.json), not the vendored
-// binaries' history. A stale value here pins returning visitors to an old
-// cached wasm binary forever after an onnxruntime-web upgrade, since the
-// cache key (this query string) never changes.
+// 已安装的 onnxruntime-web 版本（package.json）。两处都依赖它：
+//  1. sw.js 的 Cache-First /models/ 规则的缓存键——值过期会让回访用户永远命中
+//     旧的 wasm 二进制，因为缓存键（这个 query string）本身不会变；
+//  2. 下面 ONNX_WASM_PUBLIC_PATH 的目录名。
 // ponytail: hand-maintained, onnxruntime-web's exports map blocks importing
 // its package.json directly; bump this whenever that dependency changes.
 const ONNX_RUNTIME_ASSET_VERSION = '1.21.0';
+// 这里的 WASM 必须与 `onnxruntime-web/wasm` 这个 JS API 严格同版本，所以按版本号
+// 单独放一份（与 lib/workers/stem-separation.worker.ts 同源）。
+// 不要指向 /models/paddleocr/onnxruntime-web/——那份是 1.24.3，供 PaddleOCR.js
+// 自带的 ORT 使用；1.21.0 的 JS 配 1.24.3 的 WASM 会在建会话时报
+// `_OrtGetInputName is not a function`，去水印的 AI 模式会静默降级成像素修复。
+const ONNX_WASM_PUBLIC_PATH = `/models/onnxruntime-web/${ONNX_RUNTIME_ASSET_VERSION}/`;
+const ONNX_WEBGPU_WASM_PUBLIC_PATH = '/models/onnxruntime-web/';
 const WATERMARK_MIGAN_MODEL_URL = 'https://huggingface.co/andraniksargsyan/migan/resolve/main/migan_pipeline_v2.onnx';
 const WATERMARK_AI_MODEL_URL = 'https://huggingface.co/Carve/LaMa-ONNX/resolve/main/lama_fp32.onnx';
 const WATERMARK_AI_INPUT_SIZE = 512;
