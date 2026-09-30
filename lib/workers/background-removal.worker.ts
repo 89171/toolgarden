@@ -163,8 +163,11 @@ async function removeBiRefNetBackground(input: Blob): Promise<ArrayBuffer> {
   const { pixel_values: pixelValues } = await processor(rawImage);
   reportBiRefNetProgress(createBiRefNetProgress('compute', 'compute:inference', 80));
 
-  const outputs = await model({ input_image: pixelValues }) as { logits?: unknown };
-  const logits = outputs.logits;
+  // studioludens/birefnet-lite-512 的输出名是 `output_image`（不是 transformers
+  // 分割模型常见的 `logits`），内容仍是未过 sigmoid 的 logits（实测约 -22 ~ +16），
+  // 所以下面的 sigmoid 不能去掉。读错 key 会让整个高清模式静默降级到均衡模型。
+  const outputs = await model({ input_image: pixelValues }) as { output_image?: unknown };
+  const logits = outputs.output_image;
   if (!isTensorLike(logits)) throw new Error('birefnet_invalid_output');
 
   const dims = Array.from(logits.dims);
