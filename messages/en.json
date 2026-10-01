@@ -924,6 +924,73 @@
       "general": "Image repair failed. Please try again."
     }
   },
+  "image_erase": {
+    "settings_title": "Erase settings",
+    "editor_title": "Paint the area to erase",
+    "drop_title": "Click or drag an image here",
+    "drop_hint": "JPG / PNG / WebP / GIF / BMP / SVG / AVIF, processed entirely on your device",
+    "drop_action": "Choose image",
+    "input_formats": "Supported formats",
+    "local_note": "The AI model loads and runs inside your browser. Images are never uploaded, and data is cleared when you close the page.",
+    "method_title": "Repair model",
+    "method_migan": "Quality",
+    "method_ai": "Compatible",
+    "method_migan_description": "Uses the MI-GAN 512 ONNX pipeline for better reconstruction. The first run downloads about 28MB of model files.",
+    "method_ai_description": "Uses the LaMa model for broader compatibility at a larger size. The first run downloads about 200MB of model files.",
+    "brush_title": "Brush",
+    "brush_size": "Brush size",
+    "brush_size_value": "{value} px",
+    "undo_stroke": "Undo stroke",
+    "clear_strokes": "Clear strokes",
+    "stroke_count": "Strokes painted",
+    "stroke_hint": "Press and drag on the image to paint over the object, covering its edge shadow too.",
+    "erase_area": "Painted area",
+    "feather": "Edge blend",
+    "feather_value": "{value}px",
+    "output_format": "Output format",
+    "quality": "Output quality",
+    "quality_value": "{value}",
+    "apply": "Erase object",
+    "processing": "Processing",
+    "loading": "Reading image",
+    "download": "Download image",
+    "replace": "Replace image",
+    "empty_title": "Waiting for an image",
+    "empty_body": "Upload an image, then paint over the object you want removed.",
+    "output_empty": "The erased image will appear here",
+    "preview_title": "Erase result",
+    "preview_open_output": "View full size",
+    "preview_close": "Close",
+    "result_hint": "Paint an area and run the erase to see output details here.",
+    "source_size": "Source size",
+    "output_size": "Output size",
+    "file_size": "File size",
+    "duration": "Duration",
+    "duration_value": "{value}ms",
+    "result_method": "Model used",
+    "method_value_migan": "MI-GAN 512",
+    "method_value_ai": "LaMa",
+    "fallback_notice": "The preferred model could not run on this device, so the backup model completed this erase.",
+    "progress_model": "Loading the local AI model",
+    "progress_prepare": "Preparing the painted area",
+    "progress_compute": "Rebuilding with AI",
+    "progress_encode": "Exporting the image",
+    "progress_fallback": "Switching to the backup model",
+    "unknown_type": "unknown type",
+    "errors": {
+      "empty_file": "That file is empty. Choose a valid image.",
+      "unsupported_input": "This image type is not supported yet: {type}.",
+      "file_too_large": "That file is too large. The maximum is {maxSize}.",
+      "too_many_pixels": "That image is too large. The maximum is {maxPixels}.",
+      "load_failed": "The image could not be decoded. It may be corrupt or unsupported by this browser.",
+      "canvas_context": "Could not create a canvas drawing context.",
+      "canvas_export": "Image export failed. Try another browser.",
+      "unsupported_output": "This browser cannot export {format}.",
+      "ai_model_unavailable": "Neither repair model could run on this device, so nothing was erased. Check your connection and retry, or use a supported browser.",
+      "no_strokes": "Paint over the area you want to erase first.",
+      "general": "The erase failed. Please try again."
+    }
+  },
   "image_crop": {
     "settings_title": "Image crop",
     "editor_title": "Crop editor",
@@ -1276,6 +1343,7 @@
     "image-remove-bg": "remove image background, background remover, transparent background maker, AI background removal, remove background online",
     "image-id-photo": "ID photo maker, passport photo maker, visa photo maker, 2x2 photo maker, ID photo background changer, online ID photo",
     "image-remove-watermark": "remove watermark from image, image watermark remover, AI watermark removal, erase watermark online, remove text from image",
+    "image-erase": "erase object from photo, AI object remover, remove unwanted object from image, magic eraser online, delete people from photo",
     "image-watermark": "add watermark to image, image watermark maker, text watermark online, logo watermark tool, batch style image watermark",
     "image-editor": "online image editor, edit image online, image annotation tool, blur image online, add text to image, image markup tool",
     "image-to-icon": "image to icon converter, PNG to ICO, image to ICO, image to ICNS, favicon maker, app icon generator",
@@ -2465,6 +2533,26 @@
         {
           "question": "Can I process any image?",
           "answer": "Only process images you own or have permission to modify. The tool provides local AI inpainting and fast browser repair only."
+        }
+      ]
+    },
+    "image-erase": {
+      "items": [
+        {
+          "question": "Does the object eraser upload my file?",
+          "answer": "No. The image is decoded, rebuilt by the AI model, and exported inside your browser, so the file never reaches a server. The default quality model downloads about 28MB on first use and is then usually cached by the browser."
+        },
+        {
+          "question": "How precise do the strokes need to be?",
+          "answer": "Cover the object plus its shadow, reflection, and the edge where it meets the background. Missing a sliver leaves a ghost, while painting much wider removes the neighbouring background the model needs as reference, which makes the fill softer."
+        },
+        {
+          "question": "Which objects come out cleanest?",
+          "answer": "Those over regular, continuous backgrounds that occupy a small share of the frame, such as cables against sky or clutter in front of a flat wall. Objects sitting over faces, text, or dense texture cannot be reconstructed accurately."
+        },
+        {
+          "question": "Is this the same as the watermark remover?",
+          "answer": "No. Both use the same repair models, but the watermark remover takes a rectangular selection, which suits tidy watermark blocks. The eraser paints, which suits irregular outlines like people or cables and changes fewer surrounding pixels."
         }
       ]
     },
@@ -4445,6 +4533,10 @@
     "image-remove-watermark": {
       "name": "Image watermark remover",
       "description": "Free online tool to select a watermark area, inpaint it with a local browser AI model or fast pixel repair, and export JPG, PNG, or WebP"
+    },
+    "image-erase": {
+      "name": "Image object eraser",
+      "description": "Free online tool to paint over an unwanted object in a photo and have a local browser AI model rebuild just that area, then export JPG, PNG, or WebP"
     },
     "image-watermark": {
       "name": "Image watermark",

@@ -308,6 +308,15 @@ export const toolRegistry: ToolMeta[] = [
     featured: true,
   },
   {
+    id: 'image-erase',
+    name: '图片擦除',
+    description: '用画笔涂抹标出照片里要去掉的人物、电线或杂物，浏览器本地 AI 模型只重建涂抹区域并保持其余像素不变，可导出 JPG、PNG 或 WebP',
+    path: '/image/erase',
+    icon: 'ER',
+    category: 'convert',
+    imageCategory: 'optimize',
+  },
+  {
     id: 'image-remove-watermark',
     name: '图片去水印',
     description: '在浏览器本地使用 AI 模型补全水印选区，导出 JPG、PNG 或 WebP',

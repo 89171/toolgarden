@@ -924,6 +924,73 @@
       "general": "图片修复失败，请重试。"
     }
   },
+  "image_erase": {
+    "settings_title": "擦除设置",
+    "editor_title": "涂抹要擦除的区域",
+    "drop_title": "点击或拖拽图片上传",
+    "drop_hint": "支持 JPG / PNG / WebP / GIF / BMP / SVG / AVIF，所有处理都在本地完成",
+    "drop_action": "选择图片",
+    "input_formats": "支持格式",
+    "local_note": "AI 模型会在浏览器本地加载并推理，图片不会上传到任何服务器，关闭页面后，数据即被清除。",
+    "method_title": "修复模型",
+    "method_migan": "高质量",
+    "method_ai": "兼容",
+    "method_migan_description": "默认使用 MI-GAN 512 ONNX Pipeline，重建质量更好，首次会下载约 28MB 模型资源。",
+    "method_ai_description": "使用 LaMa 模型，兼容性更好但模型较大，首次会下载约 200MB 模型资源。",
+    "brush_title": "画笔",
+    "brush_size": "画笔粗细",
+    "brush_size_value": "{value} px",
+    "undo_stroke": "撤销上一笔",
+    "clear_strokes": "清除涂抹",
+    "stroke_count": "已涂抹笔数",
+    "stroke_hint": "在原图上按住并拖动涂抹要去掉的物体，连同边缘阴影一起盖住。",
+    "erase_area": "涂抹范围",
+    "feather": "边缘融合",
+    "feather_value": "{value}px",
+    "output_format": "输出格式",
+    "quality": "输出质量",
+    "quality_value": "{value}",
+    "apply": "擦除物体",
+    "processing": "处理中",
+    "loading": "读取图片",
+    "download": "下载图片",
+    "replace": "更换图片",
+    "empty_title": "等待图片输入",
+    "empty_body": "上传图片后，在原图上涂抹需要擦除的物体。",
+    "output_empty": "擦除后的图片会显示在这里",
+    "preview_title": "擦除结果",
+    "preview_open_output": "查看大图",
+    "preview_close": "关闭",
+    "result_hint": "涂抹并执行擦除后，可在这里查看输出信息。",
+    "source_size": "原始尺寸",
+    "output_size": "输出尺寸",
+    "file_size": "文件大小",
+    "duration": "耗时",
+    "duration_value": "{value}ms",
+    "result_method": "使用模型",
+    "method_value_migan": "MI-GAN 512",
+    "method_value_ai": "LaMa",
+    "fallback_notice": "首选模型在当前设备上无法运行，本次已改用备用模型完成擦除。",
+    "progress_model": "加载本地 AI 模型",
+    "progress_prepare": "准备涂抹区域",
+    "progress_compute": "AI 重建中",
+    "progress_encode": "导出图片",
+    "progress_fallback": "切换备用模型",
+    "unknown_type": "未知类型",
+    "errors": {
+      "empty_file": "文件为空，请选择有效图片。",
+      "unsupported_input": "暂不支持这种图片类型：{type}。",
+      "file_too_large": "文件过大，最大支持 {maxSize}。",
+      "too_many_pixels": "图片尺寸过大，最大支持 {maxPixels}。",
+      "load_failed": "图片解码失败，文件可能已损坏或当前浏览器不支持该格式。",
+      "canvas_context": "无法创建 Canvas 绘图上下文。",
+      "canvas_export": "图片导出失败，请换一个浏览器重试。",
+      "unsupported_output": "当前浏览器不支持导出 {format}。",
+      "ai_model_unavailable": "两个修复模型都无法在当前设备运行，擦除未执行。请检查网络后重试，或换一个支持的浏览器。",
+      "no_strokes": "请先在图片上涂抹要擦除的区域。",
+      "general": "图片擦除失败，请重试。"
+    }
+  },
   "image_crop": {
     "settings_title": "图片裁剪",
     "editor_title": "裁剪编辑",
@@ -1276,6 +1343,7 @@
     "image-remove-bg": "图片去背景,一键抠图,背景移除,透明背景图片,AI抠图,在线去背景",
     "image-id-photo": "证件照制作,在线证件照,一寸照制作,二寸照制作,证件照换底色,护照照片制作",
     "image-remove-watermark": "图片去水印,在线去水印,AI去水印,消除图片水印,去除图片文字",
+    "image-erase": "图片擦除,AI擦除物体,去除图片多余物体,消除路人,一键抹除照片元素",
     "image-watermark": "图片加水印,在线添加水印,文字水印,图片水印,Logo水印,平铺水印",
     "image-editor": "在线图片编辑,图片编辑器,图片标注,图片打马赛克,图片加文字,图片模糊",
     "image-to-icon": "图片转Icon,PNG转ICO,图片转ICO,图片转ICNS,Favicon制作,应用图标生成",
@@ -2465,6 +2533,26 @@
         {
           "question": "可以处理任意图片吗？",
           "answer": "请仅处理你拥有权利或已获授权修改的图片。工具只提供本地选区修复能力。"
+        }
+      ]
+    },
+    "image-erase": {
+      "items": [
+        {
+          "question": "图片擦除会上传文件吗？",
+          "answer": "不会。图片在浏览器本地解码、由 AI 模型重建涂抹区域再导出，文件不会上传到服务器。默认的高质量模型首次会下载约 28MB 模型资源，之后通常由浏览器缓存。"
+        },
+        {
+          "question": "涂抹要涂多准？",
+          "answer": "刚好盖住物体及其阴影、倒影和与背景接触的边缘即可。漏涂会留下残影，涂得过大则会把模型需要参考的邻近背景一起抹掉，结果更容易发虚。"
+        },
+        {
+          "question": "什么样的物体擦得比较干净？",
+          "answer": "背景规律、纹理连续，并且物体占画面比例较小时效果最好，例如天空里的电线、纯色墙面前的杂物。压在人脸、文字或密集纹理上的物体基本无法准确重建。"
+        },
+        {
+          "question": "和图片去水印是同一个功能吗？",
+          "answer": "不是。两者用同样的修复模型，但去水印用矩形选区，适合规整的水印块；擦除用画笔涂抹，适合路人、电线这类不规则轮廓，对周围像素的改动更小。"
         }
       ]
     },
@@ -4445,6 +4533,10 @@
     "image-remove-watermark": {
       "name": "图片去水印",
       "description": "框选图片上的水印区域，使用浏览器本地 AI 模型或快速像素修复补全该区域，支持导出 JPG、PNG 或 WebP。"
+    },
+    "image-erase": {
+      "name": "图片擦除",
+      "description": "用画笔涂抹标出照片里要去掉的人物、电线或杂物，浏览器本地 AI 模型只重建涂抹区域并保持其余像素不变，可导出 JPG、PNG 或 WebP。"
     },
     "image-watermark": {
       "name": "图片加水印",

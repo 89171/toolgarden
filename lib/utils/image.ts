@@ -205,6 +205,42 @@ export interface ImageWatermarkRemovalSuccess {
 
 export type ImageWatermarkRemovalOutcome = ImageWatermarkRemovalSuccess | ImageConversionError;
 
+/** 擦除工具只提供两个 AI 修复模型；像素级启发式修复留给去水印的「本地快速」。 */
+export type ImageEraseMethod = 'migan' | 'ai';
+
+export interface ImageErasePoint {
+  x: number;
+  y: number;
+}
+
+/** 一笔涂抹。points 与 radius 都是原图像素坐标，便于撤销和序列化。 */
+export interface ImageEraseStroke {
+  points: ImageErasePoint[];
+  radius: number;
+}
+
+export interface ImageEraseSuccess {
+  ok: true;
+  blob: Blob;
+  filename: string;
+  mimeType: ImageTargetConfig['mimeType'];
+  format: ImageTargetFormat;
+  /** 实际产出结果的模型 */
+  method: ImageEraseMethod;
+  /** 首选模型失败时记录原始选择，界面据此明示降级而不是静默换模型 */
+  fallbackFrom?: ImageEraseMethod;
+  width: number;
+  height: number;
+  strokeCount: number;
+  /** 涂抹区域的外接矩形，用于结果面板展示 */
+  area: ImageCropRect;
+  originalSize: number;
+  outputSize: number;
+  durationMs: number;
+}
+
+export type ImageEraseOutcome = ImageEraseSuccess | ImageConversionError;
+
 export interface ImageEditSuccess {
   ok: true;
   blob: Blob;
@@ -381,6 +417,58 @@ export function normalizeCropRect(rect: ImageCropRect, imageWidth: number, image
   const y = clampNumber(Math.round(rect.y), 0, Math.max(0, imageHeight - height));
 
   return { x, y, width, height };
+}
+
+export function getDefaultEraseBrushRadius(imageWidth: number, imageHeight: number): number {
+  return clampNumber(Math.round(Math.min(imageWidth, imageHeight) * 0.04), 6, 64);
+}
+
+export function getEraseBrushRadiusRange(
+  imageWidth: number,
+  imageHeight: number
+): { min: number; max: number } {
+  const shortSide = Math.max(1, Math.min(imageWidth, imageHeight));
+  return { min: 2, max: clampNumber(Math.round(shortSide / 2), 8, 400) };
+}
+
+/**
+ * 涂抹区域的外接矩形（含画笔半径），用于推导模型的上下文 patch。
+ * 返回 null 表示还没有有效笔画，调用方据此拒绝执行而不是送空 mask 给模型。
+ */
+export function createEraseStrokeBounds(
+  strokes: readonly ImageEraseStroke[],
+  imageWidth: number,
+  imageHeight: number
+): ImageCropRect | null {
+  let left = Infinity;
+  let top = Infinity;
+  let right = -Infinity;
+  let bottom = -Infinity;
+
+  for (const stroke of strokes) {
+    const radius = Math.max(1, stroke.radius);
+    for (const point of stroke.points) {
+      if (!Number.isFinite(point.x) || !Number.isFinite(point.y)) continue;
+      left = Math.min(left, point.x - radius);
+      top = Math.min(top, point.y - radius);
+      right = Math.max(right, point.x + radius);
+      bottom = Math.max(bottom, point.y + radius);
+    }
+  }
+
+  if (!Number.isFinite(left) || !Number.isFinite(top)) return null;
+
+  const clampedLeft = clampNumber(Math.floor(left), 0, imageWidth);
+  const clampedTop = clampNumber(Math.floor(top), 0, imageHeight);
+  const clampedRight = clampNumber(Math.ceil(right), 0, imageWidth);
+  const clampedBottom = clampNumber(Math.ceil(bottom), 0, imageHeight);
+
+  return normalizeCropRect({
+    x: clampedLeft,
+    y: clampedTop,
+    width: Math.max(1, clampedRight - clampedLeft),
+    height: Math.max(1, clampedBottom - clampedTop),
+  }, imageWidth, imageHeight);
 }
 
 export function createInitialCropRect(imageWidth: number, imageHeight: number): ImageCropRect {

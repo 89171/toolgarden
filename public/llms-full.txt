@@ -416,6 +416,16 @@ Canonical examples:
 - English URL: https://toolgarden.xyz/en/image/id-photo
 - Chinese URL: https://toolgarden.xyz/zh/image/id-photo
 
+#### Image object eraser / 图片擦除 (/image/erase)
+- ID: `image-erase`
+- Category: Convert / 转换
+- Icon label: `ER`
+- Featured: no
+- English description: Free online tool to paint over an unwanted object in a photo and have a local browser AI model rebuild just that area, then export JPG, PNG, or WebP
+- Chinese description: 用画笔涂抹标出照片里要去掉的人物、电线或杂物，浏览器本地 AI 模型只重建涂抹区域并保持其余像素不变，可导出 JPG、PNG 或 WebP。
+- English URL: https://toolgarden.xyz/en/image/erase
+- Chinese URL: https://toolgarden.xyz/zh/image/erase
+
 #### Image watermark remover / 图片去水印 (/image/remove-watermark)
 - ID: `image-remove-watermark`
 - Category: Convert / 转换

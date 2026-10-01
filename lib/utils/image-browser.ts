@@ -21,6 +21,7 @@ import {
   MAX_IMAGE_PIXELS,
   normalizeImageQuality,
   normalizeCropRect,
+  createEraseStrokeBounds,
   type AiUpscaleScale,
   type ImageBackgroundRemovalModel,
   type ImageBackgroundRemovalOutcome,
@@ -31,6 +32,9 @@ import {
   type ImageConversionOutcome,
   type ImageCropRect,
   type ImageEditOutcome,
+  type ImageEraseMethod,
+  type ImageEraseOutcome,
+  type ImageEraseStroke,
   type ImageEnhanceOutcome,
   type ImageEnhanceProgress,
   type ImageEnhanceScale,
@@ -2651,6 +2655,262 @@ async function runAiWatermarkInpaint(
   return repairCanvas;
 }
 
+/**
+ * 涂抹擦除的 mask。
+ *
+ * 画成「透明底 + 不透明白色笔画」而不是去水印那种「黑底白块」，因为同一张
+ * mask 要同时喂两个地方：
+ *  - 模型张量按红色通道判前景（见 createWatermarkMaskTensor），透明处红色为 0；
+ *  - 最终合成按 alpha 做 destination-in 裁剪，黑底会让整张图都被判定为要替换。
+ * 只有带 alpha 的版本能同时满足这两者，所以不再单独维护一张黑底 mask。
+ */
+/**
+ * 把笔画画成路径。样式由调用方决定：模型 mask 用不透明白色，界面预览用半透明
+ * 高亮色。两边共用这一份，避免预览和实际擦除范围因为画法不同而对不上。
+ */
+export function paintEraseStrokes(
+  context: CanvasRenderingContext2D,
+  strokes: readonly ImageEraseStroke[]
+) {
+  context.lineCap = 'round';
+  context.lineJoin = 'round';
+
+  for (const stroke of strokes) {
+    const points = stroke.points.filter(
+      (point) => Number.isFinite(point.x) && Number.isFinite(point.y)
+    );
+    if (points.length === 0) continue;
+
+    const radius = Math.max(1, stroke.radius);
+
+    // 单击只有一个点，stroke() 画不出东西，补一个圆点。
+    if (points.length === 1) {
+      context.beginPath();
+      context.arc(points[0].x, points[0].y, radius, 0, Math.PI * 2);
+      context.fill();
+      continue;
+    }
+
+    context.lineWidth = radius * 2;
+    context.beginPath();
+    context.moveTo(points[0].x, points[0].y);
+    for (let index = 1; index < points.length; index += 1) {
+      context.lineTo(points[index].x, points[index].y);
+    }
+    context.stroke();
+  }
+}
+
+/**
+ * 涂抹擦除的 mask。
+ *
+ * 画成「透明底 + 不透明白色笔画」而不是去水印那种「黑底白块」，因为同一张
+ * mask 要同时喂两个地方：
+ *  - 模型张量按红色通道判前景（见 createWatermarkMaskTensor），透明处红色为 0；
+ *  - 最终合成按 alpha 做 destination-in 裁剪，黑底会让整张图都被判定为要替换。
+ * 只有带 alpha 的版本能同时满足这两者，所以不再单独维护一张黑底 mask。
+ */
+function rasterizeEraseMask(
+  strokes: readonly ImageEraseStroke[],
+  imageWidth: number,
+  imageHeight: number
+): HTMLCanvasElement | null {
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.max(1, Math.round(imageWidth));
+  canvas.height = Math.max(1, Math.round(imageHeight));
+  const context = canvas.getContext('2d');
+  if (!context) return null;
+
+  context.strokeStyle = '#ffffff';
+  context.fillStyle = '#ffffff';
+  paintEraseStrokes(context, strokes);
+
+  return canvas;
+}
+
+/** 把整图 mask 裁到 patch 区域并缩放到模型输入尺寸。 */
+function createEraseMaskPatchCanvas(
+  mask: HTMLCanvasElement,
+  patch: ImageCropRect,
+  outputWidth: number,
+  outputHeight: number
+): HTMLCanvasElement | null {
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.max(1, Math.round(outputWidth));
+  canvas.height = Math.max(1, Math.round(outputHeight));
+  const context = canvas.getContext('2d');
+  if (!context) return null;
+
+  // mask 是硬边二值图，缩放时不要插值出灰边，否则阈值判定会抖动。
+  context.imageSmoothingEnabled = false;
+  context.drawImage(
+    mask,
+    patch.x,
+    patch.y,
+    patch.width,
+    patch.height,
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+  return canvas;
+}
+
+/** MI-GAN 的 mask 语义与 LaMa 相反：0 表示要重建的洞，255 表示保留。 */
+function createMiganMaskTensorFromCanvas(ort: OrtWasmModule, canvas: HTMLCanvasElement) {
+  const context = canvas.getContext('2d', { willReadFrequently: true });
+  if (!context) throw new Error('Canvas context failed');
+
+  const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+  const pixelCount = canvas.width * canvas.height;
+  const tensorData = new Uint8Array(pixelCount);
+  const source = imageData.data;
+
+  for (let pixelIndex = 0; pixelIndex < pixelCount; pixelIndex += 1) {
+    tensorData[pixelIndex] = source[pixelIndex * 4 + 3] > 127 ? 0 : 255;
+  }
+
+  return new ort.Tensor('uint8', tensorData, [1, 1, canvas.height, canvas.width]);
+}
+
+/** mask 里是否真的有像素被涂到（缩放后可能整块消失）。 */
+function hasMaskCoverage(canvas: HTMLCanvasElement): boolean {
+  const context = canvas.getContext('2d', { willReadFrequently: true });
+  if (!context) return false;
+
+  const { data } = context.getImageData(0, 0, canvas.width, canvas.height);
+  for (let index = 3; index < data.length; index += 4) {
+    if (data[index] > 127) return true;
+  }
+  return false;
+}
+
+/**
+ * 只把 mask 覆盖到的像素换成模型输出，其余像素逐位保持原图。
+ *
+ * 用原生 canvas 合成而不是逐像素混合：先把修复结果铺成整图图层，再用羽化后的
+ * mask 做 destination-in 裁剪，最后整层盖回原图。羽化由 ctx.filter 的高斯模糊
+ * 提供，与 softenRepairArea 用的是同一套能力。
+ */
+function compositeMaskedRepair(
+  image: LoadedImage,
+  repairedPatch: HTMLCanvasElement,
+  patch: ImageCropRect,
+  mask: HTMLCanvasElement,
+  feather: number
+): HTMLCanvasElement | null {
+  const result = createCanvasFromLoadedImage(image);
+  if (!result) return null;
+
+  const resultContext = result.getContext('2d');
+  if (!resultContext) return null;
+
+  const layer = createCanvasFromLoadedImage(image);
+  if (!layer) return null;
+
+  const layerContext = layer.getContext('2d');
+  if (!layerContext) return null;
+
+  layerContext.imageSmoothingEnabled = true;
+  layerContext.imageSmoothingQuality = 'high';
+  layerContext.drawImage(repairedPatch, patch.x, patch.y, patch.width, patch.height);
+
+  const softMask = document.createElement('canvas');
+  softMask.width = mask.width;
+  softMask.height = mask.height;
+  const softMaskContext = softMask.getContext('2d');
+  if (!softMaskContext) return null;
+
+  const blur = clampNumber(Math.round(feather / 2), 0, 24);
+  if (blur > 0) softMaskContext.filter = `blur(${blur}px)`;
+  softMaskContext.drawImage(mask, 0, 0);
+
+  layerContext.globalCompositeOperation = 'destination-in';
+  layerContext.drawImage(softMask, 0, 0);
+  layerContext.globalCompositeOperation = 'source-over';
+
+  resultContext.drawImage(layer, 0, 0);
+
+  return result;
+}
+
+/**
+ * 跑一次带 mask 的修复。两个模型共用这一条流水线，差别只有输入尺寸、张量类型
+ * 和 mask 极性，所以用 method 分支而不是复制两份函数。
+ */
+async function runMaskedInpaint(
+  image: LoadedImage,
+  mask: HTMLCanvasElement,
+  bounds: ImageCropRect,
+  method: ImageEraseMethod,
+  feather: number,
+  onProgress?: (progress: ImageWatermarkRemovalProgress) => void
+): Promise<HTMLCanvasElement> {
+  const { ort, session } = method === 'migan'
+    ? await getWatermarkMiganSession(onProgress)
+    : await getWatermarkInpaintSession(onProgress);
+
+  onProgress?.(createWatermarkRemovalProgress('prepare', 'prepare:patch', 36));
+
+  const patch = createWatermarkInpaintPatchRect(bounds, image.width, image.height);
+  const patchCanvas = method === 'migan'
+    ? createWatermarkOriginalPatchCanvas(image, patch)
+    : createWatermarkPatchCanvas(image, patch);
+
+  if (!patchCanvas) throw new Error('Canvas context failed');
+
+  const maskPatchCanvas = createEraseMaskPatchCanvas(
+    mask,
+    patch,
+    patchCanvas.width,
+    patchCanvas.height
+  );
+  if (!maskPatchCanvas) throw new Error('Canvas context failed');
+  if (!hasMaskCoverage(maskPatchCanvas)) throw new Error('Empty erase mask');
+
+  const imageTensor = method === 'migan'
+    ? createMiganImageTensor(ort, patchCanvas)
+    : createWatermarkImageTensor(ort, patchCanvas);
+  const maskTensor = method === 'migan'
+    ? createMiganMaskTensorFromCanvas(ort, maskPatchCanvas)
+    : createWatermarkMaskTensor(ort, maskPatchCanvas);
+
+  const imageInputName =
+    session.inputNames.find((name) => /image|img|input/i.test(name)) ?? session.inputNames[0];
+  const maskInputName =
+    session.inputNames.find((name) => /mask/i.test(name)) ??
+    session.inputNames.find((name) => name !== imageInputName);
+
+  if (!imageInputName || !maskInputName) throw new Error('Unexpected model inputs');
+
+  onProgress?.(createWatermarkRemovalProgress('compute', 'compute:inpaint', 58));
+
+  const result = await session.run({
+    [imageInputName]: imageTensor,
+    [maskInputName]: maskTensor,
+  });
+  const outputName = method === 'migan'
+    ? (session.outputNames.find((name) => /result|output|image/i.test(name))
+      ?? session.outputNames[0]
+      ?? Object.keys(result)[0])
+    : (session.outputNames[0] ?? Object.keys(result)[0]);
+  const output = outputName ? result[outputName] : undefined;
+
+  if (!isOrtTensorLike(output)) throw new Error('Unexpected model output');
+
+  const repairedPatch = tensorToImageCanvas(output);
+  if (!repairedPatch) throw new Error('Canvas context failed');
+
+  onProgress?.(createWatermarkRemovalProgress('compute', 'compute:blend', 86));
+
+  const composited = compositeMaskedRepair(image, repairedPatch, patch, mask, feather);
+  if (!composited) throw new Error('Canvas context failed');
+
+  return composited;
+}
+
 async function loadBlobImage(blob: Blob): Promise<LoadedImage> {
   const file = new File([blob], 'candidate', { type: blob.type });
   return loadImage(file);
@@ -3772,6 +4032,135 @@ export async function removeImageWatermark(
       width: image.width,
       height: image.height,
       selection,
+      originalSize: file.size,
+      outputSize: blob.size,
+      durationMs: Math.round(performance.now() - startedAt),
+    };
+  } catch {
+    return { ok: false, code: 'load_failed' };
+  }
+}
+
+export interface EraseImageObjectOptions {
+  strokes: readonly ImageEraseStroke[];
+  targetFormat: BasicImageTargetFormat;
+  method?: ImageEraseMethod;
+  quality?: number;
+  feather?: number;
+  jpegBackground?: string;
+  onProgress?: (progress: ImageWatermarkRemovalProgress) => void;
+}
+
+export async function eraseImageObject(
+  file: File,
+  options: EraseImageObjectOptions
+): Promise<ImageEraseOutcome> {
+  if (file.size === 0) return { ok: false, code: 'empty_file' };
+
+  if (file.size > MAX_IMAGE_FILE_SIZE) {
+    return { ok: false, code: 'file_too_large', maxSize: formatFileSize(MAX_IMAGE_FILE_SIZE) };
+  }
+
+  if (!isSupportedImageInput(file)) {
+    return { ok: false, code: 'unsupported_input', detail: inferImageMimeType(file) || 'unknown' };
+  }
+
+  const target = getBasicImageTargetConfig(options.targetFormat);
+  const startedAt = performance.now();
+  const sourceType = inferImageMimeType(file);
+  const sourceFile = sourceType === file.type
+    ? file
+    : new File([file], file.name, { type: sourceType });
+
+  try {
+    const image = await loadImage(sourceFile);
+    if (!image.width || !image.height) return { ok: false, code: 'load_failed' };
+
+    if (image.width * image.height > MAX_IMAGE_PIXELS) {
+      return { ok: false, code: 'too_many_pixels', maxPixels: formatPixelLimit(MAX_IMAGE_PIXELS) };
+    }
+
+    const bounds = createEraseStrokeBounds(options.strokes, image.width, image.height);
+    if (!bounds) return { ok: false, code: 'canvas_context' };
+
+    const mask = rasterizeEraseMask(options.strokes, image.width, image.height);
+    if (!mask) return { ok: false, code: 'canvas_context' };
+
+    const feather = clampNumber(Math.round(options.feather ?? 12), 0, 36);
+    const requestedMethod = options.method ?? 'migan';
+    // migan 与 ai 互为备选：任一可用就出结果，两个都失败就报错，不静默降级成
+    // 一个看起来成功、实际没做 AI 修复的输出。
+    const candidates: ImageEraseMethod[] = requestedMethod === 'migan'
+      ? ['migan', 'ai']
+      : ['ai', 'migan'];
+
+    let repairCanvas: HTMLCanvasElement | null = null;
+    let method: ImageEraseMethod = requestedMethod;
+    let lastError: unknown;
+
+    for (const candidate of candidates) {
+      try {
+        if (candidate !== requestedMethod) {
+          options.onProgress?.(createWatermarkRemovalProgress('fallback', 'fallback:model', 40));
+        }
+        repairCanvas = await runMaskedInpaint(
+          image,
+          mask,
+          bounds,
+          candidate,
+          feather,
+          options.onProgress
+        );
+        method = candidate;
+        break;
+      } catch (error) {
+        lastError = error;
+      }
+    }
+
+    if (!repairCanvas) {
+      return {
+        ok: false,
+        code: 'ai_model_unavailable',
+        detail: lastError instanceof Error ? lastError.message : undefined,
+      };
+    }
+
+    const outputCanvas = document.createElement('canvas');
+    outputCanvas.width = image.width;
+    outputCanvas.height = image.height;
+    const outputContext = outputCanvas.getContext('2d');
+    if (!outputContext) return { ok: false, code: 'canvas_context' };
+
+    if (target.mimeType === 'image/jpeg') {
+      outputContext.fillStyle = options.jpegBackground ?? '#ffffff';
+      outputContext.fillRect(0, 0, outputCanvas.width, outputCanvas.height);
+    }
+    outputContext.drawImage(repairCanvas, 0, 0);
+
+    options.onProgress?.(createWatermarkRemovalProgress('encode', 'encode:image', 96));
+
+    const quality = target.supportsQuality
+      ? normalizeImageQuality(options.quality ?? target.defaultQuality)
+      : undefined;
+    const blob = await canvasToBlob(outputCanvas, target.mimeType, quality);
+
+    if (blob.type && blob.type !== target.mimeType) {
+      return { ok: false, code: 'unsupported_output', detail: target.label };
+    }
+
+    return {
+      ok: true,
+      blob,
+      filename: createWatermarkRemovedImageFilename(file.name, target.extension),
+      mimeType: target.mimeType,
+      format: target.format,
+      method,
+      ...(method === requestedMethod ? {} : { fallbackFrom: requestedMethod }),
+      width: image.width,
+      height: image.height,
+      strokeCount: options.strokes.length,
+      area: bounds,
       originalSize: file.size,
       outputSize: blob.size,
       durationMs: Math.round(performance.now() - startedAt),

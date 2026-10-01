@@ -133,6 +133,9 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - **ID Photo Maker / 证件照制作** (`/image/id-photo`): Free online ID photo maker with China 1 inch, 2 inch, China visa, 2 x 2 inch, and custom sizes, with AI background removal, face framing, background colors, drag, and zoom
   - English: https://toolgarden.xyz/en/image/id-photo
   - Chinese: https://toolgarden.xyz/zh/image/id-photo
+- **Image object eraser / 图片擦除** (`/image/erase`): Free online tool to paint over an unwanted object in a photo and have a local browser AI model rebuild just that area, then export JPG, PNG, or WebP
+  - English: https://toolgarden.xyz/en/image/erase
+  - Chinese: https://toolgarden.xyz/zh/image/erase
 - **Image watermark remover / 图片去水印** (`/image/remove-watermark`): Free online tool to select a watermark area, inpaint it with a local browser AI model or fast pixel repair, and export JPG, PNG, or WebP
   - English: https://toolgarden.xyz/en/image/remove-watermark
   - Chinese: https://toolgarden.xyz/zh/image/remove-watermark
