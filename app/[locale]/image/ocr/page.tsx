@@ -11,15 +11,32 @@ import {
 } from '@/lib/utils/ocr';
 import { recognizeImageOcr } from '@/lib/utils/ocr-browser';
 import { imageOcrContent } from '@/lib/tools/content/image-ocr';
+import { useUrlOption } from '@/components/useUrlOption';
 
 const OCR_LANGUAGE_OPTIONS: OcrLanguage[] = ['eng', 'chi_sim', 'chi_tra', 'jpn'];
+const OCR_LANGUAGE_URL_OPTIONS: Readonly<Record<string, OcrLanguage>> = {
+  eng: 'eng',
+  chi_sim: 'chi_sim',
+  chi_tra: 'chi_tra',
+  jpn: 'jpn',
+  english: 'eng',
+  'chinese-simplified': 'chi_sim',
+  simplified: 'chi_sim',
+  'chinese-traditional': 'chi_tra',
+  traditional: 'chi_tra',
+  japanese: 'jpn',
+};
 
 export default function ImageOcrPage() {
   const t = useTranslations('tools.image-ocr');
   const tc = useTranslations('common');
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>('');
-  const [language, setLanguage] = useState<OcrLanguage>('eng');
+  const [language, selectLanguage] = useUrlOption(
+    'language',
+    'eng',
+    OCR_LANGUAGE_URL_OPTIONS,
+  );
   const [result, setResult] = useState('');
   const [error, setError] = useState('');
   const [progress, setProgress] = useState<OcrProgress | null>(null);
@@ -101,7 +118,7 @@ export default function ImageOcrPage() {
             <label className="text-xs uppercase tracking-normal text-content-faint">{t('language_label')}</label>
             <select
               value={language}
-              onChange={(e) => setLanguage(e.target.value as OcrLanguage)}
+              onChange={(e) => selectLanguage(e.target.value as OcrLanguage)}
               className="mt-1 w-full rounded border border-border-input bg-surface-raised px-3 py-2 text-sm text-content"
             >
               {OCR_LANGUAGE_OPTIONS.map((option) => (

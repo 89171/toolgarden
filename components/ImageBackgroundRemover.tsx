@@ -18,6 +18,16 @@ import {
   type ImageInspectionSuccess,
 } from '@/lib/utils/image';
 import { imageRemoveBgContent } from '@/lib/tools/content/image-remove-bg';
+import { useUrlOption } from '@/components/useUrlOption';
+
+const BACKGROUND_REMOVAL_URL_OPTIONS: Readonly<Record<string, ImageBackgroundRemovalModel>> = {
+  fast: 'small',
+  balanced: 'medium',
+  hd: 'birefnet-lite',
+  small: 'small',
+  medium: 'medium',
+  'birefnet-lite': 'birefnet-lite',
+};
 
 type RemoveBgStatus = 'idle' | 'ready' | 'processing' | 'done' | 'error';
 type PreviewKind = 'source' | 'output';
@@ -102,7 +112,11 @@ export function ImageBackgroundRemover() {
   const [image, setImage] = useState<RemoveBgImage | null>(null);
   const [dragging, setDragging] = useState(false);
   const [preview, setPreview] = useState<PreviewKind | null>(null);
-  const [selectedModel, setSelectedModel] = useState<ImageBackgroundRemovalModel>('medium');
+  const [selectedModel, selectModel] = useUrlOption(
+    'mode',
+    'medium',
+    BACKGROUND_REMOVAL_URL_OPTIONS,
+  );
   const accept = getImageAcceptValue();
   const inputFormatLabels = useMemo(() => getSupportedImageInputLabel().split(' / '), []);
   const hasImage = Boolean(image);
@@ -225,7 +239,7 @@ export function ImageBackgroundRemover() {
 
   const changeModel = useCallback((model: ImageBackgroundRemovalModel) => {
     if (imageRef.current?.status === 'processing') return;
-    setSelectedModel(model);
+    selectModel(model);
     setImage((current) => {
       if (!current?.outputUrl) return current;
       URL.revokeObjectURL(current.outputUrl);
@@ -240,7 +254,7 @@ export function ImageBackgroundRemover() {
       };
     });
     setPreview(null);
-  }, []);
+  }, [selectModel]);
 
   const addFile = useCallback((fileList: FileList | File[]) => {
     const file = Array.from(fileList)[0];

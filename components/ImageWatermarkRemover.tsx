@@ -28,6 +28,17 @@ import {
   type ImageWatermarkRemovalSuccess,
 } from '@/lib/utils/image';
 import { imageRemoveWatermarkContent } from '@/lib/tools/content/image-remove-watermark';
+import { useUrlOption } from '@/components/useUrlOption';
+
+const WATERMARK_REMOVAL_URL_OPTIONS: Readonly<Record<string, ImageWatermarkRemovalMethod>> = {
+  fast: 'local',
+  balanced: 'migan',
+  compatible: 'ai',
+  hd: 'ai',
+  local: 'local',
+  migan: 'migan',
+  ai: 'ai',
+};
 
 type DragMode = 'draw' | 'move' | 'resize';
 
@@ -103,7 +114,11 @@ export function ImageWatermarkRemover() {
   const [sourceUrl, setSourceUrl] = useState('');
   const [image, setImage] = useState<ImageInspectionSuccess | null>(null);
   const [selection, setSelection] = useState<ImageCropRect | null>(null);
-  const [method, setMethod] = useState<ImageWatermarkRemovalMethod>('migan');
+  const [method, selectMethod] = useUrlOption(
+    'mode',
+    'migan',
+    WATERMARK_REMOVAL_URL_OPTIONS,
+  );
   const [outputFormat, setOutputFormat] = useState<BasicImageTargetFormat>('png');
   const [quality, setQuality] = useState(0.92);
   const [feather, setFeather] = useState(12);
@@ -540,7 +555,7 @@ export function ImageWatermarkRemover() {
                       key={nextMethod}
                       type="button"
                       onClick={() => {
-                        setMethod(nextMethod);
+                        selectMethod(nextMethod);
                         clearOutput();
                       }}
                       className={`rounded border px-2 py-2 text-sm font-semibold transition-colors ${

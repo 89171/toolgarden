@@ -27,6 +27,16 @@ import {
   detectStemCapability,
   separateStems,
 } from '@/lib/utils/stem-separation-browser';
+import { useUrlOption } from '@/components/useUrlOption';
+
+const STEM_MODEL_URL_OPTIONS: Readonly<Record<string, StemModelId>> = {
+  '4-stem': 'htdemucs',
+  '6-stem': 'htdemucs_6s',
+  fast: 'htdemucs',
+  balanced: 'htdemucs_6s',
+  htdemucs: 'htdemucs',
+  htdemucs_6s: 'htdemucs_6s',
+};
 
 interface StemSplitterProps {
   toolId: string;
@@ -60,7 +70,11 @@ export function AudioStemSplitter({ toolId, content }: StemSplitterProps) {
   const t = useTranslations('stem_splitter');
 
   const [file, setFile] = useState<File | null>(null);
-  const [modelId, setModelId] = useState<StemModelId>(defaultStemModelId);
+  const [modelId, selectModelId] = useUrlOption(
+    'mode',
+    defaultStemModelId,
+    STEM_MODEL_URL_OPTIONS,
+  );
   const [selected, setSelected] = useState<StemSource[]>(defaultStemSelection);
   const [dragging, setDragging] = useState(false);
   const [progress, setProgress] = useState<StemProgress | null>(null);
@@ -114,10 +128,10 @@ export function AudioStemSplitter({ toolId, content }: StemSplitterProps) {
   );
 
   const switchModel = useCallback((next: StemModelId) => {
-    setModelId(next);
+    selectModelId(next);
     // 切到 4 轨时把 guitar / piano 去掉，否则会请求模型不存在的轨道。
     setSelected((current) => clampSelection(current, next));
-  }, []);
+  }, [selectModelId]);
 
   const toggleStem = useCallback(
     (source: StemSource) => {
