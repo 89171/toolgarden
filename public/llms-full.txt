@@ -556,6 +556,16 @@ Canonical examples:
 - English URL: https://toolgarden.xyz/en/subtitle-maker
 - Chinese URL: https://toolgarden.xyz/zh/subtitle-maker
 
+#### MV Generator / MV 生成器 (/audio/lyric-video)
+- ID: `audio-lyric-video`
+- Category: Convert / 转换
+- Icon label: `MV`
+- Featured: yes
+- English description: Turn an MP3 and LRC lyrics into an MP4 lyric video with an animated background, right in your browser. Choose vinyl, spectrum or star tunnel templates, set the aspect ratio and lyric style, and export locally without uploading any files.
+- Chinese description: 在浏览器本地将 MP3 和 LRC 歌词合成为带动态背景的 MP4 歌词视频，支持黑胶、频谱、星空隧道等模板，素材不上传。
+- English URL: https://toolgarden.xyz/en/audio/lyric-video
+- Chinese URL: https://toolgarden.xyz/zh/audio/lyric-video
+
 #### Audio to MP3 / 音频转 MP3 (/audio/to-mp3)
 - ID: `audio-to-mp3`
 - Category: Convert / 转换

@@ -6,6 +6,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { ImagePreviewDialog } from '@/components/ImagePreviewDialog';
 import { ToolLayout } from '@/components/ToolLayout';
+import { useUrlOption } from '@/components/useUrlOption';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
 import { useClipboardFiles } from '@/lib/hooks/useClipboardFiles';
@@ -33,6 +34,15 @@ interface OutputState {
 const SCALE_PRESETS = [2, 3, 4] as const;
 const OUTPUT_FORMATS: BasicImageTargetFormat[] = ['png', 'jpg', 'webp'];
 const UPSCALE_MODES: ImageUpscaleMode[] = ['pixel', 'smooth', 'sharp', 'ai'];
+const UPSCALE_MODE_URL_OPTIONS: Readonly<Record<string, ImageUpscaleMode>> = {
+  pixel: 'pixel',
+  smooth: 'smooth',
+  sharp: 'sharp',
+  ai: 'ai',
+  fast: 'pixel',
+  balanced: 'smooth',
+  hd: 'ai',
+};
 
 function isAiUpscaleScale(value: number): value is AiUpscaleScale {
   return (AI_UPSCALE_SCALES as readonly number[]).includes(value);
@@ -72,7 +82,7 @@ export function ImageUpscaler() {
   const [scale, setScale] = useState(2);
   const [outputWidth, setOutputWidth] = useState('');
   const [outputHeight, setOutputHeight] = useState('');
-  const [mode, setMode] = useState<ImageUpscaleMode>('pixel');
+  const [mode, selectMode] = useUrlOption('mode', 'pixel', UPSCALE_MODE_URL_OPTIONS);
   const [outputFormat, setOutputFormat] = useState<BasicImageTargetFormat>('png');
   const [quality, setQuality] = useState(0.92);
   const [output, setOutput] = useState<OutputState | null>(null);
@@ -384,7 +394,7 @@ export function ImageUpscaler() {
                       key={modeOption}
                       type="button"
                       onClick={() => {
-                        setMode(modeOption);
+                        selectMode(modeOption);
                         clearOutput();
                         if (modeOption === 'ai' && !isAiUpscaleScale(scale)) {
                           handleScalePreset(2);

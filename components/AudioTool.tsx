@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
+import { useUrlOption } from '@/components/useUrlOption';
 import type { ToolContent } from '@/lib/tools/content';
 import { copyText } from '@/lib/utils/markdown-browser';
 import {
@@ -50,6 +51,18 @@ interface OutputState {
 const bitrateOptions = [32, 48, 64, 96, 128, 160, 192, 256, 320];
 const sampleRateOptions = [8000, 11025, 16000, 22050, 32000, 44100, 48000, 96000];
 const LIVE_TRANSCRIPTION_REFRESH_MS = 15_000;
+const TRANSCRIPTION_MODEL_URL_OPTIONS: Readonly<Record<string, AudioTranscriptionModel>> = {
+  accurate: HIGH_ACCURACY_TRANSCRIPTION_MODEL,
+  balanced: BALANCED_TRANSCRIPTION_MODEL,
+  small: HIGH_ACCURACY_TRANSCRIPTION_MODEL,
+  base: BALANCED_TRANSCRIPTION_MODEL,
+};
+const TTS_VOICE_URL_OPTIONS: Readonly<Record<string, TtsVoiceId>> = {
+  zf_001: 'zf_001',
+  zm_009: 'zm_009',
+  af_maple: 'af_maple',
+  bf_vale: 'bf_vale',
+};
 
 function downloadUrl(url: string, filename: string) {
   const anchor = document.createElement('a');
@@ -119,11 +132,17 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
   const [ttsText, setTtsText] = useState('');
   const [ttsRate, setTtsRate] = useState(1);
   const [ttsFallbackNotice, setTtsFallbackNotice] = useState('');
-  const [transcriptionModel, setTranscriptionModel] = useState<AudioTranscriptionModel>(DEFAULT_TRANSCRIPTION_MODEL);
-  const [ttsLanguage, setTtsLanguage] = useState<TtsLanguage>(locale === 'en' ? 'en' : 'zh');
-  const [ttsVoiceId, setTtsVoiceId] = useState<TtsVoiceId>(
-    getDefaultTtsVoice(locale === 'en' ? 'en' : 'zh'),
+  const [transcriptionModel, selectTranscriptionModel] = useUrlOption(
+    'mode',
+    DEFAULT_TRANSCRIPTION_MODEL,
+    TRANSCRIPTION_MODEL_URL_OPTIONS,
   );
+  const [ttsVoiceId, selectTtsVoice] = useUrlOption(
+    'voice',
+    getDefaultTtsVoice(locale === 'en' ? 'en' : 'zh'),
+    TTS_VOICE_URL_OPTIONS,
+  );
+  const ttsLanguage: TtsLanguage = ttsVoiceId === 'af_maple' || ttsVoiceId === 'bf_vale' ? 'en' : 'zh';
 
   const isMerge = mode === 'merge';
   const isRecorder = mode === 'recorder';
@@ -702,8 +721,7 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
                       const language = event.target.value as TtsLanguage;
                       stopTts();
                       clearOutput();
-                      setTtsLanguage(language);
-                      setTtsVoiceId(getDefaultTtsVoice(language));
+                      selectTtsVoice(getDefaultTtsVoice(language));
                     }}
                     className="mt-2 w-full rounded border border-border-input bg-surface-raised px-3 py-2 text-sm text-content-secondary focus:outline-none focus:ring-2 focus:ring-action"
                   >
@@ -719,7 +737,7 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
                     onChange={(event) => {
                       stopTts();
                       clearOutput();
-                      setTtsVoiceId(event.target.value as TtsVoiceId);
+                      selectTtsVoice(event.target.value as TtsVoiceId);
                     }}
                     className="mt-2 w-full rounded border border-border-input bg-surface-raised px-3 py-2 text-sm text-content-secondary focus:outline-none focus:ring-2 focus:ring-action"
                   >
@@ -845,7 +863,7 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
                       value={transcriptionModel}
                       onChange={(event) => {
                         clearOutput();
-                        setTranscriptionModel(event.target.value as AudioTranscriptionModel);
+                        selectTranscriptionModel(event.target.value as AudioTranscriptionModel);
                       }}
                       disabled={isProcessing || liveTranscriptionActive}
                       className="mt-2 w-full rounded border border-border-input bg-surface-raised px-3 py-2 text-sm text-content-secondary focus:outline-none focus:ring-2 focus:ring-action disabled:cursor-not-allowed disabled:opacity-60"

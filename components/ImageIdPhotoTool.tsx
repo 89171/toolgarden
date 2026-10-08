@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
+import { useUrlOption } from '@/components/useUrlOption';
 import type { ToolContent } from '@/lib/tools/content';
 import {
   inspectImageFile,
@@ -92,6 +93,12 @@ type GestureState =
 
 const TOOL_ID = 'image-id-photo';
 const CUSTOM_PRESET_ID: IdPhotoPresetId = 'custom';
+const ID_PHOTO_MODEL_URL_OPTIONS: Readonly<Record<string, ImageBackgroundRemovalModel>> = {
+  balanced: 'medium',
+  hd: 'birefnet-lite',
+  medium: 'medium',
+  'birefnet-lite': 'birefnet-lite',
+};
 
 function createImageId(file: File): string {
   return `${file.name}-${file.size}-${file.lastModified}-${Date.now()}`;
@@ -159,7 +166,7 @@ export function ImageIdPhotoTool({ content }: ImageIdPhotoToolProps) {
   const [customHeightMm, setCustomHeightMm] = useState('45');
   const [backgroundColor, setBackgroundColor] = useState<string>(idPhotoBackgroundColors[0].value);
   const [customBackgroundColor, setCustomBackgroundColor] = useState<string>(idPhotoBackgroundColors[0].value);
-  const [model, setModel] = useState<ImageBackgroundRemovalModel>('medium');
+  const [model, selectModel] = useUrlOption('mode', 'medium', ID_PHOTO_MODEL_URL_OPTIONS);
   const [outputFormat, setOutputFormat] = useState<OutputFormat>('jpg');
   const [transform, setTransform] = useState<IdPhotoTransform>({ x: 0, y: 0, scale: 1 });
   const [status, setStatus] = useState<ProcessingStatus>('idle');
@@ -387,13 +394,13 @@ export function ImageIdPhotoTool({ content }: ImageIdPhotoToolProps) {
   }, [canvas, currentPresetForFit, getImageErrorMessage, model]);
 
   const changeModel = useCallback((nextModel: ImageBackgroundRemovalModel) => {
-    setModel(nextModel);
+    selectModel(nextModel);
 
     const current = sourceRef.current;
     if (current?.info) {
       void processSourceImage(current, nextModel);
     }
-  }, [processSourceImage]);
+  }, [processSourceImage, selectModel]);
 
   const addFile = useCallback((fileList: FileList | File[]) => {
     const file = Array.from(fileList)[0];

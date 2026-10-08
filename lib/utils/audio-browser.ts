@@ -108,7 +108,7 @@ function toProgress(label: string, percent: number): AudioProcessingProgress {
   };
 }
 
-async function loadFfmpeg(onProgress?: (progress: AudioProcessingProgress) => void): Promise<FFmpegInstance> {
+export async function loadFfmpeg(onProgress?: (progress: AudioProcessingProgress) => void): Promise<FFmpegInstance> {
   if (ffmpeg?.loaded) return ffmpeg;
   if (!ffmpegPromise) {
     ffmpegPromise = (async () => {

@@ -26,6 +26,7 @@ import {
   type ImageWatermarkRemovalProgress,
 } from '@/lib/utils/image';
 import { imageEraseContent } from '@/lib/tools/content/image-erase';
+import { useUrlOption } from '@/components/useUrlOption';
 
 interface OutputState {
   result: ImageEraseSuccess;
@@ -34,6 +35,13 @@ interface OutputState {
 
 const OUTPUT_FORMATS: BasicImageTargetFormat[] = ['png', 'jpg', 'webp'];
 const ERASE_METHODS: ImageEraseMethod[] = ['migan', 'ai'];
+const ERASE_METHOD_URL_OPTIONS: Readonly<Record<string, ImageEraseMethod>> = {
+  migan: 'migan',
+  ai: 'ai',
+  balanced: 'migan',
+  compatible: 'ai',
+  hd: 'ai',
+};
 
 function formatDimensions(width: number, height: number): string {
   return `${Math.round(width)} × ${Math.round(height)} px`;
@@ -76,7 +84,7 @@ export function ImageObjectEraser() {
   const [image, setImage] = useState<ImageInspectionSuccess | null>(null);
   const [strokes, setStrokes] = useState<ImageEraseStroke[]>([]);
   const [brushRadius, setBrushRadius] = useState(24);
-  const [method, setMethod] = useState<ImageEraseMethod>('migan');
+  const [method, selectMethod] = useUrlOption('mode', 'migan', ERASE_METHOD_URL_OPTIONS);
   const [outputFormat, setOutputFormat] = useState<BasicImageTargetFormat>('png');
   const [quality, setQuality] = useState(0.92);
   const [feather, setFeather] = useState(12);
@@ -491,7 +499,7 @@ export function ImageObjectEraser() {
                     key={value}
                     type="button"
                     onClick={() => {
-                      setMethod(value);
+                      selectMethod(value);
                       clearOutput();
                     }}
                     disabled={isProcessing}

@@ -1401,7 +1401,8 @@
     "quickdraw-whiteboard": "Quickdraw whiteboard, online whiteboard, infinite canvas, browser drawing board, MIT whiteboard SDK",
     "excalidraw-board": "Excalidraw online, online drawing board, hand drawn diagram tool, browser sketch board, Excalidraw editor",
     "mind-map": "online mind map, mind map maker, mind mapping tool, Markdown mind map, browser mind map editor",
-    "jwt": "JWT decoder,JWT parser,decode JWT token,JWT signature verifier,inspect JWT payload,HS256 validator,JWT decoder online,view JWT payload,HS256 signature verify,debug JWT online"
+    "jwt": "JWT decoder,JWT parser,decode JWT token,JWT signature verifier,inspect JWT payload,HS256 validator,JWT decoder online,view JWT payload,HS256 signature verify,debug JWT online",
+    "audio-lyric-video": "lyric video maker, MV generator, MP3 to MP4, LRC lyric video, music video maker online, make lyric video"
   },
   "tool_faq": {
     "json-escape": {
@@ -2881,6 +2882,22 @@
         {
           "question": "Can I convert between LRC, SRT, and VTT?",
           "answer": "Yes. After parsing subtitles, switch the output format and export. The tool generates timing codes for the selected target format."
+        }
+      ]
+    },
+    "audio-lyric-video": {
+      "items": [
+        {
+          "question": "Does the MV generator upload my audio or lyrics?",
+          "answer": "No. Drawing, audio capture and MP4 export all run in your browser; there is no upload endpoint."
+        },
+        {
+          "question": "Which audio and lyric formats work?",
+          "answer": "MP3 audio, and LRC lyrics with timestamps. You can also type plain text and the tool spreads it evenly over the song."
+        },
+        {
+          "question": "What quality is the MP4?",
+          "answer": "It records at 30 fps and about 8 Mbps, in 16:9, 9:16, 4:3 or 1:1."
         }
       ]
     }
@@ -5286,6 +5303,63 @@
       "download_page": "Download",
       "page_label": "Page {page}",
       "empty_state": "Upload a PDF and click Convert"
+    },
+    "audio-lyric-video": {
+      "name": "MV Generator",
+      "description": "Turn an MP3 and LRC lyrics into an MP4 lyric video with an animated background, right in your browser. Choose vinyl, spectrum or star tunnel templates, set the aspect ratio and lyric style, and export locally without uploading any files.",
+      "templates": "Visual templates",
+      "template_vinyl": "Vinyl Echo",
+      "template_particles": "Stardust",
+      "template_spectrum": "Audio Spectrum",
+      "template_waveform": "Neon Waveform",
+      "template_tunnel": "Star Tunnel",
+      "template_video": "Loop Video",
+      "upload_video": "Upload loop video (MP4 / WebM)",
+      "replace_video": "Replace loop video",
+      "audio_title": "Add music",
+      "audio_drop": "Choose or drop an MP3 file",
+      "replace": "Replace",
+      "play": "Play",
+      "pause": "Pause",
+      "privacy_note": "Audio is processed on this device and never uploaded.",
+      "err_audio": "Could not read this audio file.",
+      "err_mp3": "Please choose an MP3 audio file.",
+      "lyrics_title": "Add lyrics",
+      "upload_lrc": "Upload LRC",
+      "lyrics_placeholder": "[00:08.50] Paste LRC lyrics here\nor type plain lyrics, one line each",
+      "lyrics_hint": "Supports [mm:ss.ms] timestamps. Plain text is timed evenly.",
+      "credits_title": "Song credits (optional)",
+      "song_title": "Song title",
+      "artist": "Artist",
+      "lyricist": "Lyrics",
+      "composer": "Music",
+      "credits_hint": "Enter any field to show credits for the first 5 seconds.",
+      "untitled": "Credits",
+      "idle_text": "Add music and lyrics to start",
+      "preview": "Live preview",
+      "style_title": "Video and lyric look",
+      "ratio_title": "Aspect ratio",
+      "lyric_style": "Style",
+      "style_clean": "Clean",
+      "style_outline": "Outline",
+      "style_neon": "Neon",
+      "lyric_position": "Position",
+      "position_top": "Top",
+      "position_center": "Center",
+      "position_bottom": "Bottom",
+      "lyric_lines": "Lines shown",
+      "lines_single": "Single",
+      "lines_multi": "Multiple",
+      "export": "Generate MP4",
+      "exporting": "Generating…",
+      "progress_render": "Rendering video",
+      "progress_convert": "Converting to MP4 locally (first run loads the converter)",
+      "done": "MP4 generated and downloaded",
+      "keep_foreground": "Keep this page in the foreground while exporting.",
+      "err_video_required": "Upload a video clip to loop first.",
+      "err_unsupported": "This browser cannot record video. Use the latest Chrome, Edge or Safari.",
+      "err_no_codec": "No video encoder is available in this browser.",
+      "err_failed": "Export failed. Please try again."
     }
   },
   "redirect_page": {

@@ -14,7 +14,7 @@ function subscribeToUrlOption(onStoreChange: () => void): () => void {
 }
 
 /** Read a named URL option on load and keep it shareable as the user changes it. */
-export function useUrlOption<T extends string>(
+export function useUrlOption<T extends string | number>(
   parameter: string,
   defaultValue: T,
   options: Readonly<Record<string, T>>,

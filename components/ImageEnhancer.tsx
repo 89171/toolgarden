@@ -5,6 +5,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslations } from 'next-intl';
 import { ImagePreviewDialog } from '@/components/ImagePreviewDialog';
 import { ToolLayout } from '@/components/ToolLayout';
+import { useUrlOption } from '@/components/useUrlOption';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
 import { imageEnhanceContent } from '@/lib/tools/content/image-enhance';
@@ -36,6 +37,11 @@ interface OutputState {
 }
 
 const OUTPUT_FORMATS: BasicImageTargetFormat[] = ['png', 'jpg', 'webp'];
+const IMAGE_ENHANCE_SCALE_URL_OPTIONS: Readonly<Record<string, ImageEnhanceScale>> = {
+  '1': 1,
+  '2': 2,
+  '4': 4,
+};
 
 function formatDimensions(width: number, height: number): string {
   return `${Math.round(width)} × ${Math.round(height)} px`;
@@ -69,7 +75,7 @@ export function ImageEnhancer() {
   const [file, setFile] = useState<File | null>(null);
   const [sourceUrl, setSourceUrl] = useState('');
   const [image, setImage] = useState<ImageInspectionSuccess | null>(null);
-  const [scale, setScale] = useState<ImageEnhanceScale>(1);
+  const [scale, selectScale] = useUrlOption('scale', 1, IMAGE_ENHANCE_SCALE_URL_OPTIONS);
   const [outputFormat, setOutputFormat] = useState<BasicImageTargetFormat>('png');
   const [quality, setQuality] = useState(0.92);
   const [output, setOutput] = useState<OutputState | null>(null);
@@ -198,7 +204,6 @@ export function ImageEnhancer() {
     setFile(selected);
     setSourceUrl(url);
     setImage(inspected);
-    setScale(1);
     setOutputFormat('png');
   }, [clearOutput, getErrorMessage]);
 
@@ -335,7 +340,7 @@ export function ImageEnhancer() {
                       type="button"
                       disabled={!image || isProcessing}
                       onClick={() => {
-                        setScale(scaleOption);
+                        selectScale(scaleOption);
                         clearOutput();
                         setError('');
                       }}

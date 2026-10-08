@@ -175,6 +175,9 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - **Subtitle Maker / 字幕编辑器** (`/subtitle-maker`): Free online LRC, SRT, and VTT subtitle editor and converter with media preview, timeline calibration, and subtitle export
   - English: https://toolgarden.xyz/en/subtitle-maker
   - Chinese: https://toolgarden.xyz/zh/subtitle-maker
+- **MV Generator / MV 生成器** (`/audio/lyric-video`): Turn an MP3 and LRC lyrics into an MP4 lyric video with an animated background, right in your browser. Choose vinyl, spectrum or star tunnel templates, set the aspect ratio and lyric style, and export locally without uploading any files.
+  - English: https://toolgarden.xyz/en/audio/lyric-video
+  - Chinese: https://toolgarden.xyz/zh/audio/lyric-video
 - **Audio to MP3 / 音频转 MP3** (`/audio/to-mp3`): Free online tool to convert WAV, M4A, AAC, OGG, OPUS, WebM, FLAC, and other audio files to MP3 locally in your browser
   - English: https://toolgarden.xyz/en/audio/to-mp3
   - Chinese: https://toolgarden.xyz/zh/audio/to-mp3

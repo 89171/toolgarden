@@ -438,6 +438,15 @@ export const toolRegistry: ToolMeta[] = [
     featured: true,
   },
   {
+    id: 'audio-lyric-video',
+    name: 'MV 生成器',
+    description: '在浏览器本地将 MP3 和 LRC 歌词合成为带动态背景的 MP4 歌词视频',
+    path: '/audio/lyric-video',
+    icon: 'MV',
+    category: 'convert',
+    featured: true,
+  },
+  {
     id: 'audio-to-mp3',
     name: '音频转 MP3',
     description: '在浏览器本地将 WAV、M4A、OGG、FLAC、WebM 等音频转换为 MP3',

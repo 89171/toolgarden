@@ -1401,7 +1401,8 @@
     "quickdraw-whiteboard": "Quickdraw白板,在线白板,无限画布,网页画板,MIT白板SDK,浏览器绘图板",
     "excalidraw-board": "在线Excalidraw,手绘风画板,在线绘图板,网页草图工具,Excalidraw编辑器",
     "mind-map": "在线思维导图,思维导图制作,脑图工具,Markdown思维导图,网页脑图编辑器",
-    "jwt": "JWT解析,JWT解码,JWT Token解析,JWT签名验证,查看JWT Payload,HS256校验,JWT在线解析,JWT Token解码,HS256签名验证,JWT调试工具"
+    "jwt": "JWT解析,JWT解码,JWT Token解析,JWT签名验证,查看JWT Payload,HS256校验,JWT在线解析,JWT Token解码,HS256签名验证,JWT调试工具",
+    "audio-lyric-video": "MV生成器,歌词视频制作,MP3转MP4,LRC歌词视频,在线制作MV,歌词视频生成"
   },
   "tool_faq": {
     "json-escape": {
@@ -2881,6 +2882,22 @@
         {
           "question": "可以互转 LRC、SRT 和 VTT 吗？",
           "answer": "可以。解析字幕后切换输出格式并导出，工具会按目标格式生成时间码。"
+        }
+      ]
+    },
+    "audio-lyric-video": {
+      "items": [
+        {
+          "question": "MV 生成器会上传我的音频或歌词吗？",
+          "answer": "不会。画面绘制、音频录入和 MP4 导出都在浏览器本地完成，没有上传接口。"
+        },
+        {
+          "question": "支持哪些音频和歌词格式？",
+          "answer": "音频支持 MP3；歌词支持带时间标签的 LRC，也可直接输入普通文本，由工具按歌曲时长平均分配。"
+        },
+        {
+          "question": "导出的 MP4 画质如何？",
+          "answer": "按 30 帧/秒、约 8 Mbps 码率录制，可选 16:9、9:16、4:3、1:1 四种比例。"
         }
       ]
     }
@@ -5286,6 +5303,63 @@
       "download_page": "下载",
       "page_label": "第 {page} 页",
       "empty_state": "上传 PDF 后点击开始转换"
+    },
+    "audio-lyric-video": {
+      "name": "MV 生成器",
+      "description": "在浏览器本地将 MP3 和 LRC 歌词合成为带动态背景的 MP4 歌词视频，支持黑胶、频谱、星空隧道等模板，素材不上传。",
+      "templates": "视觉模板",
+      "template_vinyl": "黑胶回响",
+      "template_particles": "星尘粒子",
+      "template_spectrum": "音频频谱",
+      "template_waveform": "霓虹波形",
+      "template_tunnel": "星空隧道",
+      "template_video": "循环视频",
+      "upload_video": "上传循环视频（MP4 / WebM）",
+      "replace_video": "替换循环视频",
+      "audio_title": "添加音乐",
+      "audio_drop": "选择或拖入 MP3 文件",
+      "replace": "替换",
+      "play": "播放",
+      "pause": "暂停",
+      "privacy_note": "音频仅在本机处理，不会上传。",
+      "err_audio": "无法读取该音频文件。",
+      "err_mp3": "请选择 MP3 格式的音频文件。",
+      "lyrics_title": "添加歌词",
+      "upload_lrc": "上传 LRC",
+      "lyrics_placeholder": "[00:08.50] 在这里粘贴 LRC 歌词\n或直接输入普通歌词，每行一句",
+      "lyrics_hint": "支持 [分:秒.毫秒] 时间格式；普通文本将自动平均分配时间。",
+      "credits_title": "歌曲信息（选填）",
+      "song_title": "歌曲名称",
+      "artist": "演唱",
+      "lyricist": "作词",
+      "composer": "作曲",
+      "credits_hint": "填写任意信息后，将在视频开头展示 5 秒。",
+      "untitled": "作品信息",
+      "idle_text": "添加音乐与歌词，开始创作",
+      "preview": "实时预览",
+      "style_title": "视频与歌词外观",
+      "ratio_title": "视频比例",
+      "lyric_style": "展示样式",
+      "style_clean": "简洁",
+      "style_outline": "描边",
+      "style_neon": "霓虹",
+      "lyric_position": "展示位置",
+      "position_top": "顶部",
+      "position_center": "居中",
+      "position_bottom": "底部",
+      "lyric_lines": "展示行数",
+      "lines_single": "单行",
+      "lines_multi": "多行",
+      "export": "生成 MP4",
+      "exporting": "正在生成…",
+      "progress_render": "正在渲染视频",
+      "progress_convert": "正在本地转换 MP4（首次需加载转码组件）",
+      "done": "MP4 已生成并下载",
+      "keep_foreground": "导出期间请保持此页面在前台打开。",
+      "err_video_required": "请先上传用于循环播放的视频片段。",
+      "err_unsupported": "当前浏览器不支持视频录制，请使用最新版 Chrome、Edge 或 Safari。",
+      "err_no_codec": "当前浏览器没有可用的视频编码器。",
+      "err_failed": "生成失败，请重试。"
     }
   },
   "redirect_page": {
