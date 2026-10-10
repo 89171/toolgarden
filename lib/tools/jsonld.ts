@@ -88,9 +88,16 @@ export function getToolSeoPhrase(description: string, locale: Locale, limit = TO
   return truncateSeoPhrase(phrase, locale, limit);
 }
 
+// 补上「在线免费 / Free … Online」这类高频搜索意图词；关键词里已有则不重复。
+function withSearchIntent(name: string, locale: Locale): string {
+  if (locale === 'zh') return `在线免费${name.replace(/^(?:在线|免费)+/u, '')}`;
+  if (/\bonline\b/i.test(name)) return name;
+  return `Free ${name.replace(/^free\s+/i, '')} Online`;
+}
+
 export function createToolSeoTitle(toolName: string, description: string, locale: Locale): string {
   const titleLimit = TOOL_TITLE_LIMIT[locale];
-  const normalizedName = truncatePlainText(toolName, titleLimit, locale);
+  const normalizedName = truncatePlainText(withSearchIntent(toolName, locale), titleLimit, locale);
   const phraseBudget = titleLimit - normalizedName.length - 3;
 
   if (phraseBudget < (locale === 'zh' ? 6 : 12)) return normalizedName;

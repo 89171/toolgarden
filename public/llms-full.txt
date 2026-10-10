@@ -1121,7 +1121,7 @@ Canonical examples:
 - Chinese: https://toolgarden.xyz/zh/blog/blob-url-createobjecturl-explained
 - Chinese title: Blob URL 是什么？URL.createObjectURL() 工作原理
 - Summary: Learn how blob: URLs expose in-memory data to browser elements, differ from Base64 Data URLs, and require explicit lifetime management.
-- Published: 2026-09-20; updated: 2026-09-20
+- Published: 2026-09-20; updated: 2026-10-10
 
 ### How Does Browser Image Compression Work?
 - English: https://toolgarden.xyz/en/blog/browser-image-compression-canvas-blob
@@ -1143,6 +1143,34 @@ Canonical examples:
 - Chinese title: Unix Timestamp 是什么？秒和毫秒时间戳有什么区别？
 - Summary: Understand epoch time, seconds, milliseconds, microseconds, timezone display, digit heuristics, precision, and conversion bugs.
 - Published: 2026-09-20; updated: 2026-09-20
+
+### What Is Image Metadata / EXIF, and How Do You Remove It?
+- English: https://toolgarden.xyz/en/blog/image-metadata-exif-explained-remove
+- Chinese: https://toolgarden.xyz/zh/blog/image-metadata-exif-explained-remove
+- Chinese title: 图片 Metadata / EXIF 是什么？如何删除照片中的 EXIF 信息？
+- Summary: Compare EXIF, XMP, IPTC and ICC, choose metadata stripping or re-encoding, and verify location, orientation and color in the exported photo.
+- Published: 2026-10-10; updated: 2026-10-10
+
+### How Do You Avoid Doubling Memory When Processing Large Files in a Browser?
+- English: https://toolgarden.xyz/en/blog/avoid-browser-large-file-memory-copies
+- Chinese: https://toolgarden.xyz/zh/blog/avoid-browser-large-file-memory-copies
+- Chinese title: 如何避免浏览器处理大文件时内存翻倍？
+- Summary: Control peak memory by reducing representations, using backpressure, transferring Worker buffers and limiting retained results.
+- Published: 2026-10-10; updated: 2026-10-10
+
+### Why Do Browsers Crash When Processing Large Files?
+- English: https://toolgarden.xyz/en/blog/why-browser-large-files-crash
+- Chinese: https://toolgarden.xyz/zh/blog/why-browser-large-files-crash
+- Chinese title: 为什么浏览器处理大文件容易崩溃？
+- Summary: Estimate decoded working sets for images, audio and archives, distinguish peaks from leaks and stalls, and diagnose failures step by step.
+- Published: 2026-10-10; updated: 2026-10-10
+
+### Why Must You Revoke URL.createObjectURL() URLs After Use?
+- English: https://toolgarden.xyz/en/blog/why-revoke-object-url
+- Chinese: https://toolgarden.xyz/zh/blog/why-revoke-object-url
+- Chinese title: 为什么 URL.createObjectURL() 用完需要 revoke？
+- Summary: Understand Blob URL ownership, garbage-collection boundaries and download races, and manage previews with an explicit cleanup function.
+- Published: 2026-10-10; updated: 2026-10-10
 
 ### What Is JSONL? Examples, Comparisons, and When to Use It
 - English: https://toolgarden.xyz/en/blog/what-is-jsonl-format
@@ -1450,7 +1478,7 @@ Canonical examples:
 - Chinese: https://toolgarden.xyz/zh/blog/base64-encoding-explained-common-pitfalls
 - Chinese title: Base64 编码原理和常见坑
 - Summary: Base64 turns binary data into text for Data URLs, APIs, and embedded configuration. It is encoding, not encryption.
-- Published: 2026-07-02; updated: 2026-08-03
+- Published: 2026-07-02; updated: 2026-10-10
 
 ### LRC vs SRT Subtitle Formats and How to Edit Them Online
 - English: https://toolgarden.xyz/en/blog/lrc-vs-srt-subtitle-format-edit-online

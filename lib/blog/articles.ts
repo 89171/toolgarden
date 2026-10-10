@@ -17,6 +17,7 @@ import { workflowSeoBlogArticles } from './workflow-seo-articles';
 import { seoBlogArticles } from './seo-articles';
 import { longTailBlogArticles } from './long-tail-articles';
 import { privacyFirstToolsArticles } from './privacy-first-tools';
+import { browserResourceArticles } from './browser-resource-articles';
 import { browserFileSeoArticles } from './browser-file-seo-articles';
 import { jsonFormatBlogArticles } from './json-format-articles';
 import { isConsolidatedBlogSlug } from './consolidations';
@@ -190,6 +191,7 @@ const faviconHtmlSnippet = `<link rel="icon" href="/favicon.ico">
 export const blogArticles: BlogArticle[] = [
   ...privacyFirstToolsArticles,
   ...browserFileSeoArticles,
+  ...browserResourceArticles,
   ...jsonFormatBlogArticles,
   ...harnessEngineeringArticles,
   ...audioBlogArticles,

@@ -1489,7 +1489,7 @@ export const workflowSeoBlogArticles = [
   {
     slug: 'base64-encoding-explained-common-pitfalls',
     publishedAt: '2026-07-02',
-    updatedAt: '2026-08-03',
+    updatedAt: '2026-10-10',
     translations: {
       zh: {
         title: 'Base64 编码原理和常见坑',
@@ -1535,10 +1535,42 @@ export const workflowSeoBlogArticles = [
             type: 'paragraph',
             text: '它的作用是把二进制数据转换成只包含常见 ASCII 字符的文本，方便放进 JSON、HTML、CSS、配置文件或接口字段里。',
           },
+          { type: 'heading', level: 2, text: '编码原理：3 个字节如何变成 4 个字符？' },
+          {
+            type: 'paragraph',
+            text: '一个字节有 8 个二进制位（bit）。Base64 每次取 3 个字节，共 24 位，再按从左到右的顺序重新分成 4 组，每组 6 位。6 位能表示 0～63 共 64 个数值，每个数值都对应字母表中的一个字符，这就是 Base64 名称中 64 的由来。',
+          },
+          {
+            type: 'table',
+            headers: ['索引（从 0 开始）', '标准 Base64 字符'],
+            rows: [['0～25', 'A～Z'], ['26～51', 'a～z'], ['52～61', '0～9'], ['62', '+'], ['63', '/']],
+          },
+          {
+            type: 'paragraph',
+            text: '以 Man 为例，这三个字符在 ASCII 和 UTF-8 中都各占一个字节。先写出字节的二进制形式，再按 6 位重新分组，最后查表即可得到 TWFu。整个过程只改变数据的表示方式，没有使用密钥，也没有压缩数据。',
+          },
+          {
+            type: 'code', language: 'text',
+            code: 'Man → TWFu\n\n字符：       M        a        n\n十进制字节： 77       97       110\n8 位分组：   01001101 01100001 01101110\n6 位分组：   010011 010110 000101 101110\n索引：       19     22     5      46\n查表：       T      W      F      u',
+          },
+          { type: 'heading', level: 2, text: '不足 3 个字节时，为什么要补 =？' },
+          {
+            type: 'paragraph',
+            text: '最后一组若不足 3 个字节，就在剩余位的右侧补 0，使其凑够 6 位后查表，再用 = 把输出补到 4 个字符。= 是填充标记，不属于上述 64 个字符，也不代表原始数据中有一个等号或零字节。',
+          },
+          {
+            type: 'table',
+            headers: ['输入', '按 6 位分组（末组右侧补 0）', '有效索引', '带填充的输出'],
+            rows: [['M（1 字节）', '010011 010000', '19、16', 'TQ=='], ['Ma（2 字节）', '010011 010110 000100', '19、22、4', 'TWE='], ['Man（3 字节）', '010011 010110 000101 101110', '19、22、5、46', 'TWFu']],
+          },
+          {
+            type: 'paragraph',
+            text: '解码时反过来操作：把字符映射回 6 位数值，拼接后按 8 位还原字节，并依据填充去掉编码时补入的尾部位。例如 TQ== 还原为 01001101，也就是 M。部分协议允许省略 =，但必须由收发双方约定，不能随意删除。',
+          },
           { type: 'heading', level: 2, text: '为什么 Base64 会变大？' },
           {
             type: 'paragraph',
-            text: 'Base64 大约每 3 个字节编码成 4 个字符，所以体积通常会增加约三分之一。如果把大图片直接塞进 JSON，请求体可能会明显膨胀。',
+            text: '对于 n 个输入字节，带填充的 Base64 长度为 4 × ceil(n / 3) 个 ASCII 字符，其中 ceil 表示向上取整；这里不计换行和 Data URL 前缀。输入较大时，体积增加接近三分之一；短输入的比例可能更高，例如 1 个字节编码后是 4 个字符。如果把大图片直接塞进 JSON，请求体可能会明显膨胀。',
           },
           { type: 'heading', level: 2, text: 'Data URL 和纯 Base64 有什么区别？' },
           {
@@ -1661,10 +1693,42 @@ export const workflowSeoBlogArticles = [
             type: 'paragraph',
             text: 'Base64 converts binary bytes into text made from common ASCII characters, which makes it convenient for JSON, HTML, CSS, configs, and API fields.',
           },
+          { type: 'heading', level: 2, text: 'How Encoding Works: 3 Bytes Become 4 Characters' },
+          {
+            type: 'paragraph',
+            text: 'Each byte contains 8 bits. Base64 takes 3 bytes, or 24 bits, and splits them from left to right into four 6-bit groups. Each group represents a number from 0 to 63, which selects one character from a 64-character alphabet. That alphabet gives Base64 its name.',
+          },
+          {
+            type: 'table',
+            headers: ['Index (starting at 0)', 'Standard Base64 character'],
+            rows: [['0–25', 'A–Z'], ['26–51', 'a–z'], ['52–61', '0–9'], ['62', '+'], ['63', '/']],
+          },
+          {
+            type: 'paragraph',
+            text: 'For example, each character in Man occupies one byte in both ASCII and UTF-8. Write those bytes in binary, regroup them into 6-bit values, and look up each value to get TWFu. This changes the representation of the data without using a key or compressing it.',
+          },
+          {
+            type: 'code', language: 'text',
+            code: 'Man → TWFu\n\nCharacters:    M        a        n\nDecimal bytes: 77       97       110\n8-bit groups:  01001101 01100001 01101110\n6-bit groups:  010011 010110 000101 101110\nIndexes:       19     22     5      46\nAlphabet:      T      W      F      u',
+          },
+          { type: 'heading', level: 2, text: 'Why Pad with = When Fewer Than 3 Bytes Remain?' },
+          {
+            type: 'paragraph',
+            text: 'If the final group contains fewer than 3 bytes, append zero bits on the right to complete the last 6-bit value, then add = characters to make four output characters. The = sign is a padding marker outside the 64-character alphabet; it does not represent an equals sign or a zero byte in the original data.',
+          },
+          {
+            type: 'table',
+            headers: ['Input', '6-bit groups (last group zero-padded)', 'Data indexes', 'Padded output'],
+            rows: [['M (1 byte)', '010011 010000', '19, 16', 'TQ=='], ['Ma (2 bytes)', '010011 010110 000100', '19, 22, 4', 'TWE='], ['Man (3 bytes)', '010011 010110 000101 101110', '19, 22, 5, 46', 'TWFu']],
+          },
+          {
+            type: 'paragraph',
+            text: 'Decoding reverses the process: map characters back to 6-bit values, join the bits, and recover 8-bit bytes, discarding the trailing bits added during encoding as indicated by the padding. TQ== therefore restores 01001101, or M. Some protocols allow omitted padding, but both sides must agree on that convention.',
+          },
           { type: 'heading', level: 2, text: 'Why Does Base64 Get Larger?' },
           {
             type: 'paragraph',
-            text: 'Base64 encodes about every 3 bytes into 4 characters, so the result is usually about one third larger than the original binary data.',
+            text: 'For n input bytes, padded Base64 contains 4 × ceil(n / 3) ASCII characters, where ceil rounds up, excluding line breaks and any Data URL prefix. For large inputs the overhead approaches one third; short inputs can have a higher ratio, such as 1 byte becoming 4 characters.',
           },
           { type: 'heading', level: 2, text: 'Data URL vs Raw Base64' },
           {
