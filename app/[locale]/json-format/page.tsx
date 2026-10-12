@@ -22,7 +22,7 @@ import {
 type OutputMode = 'tree' | 'jsonText';
 
 const EXAMPLE_JSON = {
-  name: 'JSON Toolkit', version: '1.0.0',
+  name: 'ToolGarden', version: '1.0.0',
   features: ['format', 'minify', 'validate'],
   settings: { theme: 'dark', indentSize: 2 },
   isActive: true, lastUpdated: '2026-01-01T00:00:00.000Z',

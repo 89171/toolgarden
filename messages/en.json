@@ -2905,7 +2905,7 @@
   "nav": {
     "brand": "toolgarden",
     "tld": "xyz",
-    "title": "JSON Toolkit",
+    "title": "ToolGarden",
     "json_tools_menu": "JSON tools",
     "image_toolbar": "Image tools",
     "audio_tools": "Audio tools",
@@ -3659,8 +3659,8 @@
     }
   },
   "json_hub": {
-    "title": "JSON Toolkit",
-    "meta_title": "Free Online JSON Toolkit - Local, Private Format and Convert Tools",
+    "title": "ToolGarden",
+    "meta_title": "ToolGarden JSON Tools - Local, Private Format and Convert Tools",
     "description": "Free online tools to format, minify, diff, convert, validate, and inspect JSON in your browser. Includes JSON/YAML/XML/CSV/Excel/TypeScript conversion, JSON Schema, JSONPath, and JWT tools. All processing runs locally in your browser with no upload required.",
     "featured": "Popular JSON tools",
     "all_tools": "All JSON tools",
@@ -3671,7 +3671,7 @@
     "breadcrumb": "JSON tools",
     "faq_title": "FAQ",
     "faq": {
-      "privacy_q": "Does JSON Toolkit upload my data?",
+      "privacy_q": "Does ToolGarden upload my data?",
       "privacy_a": "No. Formatting, conversion, analysis, JWT parsing, and file processing run locally in your browser. The server does not receive your input.",
       "formats_q": "Which JSON-related formats are supported?",
       "formats_a": "JSON, YAML, XML, CSV, Excel, TypeScript interfaces, JSON Schema, JSONPath, and JWT are supported. Image compression, background removal, and format conversion are available from the top image toolbar.",

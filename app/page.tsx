@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'JSON Toolkit',
+    title: 'ToolGarden',
   },
   formatDetection: { telephone: false },
 };

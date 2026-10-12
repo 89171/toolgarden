@@ -465,7 +465,7 @@ export const harnessEngineeringArticles: BlogArticle[] = [
           {
             label: 'JSON Tools Directory',
             href: '/json-tools',
-            description: 'Explore the registry-driven JSON toolkit that grew from the original formatter.',
+            description: 'Explore ToolGarden, the registry-driven toolbox that grew from the original formatter.',
           },
           {
             label: 'JSON Formatter',

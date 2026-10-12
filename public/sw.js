@@ -1,5 +1,5 @@
 /**
- * JSON Toolkit — Service Worker
+ * ToolGarden — Service Worker
  *
  * 策略：
  *  /_next/static/   → Cache-First（靠 CACHE_NAME 的构建指纹保证新鲜，见下）
