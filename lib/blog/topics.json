@@ -3,22 +3,12 @@
     "id": "browser-local-data-processing",
     "pillarSlug": "complete-guide-browser-local-data-processing",
     "clusterSlugs": [
-      "why-browser-local-processing-matters-for-privacy",
       "edit-json-without-uploading-to-server",
-      "privacy-risks-online-file-converters",
-      "gdpr-compliance-client-side-tools",
-      "toolgarden-vs-online-converters",
-      "developer-privacy-toolkit",
-      "how-i-built-browser-local-online-tool-site"
+      "privacy-risks-online-file-converters"
     ],
     "targetKeywords": [
-      "browser local processing",
       "offline JSON editor",
-      "secure file converter no upload",
-      "GDPR compliant tools",
-      "browser local tools vs online converters",
-      "developer privacy toolkit",
-      "browser local tool architecture"
+      "secure file converter no upload"
     ],
     "toolPathPrefixes": []
   },
@@ -28,35 +18,35 @@
     "clusterSlugs": [
       "json-json5-jsonc-differences",
       "what-is-jsonl-format",
-      "format-and-validate-json-in-browser",
       "common-json-errors-and-fixes",
       "json-to-typescript-interface-guide"
     ],
     "targetKeywords": [
       "JSONC vs JSON5",
       "JSONL format",
-      "JSON formatter online",
       "JSON syntax error fix",
       "JSON to TypeScript interface"
     ],
-    "toolPathPrefixes": ["/json", "/excel-to-json", "/jwt"]
+    "toolPathPrefixes": [
+      "/json",
+      "/excel-to-json",
+      "/jwt"
+    ]
   },
   {
     "id": "image-processing",
     "pillarSlug": "image-processing-without-upload",
     "clusterSlugs": [
       "resize-images-locally-no-upload",
-      "jpg-png-webp-avif-differences",
-      "batch-image-compression-browser",
-      "developer-client-side-image-processing"
+      "jpg-png-webp-avif-differences"
     ],
     "targetKeywords": [
       "resize image without upload",
-      "PNG vs WebP converter",
-      "batch image compressor offline",
-      "client-side image processing"
+      "PNG vs WebP converter"
     ],
-    "toolPathPrefixes": ["/image/"]
+    "toolPathPrefixes": [
+      "/image/"
+    ]
   },
   {
     "id": "pdf-tools",
@@ -71,32 +61,35 @@
       "PDF text extractor local",
       "password protect PDF without upload"
     ],
-    "toolPathPrefixes": ["/pdf/"]
+    "toolPathPrefixes": [
+      "/pdf/"
+    ]
   },
   {
     "id": "qr-subtitle-tools",
     "pillarSlug": "qr-code-subtitle-tools-guide",
     "clusterSlugs": [
-      "wifi-qr-code-generator-guide",
-      "srt-to-vtt-browser-workflow"
+      "wifi-qr-code-generator-guide"
     ],
     "targetKeywords": [
-      "WiFi QR code generator",
-      "SRT to VTT converter"
+      "WiFi QR code generator"
     ],
-    "toolPathPrefixes": ["/qr-code", "/subtitle-maker"]
+    "toolPathPrefixes": [
+      "/qr-code",
+      "/subtitle-maker"
+    ]
   },
   {
     "id": "audio-tools",
     "pillarSlug": "free-online-mp3-recording-video-to-text-tools",
     "clusterSlugs": [
-      "split-song-into-vocals-instrumental-stems-browser",
-      "best-online-audio-stem-splitter-websites"
+      "split-song-into-vocals-instrumental-stems-browser"
     ],
     "targetKeywords": [
-      "online audio stem splitter",
-      "best online stem splitter"
+      "online audio stem splitter"
     ],
-    "toolPathPrefixes": ["/audio/"]
+    "toolPathPrefixes": [
+      "/audio/"
+    ]
   }
 ]

@@ -319,20 +319,10 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - Pillar: https://toolgarden.xyz/en/blog/complete-guide-browser-local-data-processing
   - Chinese: https://toolgarden.xyz/zh/blog/complete-guide-browser-local-data-processing
 - Cluster articles:
-  - browser local processing: https://toolgarden.xyz/en/blog/why-browser-local-processing-matters-for-privacy
-    - Chinese: https://toolgarden.xyz/zh/blog/why-browser-local-processing-matters-for-privacy
   - offline JSON editor: https://toolgarden.xyz/en/blog/edit-json-without-uploading-to-server
     - Chinese: https://toolgarden.xyz/zh/blog/edit-json-without-uploading-to-server
   - secure file converter no upload: https://toolgarden.xyz/en/blog/privacy-risks-online-file-converters
     - Chinese: https://toolgarden.xyz/zh/blog/privacy-risks-online-file-converters
-  - GDPR compliant tools: https://toolgarden.xyz/en/blog/gdpr-compliance-client-side-tools
-    - Chinese: https://toolgarden.xyz/zh/blog/gdpr-compliance-client-side-tools
-  - browser local tools vs online converters: https://toolgarden.xyz/en/blog/toolgarden-vs-online-converters
-    - Chinese: https://toolgarden.xyz/zh/blog/toolgarden-vs-online-converters
-  - developer privacy toolkit: https://toolgarden.xyz/en/blog/developer-privacy-toolkit
-    - Chinese: https://toolgarden.xyz/zh/blog/developer-privacy-toolkit
-  - browser local tool architecture: https://toolgarden.xyz/en/blog/how-i-built-browser-local-online-tool-site
-    - Chinese: https://toolgarden.xyz/zh/blog/how-i-built-browser-local-online-tool-site
 
 ### json-tools
 
@@ -343,8 +333,6 @@ ToolGarden provides practical browser-based utilities for developer data, docume
     - Chinese: https://toolgarden.xyz/zh/blog/json-json5-jsonc-differences
   - JSONL format: https://toolgarden.xyz/en/blog/what-is-jsonl-format
     - Chinese: https://toolgarden.xyz/zh/blog/what-is-jsonl-format
-  - JSON formatter online: https://toolgarden.xyz/en/blog/format-and-validate-json-in-browser
-    - Chinese: https://toolgarden.xyz/zh/blog/format-and-validate-json-in-browser
   - JSON syntax error fix: https://toolgarden.xyz/en/blog/common-json-errors-and-fixes
     - Chinese: https://toolgarden.xyz/zh/blog/common-json-errors-and-fixes
   - JSON to TypeScript interface: https://toolgarden.xyz/en/blog/json-to-typescript-interface-guide
@@ -359,10 +347,6 @@ ToolGarden provides practical browser-based utilities for developer data, docume
     - Chinese: https://toolgarden.xyz/zh/blog/resize-images-locally-no-upload
   - PNG vs WebP converter: https://toolgarden.xyz/en/blog/jpg-png-webp-avif-differences
     - Chinese: https://toolgarden.xyz/zh/blog/jpg-png-webp-avif-differences
-  - batch image compressor offline: https://toolgarden.xyz/en/blog/batch-image-compression-browser
-    - Chinese: https://toolgarden.xyz/zh/blog/batch-image-compression-browser
-  - client-side image processing: https://toolgarden.xyz/en/blog/developer-client-side-image-processing
-    - Chinese: https://toolgarden.xyz/zh/blog/developer-client-side-image-processing
 
 ### pdf-tools
 
@@ -383,8 +367,6 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - Cluster articles:
   - WiFi QR code generator: https://toolgarden.xyz/en/blog/wifi-qr-code-generator-guide
     - Chinese: https://toolgarden.xyz/zh/blog/wifi-qr-code-generator-guide
-  - SRT to VTT converter: https://toolgarden.xyz/en/blog/srt-to-vtt-browser-workflow
-    - Chinese: https://toolgarden.xyz/zh/blog/srt-to-vtt-browser-workflow
 
 ### audio-tools
 
@@ -393,8 +375,6 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - Cluster articles:
   - online audio stem splitter: https://toolgarden.xyz/en/blog/split-song-into-vocals-instrumental-stems-browser
     - Chinese: https://toolgarden.xyz/zh/blog/split-song-into-vocals-instrumental-stems-browser
-  - best online stem splitter: https://toolgarden.xyz/en/blog/best-online-audio-stem-splitter-websites
-    - Chinese: https://toolgarden.xyz/zh/blog/best-online-audio-stem-splitter-websites
 <!-- blog-topic-clusters:end -->
 
 <!-- blog-articles:start -->
@@ -409,26 +389,145 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - Summary: See how ToolGarden uses fflate, Canvas, Web APIs, browser JavaScript, WebAssembly, and local models to process everyday files without uploading tool input to a server.
 - Published: 2026-09-20; updated: 2026-09-20
 
-### Blob vs File vs ArrayBuffer: What Is the Difference?
-- English: https://toolgarden.xyz/en/blog/blob-file-arraybuffer-differences
-- Chinese: https://toolgarden.xyz/zh/blog/blob-file-arraybuffer-differences
-- Chinese title: Blob、File 和 ArrayBuffer 有什么区别？
-- Summary: Understand how Blob, File, ArrayBuffer, Uint8Array, and streams represent browser data, when copies happen, and which type belongs at each stage.
-- Published: 2026-09-20; updated: 2026-09-20
+### Which PDF Tool Should You Use? Merge, Split, Extract, Encrypt Explained
+- English: https://toolgarden.xyz/en/blog/pdf-tools-guide
+- Chinese: https://toolgarden.xyz/zh/blog/pdf-tools-guide
+- Chinese title: PDF 工具怎么选：合并、拆分、提取、加密一篇讲清
+- Summary: Need to merge, split, delete pages, password-protect, or convert a PDF to Word? This guide gives a decision table, the right order for combining steps, and each tool's real limits.
+- Published: 2026-07-20; updated: 2026-10-14
 
-### How Does a JSON Formatter Work?
-- English: https://toolgarden.xyz/en/blog/how-json-formatter-works
-- Chinese: https://toolgarden.xyz/zh/blog/how-json-formatter-works
-- Chinese title: JSON Formatter 是怎么实现的？
-- Summary: Build a reliable formatter with JSON.parse, JSON.stringify, errors, JSON5 fallback, tree views, and large-input limits.
-- Published: 2026-09-20; updated: 2026-09-20
+### How to Split a PDF by Page Ranges, Every Page, or Email Size Limits
+- English: https://toolgarden.xyz/en/blog/split-pdf-by-pages-ranges-size
+- Chinese: https://toolgarden.xyz/zh/blog/split-pdf-by-pages-ranges-size
+- Chinese title: 如何拆分 PDF：按页码范围、每页一份、凑够邮件大小
+- Summary: Need to cut a long PDF into parts for different people, or shrink it to fit an upload limit? Learn the range syntax, one-file-per-page export, size-driven splitting, and the checks to run afterwards.
+- Published: 2026-07-02; updated: 2026-10-14
 
-### JSON Formatter vs JSON Validator: What Is the Difference?
-- English: https://toolgarden.xyz/en/blog/json-formatter-vs-json-validator
-- Chinese: https://toolgarden.xyz/zh/blog/json-formatter-vs-json-validator
-- Chinese title: JSON Formatter 和 JSON Validator 有什么区别？
-- Summary: Separate formatting, syntax validation, schema validation, linting, and repair with practical examples.
-- Published: 2026-09-20; updated: 2026-09-20
+### How to Extract Selected Pages from a PDF: Syntax, Order, and Checks
+- English: https://toolgarden.xyz/en/blog/extract-selected-pages-from-pdf
+- Chinese: https://toolgarden.xyz/zh/blog/extract-selected-pages-from-pdf
+- Chinese title: 如何从 PDF 中提取指定页面：页码写法、顺序与检查
+- Summary: Want to save just a few pages of a PDF as a new file? Learn the page syntax, how order and duplicates are handled, what to check afterwards, and when to use extract, split, or organize.
+- Published: 2026-07-02; updated: 2026-10-14
+
+### How to Merge Multiple PDFs Without Uploading: Keep Order and Check Bookmarks and Page Counts
+- English: https://toolgarden.xyz/en/blog/merge-multiple-pdf-files-keep-order-bookmarks
+- Chinese: https://toolgarden.xyz/zh/blog/merge-multiple-pdf-files-keep-order-bookmarks
+- Chinese title: 如何不上传文件合并多个 PDF：保持顺序并检查书签与页数
+- Summary: Need to combine contracts, CVs, invoices, or scans into one PDF without handing them to a stranger's server? Learn the local merge steps, ordering, what happens to bookmarks and forms, and a post-merge checklist.
+- Published: 2026-07-02; updated: 2026-10-14
+
+### How to Password-Protect a PDF Without Uploading It: Set, Remove, and Restrict
+- English: https://toolgarden.xyz/en/blog/password-protect-pdf-without-upload
+- Chinese: https://toolgarden.xyz/zh/blog/password-protect-pdf-without-upload
+- Chinese title: 如何给 PDF 加密码保护（不上传文件）：设置、移除与权限限制
+- Summary: Sending a contract, ID, or financial report and worried about it spreading? Set an open password, restrict printing and copying, or remove an existing password, all in your browser with no upload.
+- Published: 2026-07-27; updated: 2026-10-14
+
+### How to Extract Text from a PDF in Your Browser (Including Scans and Garbled Files)
+- English: https://toolgarden.xyz/en/blog/extract-text-from-pdf-in-browser
+- Chinese: https://toolgarden.xyz/zh/blog/extract-text-from-pdf-in-browser
+- Chinese title: PDF 文字怎么提取？在浏览器本地提取，扫描件和乱码也能处理
+- Summary: Work out whether a PDF has a real text layer, then choose direct extraction or OCR. Includes fixes for columns, hyphenation and garbled output, all done locally in your browser.
+- Published: 2026-07-20; updated: 2026-10-14
+
+### How to Convert Word, Excel, PowerPoint and Images to PDF for Free (and Fix Layout Problems)
+- English: https://toolgarden.xyz/en/blog/convert-word-excel-ppt-image-to-pdf-free
+- Chinese: https://toolgarden.xyz/zh/blog/convert-word-excel-ppt-image-to-pdf-free
+- Chinese title: 如何免费把 Word、Excel、PPT、图片转成 PDF？排版错乱怎么办
+- Summary: Convert Word, Excel, PowerPoint, images and Markdown to PDF locally in your browser: what each format supports, what gets lost, and how to debug fonts and page breaks.
+- Published: 2026-07-02; updated: 2026-10-14
+
+### Process Images Without Uploading Them: How Browser-Local Tools Work, How to Verify Them, and Their Limits
+- English: https://toolgarden.xyz/en/blog/image-processing-without-upload
+- Chinese: https://toolgarden.xyz/zh/blog/image-processing-without-upload
+- Chinese title: 图片处理不想上传怎么办？浏览器本地处理的原理、验证与限制
+- Summary: How compressing, resizing, converting and even AI background removal can run on your device without uploading, how to check that yourself, and where memory and models set limits.
+- Published: 2026-07-20; updated: 2026-10-14
+
+### How to Resize an Image Without Uploading It: Pixel Math, Aspect Ratio and Avoiding Blur
+- English: https://toolgarden.xyz/en/blog/resize-images-locally-no-upload
+- Chinese: https://toolgarden.xyz/zh/blog/resize-images-locally-no-upload
+- Chinese title: 如何不上传调整图片尺寸？按像素缩放、保持比例、避免模糊的完整做法
+- Summary: Resize images to exact pixel sizes locally in your browser: how to work out target dimensions, how resizing differs from cropping, how scaling algorithms behave, and why enlarging looks soft.
+- Published: 2026-07-20; updated: 2026-10-14
+
+### How to Convert Images to WebP: Quality Settings and Pitfalls for JPG, PNG and GIF
+- English: https://toolgarden.xyz/en/blog/convert-images-to-webp
+- Chinese: https://toolgarden.xyz/zh/blog/convert-images-to-webp
+- Chinese title: 如何把图片转换成 WebP？JPG、PNG、GIF 转 WebP 的质量设置与避坑指南
+- Summary: Convert JPG, PNG, GIF and SVG to WebP locally in your browser: how to choose quality, what happens to transparency and animation, why files sometimes grow, and a safe fallback pattern for web pages.
+- Published: 2026-07-01; updated: 2026-10-14
+
+### How to Choose JSON Tools: Format, Repair, Validate, Diff in One Workflow
+- English: https://toolgarden.xyz/en/blog/json-tools-master-guide
+- Chinese: https://toolgarden.xyz/zh/blog/json-tools-master-guide
+- Chinese title: JSON 工具怎么选？格式化、修复、校验、对比的完整流程
+- Summary: What should you do first with a JSON payload you did not write? Walk one order sample through formatting, repair, schema checks, JSONPath, diffing and conversion, with the limits of each step.
+- Published: 2026-07-20; updated: 2026-10-14
+
+### JSON Unexpected Token Error: How to Diagnose and Fix Common Syntax Errors
+- English: https://toolgarden.xyz/en/blog/common-json-errors-and-fixes
+- Chinese: https://toolgarden.xyz/zh/blog/common-json-errors-and-fixes
+- Chinese title: JSON 报错 Unexpected token 怎么办？常见语法错误逐个排查
+- Summary: Trailing commas, single quotes, missing commas, truncated data, getting HTML instead of JSON. Locate the error in a fixed order and learn which problems can be auto-repaired and which need the data source.
+- Published: 2026-07-20; updated: 2026-10-14
+
+### JSON vs JSONC vs JSON5: Differences and How to Choose for Config Files
+- English: https://toolgarden.xyz/en/blog/json-json5-jsonc-differences
+- Chinese: https://toolgarden.xyz/zh/blog/json-json5-jsonc-differences
+- Chinese title: JSON、JSONC、JSON5 有什么区别？配置文件该怎么选
+- Summary: Compare JSON, JSONC and JSON5 item by item, from comments, trailing commas and quotes to number syntax and parser compatibility, then learn how to pick one for config files and convert to standard JSON.
+- Published: 2026-07-02; updated: 2026-10-14
+
+### How to Edit and Redact Sensitive JSON Without Uploading It to a Server
+- English: https://toolgarden.xyz/en/blog/edit-json-without-uploading-to-server
+- Chinese: https://toolgarden.xyz/zh/blog/edit-json-without-uploading-to-server
+- Chinese title: 敏感 JSON 怎么在不上传服务器的情况下编辑和脱敏
+- Summary: API samples contain tokens, emails and phone numbers, yet you still want to format, delete fields and diff before sharing. Redact, inspect and validate with a browser-local tool, and verify for yourself that nothing leaves the page.
+- Published: 2026-07-20; updated: 2026-10-14
+
+### What Is a JWT? How to Safely Inspect Header and Payload and Verify the Signature
+- English: https://toolgarden.xyz/en/blog/what-is-jwt-header-payload
+- Chinese: https://toolgarden.xyz/zh/blog/what-is-jwt-header-payload
+- Chinese title: JWT 是什么？怎么安全查看 Header、Payload 并验证签名
+- Summary: Take apart a real token segment by segment: Base64URL-decode the Header and Payload, tell whether exp has passed, verify an HS256 signature, and learn what must never go inside and which attacks to defend against.
+- Published: 2026-07-02; updated: 2026-10-14
+
+### QR Code Won’t Scan or Subtitles Won’t Load? A Hands-On Guide to QR Payloads and SRT/VTT/LRC Conversion
+- English: https://toolgarden.xyz/en/blog/qr-code-subtitle-tools-guide
+- Chinese: https://toolgarden.xyz/zh/blog/qr-code-subtitle-tools-guide
+- Chinese title: 二维码扫不出来、字幕格式不兼容怎么办？生成、识别与 SRT/VTT/LRC 转换实战
+- Summary: From Wi-Fi QR escaping, error correction and quiet zones to the timestamp differences between SRT, VTT and LRC, here is how to debug “it will not scan” and “the player rejects it” with browser-local tools.
+- Published: 2026-07-20; updated: 2026-10-14
+
+### Do Online Tools Secretly Upload My Files? How Browser-Local Processing Works and How to Check It
+- English: https://toolgarden.xyz/en/blog/complete-guide-browser-local-data-processing
+- Chinese: https://toolgarden.xyz/zh/blog/complete-guide-browser-local-data-processing
+- Chinese title: 在线工具会不会偷偷上传我的文件？浏览器本地处理的原理与自查方法
+- Summary: “No upload” is not a slogan; it is a data path you can verify with developer tools. This guide explains how browser-local processing works, how to audit it with the Network panel, which requests are normal, and where the real limits are.
+- Published: 2026-07-20; updated: 2026-10-14
+
+### Why Does Image Watermark Removal Leave Blur or Ghosts? How Local AI Inpainting Works, and Its Limits
+- English: https://toolgarden.xyz/en/blog/remove-image-watermark-local-ai-inpainting
+- Chinese: https://toolgarden.xyz/zh/blog/remove-image-watermark-local-ai-inpainting
+- Chinese title: 图片水印去不干净怎么办？浏览器本地 AI 补全的原理、选区技巧与局限
+- Summary: Removing a watermark is not erasing it; a model repaints the area from the surrounding pixels. This guide uses concrete numbers to show how selection size drives the result, how to pick among the three modes, and which watermarks you should not hand to AI inpainting at all.
+- Published: 2026-07-02; updated: 2026-10-14
+
+### Watermark Too Faint or Too Intrusive? Choosing Text, Logo, Tiled and Diagonal Settings That Work
+- English: https://toolgarden.xyz/en/blog/add-watermark-to-image-text-tile-diagonal
+- Chinese: https://toolgarden.xyz/zh/blog/add-watermark-to-image-text-tile-diagonal
+- Chinese title: 图片加水印太淡看不见、太显眼毁图怎么办？文字、Logo、平铺与对角线的参数选择
+- Summary: From why font size is measured in image pixels, to how nine-grid anchors can push a stamp off the picture, to the tiling spacing formula and the diagonal layout: concrete numbers for watermarks that are visible without ruining the image, plus a comparison of how hard each layout is to defeat.
+- Published: 2026-07-02; updated: 2026-10-14
+
+### PNG to JPG Turned the Transparent Background White? Why JPG to PNG Gets Bigger, Explained
+- English: https://toolgarden.xyz/en/blog/png-to-jpg-jpg-to-png-transparency
+- Chinese: https://toolgarden.xyz/zh/blog/png-to-jpg-jpg-to-png-transparency
+- Chinese title: PNG 转 JPG 透明背景变白了怎么办？JPG 转 PNG 为什么更大？格式转换的真相
+- Summary: Converting PNG to JPG replaces transparency with white and adds lossy compression, while JPG to PNG cannot improve quality yet makes the file much larger. Calculations and examples show what happens at each step, how to pick a quality setting, and how to troubleshoot.
+- Published: 2026-07-01; updated: 2026-10-14
 
 ### Why Does Base64 Increase File Size by About 33%?
 - English: https://toolgarden.xyz/en/blog/why-base64-increases-file-size-33-percent
@@ -443,13 +542,6 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - Chinese title: Base64、URL Encode 和普通文本编码有什么区别？
 - Summary: Compare Base64, percent-encoding, UTF-8, Unicode escapes, and HTML entities by data layer and purpose.
 - Published: 2026-09-20; updated: 2026-09-20
-
-### What Is a Blob URL? How URL.createObjectURL() Works
-- English: https://toolgarden.xyz/en/blog/blob-url-createobjecturl-explained
-- Chinese: https://toolgarden.xyz/zh/blog/blob-url-createobjecturl-explained
-- Chinese title: Blob URL 是什么？URL.createObjectURL() 工作原理
-- Summary: Learn how blob: URLs expose in-memory data to browser elements, differ from Base64 Data URLs, and require explicit lifetime management.
-- Published: 2026-09-20; updated: 2026-10-10
 
 ### How Does Browser Image Compression Work?
 - English: https://toolgarden.xyz/en/blog/browser-image-compression-canvas-blob
@@ -479,27 +571,6 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - Summary: Compare EXIF, XMP, IPTC and ICC, choose metadata stripping or re-encoding, and verify location, orientation and color in the exported photo.
 - Published: 2026-10-10; updated: 2026-10-10
 
-### How Do You Avoid Doubling Memory When Processing Large Files in a Browser?
-- English: https://toolgarden.xyz/en/blog/avoid-browser-large-file-memory-copies
-- Chinese: https://toolgarden.xyz/zh/blog/avoid-browser-large-file-memory-copies
-- Chinese title: 如何避免浏览器处理大文件时内存翻倍？
-- Summary: Control peak memory by reducing representations, using backpressure, transferring Worker buffers and limiting retained results.
-- Published: 2026-10-10; updated: 2026-10-10
-
-### Why Do Browsers Crash When Processing Large Files?
-- English: https://toolgarden.xyz/en/blog/why-browser-large-files-crash
-- Chinese: https://toolgarden.xyz/zh/blog/why-browser-large-files-crash
-- Chinese title: 为什么浏览器处理大文件容易崩溃？
-- Summary: Estimate decoded working sets for images, audio and archives, distinguish peaks from leaks and stalls, and diagnose failures step by step.
-- Published: 2026-10-10; updated: 2026-10-10
-
-### Why Must You Revoke URL.createObjectURL() URLs After Use?
-- English: https://toolgarden.xyz/en/blog/why-revoke-object-url
-- Chinese: https://toolgarden.xyz/zh/blog/why-revoke-object-url
-- Chinese title: 为什么 URL.createObjectURL() 用完需要 revoke？
-- Summary: Understand Blob URL ownership, garbage-collection boundaries and download races, and manage previews with an explicit cleanup function.
-- Published: 2026-10-10; updated: 2026-10-10
-
 ### What Is JSONL? Examples, Comparisons, and When to Use It
 - English: https://toolgarden.xyz/en/blog/what-is-jsonl-format
 - Chinese: https://toolgarden.xyz/zh/blog/what-is-jsonl-format
@@ -507,25 +578,11 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - Summary: JSONL stores one valid JSON value per line, making it a better fit than normal JSON for logs, AI training data, large imports and exports, and streaming pipelines.
 - Published: 2026-09-21; updated: 2026-09-21
 
-### Harness Engineering in Practice: How Claude Helped Transform My Next.js Project
-- English: https://toolgarden.xyz/en/blog/harness-engineering-with-claude
-- Chinese: https://toolgarden.xyz/zh/blog/harness-engineering-with-claude
-- Chinese title: Harness Engineering 实践：我让 Claude 对项目做了一次改造
-- Summary: A real AI-assisted refactoring journey from one JSON formatter to a multilingual toolbox with 80+ utilities, registry-driven discovery, automated SEO, and repeatable validation.
-- Published: 2026-08-04; updated: 2026-08-04
-
 ### How to Split a Song into Vocals, Drums, Bass, Guitar, Piano, and Instrumental Stems
 - English: https://toolgarden.xyz/en/blog/split-song-into-vocals-instrumental-stems-browser
 - Chinese: https://toolgarden.xyz/zh/blog/split-song-into-vocals-instrumental-stems-browser
 - Chinese title: 在线音频分轨怎么用？本地分离人声、伴奏、鼓、贝斯、吉他和钢琴
 - Summary: Learn how browser-local stem separation works, when to choose the four- or six-stem model, and how to export vocals, drums, bass, guitar, piano, and other parts as WAV files.
-- Published: 2026-07-30; updated: 2026-07-30
-
-### 5 Best Online Audio Stem Splitter Websites for Vocals and Instruments
-- English: https://toolgarden.xyz/en/blog/best-online-audio-stem-splitter-websites
-- Chinese: https://toolgarden.xyz/zh/blog/best-online-audio-stem-splitter-websites
-- Chinese title: 在线音频分轨网站推荐：5 款人声、伴奏与乐器分离工具对比
-- Summary: Compare ToolGarden, Moises, BandLab Splitter, VocalRemover.org, and LALAL.AI by free access, local or cloud processing, output stems, privacy, and workflow.
 - Published: 2026-07-30; updated: 2026-07-30
 
 ### Best Free Online MP3, Recording, and Video-to-Text Tools Compared
@@ -555,13 +612,6 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - Chinese title: 为什么音频分轨后还有杂音和串音？
 - Summary: Learn where vocal residue, instrument bleed, metallic artifacts, watery sound, dropouts, and missing bass come from, and how source quality, model choice, and cleanup can help.
 - Published: 2026-07-30; updated: 2026-07-30
-
-### 2026 SEO Optimization Guide: Technical SEO, Content, AEO, and GEO
-- English: https://toolgarden.xyz/en/blog/2026-seo-optimization-guide
-- Chinese: https://toolgarden.xyz/zh/blog/2026-seo-optimization-guide
-- Chinese title: 2026年SEO优化指南：技术SEO、内容、AEO与GEO实战
-- Summary: A practical guide based on ToolGarden’s production architecture, covering localized URLs, canonical and hreflang, structured data, topic clusters, performance, and what AI search does and does not change.
-- Published: 2026-07-23; updated: 2026-07-23
 
 ### How to Build Browser Audio Tools with FFmpeg.wasm
 - English: https://toolgarden.xyz/en/blog/build-browser-audio-tools-with-ffmpeg-wasm
@@ -633,130 +683,11 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - Summary: Build a browser-local MindElixir editor with a Markdown outline, lifecycle cleanup, selection synchronization, keyboard behavior, panning, fullscreen, and multi-format export.
 - Published: 2026-07-22; updated: 2026-07-22
 
-### The Complete Guide to Browser-Local Data Processing
-- English: https://toolgarden.xyz/en/blog/complete-guide-browser-local-data-processing
-- Chinese: https://toolgarden.xyz/zh/blog/complete-guide-browser-local-data-processing
-- Chinese title: 浏览器本地数据处理完整指南
-- Summary: Learn how browser-local tools process JSON, images, PDFs, and other files on your device, where the privacy benefits come from, and what limits still matter.
-- Published: 2026-07-20; updated: 2026-07-20
-
-### Why Browser-Local Processing Matters for Privacy
-- English: https://toolgarden.xyz/en/blog/why-browser-local-processing-matters-for-privacy
-- Chinese: https://toolgarden.xyz/zh/blog/why-browser-local-processing-matters-for-privacy
-- Chinese title: 为什么浏览器本地处理对隐私很重要
-- Summary: Local processing removes an avoidable data transfer from everyday tool workflows and makes privacy claims easier to inspect.
-- Published: 2026-07-20; updated: 2026-07-20
-
-### How to Edit Sensitive JSON Data Without Uploading to a Server
-- English: https://toolgarden.xyz/en/blog/edit-json-without-uploading-to-server
-- Chinese: https://toolgarden.xyz/zh/blog/edit-json-without-uploading-to-server
-- Chinese title: 如何在不上传服务器的情况下编辑敏感 JSON 数据
-- Summary: Use an offline JSON editor to format, validate, redact, and inspect sensitive API samples or configuration files without sending them to a backend.
-- Published: 2026-07-20; updated: 2026-07-20
-
 ### 5 Privacy Risks of Online File Converters (And How to Avoid Them)
 - English: https://toolgarden.xyz/en/blog/privacy-risks-online-file-converters
 - Chinese: https://toolgarden.xyz/zh/blog/privacy-risks-online-file-converters
 - Chinese title: 在线文件转换器的 5 个隐私风险，以及如何规避
 - Summary: Before uploading a document or image, understand where copies can be created and use a practical checklist to reduce each privacy risk.
-- Published: 2026-07-20; updated: 2026-07-20
-
-### GDPR Compliance: Why Client-Side Tools Win
-- English: https://toolgarden.xyz/en/blog/gdpr-compliance-client-side-tools
-- Chinese: https://toolgarden.xyz/zh/blog/gdpr-compliance-client-side-tools
-- Chinese title: GDPR 合规：为什么客户端工具更有优势
-- Summary: Client-side tools can support data minimization and privacy by design by avoiding unnecessary collection, but GDPR compliance still depends on the full processing context.
-- Published: 2026-07-20; updated: 2026-07-20
-
-### JSON Tools Master Guide
-- English: https://toolgarden.xyz/en/blog/json-tools-master-guide
-- Chinese: https://toolgarden.xyz/zh/blog/json-tools-master-guide
-- Chinese title: JSON 工具大师指南
-- Summary: A practical map of JSON formatting, validation, repair, conversion, schema, path queries, diffing, and safe browser-local workflows.
-- Published: 2026-07-20; updated: 2026-07-20
-
-### How to Format and Validate JSON in Your Browser
-- English: https://toolgarden.xyz/en/blog/format-and-validate-json-in-browser
-- Chinese: https://toolgarden.xyz/zh/blog/format-and-validate-json-in-browser
-- Chinese title: 如何在浏览器中格式化和验证 JSON
-- Summary: Format JSON for readability, identify syntax errors, and verify data contracts in a no-upload browser workflow.
-- Published: 2026-07-20; updated: 2026-07-20
-
-### Common JSON Errors and How to Fix Them
-- English: https://toolgarden.xyz/en/blog/common-json-errors-and-fixes
-- Chinese: https://toolgarden.xyz/zh/blog/common-json-errors-and-fixes
-- Chinese title: 常见 JSON 错误及修复方法
-- Summary: Diagnose trailing commas, quote problems, unexpected tokens, invalid escapes, truncated payloads, and schema failures in a repeatable order.
-- Published: 2026-07-20; updated: 2026-07-20
-
-### Image Processing Without Upload
-- English: https://toolgarden.xyz/en/blog/image-processing-without-upload
-- Chinese: https://toolgarden.xyz/zh/blog/image-processing-without-upload
-- Chinese title: 无需上传的图片处理完整指南
-- Summary: A complete guide to resizing, compressing, converting, cropping, and editing images locally in the browser, with practical privacy and quality checks.
-- Published: 2026-07-20; updated: 2026-07-20
-
-### How to Resize Images Locally (No Server Upload)
-- English: https://toolgarden.xyz/en/blog/resize-images-locally-no-upload
-- Chinese: https://toolgarden.xyz/zh/blog/resize-images-locally-no-upload
-- Chinese title: 如何在本地调整图片尺寸（无需上传）
-- Summary: Resize an image without upload by choosing dimensions, preserving aspect ratio, selecting a resampling mode, and checking the local export.
-- Published: 2026-07-20; updated: 2026-07-20
-
-### Batch Image Compression in the Browser
-- English: https://toolgarden.xyz/en/blog/batch-image-compression-browser
-- Chinese: https://toolgarden.xyz/zh/blog/batch-image-compression-browser
-- Chinese title: 在浏览器中批量压缩图片
-- Summary: Compress a folder of images with consistent local settings, previews, format decisions, and quality checks, even in a privacy-sensitive workflow.
-- Published: 2026-07-20; updated: 2026-07-20
-
-### PDF Tools Guide
-- English: https://toolgarden.xyz/en/blog/pdf-tools-guide
-- Chinese: https://toolgarden.xyz/zh/blog/pdf-tools-guide
-- Chinese title: PDF 工具完整指南
-- Summary: Choose the right browser-local workflow for merging, splitting, organizing, extracting, converting, encrypting, and watermarking PDF files.
-- Published: 2026-07-20; updated: 2026-07-20
-
-### Extract Text from PDF in Your Browser
-- English: https://toolgarden.xyz/en/blog/extract-text-from-pdf-in-browser
-- Chinese: https://toolgarden.xyz/zh/blog/extract-text-from-pdf-in-browser
-- Chinese title: 在浏览器中提取 PDF 文本
-- Summary: Use a local PDF text extractor, understand selectable text versus OCR, preserve privacy, and review reading order before reusing the output.
-- Published: 2026-07-20; updated: 2026-07-20
-
-### QR Code & Subtitle Tools Guide
-- English: https://toolgarden.xyz/en/blog/qr-code-subtitle-tools-guide
-- Chinese: https://toolgarden.xyz/zh/blog/qr-code-subtitle-tools-guide
-- Chinese title: 二维码与字幕工具指南
-- Summary: Create reliable QR codes and edit or convert timed subtitles locally, with practical guidance for payloads, scan quality, timing, formats, and privacy.
-- Published: 2026-07-20; updated: 2026-08-03
-
-### SRT to VTT Converter: Browser-Based Workflow
-- English: https://toolgarden.xyz/en/blog/srt-to-vtt-browser-workflow
-- Chinese: https://toolgarden.xyz/zh/blog/srt-to-vtt-browser-workflow
-- Chinese title: SRT 转 VTT：浏览器本地转换流程
-- Summary: Convert SRT to WebVTT locally by parsing cues, changing timestamp syntax, adding the WEBVTT header, and checking web-player compatibility.
-- Published: 2026-07-20; updated: 2026-07-20
-
-### The Developer's Guide to Client-Side Image Processing
-- English: https://toolgarden.xyz/en/blog/developer-client-side-image-processing
-- Chinese: https://toolgarden.xyz/zh/blog/developer-client-side-image-processing
-- Chinese title: 开发者客户端图片处理指南
-- Summary: A practical architecture guide to decoding, resizing, compressing, and exporting images in the browser with Canvas, workers, and modern codecs.
-- Published: 2026-07-20; updated: 2026-07-20
-
-### ToolGarden vs Online Converters: Why Local Processing Matters
-- English: https://toolgarden.xyz/en/blog/toolgarden-vs-online-converters
-- Chinese: https://toolgarden.xyz/zh/blog/toolgarden-vs-online-converters
-- Chinese title: ToolGarden 与在线转换器对比：为什么本地处理很重要
-- Summary: Compare a browser-local workflow with conventional upload-and-convert services using observable criteria instead of privacy slogans.
-- Published: 2026-07-20; updated: 2026-07-20
-
-### The Complete Privacy Toolkit for Developers in 2026
-- English: https://toolgarden.xyz/en/blog/developer-privacy-toolkit
-- Chinese: https://toolgarden.xyz/zh/blog/developer-privacy-toolkit
-- Chinese title: 2026 开发者隐私工具箱完整指南
-- Summary: A practical privacy-first toolkit for inspecting, transforming, and sharing developer data while minimizing unnecessary copies and uploads.
 - Published: 2026-07-20; updated: 2026-07-20
 
 ### Building QR Codes for WiFi: A Step-by-Step Guide
@@ -766,33 +697,12 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - Summary: Create reliable WiFi QR codes for WPA, open, and hidden networks, including correct payload syntax, escaping rules, security checks, and scan testing.
 - Published: 2026-07-20; updated: 2026-07-20
 
-### How We Built ToolGarden: Architecture of a Browser-Local Tool Suite
-- English: https://toolgarden.xyz/en/blog/how-i-built-browser-local-online-tool-site
-- Chinese: https://toolgarden.xyz/zh/blog/how-i-built-browser-local-online-tool-site
-- Chinese title: ToolGarden 是如何构建的：浏览器本地工具套件架构
-- Summary: See how ToolGarden uses a registry, static pages, pure utilities, Workers, Canvas, Web Crypto, and WASM to build a browser-local tool suite.
-- Published: 2026-07-07; updated: 2026-07-20
-
 ### How to Choose ID Photo Size and Background: 1-Inch, 2-Inch, China Passport, and U.S. Passport Guide
 - English: https://toolgarden.xyz/en/blog/make-id-photo-online-size-background-guide
 - Chinese: https://toolgarden.xyz/zh/blog/make-id-photo-online-size-background-guide
 - Chinese title: 证件照尺寸和底色怎么选？一寸、二寸、中国护照、美国护照在线制作指南
 - Summary: Before making a digital ID photo, confirm the use case, size, background color, head position, and whether digital edits are allowed.
 - Published: 2026-07-06; updated: 2026-07-06
-
-### How Does Online Image Watermark Removal Work with Local AI Inpainting?
-- English: https://toolgarden.xyz/en/blog/remove-image-watermark-local-ai-inpainting
-- Chinese: https://toolgarden.xyz/zh/blog/remove-image-watermark-local-ai-inpainting
-- Chinese title: 如何在线去除图片水印？浏览器本地 AI 补全原理
-- Summary: Removing a watermark is usually image inpainting: select the watermark area, then reconstruct the background from surrounding pixels locally in the browser.
-- Published: 2026-07-02; updated: 2026-08-03
-
-### How to Add Text, Image, Tiled, and Diagonal Watermarks to Images
-- English: https://toolgarden.xyz/en/blog/add-watermark-to-image-text-tile-diagonal
-- Chinese: https://toolgarden.xyz/zh/blog/add-watermark-to-image-text-tile-diagonal
-- Chinese title: 如何给图片加水印：文字/图片、九宫格、平铺、对角线
-- Summary: Image watermarks can be text or logos. Position, opacity, rotation, and tiling decide whether the mark is useful without distracting from the image.
-- Published: 2026-07-02; updated: 2026-08-03
 
 ### How One-Click Background Removal Works with a Browser-Local Model
 - English: https://toolgarden.xyz/en/blog/remove-image-background-browser-local-model
@@ -808,13 +718,6 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - Summary: Base64 turns binary data into text for Data URLs, APIs, and embedded configuration. It is encoding, not encryption.
 - Published: 2026-07-02; updated: 2026-10-10
 
-### LRC vs SRT Subtitle Formats and How to Edit Them Online
-- English: https://toolgarden.xyz/en/blog/lrc-vs-srt-subtitle-format-edit-online
-- Chinese: https://toolgarden.xyz/zh/blog/lrc-vs-srt-subtitle-format-edit-online
-- Chinese title: LRC vs SRT 字幕格式区别，如何在线编辑
-- Summary: LRC is often used for synced lyrics, while SRT is common for video subtitles. Their timing structure and editing needs are different.
-- Published: 2026-07-02; updated: 2026-07-03
-
 ### How to Convert Excel Data to JSON Online
 - English: https://toolgarden.xyz/en/blog/convert-excel-data-to-json-online
 - Chinese: https://toolgarden.xyz/zh/blog/convert-excel-data-to-json-online
@@ -828,41 +731,6 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - Chinese title: 文本对比工具原理：diff 算法怎么找出增删改
 - Summary: Diff algorithms look for shared subsequences between two texts, then mark the remaining parts as additions, deletions, or changes.
 - Published: 2026-07-02; updated: 2026-08-03
-
-### JSON vs JSONC vs JSON5: A Complete Guide
-- English: https://toolgarden.xyz/en/blog/json-json5-jsonc-differences
-- Chinese: https://toolgarden.xyz/zh/blog/json-json5-jsonc-differences
-- Chinese title: JSON vs JSONC vs JSON5：完整对比指南
-- Summary: JSON is strict data interchange, JSONC adds comments mainly for config files, and JSON5 allows more JavaScript-like syntax.
-- Published: 2026-07-02; updated: 2026-07-20
-
-### How to Convert Word, Excel, PowerPoint, and Images to PDF for Free
-- English: https://toolgarden.xyz/en/blog/convert-word-excel-ppt-image-to-pdf-free
-- Chinese: https://toolgarden.xyz/zh/blog/convert-word-excel-ppt-image-to-pdf-free
-- Chinese title: 如何免费把 Word / Excel / PPT / 图片 转成 PDF
-- Summary: PDF is useful for archiving, submissions, and cross-device viewing. Browser-local conversion is convenient for common document and image formats.
-- Published: 2026-07-02; updated: 2026-07-03
-
-### How to Merge PDFs Without Uploading Files: A Privacy-First Approach
-- English: https://toolgarden.xyz/en/blog/merge-multiple-pdf-files-keep-order-bookmarks
-- Chinese: https://toolgarden.xyz/zh/blog/merge-multiple-pdf-files-keep-order-bookmarks
-- Chinese title: 如何在不上传文件的情况下合并 PDF：隐私优先方法
-- Summary: Merge multiple PDFs locally in your browser without uploading source files, then verify page order, bookmarks, forms, signatures, and output.
-- Published: 2026-07-02; updated: 2026-07-20
-
-### How to Split a PDF by Pages, Ranges, or File Size
-- English: https://toolgarden.xyz/en/blog/split-pdf-by-pages-ranges-size
-- Chinese: https://toolgarden.xyz/zh/blog/split-pdf-by-pages-ranges-size
-- Chinese title: 如何拆分 PDF：按页数、按范围、按大小
-- Summary: PDF splitting can export every page, split selected page ranges, or create smaller parts to satisfy upload size limits.
-- Published: 2026-07-02; updated: 2026-07-03
-
-### How to Extract Selected Pages from a PDF
-- English: https://toolgarden.xyz/en/blog/extract-selected-pages-from-pdf
-- Chinese: https://toolgarden.xyz/zh/blog/extract-selected-pages-from-pdf
-- Chinese title: 如何从 PDF 中提取指定页面
-- Summary: Extracting selected PDF pages is useful when you only need a few contract pages, attachments, scans, or a section of a larger document.
-- Published: 2026-07-02; updated: 2026-07-03
 
 ### Chinese vs English Text Counting: Characters, Words, and Bytes
 - English: https://toolgarden.xyz/en/blog/chinese-english-word-count-character-byte
@@ -899,32 +767,11 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - Summary: JSON Schema is a rules document for JSON data. It can describe required fields, value types, arrays, string formats, and nested object structures.
 - Published: 2026-07-02; updated: 2026-08-03
 
-### What Is a JWT and How Do You Safely Inspect Header and Payload?
-- English: https://toolgarden.xyz/en/blog/what-is-jwt-header-payload
-- Chinese: https://toolgarden.xyz/zh/blog/what-is-jwt-header-payload
-- Chinese title: JWT 是什么？如何安全查看 Header 和 Payload
-- Summary: A JWT has three parts: Header, Payload, and Signature. Header and Payload are Base64URL encoded, not encrypted, so anyone with the token can decode them.
-- Published: 2026-07-02; updated: 2026-08-03
-
-### Why Can a QR Code Fail to Decode and How Can You Improve Scan Rate?
-- English: https://toolgarden.xyz/en/blog/why-qr-code-cannot-be-decoded
-- Chinese: https://toolgarden.xyz/zh/blog/why-qr-code-cannot-be-decoded
-- Chinese title: 二维码识别不出来是什么原因？如何提高识别率
-- Summary: QR codes fail to scan when the image is blurry, too small, cropped, low contrast, heavily compressed, too dense, or physically damaged.
-- Published: 2026-07-02; updated: 2026-08-03
-
 ### How to Convert JSON to a TypeScript Interface
 - English: https://toolgarden.xyz/en/blog/json-to-typescript-interface-guide
 - Chinese: https://toolgarden.xyz/zh/blog/json-to-typescript-interface-guide
 - Chinese title: 如何把 JSON 转成 TypeScript 接口（interface）
 - Summary: Hand-writing TypeScript types for an API response is slow and error-prone. Infer an interface from a real JSON sample and get usable types in seconds.
-- Published: 2026-07-27; updated: 2026-07-27
-
-### How to Password-Protect a PDF Without Uploading It
-- English: https://toolgarden.xyz/en/blog/password-protect-pdf-without-upload
-- Chinese: https://toolgarden.xyz/zh/blog/password-protect-pdf-without-upload
-- Chinese title: 如何给 PDF 加密码保护（不上传文件）
-- Summary: The PDFs that most need a password — contracts, IDs, financial statements — are the ones you should least upload to an unknown server. Encrypt and decrypt them locally so the file never leaves your computer.
 - Published: 2026-07-27; updated: 2026-07-27
 
 ### Why Do Images Look Blurry After Compression? How to Keep Them Sharp
@@ -969,25 +816,11 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - Summary: PNG, WebP, and AVIF each balance compression, transparency, visual quality, encoding cost, and compatibility differently, while JPG remains a practical fallback.
 - Published: 2026-07-01; updated: 2026-07-20
 
-### How to Convert Images to WebP: JPG, PNG, and GIF to WebP Guide
-- English: https://toolgarden.xyz/en/blog/convert-images-to-webp
-- Chinese: https://toolgarden.xyz/zh/blog/convert-images-to-webp
-- Chinese title: 如何把图片转换成 WebP？JPG、PNG、GIF 转 WebP 完整教程
-- Summary: WebP often keeps good visual quality at smaller file sizes, supports transparency, and works well for web images, thumbnails, and batch optimization.
-- Published: 2026-07-01; updated: 2026-07-03
-
 ### How to Convert Images to AVIF and When You Should Use AVIF
 - English: https://toolgarden.xyz/en/blog/convert-images-to-avif
 - Chinese: https://toolgarden.xyz/zh/blog/convert-images-to-avif
 - Chinese title: 如何把图片转换成 AVIF？什么时候应该使用 AVIF
 - Summary: AVIF can be smaller than JPG and WebP, but encoding is slower and compatibility should be checked. It is best for hero images, cover images, and highly compressed web assets.
-- Published: 2026-07-01; updated: 2026-07-03
-
-### What Happens When You Convert PNG to JPG or JPG to PNG?
-- English: https://toolgarden.xyz/en/blog/png-to-jpg-jpg-to-png-transparency
-- Chinese: https://toolgarden.xyz/zh/blog/png-to-jpg-jpg-to-png-transparency
-- Chinese title: PNG 转 JPG、JPG 转 PNG 会发生什么？透明背景和画质怎么处理
-- Summary: PNG and JPG differ in more than file extensions. PNG supports transparency and lossless compression, while JPG is better for photos but does not support alpha.
 - Published: 2026-07-01; updated: 2026-07-03
 
 ### How to Keep Images Clear After Upscaling
@@ -1008,13 +841,11 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 ## Available Tools
 
 - **Developer Blog** (`/blog`): Articles about JSON, JSONC, JSON5, frontend toolchains, browser-local processing, privacy-friendly workflows, and developer productivity.
-  - **How I Built a Fully Browser-Local Online Toolkit** (`/blog/how-i-built-browser-local-online-tool-site`): Explains why ToolGarden was built as a no-upload, browser-local tool site, covering static Next.js architecture, pure utility functions, Workers, Canvas, Web Crypto, WASM, local AI, and privacy tradeoffs.
   - **How to Choose ID Photo Size and Background** (`/blog/make-id-photo-online-size-background-guide`): Covers China 1-inch, China 2-inch, China passport/travel document, U.S. passport 2 x 2 inch, background colors, official source links, and when digital edits are not appropriate.
   - **How Does Online Image Watermark Removal Work with Local AI Inpainting?** (`/blog/remove-image-watermark-local-ai-inpainting`): Explains browser-local watermark removal, AI inpainting, selection masks, suitable watermark areas, and limitations.
   - **How to Add Text, Image, Tiled, and Diagonal Watermarks to Images** (`/blog/add-watermark-to-image-text-tile-diagonal`): Covers text and image watermarks, nine-grid placement, tiling, diagonal layout, opacity, rotation, and output format choices.
   - **How One-Click Background Removal Works with a Browser-Local Model** (`/blog/remove-image-background-browser-local-model`): Explains foreground segmentation, alpha masks, transparent PNG export, local model processing, and edge-quality limits.
   - **Base64 Encoding Explained and Common Pitfalls** (`/blog/base64-encoding-explained-common-pitfalls`): Explains Base64, Data URLs, raw Base64, URL-safe Base64, size overhead, copy errors, and why Base64 is not encryption.
-  - **LRC vs SRT Subtitle Formats and Online Editing** (`/blog/lrc-vs-srt-subtitle-format-edit-online`): Compares LRC and SRT timing structures, use cases, online editing, media preview, calibration, and export.
   - **How to Convert Excel Data to JSON Online** (`/blog/convert-excel-data-to-json-online`): Explains Excel-to-JSON conversion, headers, rows, empty cells, dates, first-sheet behavior, and data cleanup.
   - **How Text Diff Algorithms Find Additions, Deletions, and Changes** (`/blog/text-diff-algorithm-add-delete-change`): Explains line diff, word diff, sequence alignment, common subsequence ideas, and JSON structured comparison.
   - **What Is the Difference Between JSON, JSON5, and JSONC?** (`/blog/json-json5-jsonc-differences`): Compares strict JSON, JSONC comments, JSON5 JavaScript-like syntax, and when to convert back to standard JSON.
@@ -1028,7 +859,6 @@ ToolGarden provides practical browser-based utilities for developer data, docume
   - **What Is JSON Schema and How Do You Validate API Data?** (`/blog/what-is-json-schema-api-validation`): Introduces JSON Schema, required fields, properties, items, format hints, and API validation workflows.
   - **What Is a JWT and How Do You Safely Inspect Header and Payload?** (`/blog/what-is-jwt-header-payload`): Explains JWT Header, Payload, Signature, Base64URL decoding, HS256 verification, and safe token inspection.
   - **How to Generate QR Codes for URLs, Wi-Fi, and Contact Cards** (`/blog/how-to-generate-qr-code-url-wifi-contact`): Explains URL QR codes, Wi-Fi QR payloads, vCard contact payloads, output size, quiet zone, and contrast.
-  - **Why Can a QR Code Fail to Decode?** (`/blog/why-qr-code-cannot-be-decoded`): Explains QR decode failures caused by blur, low resolution, missing quiet zone, weak contrast, compression, and overly dense payloads.
   - **How to Use a Text Diff Tool** (`/blog/how-to-use-text-diff-tool`): Explains line-level and word-level text comparison for configs, copy, logs, translations, and generated output.
   - **Word Count, Character Count, and Byte Count** (`/blog/word-count-character-byte-difference`): Explains word count, character count, line count, paragraph count, and UTF-8 byte size for writing and technical limits.
   - **Why Do Images Look Blurry After Compression?** (`/blog/why-image-compression-looks-blurry`): Explains lossy compression, repeated exports, resizing, format choice, and how to keep JPG, PNG, and WebP images clear.
