@@ -148,16 +148,16 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - **Image to Icon / 图片转 Icon** (`/image/to-icon`): Free online tool to turn PNG, SVG, JPG, WebP, and other images into ICO, ICNS, or multi-size PNG ZIP icons with background removal, drag scaling, corner radius, and browser previews
   - English: https://toolgarden.xyz/en/image/to-icon
   - Chinese: https://toolgarden.xyz/zh/image/to-icon
-- **Image to JPG / 图片转 JPG** (`/image/to-jpg`): Free online tool to convert PNG, WebP, GIF, BMP, SVG, AVIF, and other images to JPG locally in your browser
+- **Image to JPG / 图片转 JPG** (`/image/to-jpg`): Free online tool to convert PNG, WebP, HEIC, HEIF, GIF, BMP, SVG, AVIF, and other images to JPG locally in your browser
   - English: https://toolgarden.xyz/en/image/to-jpg
   - Chinese: https://toolgarden.xyz/zh/image/to-jpg
-- **Image to PNG / 图片转 PNG** (`/image/to-png`): Free online tool to convert JPG, WebP, GIF, BMP, SVG, AVIF, and other images to PNG locally in your browser
+- **Image to PNG / 图片转 PNG** (`/image/to-png`): Free online tool to convert JPG, WebP, HEIC, HEIF, GIF, BMP, SVG, AVIF, and other images to PNG locally in your browser
   - English: https://toolgarden.xyz/en/image/to-png
   - Chinese: https://toolgarden.xyz/zh/image/to-png
-- **Image to WebP / 图片转 WebP** (`/image/to-webp`): Free online tool to convert JPG, PNG, GIF, BMP, SVG, AVIF, and other images to WebP locally in your browser
+- **Image to WebP / 图片转 WebP** (`/image/to-webp`): Free online tool to convert JPG, PNG, HEIC, HEIF, GIF, BMP, SVG, AVIF, and other images to WebP locally in your browser
   - English: https://toolgarden.xyz/en/image/to-webp
   - Chinese: https://toolgarden.xyz/zh/image/to-webp
-- **Image to AVIF / 图片转 AVIF** (`/image/to-avif`): Free online tool to convert JPG, PNG, WebP, GIF, BMP, SVG, and other images to AVIF locally in your browser
+- **Image to AVIF / 图片转 AVIF** (`/image/to-avif`): Free online tool to convert JPG, PNG, WebP, HEIC, HEIF, GIF, BMP, SVG, and other images to AVIF locally in your browser
   - English: https://toolgarden.xyz/en/image/to-avif
   - Chinese: https://toolgarden.xyz/zh/image/to-avif
 - **Image to Base64 / 图片转 Base64** (`/image/to-base64`): Free online tool to convert PNG, JPG, WebP, GIF, BMP, SVG, AVIF, and other images to Base64 Data URLs locally in your browser, with choose, drag, and Ctrl + V paste support

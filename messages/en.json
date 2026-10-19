@@ -347,6 +347,7 @@
     }
   },
   "image_converter": {
+    "heic_note": "HEIC/HEIF is decoded locally; only the first image is converted and original EXIF metadata is not retained.",
     "settings_title": "Image conversion",
     "results_title": "Converted images",
     "drop_title": "Click or drag images here",
@@ -2589,7 +2590,7 @@
         },
         {
           "question": "Which images can be converted to JPG?",
-          "answer": "JPG, PNG, WebP, GIF, BMP, SVG, AVIF, and other common browser-decodable image formats are supported."
+          "answer": "JPG, PNG, WebP, HEIC, HEIF, GIF, BMP, SVG, AVIF, and other common browser-decodable image formats are supported."
         },
         {
           "question": "Does converting to JPG reduce image quality?",
@@ -2609,7 +2610,7 @@
         },
         {
           "question": "Which images can be converted to PNG?",
-          "answer": "JPG, PNG, WebP, GIF, BMP, SVG, AVIF, and other common browser-decodable image formats are supported."
+          "answer": "JPG, PNG, WebP, HEIC, HEIF, GIF, BMP, SVG, AVIF, and other common browser-decodable image formats are supported."
         },
         {
           "question": "Why can PNG files be larger than JPG files?",
@@ -2629,7 +2630,7 @@
         },
         {
           "question": "Which images can be converted to WebP?",
-          "answer": "JPG, PNG, WebP, GIF, BMP, SVG, AVIF, and other common browser-decodable image formats are supported."
+          "answer": "JPG, PNG, WebP, HEIC, HEIF, GIF, BMP, SVG, AVIF, and other common browser-decodable image formats are supported."
         },
         {
           "question": "Does converting to WebP reduce image quality?",
@@ -2649,7 +2650,7 @@
         },
         {
           "question": "Which images can be converted to AVIF?",
-          "answer": "JPG, PNG, WebP, GIF, BMP, SVG, AVIF, and other common browser-decodable image formats are supported."
+          "answer": "JPG, PNG, WebP, HEIC, HEIF, GIF, BMP, SVG, AVIF, and other common browser-decodable image formats are supported."
         },
         {
           "question": "Does AVIF conversion have browser limits?",
@@ -4418,7 +4419,7 @@
     },
     "image-to-jpg": {
       "name": "Image to JPG",
-      "description": "Free online tool to convert PNG, WebP, GIF, BMP, SVG, AVIF, and other images to JPG locally in your browser"
+      "description": "Free online tool to convert PNG, WebP, HEIC, HEIF, GIF, BMP, SVG, AVIF, and other images to JPG locally in your browser"
     },
     "image-compress": {
       "name": "Image Compressor",
@@ -4569,15 +4570,15 @@
     },
     "image-to-png": {
       "name": "Image to PNG",
-      "description": "Free online tool to convert JPG, WebP, GIF, BMP, SVG, AVIF, and other images to PNG locally in your browser"
+      "description": "Free online tool to convert JPG, WebP, HEIC, HEIF, GIF, BMP, SVG, AVIF, and other images to PNG locally in your browser"
     },
     "image-to-webp": {
       "name": "Image to WebP",
-      "description": "Free online tool to convert JPG, PNG, GIF, BMP, SVG, AVIF, and other images to WebP locally in your browser"
+      "description": "Free online tool to convert JPG, PNG, HEIC, HEIF, GIF, BMP, SVG, AVIF, and other images to WebP locally in your browser"
     },
     "image-to-avif": {
       "name": "Image to AVIF",
-      "description": "Free online tool to convert JPG, PNG, WebP, GIF, BMP, SVG, and other images to AVIF locally in your browser"
+      "description": "Free online tool to convert JPG, PNG, WebP, HEIC, HEIF, GIF, BMP, SVG, and other images to AVIF locally in your browser"
     },
     "image-to-base64": {
       "name": "Image to Base64",

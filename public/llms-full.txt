@@ -471,8 +471,8 @@ Canonical examples:
 - Category: Convert / 转换
 - Icon label: `JPG`
 - Featured: no
-- English description: Free online tool to convert PNG, WebP, GIF, BMP, SVG, AVIF, and other images to JPG locally in your browser
-- Chinese description: 将 PNG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 JPG，浏览器本地处理，图片不会上传到服务器。
+- English description: Free online tool to convert PNG, WebP, HEIC, HEIF, GIF, BMP, SVG, AVIF, and other images to JPG locally in your browser
+- Chinese description: 将 PNG、WebP、HEIC、HEIF、GIF、BMP、SVG、AVIF 等图片转换为 JPG，浏览器本地处理，图片不会上传到服务器。
 - English URL: https://toolgarden.xyz/en/image/to-jpg
 - Chinese URL: https://toolgarden.xyz/zh/image/to-jpg
 
@@ -481,8 +481,8 @@ Canonical examples:
 - Category: Convert / 转换
 - Icon label: `PNG`
 - Featured: no
-- English description: Free online tool to convert JPG, WebP, GIF, BMP, SVG, AVIF, and other images to PNG locally in your browser
-- Chinese description: 将 JPG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 PNG，保留透明通道，浏览器本地处理，无需上传。
+- English description: Free online tool to convert JPG, WebP, HEIC, HEIF, GIF, BMP, SVG, AVIF, and other images to PNG locally in your browser
+- Chinese description: 将 JPG、WebP、HEIC、HEIF、GIF、BMP、SVG、AVIF 等图片转换为 PNG，保留透明通道，浏览器本地处理，无需上传。
 - English URL: https://toolgarden.xyz/en/image/to-png
 - Chinese URL: https://toolgarden.xyz/zh/image/to-png
 
@@ -491,8 +491,8 @@ Canonical examples:
 - Category: Convert / 转换
 - Icon label: `WEB`
 - Featured: no
-- English description: Free online tool to convert JPG, PNG, GIF, BMP, SVG, AVIF, and other images to WebP locally in your browser
-- Chinese description: 将 JPG、PNG、GIF、BMP、SVG、AVIF 等图片转换为 WebP，可选有损或无损模式，浏览器本地处理。
+- English description: Free online tool to convert JPG, PNG, HEIC, HEIF, GIF, BMP, SVG, AVIF, and other images to WebP locally in your browser
+- Chinese description: 将 JPG、PNG、HEIC、HEIF、GIF、BMP、SVG、AVIF 等图片转换为 WebP，可选有损或无损模式，浏览器本地处理。
 - English URL: https://toolgarden.xyz/en/image/to-webp
 - Chinese URL: https://toolgarden.xyz/zh/image/to-webp
 
@@ -501,8 +501,8 @@ Canonical examples:
 - Category: Convert / 转换
 - Icon label: `AVF`
 - Featured: no
-- English description: Free online tool to convert JPG, PNG, WebP, GIF, BMP, SVG, and other images to AVIF locally in your browser
-- Chinese description: 将 JPG、PNG、WebP、GIF、BMP、SVG 等图片转换为 AVIF，体积更小、支持透明通道，浏览器本地处理。
+- English description: Free online tool to convert JPG, PNG, WebP, HEIC, HEIF, GIF, BMP, SVG, and other images to AVIF locally in your browser
+- Chinese description: 将 JPG、PNG、WebP、HEIC、HEIF、GIF、BMP、SVG 等图片转换为 AVIF，体积更小、支持透明通道，浏览器本地处理。
 - English URL: https://toolgarden.xyz/en/image/to-avif
 - Chinese URL: https://toolgarden.xyz/zh/image/to-avif
 

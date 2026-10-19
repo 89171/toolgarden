@@ -11,6 +11,7 @@ import { useClipboardFiles } from '@/lib/hooks/useClipboardFiles';
 import { convertImageFile } from '@/lib/utils/image-browser';
 import {
   formatFileSize,
+  isHeicImageInput,
   getImageAcceptValue,
   getImageTargetConfig,
   getSupportedImageInputLabel,
@@ -72,11 +73,11 @@ export function ImageTargetConverter({ toolId, targetFormat, content }: ImageTar
   const [quality, setQuality] = useState(target.defaultQuality);
   const [dragging, setDragging] = useState(false);
   const [preview, setPreview] = useState<{ itemId: string; kind: PreviewKind } | null>(null);
-  const accept = getImageAcceptValue();
+  const accept = getImageAcceptValue(true);
   const hasFiles = items.length > 0;
   const hasDownloads = items.some((item) => item.status === 'done' && item.outputUrl);
   const doneCount = items.filter((item) => item.status === 'done').length;
-  const inputFormatLabels = getSupportedImageInputLabel().split(' / ');
+  const inputFormatLabels = getSupportedImageInputLabel(true).split(' / ');
 
   useEffect(() => {
     itemsRef.current = items;
@@ -142,10 +143,17 @@ export function ImageTargetConverter({ toolId, targetFormat, content }: ImageTar
       });
 
       if (result.ok) {
+        if (!itemsRef.current.some((current) => current.id === item.id)) continue;
         const outputUrl = URL.createObjectURL(result.blob);
+        const sourceUrl = result.sourcePreviewBlob ? URL.createObjectURL(result.sourcePreviewBlob) : undefined;
+        if (sourceUrl) {
+          const current = itemsRef.current.find((entry) => entry.id === item.id);
+          if (current) URL.revokeObjectURL(current.sourceUrl);
+        }
         updateItem(item.id, (current) => ({
           ...current,
           status: 'done',
+          sourceUrl: sourceUrl ?? current.sourceUrl,
           outputBlob: result.blob,
           outputUrl,
           outputName: result.filename,
@@ -173,7 +181,7 @@ export function ImageTargetConverter({ toolId, targetFormat, content }: ImageTar
     const nextItems = selectedFiles.map((file, index) => ({
       id: createItemId(file, index),
       file,
-      sourceUrl: URL.createObjectURL(file),
+      sourceUrl: isHeicImageInput(file) ? '' : URL.createObjectURL(file),
       status: 'ready' as const,
     }));
 
@@ -183,7 +191,7 @@ export function ImageTargetConverter({ toolId, targetFormat, content }: ImageTar
   }, [convertItems]);
 
   useClipboardFiles(addFiles, {
-    accept: useCallback((file: File) => file.type.startsWith('image/'), []),
+    accept: useCallback((file: File) => file.type.startsWith('image/') || isHeicImageInput(file), []),
   });
 
   const reconvert = useCallback(() => {
@@ -349,7 +357,7 @@ export function ImageTargetConverter({ toolId, targetFormat, content }: ImageTar
                 <span className="text-base font-semibold text-content sm:text-lg">{ti('drop_title')}</span>
                 <span className="max-w-72 text-xs leading-relaxed text-content-muted sm:text-sm">
                   {ti('drop_hint', {
-                    formats: getSupportedImageInputLabel(),
+                    formats: getSupportedImageInputLabel(true),
                     target: target.label,
                   })}
                 </span>
@@ -401,7 +409,7 @@ export function ImageTargetConverter({ toolId, targetFormat, content }: ImageTar
             )}
 
             <p className="border-t border-border-subtle pt-3 text-xs leading-relaxed text-content-faint">
-              {ti('local_worker_note')}
+              {ti('local_worker_note')} · {ti('heic_note')}
             </p>
 
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -467,9 +475,10 @@ export function ImageTargetConverter({ toolId, targetFormat, content }: ImageTar
                             type="button"
                             aria-label={ti('preview_open_source')}
                             onClick={() => openPreview(item, 'source')}
+                            disabled={!item.sourceUrl}
                             className="group flex aspect-[4/3] w-full cursor-zoom-in appearance-none items-center justify-center overflow-hidden rounded border border-border-base bg-surface transition-colors hover:border-border-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
                           >
-                            <img src={item.sourceUrl} alt={item.file.name} className="h-full w-full object-contain" />
+                            {item.sourceUrl ? <img src={item.sourceUrl} alt={item.file.name} className="h-full w-full object-contain" /> : <span className="text-xs text-content-muted">{ti(item.status === 'error' ? 'errors.load_failed' : 'status_converting')}</span>}
                           </button>
                         </figure>
 

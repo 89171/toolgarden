@@ -46,6 +46,7 @@
     "fonteditor-core": "^2.6.3",
     "gif.js": "^0.2.0",
     "gifuct-js": "^2.1.2",
+    "heic-to": "^1.6.6",
     "html2canvas": "^1.4.1",
     "json5": "^2.2.3",
     "jsonpath-plus": "^10.3.0",

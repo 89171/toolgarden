@@ -1,3 +1,4 @@
+import { decodeHeicImage } from './image-heic-browser';
 import {
   AI_UPSCALE_MAX_SOURCE_PIXELS,
   AI_UPSCALE_SCALES,
@@ -16,6 +17,7 @@ import {
   getImageTargetConfig,
   inferImageMimeType,
   isSupportedImageInput,
+  isHeicImageInput,
   IMAGE_ENHANCE_MAX_SOURCE_PIXELS,
   MAX_IMAGE_FILE_SIZE,
   MAX_IMAGE_PIXELS,
@@ -3278,7 +3280,8 @@ async function compressSvgFilePreservingFormat(
 async function convertImageFileOnMainThread(
   file: File,
   targetFormat: ImageTargetFormat,
-  options: ConvertImageOptions = {}
+  options: ConvertImageOptions = {},
+  decodedSource?: File
 ): Promise<ImageConversionOutcome> {
   if (file.size === 0) return { ok: false, code: 'empty_file' };
 
@@ -3290,7 +3293,7 @@ async function convertImageFileOnMainThread(
     };
   }
 
-  if (!isSupportedImageInput(file)) {
+  if (!isSupportedImageInput(decodedSource ?? file)) {
     return {
       ok: false,
       code: 'unsupported_input',
@@ -3300,8 +3303,8 @@ async function convertImageFileOnMainThread(
 
   const startedAt = performance.now();
   const target = getImageTargetConfig(targetFormat);
-  const sourceType = inferImageMimeType(file);
-  const sourceFile = sourceType === file.type ? file : new File([file], file.name, { type: sourceType });
+  const sourceType = inferImageMimeType(decodedSource ?? file);
+  const sourceFile = decodedSource ?? (sourceType === file.type ? file : new File([file], file.name, { type: sourceType }));
 
   try {
     const image = await loadImage(sourceFile);
@@ -4183,6 +4186,19 @@ export async function convertImageFile(
       code: 'file_too_large',
       maxSize: formatFileSize(MAX_IMAGE_FILE_SIZE),
     };
+  }
+
+  if (isHeicImageInput(file)) {
+    const startedAt = performance.now();
+    const decoded = await decodeHeicImage(file);
+    if (!decoded.ok) return decoded;
+    const result = await convertImageFileOnMainThread(file, targetFormat, options, decoded.file);
+    return result.ok ? {
+      ...result,
+      originalSize: file.size,
+      durationMs: Math.round(performance.now() - startedAt),
+      sourcePreviewBlob: decoded.file,
+    } : result;
   }
 
   if (!isSupportedImageInput(file)) {

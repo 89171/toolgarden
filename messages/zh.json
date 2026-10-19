@@ -347,6 +347,7 @@
     }
   },
   "image_converter": {
+    "heic_note": "HEIC/HEIF 在本地解码后转换；多图文件仅转换第一张，不保留原始 EXIF 元数据。",
     "settings_title": "图片转换",
     "results_title": "转换结果",
     "drop_title": "点击或拖拽图片上传",
@@ -2589,7 +2590,7 @@
         },
         {
           "question": "哪些图片可以转换为 JPG？",
-          "answer": "支持 JPG、PNG、WebP、GIF、BMP、SVG、AVIF 等浏览器可解码的常见图片格式。"
+          "answer": "支持 JPG、PNG、WebP、HEIC、HEIF、GIF、BMP、SVG、AVIF 等浏览器可解码的常见图片格式。"
         },
         {
           "question": "转换为 JPG 会损失画质吗？",
@@ -2609,7 +2610,7 @@
         },
         {
           "question": "哪些图片可以转换为 PNG？",
-          "answer": "支持 JPG、PNG、WebP、GIF、BMP、SVG、AVIF 等浏览器可解码的常见图片格式。"
+          "answer": "支持 JPG、PNG、WebP、HEIC、HEIF、GIF、BMP、SVG、AVIF 等浏览器可解码的常见图片格式。"
         },
         {
           "question": "为什么 PNG 文件可能比 JPG 更大？",
@@ -2629,7 +2630,7 @@
         },
         {
           "question": "哪些图片可以转换为 WebP？",
-          "answer": "支持 JPG、PNG、WebP、GIF、BMP、SVG、AVIF 等浏览器可解码的常见图片格式。"
+          "answer": "支持 JPG、PNG、WebP、HEIC、HEIF、GIF、BMP、SVG、AVIF 等浏览器可解码的常见图片格式。"
         },
         {
           "question": "转换为 WebP 会损失画质吗？",
@@ -2649,7 +2650,7 @@
         },
         {
           "question": "哪些图片可以转换为 AVIF？",
-          "answer": "支持 JPG、PNG、WebP、GIF、BMP、SVG、AVIF 等浏览器可解码的常见图片格式。"
+          "answer": "支持 JPG、PNG、WebP、HEIC、HEIF、GIF、BMP、SVG、AVIF 等浏览器可解码的常见图片格式。"
         },
         {
           "question": "转换为 AVIF 有兼容性限制吗？",
@@ -4418,7 +4419,7 @@
     },
     "image-to-jpg": {
       "name": "图片转 JPG",
-      "description": "将 PNG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 JPG，浏览器本地处理，图片不会上传到服务器。"
+      "description": "将 PNG、WebP、HEIC、HEIF、GIF、BMP、SVG、AVIF 等图片转换为 JPG，浏览器本地处理，图片不会上传到服务器。"
     },
     "image-compress": {
       "name": "图片压缩",
@@ -4569,15 +4570,15 @@
     },
     "image-to-png": {
       "name": "图片转 PNG",
-      "description": "将 JPG、WebP、GIF、BMP、SVG、AVIF 等图片转换为 PNG，保留透明通道，浏览器本地处理，无需上传。"
+      "description": "将 JPG、WebP、HEIC、HEIF、GIF、BMP、SVG、AVIF 等图片转换为 PNG，保留透明通道，浏览器本地处理，无需上传。"
     },
     "image-to-webp": {
       "name": "图片转 WebP",
-      "description": "将 JPG、PNG、GIF、BMP、SVG、AVIF 等图片转换为 WebP，可选有损或无损模式，浏览器本地处理。"
+      "description": "将 JPG、PNG、HEIC、HEIF、GIF、BMP、SVG、AVIF 等图片转换为 WebP，可选有损或无损模式，浏览器本地处理。"
     },
     "image-to-avif": {
       "name": "图片转 AVIF",
-      "description": "将 JPG、PNG、WebP、GIF、BMP、SVG 等图片转换为 AVIF，体积更小、支持透明通道，浏览器本地处理。"
+      "description": "将 JPG、PNG、WebP、HEIC、HEIF、GIF、BMP、SVG 等图片转换为 AVIF，体积更小、支持透明通道，浏览器本地处理。"
     },
     "image-to-base64": {
       "name": "图片转 Base64",

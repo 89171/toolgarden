@@ -55,6 +55,7 @@ export interface ImageConversionSuccess {
   originalSize: number;
   outputSize: number;
   durationMs: number;
+  sourcePreviewBlob?: Blob;
 }
 
 export type ImageConversionOutcome = ImageConversionSuccess | ImageConversionError;
@@ -307,6 +308,17 @@ export const supportedImageInputs: ImageInputFormat[] = [
   { mimeType: 'image/avif', label: 'AVIF', extensions: ['avif'] },
 ];
 
+export const heicImageInputs: ImageInputFormat[] = [
+  { mimeType: 'image/heic', label: 'HEIC', extensions: ['heic'] },
+  { mimeType: 'image/heif', label: 'HEIF', extensions: ['heif'] },
+];
+
+export function isHeicImageInput(file: File): boolean {
+  return heicImageInputs.some((format) =>
+    format.mimeType === file.type.toLowerCase() || format.extensions.includes(getFileExtension(file.name))
+  );
+}
+
 const extensionToMime = new Map(
   supportedImageInputs.flatMap((format) =>
     format.extensions.map((extension) => [extension, format.mimeType] as const)
@@ -323,16 +335,18 @@ export function getBasicImageTargetConfig(format: BasicImageTargetFormat): Basic
   return imageTargetConfigs[format];
 }
 
-export function getImageAcceptValue(): string {
-  const extensions = supportedImageInputs.flatMap((format) =>
+export function getImageAcceptValue(includeHeic = false): string {
+  const inputs = includeHeic ? [...supportedImageInputs, ...heicImageInputs] : supportedImageInputs;
+  const extensions = inputs.flatMap((format) =>
     format.extensions.map((extension) => `.${extension}`)
   );
 
-  return [...supportedInputMimes, ...extensions].join(',');
+  return [...inputs.map((format) => format.mimeType), ...extensions].join(',');
 }
 
-export function getSupportedImageInputLabel(): string {
-  return supportedImageInputs.map((format) => format.label).join(' / ');
+export function getSupportedImageInputLabel(includeHeic = false): string {
+  const inputs = includeHeic ? [...supportedImageInputs, ...heicImageInputs] : supportedImageInputs;
+  return inputs.map((format) => format.label).join(' / ');
 }
 
 export function normalizeImageQuality(value: number): number {
