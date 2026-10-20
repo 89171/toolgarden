@@ -795,6 +795,14 @@ export const toolRegistry: ToolMeta[] = [
     category: 'encode',
   },
   {
+    id: 'font-preview',
+    name: '字体预览',
+    description: '上传 TTF、OTF、WOFF 或 WOFF2 字体，输入文字并实时预览排版效果',
+    path: '/other/font-preview',
+    icon: 'Aa',
+    category: 'format',
+  },
+  {
     id: 'font-subset',
     name: '字体提取',
     description: '从 TTF / WOFF 字体中提取指定字符，生成更小的 TTF 或 WOFF 子集字体',

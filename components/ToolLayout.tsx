@@ -42,6 +42,7 @@ const TOOL_IDS_WITH_FILE_INPUT = new Set([
   'zip-compress',
   'zip-extract',
   'font-subset',
+  'font-preview',
   'file-preview',
 ]);
 

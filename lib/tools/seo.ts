@@ -81,6 +81,7 @@ export function getLocaleMessages(locale: string) {
  */
 export function getClientMessages(locale: string) {
   const {
+    font_preview_content: _fontPreviewContent,
     site_pages: _sitePages,
     hub_content: _hubContent,
     home_content: _homeContent,
@@ -88,6 +89,7 @@ export function getClientMessages(locale: string) {
     organic_keywords: _organicKeywords,
     ...clientMessages
   } = getLocaleMessages(locale);
+  void _fontPreviewContent;
   void _sitePages;
   void _hubContent;
   void _homeContent;

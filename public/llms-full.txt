@@ -84,6 +84,16 @@ Canonical examples:
 - English URL: https://toolgarden.xyz/en/text/diff
 - Chinese URL: https://toolgarden.xyz/zh/text/diff
 
+#### Font Preview / 字体预览 (/other/font-preview)
+- ID: `font-preview`
+- Category: Format / 格式化
+- Icon label: `Aa`
+- Featured: no
+- English description: Upload a TTF, OTF, WOFF or WOFF2 font and preview your own text with adjustable size, line height and spacing, locally in your browser.
+- Chinese description: 上传 TTF、OTF、WOFF 或 WOFF2 字体，输入文字并实时预览，支持调节字号、行高和字距，浏览器本地处理。
+- English URL: https://toolgarden.xyz/en/other/font-preview
+- Chinese URL: https://toolgarden.xyz/zh/other/font-preview
+
 #### Whiteboard / 白板工具 (/other/whiteboard)
 - ID: `whiteboard`
 - Category: Format / 格式化

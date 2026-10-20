@@ -31,6 +31,9 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - **Text Diff / 文本对比** (`/text/diff`): Free online text diff using an open-source diff algorithm to highlight line and word changes
   - English: https://toolgarden.xyz/en/text/diff
   - Chinese: https://toolgarden.xyz/zh/text/diff
+- **Font Preview / 字体预览** (`/other/font-preview`): Upload a TTF, OTF, WOFF or WOFF2 font and preview your own text with adjustable size, line height and spacing, locally in your browser.
+  - English: https://toolgarden.xyz/en/other/font-preview
+  - Chinese: https://toolgarden.xyz/zh/other/font-preview
 - **Whiteboard / 白板工具** (`/other/whiteboard`): Create a full local whiteboard with tldraw, including shapes, drawing, notes, images, pages, and export
   - English: https://toolgarden.xyz/en/other/whiteboard
   - Chinese: https://toolgarden.xyz/zh/other/whiteboard

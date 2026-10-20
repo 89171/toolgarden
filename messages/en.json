@@ -1403,7 +1403,8 @@
     "excalidraw-board": "Excalidraw online, online drawing board, hand drawn diagram tool, browser sketch board, Excalidraw editor",
     "mind-map": "online mind map, mind map maker, mind mapping tool, Markdown mind map, browser mind map editor",
     "jwt": "JWT decoder,JWT parser,decode JWT token,JWT signature verifier,inspect JWT payload,HS256 validator,JWT decoder online,view JWT payload,HS256 signature verify,debug JWT online",
-    "audio-lyric-video": "lyric video maker, MV generator, MP3 to MP4, LRC lyric video, music video maker online, make lyric video"
+    "audio-lyric-video": "lyric video maker, MV generator, MP3 to MP4, LRC lyric video, music video maker online, make lyric video",
+    "font-preview": "font preview, online font viewer, TTF preview, OTF preview, WOFF preview"
   },
   "tool_faq": {
     "json-escape": {
@@ -5361,11 +5362,130 @@
       "err_unsupported": "This browser cannot record video. Use the latest Chrome, Edge or Safari.",
       "err_no_codec": "No video encoder is available in this browser.",
       "err_failed": "Export failed. Please try again."
+    },
+    "font-preview": {
+      "name": "Font Preview",
+      "description": "Upload a TTF, OTF, WOFF or WOFF2 font and preview your own text with adjustable size, line height and spacing, locally in your browser."
     }
   },
   "redirect_page": {
     "title": "This address has moved",
     "description": "Taking you to the matching tool page now. If nothing happens, use the link below.",
     "action": "Go to {target}"
+  },
+  "font_preview": {
+    "settings": "Font and text",
+    "clear": "Clear font",
+    "upload": "Upload font",
+    "formats": "TTF / OTF / WOFF / WOFF2, up to 30 MB",
+    "loading": "Loading font…",
+    "loaded": "Loaded: {name}",
+    "no_font": "No font loaded",
+    "text": "Preview text",
+    "placeholder": "Enter text to preview",
+    "reset_text": "Restore sample text",
+    "sample": "The quick brown fox jumps over the lazy dog.\nABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz\n0123456789 !? @#%&\n你好，世界！",
+    "size": "Font size: {value} px",
+    "line_height": "Line height: {value}",
+    "spacing": "Letter spacing: {value} px",
+    "privacy": "Fonts and text stay in this browser. Nothing is uploaded or installed on your system.",
+    "preview": "Live preview",
+    "fallback": "Missing characters may use a system fallback font. Visible text does not prove the uploaded font includes every character.",
+    "empty_preview": "Upload a font to preview your text here.",
+    "errors": {
+      "empty": "The font file is empty. Please choose another file.",
+      "format": "Choose a TTF, OTF, WOFF or WOFF2 font.",
+      "size": "The font file must be no larger than 30 MB.",
+      "load": "The font could not be loaded. It may be damaged or unsupported by this browser."
+    }
+  },
+  "font_preview_content": {
+    "overview": [
+      "Preview your own text in a local font without installing it. Once a font loads, the preview uses it to render headings, paragraphs and numbers so you can inspect their appearance.",
+      "Rendering uses your current browser’s font engine. Font size, line height and letter spacing are independent controls. Replacing the font keeps your text and settings for comparing the same passage."
+    ],
+    "steps": [
+      [
+        "Choose a font",
+        "Select one TTF, OTF, WOFF or WOFF2 file no larger than 30 MB and wait for it to load."
+      ],
+      [
+        "Enter your text",
+        "Replace the sample with the actual letters, numbers and punctuation you intend to use."
+      ],
+      [
+        "Adjust the layout",
+        "Move the size, line height and spacing sliders to inspect wrapping, density and readability."
+      ]
+    ],
+    "scenarios": [
+      [
+        "Check a brand heading",
+        "Use a product name or headline to examine letterforms and spacing."
+      ],
+      [
+        "Choose a body font",
+        "Paste several paragraphs to compare reading comfort at smaller sizes."
+      ],
+      [
+        "Inspect numbers and punctuation",
+        "Try dates, prices and identifiers to review the visual consistency of digits and symbols."
+      ]
+    ],
+    "notes": [
+      "Missing glyphs may fall back to a system font; this tool does not validate character coverage.",
+      "Loading a font does not install it on your operating system. Choose the file again after refreshing.",
+      "Rendering varies across browsers and operating systems and may differ from print or design software."
+    ],
+    "specs": [
+      [
+        "Input formats",
+        "One TTF, OTF, WOFF or WOFF2 font file"
+      ],
+      [
+        "File limit",
+        "30 MB; empty files are rejected"
+      ],
+      [
+        "Font size",
+        "12–144 px"
+      ],
+      [
+        "Line height",
+        "1–2.5 times the font size"
+      ],
+      [
+        "Letter spacing",
+        "-2–12 px"
+      ],
+      [
+        "Processing",
+        "Local browser FontFace API; no font upload"
+      ],
+      [
+        "Preview text",
+        "Preserves line breaks and wraps long text"
+      ]
+    ],
+    "reference": [
+      [
+        "Glyph",
+        "The visual shape a font provides for a character. Missing glyphs may trigger font fallback."
+      ],
+      [
+        "Line height",
+        "The layout height of a text line, expressed here as a multiple of the font size."
+      ]
+    ],
+    "faq": [
+      {
+        "question": "Do I need to install the font first?",
+        "answer": "No. The font is registered only in this page and released when you clear it or leave."
+      },
+      {
+        "question": "Can I change font weight or variable font axes?",
+        "answer": "The preview uses the font’s default style. It supports size, line height and spacing, but does not expose variable axes or separate weight controls."
+      }
+    ]
   }
 }

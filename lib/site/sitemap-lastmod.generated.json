@@ -1,5 +1,5 @@
 {
-  "": "2026-10-12",
+  "": "2026-10-20",
   "/about": "2026-07-30",
   "/audio": "2026-10-08",
   "/audio/bitrate": "2026-08-04",
@@ -73,8 +73,9 @@
   "/json-xml": "2026-08-04",
   "/json-yaml": "2026-08-04",
   "/jwt": "2026-08-04",
-  "/other": "2026-09-22",
+  "/other": "2026-10-20",
   "/other/excalidraw-board": "2026-08-04",
+  "/other/font-preview": "2026-10-20",
   "/other/font-subset": "2026-08-04",
   "/other/mind-map": "2026-08-04",
   "/other/quickdraw-whiteboard": "2026-08-28",
