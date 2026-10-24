@@ -11,6 +11,7 @@ import {
   getOtherTools,
   getPdfTools,
   getTextTools,
+  getVideoTools,
   toolRegistry,
 } from '../lib/tools/registry';
 
@@ -25,6 +26,7 @@ const hubTools = new Map<string, typeof toolRegistry>([
   ['/json-tools', getJsonTools()],
   ['/image', getImageTools()],
   ['/audio', getAudioTools()],
+  ['/video', getVideoTools()],
   ['/pdf', getPdfTools()],
   ['/file-merge', getFileMergeTools()],
   ['/text', getTextTools()],

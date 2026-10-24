@@ -1404,7 +1404,11 @@
     "mind-map": "在线思维导图,思维导图制作,脑图工具,Markdown思维导图,网页脑图编辑器",
     "jwt": "JWT解析,JWT解码,JWT Token解析,JWT签名验证,查看JWT Payload,HS256校验,JWT在线解析,JWT Token解码,HS256签名验证,JWT调试工具",
     "audio-lyric-video": "MV生成器,歌词视频制作,MP3转MP4,LRC歌词视频,在线制作MV,歌词视频生成",
-    "font-preview": "字体预览,在线字体查看,TTF预览,OTF预览,WOFF预览"
+    "font-preview": "字体预览,在线字体查看,TTF预览,OTF预览,WOFF预览",
+    "video-remove-watermark": "视频去水印,去除视频水印,视频水印消除,在线视频去水印,视频去logo,视频去水印免费",
+    "video-to-gif": "视频转GIF,视频生成GIF,在线视频转GIF,MP4转GIF,GIF制作,视频截取动图",
+    "video-compress": "视频压缩,视频压缩在线,免费视频压缩,压缩视频体积,MP4压缩,视频变小",
+    "video-trim": "视频截取,视频剪辑,在线截取视频,视频片段截取,剪切视频,视频切割"
   },
   "tool_faq": {
     "json-escape": {
@@ -2902,6 +2906,70 @@
           "answer": "按 30 帧/秒、约 8 Mbps 码率录制，可选 16:9、9:16、4:3、1:1 四种比例。"
         }
       ]
+    },
+    "video-remove-watermark": {
+      "items": [
+        {
+          "question": "视频去水印会上传文件吗？",
+          "answer": "不会。视频在浏览器本地解码、重建和编码，输出也在本地生成，文件不会上传到任何服务器。AI 模式首次会下载约 28MB 的 MI-GAN 模型资源，之后通常会被浏览器缓存。"
+        },
+        {
+          "question": "什么水印去不掉？",
+          "answer": "位置随时间移动或形状变化的水印无法用单一选区覆盖；滚动字幕请使用裁剪方式处理。另外水印压在人脸或持续变化的复杂纹理上时，重建结果只是模型的推测。"
+        },
+        {
+          "question": "导出是什么格式？画质有损失吗？",
+          "answer": "输出为 H.264 MP4，会尽量回填原音轨。画面需要重编码，会有轻微二次压缩，与原视频码率和内容复杂度有关。默认 AI 补全使用轻量的 MI-GAN（约 28MB）；LaMa 高清档（约 198MB）适合大水印精修，速度明显更慢。"
+        }
+      ]
+    },
+    "video-to-gif": {
+      "items": [
+        {
+          "question": "为什么输出的 GIF 比原视频片段还大？",
+          "answer": "GIF 对照片级内容的压缩效率远低于现代视频编码，大面积运动画面经常出现 GIF 更大的情况。降低帧率、缩小宽度、缩短片段都能显著减小体积。"
+        },
+        {
+          "question": "转换后画面有色带或闪烁怎么办？",
+          "answer": "色带来自 GIF 的 256 色限制；闪烁多与帧率过高有关，可尝试降到 8fps。文字、界面录屏这类色彩少的内容效果最好。"
+        },
+        {
+          "question": "可以转整个视频吗？",
+          "answer": "受 900 帧上限保护，15fps 下约 1 分钟。GIF 的典型用法是几秒的片段，建议先截取需要的部分再转换。"
+        }
+      ]
+    },
+    "video-compress": {
+      "items": [
+        {
+          "question": "能压到指定大小吗？",
+          "answer": "目前按画质档位工作而不是精确到目标字节数。先试中档位看实际体积，再决定换高档或低档，通常一两轮就能找到合适的档位。"
+        },
+        {
+          "question": "为什么压缩后画质明显变差？",
+          "answer": "码率系数决定每像素分到的数据量。低档位为体积牺牲细节，快速运动最容易出现块状伪影；对画质敏感的素材请用高档位并保持原分辨率。"
+        },
+        {
+          "question": "压缩会保留声音吗？",
+          "answer": "会尽量保留：音轨重新编码为 AAC 并匹配画质档位的码率。个别格式回填失败时会输出无声视频，结果信息里会标注。"
+        }
+      ]
+    },
+    "video-trim": {
+      "items": [
+        {
+          "question": "是无损切割吗？",
+          "answer": "不是。输出片段经过 H.264 重编码，会有轻微二次压缩，但兼容性最好、可直接分享；默认高档位下画质损失通常难以察觉。"
+        },
+        {
+          "question": "片段最长能有多长？",
+          "answer": "受总时长 5 分钟与 300MB 限制。截取只重编码选中区间，所以长视频里截 10 秒的处理速度和 10 秒短片一样快。"
+        },
+        {
+          "question": "声音会跟着一起截吗？",
+          "answer": "会。音轨按所选区间从原视频裁剪后回填，画面和声音对齐；个别格式回填失败时会输出无声视频并标注。"
+        }
+      ]
     }
   },
   "nav": {
@@ -2922,7 +2990,8 @@
     "menu": "菜单",
     "close_menu": "关闭",
     "blog": "博客",
-    "github": "GitHub"
+    "github": "GitHub",
+    "video_tools": "视频工具"
   },
   "footer": {
     "text": "ToolGarden",
@@ -4245,6 +4314,64 @@
           ]
         ]
       }
+    },
+    "video_hub": {
+      "lead": [
+        "这一组工具用 WebCodecs 在浏览器里解码和重编码视频，配合 ffmpeg 的 WebAssembly 版本回填音轨，因此去水印全程不需要把视频传到服务器。AI 补全按需加载开源模型：轻量的 MI-GAN 适合小水印，LaMa 高清档适合大水印和压在人脸、建筑边缘的精修场景。",
+        "代价是算力来自你的设备：处理时长与视频长度、分辨率和设备性能成正比，建议先处理 1 分钟以内的片段验证效果，再处理完整视频。"
+      ],
+      "choosing": [
+        {
+          "title": "只是要去掉角标或 logo",
+          "detail": "默认的自动判定模式就够了：背景在动时用时域中值直接还原干净背景，背景静止时用 MI-GAN 对代表帧做一次 AI 补全，把修复补丁贴回全片。"
+        },
+        {
+          "title": "水印很大或压在人脸、建筑边缘",
+          "detail": "切换 LaMa 高清档：它的全局感受野能重建结构而不只是填充纹理，效果明显更好；代价是约 198MB 的模型下载和慢约 7 倍的推理速度。"
+        },
+        {
+          "title": "想最快出结果",
+          "detail": "手动选时域重建模式：不加载任何 AI 模型，背景运动或镜头移动时速度最快、且无闪烁。"
+        },
+        {
+          "title": "在意隐私",
+          "detail": "所有视频工具都不上传文件：解码、重建、编码全部在本地完成，关闭页面后数据即被清除，适合处理未发布素材。"
+        }
+      ],
+      "comparison": {
+        "caption": "三种重建方式的取舍：速度、模型体积与适用场景的粗略对比。",
+        "headers": [
+          "方式",
+          "模型体积",
+          "速度",
+          "适合的场景"
+        ],
+        "rows": [
+          [
+            "时域重建",
+            "无需模型",
+            "最快（约等于视频时长）",
+            "背景运动或镜头移动的视频"
+          ],
+          [
+            "MI-GAN 补全（默认）",
+            "约 28MB",
+            "WebGPU 下约 0.4 秒/帧",
+            "小面积水印、背景静止"
+          ],
+          [
+            "LaMa 高清补全",
+            "约 198MB",
+            "约为 MI-GAN 的 1/7 速度",
+            "大水印、压在人脸或建筑边缘"
+          ]
+        ]
+      },
+      "notes": [
+        "只处理位置固定的水印：位置随时间移动或形状变化的水印无法用单一选区覆盖，滚动字幕请使用裁剪方式处理。",
+        "水印压在人脸、文字或持续变化的复杂纹理上时，AI 补全是模型的推测，结果可能与真实内容不符，请逐帧检查输出。",
+        "输出采用 H.264 重编码，会有轻微的二次压缩；对画质要求极高的场景请使用原始工程文件处理。"
+      ]
     }
   },
   "tool_article": {
@@ -5366,6 +5493,22 @@
     "font-preview": {
       "name": "字体预览",
       "description": "上传 TTF、OTF、WOFF 或 WOFF2 字体，输入文字并实时预览，支持调节字号、行高和字距，浏览器本地处理。"
+    },
+    "video-remove-watermark": {
+      "name": "视频去水印",
+      "description": "在浏览器本地去除视频固定水印，自动选择时域重建或 MI-GAN AI 补全水印选区，支持边缘羽化过渡，导出带音轨的 MP4，文件不上传服务器。"
+    },
+    "video-to-gif": {
+      "name": "视频转 GIF",
+      "description": "在浏览器本地把视频片段转成 GIF 动图，自由截取区间并选择帧率与输出宽度，逐帧量化编码，适合表情包、聊天斗图与界面演示场景，文件不上传服务器。"
+    },
+    "video-compress": {
+      "name": "视频压缩",
+      "description": "在浏览器本地压缩视频体积，画质三档可选并支持把长边缩放到 1080p、720p 或 480p，重编码为 H.264 MP4 并同步压低音轨，文件不上传服务器。"
+    },
+    "video-trim": {
+      "name": "视频截取",
+      "description": "在浏览器本地按起止时间截取视频片段，重编码为 H.264 MP4 并回填对应区间的音轨，画质三档可选，适合截取精彩片段或去掉头尾冗余，文件不上传服务器。"
     }
   },
   "redirect_page": {
@@ -5487,5 +5630,206 @@
         "answer": "目前显示字体的默认样式，提供字号、行高和字距调节，不提供可变轴或独立字重控制。"
       }
     ]
+  },
+  "video_remove_watermark": {
+    "settings_title": "视频去水印设置",
+    "drop_title": "点击或拖拽视频上传",
+    "drop_hint": "支持 MP4、WebM、MOV 等常见格式，最长 5 分钟、最大 300MB，所有处理都在本地完成",
+    "drop_action": "选择视频",
+    "replace": "更换视频",
+    "local_note": "请仅处理你拥有权利或已获授权修改的视频。视频在浏览器本地解码、重建和编码，不会上传到任何服务器，关闭页面后数据即被清除。",
+    "method_title": "处理方式",
+    "method_auto": "自动判定",
+    "method_temporal": "时域重建",
+    "method_ai": "AI 单帧补全",
+    "method_auto_description": "先采样选区像素随时间的变化：背景在动用时域中值重建，背景静止时用 MI-GAN AI 补全。",
+    "method_temporal_description": "不加载 AI 模型，用时域中值从水印背后的画面直接还原干净背景，适合背景运动或镜头移动的视频。",
+    "method_ai_description": "加载 MI-GAN 模型（约 28MB）对代表帧做一次本地补全，再把修复补丁贴回全片，适合背景完全静止的视频。",
+    "resolution": "分辨率",
+    "source_duration": "时长",
+    "file_size": "文件大小",
+    "feather": "边缘融合",
+    "feather_value": "{value}px",
+    "apply": "生成无水印视频",
+    "processing": "处理中…",
+    "cancel": "取消",
+    "download": "下载视频",
+    "progress_prepare": "正在读取视频",
+    "progress_analyze": "正在采样水印区域",
+    "progress_model": "正在加载本地 AI 模型",
+    "progress_render": "正在重建画面并编码",
+    "progress_audio": "正在回填音轨",
+    "progress_done": "完成",
+    "preview_title": "源视频预览",
+    "preview_scrubber": "预览进度",
+    "empty_title": "等待视频输入",
+    "empty_body": "上传视频后，在预览画面上拖拽框选需要去除的水印区域，可以拖动、缩放选框。",
+    "selection_x": "X {value}",
+    "selection_y": "Y {value}",
+    "selection_width": "宽 {value}",
+    "selection_height": "高 {value}",
+    "reset_selection": "重置区域",
+    "output_title": "输出视频",
+    "output_empty": "生成的无水印视频会显示在这里",
+    "result_method": "重建方式",
+    "method_value_temporal": "时域重建",
+    "method_value_ai": "AI 补全",
+    "method_value_auto": "自动 · {method}",
+    "audio_track": "音轨",
+    "audio_track_kept": "已保留原音轨",
+    "audio_track_dropped": "无声视频（音轨回填失败）",
+    "duration": "耗时",
+    "duration_value": "{value}ms",
+    "errors": {
+      "general": "处理失败，请重试或换一个视频。",
+      "unsupported_input": "不支持的文件类型，请选择 MP4、WebM、MOV 等视频文件。",
+      "unsupported_browser": "当前浏览器不支持 WebCodecs 视频编码，请使用较新版本的 Chrome、Edge 或 Safari。",
+      "file_too_large": "视频超过 {maxSize} 上限，请先裁剪或压缩。",
+      "video_too_long": "视频超过 {maxDuration} 上限，请先截取需要的片段。",
+      "video_load_failed": "视频读取失败，可能是不支持的编码格式或损坏的文件。",
+      "encode_failed": "视频编码失败{detail}。",
+      "canvas_context": "无法创建画布上下文，请重试。",
+      "selection_required": "请先框选需要去除的水印区域。",
+      "cancelled": "处理已取消。"
+    },
+    "method_hq": "LaMa 高清补全",
+    "method_hq_description": "加载 LaMa 大模型（约 198MB）对代表帧做高清补全，大面积水印、压在人脸或建筑边缘时效果最好；下载大、推理慢，只建议短片段精修使用。",
+    "method_value_hq": "LaMa 高清补全"
+  },
+  "video_hub": {
+    "title": "视频工具",
+    "meta_title": "视频工具 - 本地去水印与 AI 补全，导出 MP4",
+    "description": "在浏览器本地处理视频：去除画面中位置固定的水印，自动选择时域重建或 MI-GAN、LaMa AI 补全，可选高清档精修大水印，导出 H.264 MP4 并回填原音轨。视频文件不上传到任何服务器，处理全程在你的设备上完成。",
+    "all_tools": "全部视频工具",
+    "breadcrumb": "视频工具",
+    "privacy_note": "视频在浏览器本地解码、重建和编码，不会上传到任何服务器；AI 补全模式会按需下载开源模型（约 28MB / 198MB）。",
+    "faq": {
+      "privacy_q": "视频工具会上传我的视频吗？",
+      "privacy_a": "不会。视频在浏览器本地解码、重建和编码，输出也在本地生成，文件不会上传到任何服务器。AI 补全模式首次使用会下载开源模型资源，之后通常会被浏览器缓存。",
+      "formats_q": "支持哪些视频格式？",
+      "formats_a": "支持 MP4、WebM、MOV 等浏览器能解码的常见格式，单文件上限 300MB、时长上限 5 分钟。输出统一为 H.264 MP4，并尽量回填原音轨。",
+      "free_q": "视频工具免费吗？",
+      "free_a": "免费。所有处理都在你自己的浏览器里完成，没有转码队列也没有次数限制，速度取决于你的设备性能。",
+      "quality_q": "去水印后画质有损失吗？",
+      "quality_a": "画面需要重新编码，会有轻微的二次压缩。默认 AI 补全使用轻量的 MI-GAN 模型；大水印可以切换 LaMa 高清档，结构重建效果更好，但模型更大、速度更慢。"
+    }
+  },
+  "video_to_gif": {
+    "settings_title": "视频转 GIF 设置",
+    "drop_title": "点击或拖拽视频上传",
+    "drop_hint": "支持 MP4、WebM、MOV 等常见格式，最长 5 分钟、最大 300MB，所有处理都在本地完成",
+    "replace": "更换视频",
+    "local_note": "请仅处理你拥有权利或已获授权修改的视频。逐帧采样与量化全部在浏览器本地完成，不会上传到任何服务器。",
+    "range_title": "截取区间",
+    "range_start": "开始时间",
+    "range_end": "结束时间",
+    "range_summary": "片段时长 {duration} 秒",
+    "range_empty": "上传视频后在这里设定截取区间",
+    "fps_title": "帧率",
+    "fps_value": "{value} fps",
+    "width_title": "输出宽度",
+    "width_value": "{value}px",
+    "apply": "转换为 GIF",
+    "processing": "转换中…",
+    "cancel": "取消",
+    "download": "下载 GIF",
+    "preview_title": "源视频预览",
+    "empty_title": "等待视频输入",
+    "empty_body": "上传视频后设定截取区间与参数，生成 GIF 动图。",
+    "output_title": "输出 GIF",
+    "output_empty": "生成的 GIF 动图会显示在这里",
+    "frame_count": "{value} 帧",
+    "duration_value": "耗时 {value}ms",
+    "errors": {
+      "general": "转换失败，请重试或换一个视频。",
+      "unsupported_input": "不支持的文件类型，请选择 MP4、WebM、MOV 等视频文件。",
+      "file_too_large": "视频超过 {maxSize} 上限，请先裁剪或压缩。",
+      "video_too_long": "视频超过 {maxDuration} 上限，请先截取需要的片段。",
+      "video_load_failed": "视频读取失败，可能是不支持的编码格式或损坏的文件。",
+      "encode_failed": "GIF 编码失败{detail}。",
+      "canvas_context": "无法创建画布上下文，请重试。",
+      "range_invalid": "截取区间无效，请保证结束时间晚于开始时间。",
+      "cancelled": "转换已取消。"
+    }
+  },
+  "video_compress": {
+    "settings_title": "视频压缩设置",
+    "drop_title": "点击或拖拽视频上传",
+    "drop_hint": "支持 MP4、WebM、MOV 等常见格式，最长 5 分钟、最大 300MB，所有处理都在本地完成",
+    "replace": "更换视频",
+    "local_note": "请仅处理你拥有权利或已获授权修改的视频。压缩全程在浏览器本地完成，不会上传到任何服务器，关闭页面后数据即被清除。",
+    "quality_title": "画质档位",
+    "quality_high": "高画质",
+    "quality_high_hint": "码率充裕，画质损失最小，体积压缩有限",
+    "quality_medium": "中画质",
+    "quality_medium_hint": "日常分享的平衡点，体积约为原来的几分之一",
+    "quality_low": "低画质",
+    "quality_low_hint": "体积优先，快速运动画面可能出现块状伪影",
+    "resolution_title": "输出分辨率",
+    "resolution_original": "保持原尺寸",
+    "resolution_1080": "长边 1080p",
+    "resolution_720": "长边 720p",
+    "resolution_480": "长边 480p",
+    "estimate": "按当前档位预估输出约 {size}（实际以画面复杂度为准）",
+    "apply": "开始压缩",
+    "processing": "压缩中…",
+    "cancel": "取消",
+    "download": "下载视频",
+    "output_title": "输出视频",
+    "output_empty": "压缩后的视频会显示在这里",
+    "audio_track": "音轨",
+    "audio_track_kept": "已保留（AAC 重编码）",
+    "audio_track_dropped": "无声视频（音轨处理失败）",
+    "duration_value": "耗时 {value}ms",
+    "errors": {
+      "general": "压缩失败，请重试或换一个视频。",
+      "unsupported_input": "不支持的文件类型，请选择 MP4、WebM、MOV 等视频文件。",
+      "unsupported_browser": "当前浏览器不支持 WebCodecs 视频编码，请使用较新版本的 Chrome、Edge 或 Safari。",
+      "file_too_large": "视频超过 {maxSize} 上限，请先裁剪或压缩。",
+      "video_too_long": "视频超过 {maxDuration} 上限，请先截取需要的片段。",
+      "video_load_failed": "视频读取失败，可能是不支持的编码格式或损坏的文件。",
+      "encode_failed": "视频编码失败{detail}。",
+      "canvas_context": "无法创建画布上下文，请重试。",
+      "range_invalid": "截取区间无效。",
+      "cancelled": "压缩已取消。"
+    }
+  },
+  "video_trim": {
+    "settings_title": "视频截取设置",
+    "drop_title": "点击或拖拽视频上传",
+    "drop_hint": "支持 MP4、WebM、MOV 等常见格式，最长 5 分钟、最大 300MB，所有处理都在本地完成",
+    "replace": "更换视频",
+    "local_note": "请仅处理你拥有权利或已获授权修改的视频。截取全程在浏览器本地完成，不会上传到任何服务器。",
+    "range_title": "截取区间",
+    "range_start": "开始时间",
+    "range_end": "结束时间",
+    "range_summary": "{start} → {end}，共 {duration} 秒",
+    "range_empty": "上传视频后在这里设定截取区间",
+    "quality_title": "画质档位",
+    "quality_high": "高",
+    "quality_medium": "中",
+    "quality_low": "低",
+    "apply": "截取片段",
+    "processing": "截取中…",
+    "cancel": "取消",
+    "download": "下载视频",
+    "output_title": "输出视频",
+    "output_empty": "截取出的片段会显示在这里",
+    "audio_track": "音轨",
+    "audio_track_kept": "已保留原区间音轨",
+    "audio_track_dropped": "无声视频（音轨处理失败）",
+    "duration_value": "耗时 {value}ms",
+    "errors": {
+      "general": "截取失败，请重试或换一个视频。",
+      "unsupported_input": "不支持的文件类型，请选择 MP4、WebM、MOV 等视频文件。",
+      "unsupported_browser": "当前浏览器不支持 WebCodecs 视频编码，请使用较新版本的 Chrome、Edge 或 Safari。",
+      "file_too_large": "视频超过 {maxSize} 上限，请先裁剪或压缩。",
+      "video_too_long": "视频超过 {maxDuration} 上限，请先截取需要的片段。",
+      "video_load_failed": "视频读取失败，可能是不支持的编码格式或损坏的文件。",
+      "encode_failed": "视频编码失败{detail}。",
+      "canvas_context": "无法创建画布上下文，请重试。",
+      "range_invalid": "截取区间无效，请保证结束时间晚于开始时间。",
+      "cancelled": "截取已取消。"
+    }
   }
 }

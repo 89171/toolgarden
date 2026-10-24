@@ -15,6 +15,7 @@ import {
   getQrCodeTools,
   getSubtitleTools,
   getTextTools,
+  getVideoTools,
 } from '@/lib/tools/registry';
 import type { ToolMeta } from '@/lib/tools/types';
 import { getLocalizedBlogTopics } from '@/lib/blog/articles';
@@ -67,6 +68,7 @@ export function HomePageContent({ locale }: HomePageContentProps) {
     buildSection('image',      m.nav.image_toolbar,    `/${normalizedLocale}/image`,      getImageTools()),
     buildSection('pdf',        m.nav.pdf_tools,        `/${normalizedLocale}/pdf`,        getPdfTools()),
     buildSection('audio',      m.nav.audio_tools,      `/${normalizedLocale}/audio`,      getAudioTools()),
+    buildSection('video',      m.nav.video_tools,      `/${normalizedLocale}/video`,      getVideoTools()),
     buildSection('text',       m.nav.text_tools,       `/${normalizedLocale}/text`,       getTextTools()),
     buildSection('file-merge', m.nav.file_merge_tools, `/${normalizedLocale}/file-merge`, getFileMergeTools()),
     buildSection('info-codec', m.nav.info_codec_tools, null,                              getInfoCodecTools()),

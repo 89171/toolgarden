@@ -36,6 +36,7 @@ import {
   getJsonTools,
   getLocalizedToolPath,
   getOtherTools,
+  getVideoTools,
   getPdfTools,
   getTextTools,
   getToolById,
@@ -234,6 +235,31 @@ export function createAudioHubMetadata(locale: string): Metadata {
     },
     openGraph: {
       title: `${m.audio_hub.title} | ${m.home.title}`,
+      images: [DEFAULT_OPEN_GRAPH_IMAGE],
+      description: seoDescription,
+      type: 'website',
+      locale: normalizedLocale === 'zh' ? 'zh_CN' : 'en_US',
+      siteName: m.home.title,
+      url: getLocalizedPath(normalizedLocale, path),
+    },
+  };
+}
+
+export function createVideoHubMetadata(locale: string): Metadata {
+  const normalizedLocale = normalizeLocale(locale);
+  const m = getLocaleMessages(normalizedLocale);
+  const path = '/video';
+  const seoDescription = createPrivacySeoDescription(m.video_hub.description, normalizedLocale);
+
+  return {
+    title: createPageSeoTitle(m.video_hub.meta_title, normalizedLocale),
+    description: seoDescription,
+    alternates: {
+      canonical: getLocalizedPath(normalizedLocale, path),
+      languages: getLanguageAlternates(path),
+    },
+    openGraph: {
+      title: `${m.video_hub.title} | ${m.home.title}`,
       images: [DEFAULT_OPEN_GRAPH_IMAGE],
       description: seoDescription,
       type: 'website',
@@ -632,6 +658,28 @@ export function createAudioToolItemListJsonLd(locale: string) {
   };
 }
 
+export function createVideoToolItemListJsonLd(locale: string) {
+  const normalizedLocale = normalizeLocale(locale);
+  const m = getLocaleMessages(normalizedLocale);
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: m.video_hub.title,
+    description: createPrivacySeoDescription(m.video_hub.description, normalizedLocale),
+    itemListElement: getVideoTools().map((tool, index) => {
+      const localizedTool = m.tools[tool.id as ToolMessageId];
+      return {
+        '@type': 'ListItem',
+        position: index + 1,
+        url: getLocalizedUrl(normalizedLocale, tool.path),
+        name: localizedTool.name,
+        description: createToolSeoDescription(localizedTool.description, normalizedLocale),
+      };
+    }),
+  };
+}
+
 export function createFileMergeToolItemListJsonLd(locale: string) {
   const normalizedLocale = normalizeLocale(locale);
   const m = getLocaleMessages(normalizedLocale);
@@ -753,6 +801,7 @@ export type HubFaqKey =
   | 'image_hub'
   | 'pdf_hub'
   | 'audio_hub'
+  | 'video_hub'
   | 'file_merge_hub'
   | 'text_hub'
   | 'other_hub';

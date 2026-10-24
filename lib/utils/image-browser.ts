@@ -2170,6 +2170,23 @@ async function getWatermarkInpaintSession(
   return loaded;
 }
 
+/**
+ * MI-GAN 会话（图片去水印 + 视频去水印共用）。
+ *
+ * 优先尝试 WebGPU 执行提供器（实测单帧 2100~3500ms → 约 400ms），
+ * 会话创建失败时回退 WASM。注意 WebGPU 会话"创建成功"不代表推理可用，
+ * 视频管线对每帧推理做了看门狗，超时会调用 disableMiganWebGpu() 强制降级。
+ */
+let miganWebGpuDisabled = false;
+
+export function disableMiganWebGpu(): void {
+  miganWebGpuDisabled = true;
+}
+
+export function resetMiganWatermarkSession(): void {
+  watermarkMiganSessionPromise = null;
+}
+
 async function getWatermarkMiganSession(
   onProgress?: (progress: ImageWatermarkRemovalProgress) => void
 ): Promise<{ ort: OrtWasmModule; session: OrtInferenceSession }> {
@@ -2177,6 +2194,34 @@ async function getWatermarkMiganSession(
 
   if (!watermarkMiganSessionPromise) {
     watermarkMiganSessionPromise = (async () => {
+      if (!miganWebGpuDisabled && (await supportsImageEnhanceWebGpu())) {
+        try {
+          const ortWebGpu = await import('onnxruntime-web/webgpu');
+          ortWebGpu.env.wasm.proxy = false;
+          ortWebGpu.env.wasm.wasmPaths = {
+            mjs: getVersionedOnnxRuntimeAsset(
+              'ort-wasm-simd-threaded.jsep.mjs',
+              ONNX_WEBGPU_WASM_PUBLIC_PATH,
+            ),
+            wasm: getVersionedOnnxRuntimeAsset(
+              'ort-wasm-simd-threaded.jsep.wasm',
+              ONNX_WEBGPU_WASM_PUBLIC_PATH,
+            ),
+          };
+          const session = await ortWebGpu.InferenceSession.create(WATERMARK_MIGAN_MODEL_URL, {
+            executionProviders: ['webgpu'],
+            graphOptimizationLevel: 'all',
+          });
+          // Tensor API 与 wasm 模块一致，收窄回 OrtWasmModule 以复用现有张量构造代码
+          return {
+            ort: ortWebGpu as unknown as OrtWasmModule,
+            session: session as unknown as OrtInferenceSession,
+          };
+        } catch {
+          // 部分浏览器暴露 navigator.gpu 但设备创建会失败 → 回退 WASM
+        }
+      }
+
       const ort = await import('onnxruntime-web/wasm');
 
       ort.env.wasm.numThreads = 1;
@@ -2588,6 +2633,45 @@ async function runMiganWatermarkInpaint(
   softenRepairArea(repairCanvas, selection, feather);
 
   return repairCanvas;
+}
+
+/**
+ * 视频去水印复用入口：对一帧画布上的选区做 MI-GAN 本地补全，返回整帧修复结果。
+ * 视频工具在代表帧上调用一次，再把修复后的选区补丁贴回所有帧。
+ */
+export async function inpaintCanvasRegionWithMigan(
+  frame: HTMLCanvasElement,
+  selection: ImageCropRect,
+  feather: number,
+  onProgress?: (progress: ImageWatermarkRemovalProgress) => void
+): Promise<HTMLCanvasElement> {
+  const image: LoadedImage = {
+    element: frame as unknown as HTMLImageElement,
+    width: frame.width,
+    height: frame.height,
+  };
+  return runMiganWatermarkInpaint(image, selection, feather, onProgress);
+}
+
+/**
+ * 视频去水印 HQ 档：用 LaMa（big-lama fp32，约 198MB）对单帧做补全。
+ *
+ * 大面积水印、压在人脸/建筑边缘等需要全局结构重建的场景明显优于 MI-GAN
+ * （实测大洞修复 +11.6dB），但体积大、推理慢约 7 倍，仅作为显式选装的 HQ 模式。
+ * LaMa 在 WebGPU 下存在创建/推理死锁问题（无错误、无超时可救），刻意只用 WASM。
+ */
+export async function inpaintCanvasRegionWithLama(
+  frame: HTMLCanvasElement,
+  selection: ImageCropRect,
+  feather: number,
+  onProgress?: (progress: ImageWatermarkRemovalProgress) => void
+): Promise<HTMLCanvasElement> {
+  const image: LoadedImage = {
+    element: frame as unknown as HTMLImageElement,
+    width: frame.width,
+    height: frame.height,
+  };
+  return runAiWatermarkInpaint(image, selection, feather, onProgress);
 }
 
 async function runAiWatermarkInpaint(

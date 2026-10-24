@@ -15,6 +15,7 @@ import {
   getQrCodeTools,
   getSubtitleTools,
   getTextTools,
+  getVideoTools,
 } from '@/lib/tools/registry';
 import type { ToolMeta } from '@/lib/tools/types';
 import { LanguageSwitcher } from './LanguageSwitcher';
@@ -126,6 +127,7 @@ function Header({ compact = false }: HeaderProps) {
   const jsonGroups = getJsonToolGroups();
   const imageGroups = getImageToolGroups();
   const audioTools = getAudioTools();
+  const videoTools = getVideoTools();
   const pdfTools = getPdfTools();
   const fileMergeTools = getFileMergeTools();
   const infoCodecTools = getInfoCodecTools();
@@ -233,6 +235,13 @@ function Header({ compact = false }: HeaderProps) {
       href: `/${locale}/audio`,
       priority: 'core',
       renderPanel: createToolsPanel(audioTools, 'two'),
+    },
+    {
+      id: 'video',
+      label: t('nav.video_tools'),
+      href: `/${locale}/video`,
+      priority: 'core',
+      renderPanel: createToolsPanel(videoTools),
     },
     {
       id: 'pdf',

@@ -438,6 +438,42 @@ export const toolRegistry: ToolMeta[] = [
     featured: true,
   },
   {
+    id: 'video-remove-watermark',
+    name: '视频去水印',
+    description: '在浏览器本地去除视频固定水印，自动选择时域重建或 MI-GAN AI 补全水印选区，支持边缘羽化过渡，导出带音轨的 MP4，文件不上传服务器。',
+    path: '/video/remove-watermark',
+    icon: 'VID',
+    category: 'convert',
+    featured: true,
+  },
+  {
+    id: 'video-to-gif',
+    name: '视频转 GIF',
+    description: '在浏览器本地把视频片段转成 GIF 动图，支持选择帧率、输出宽度与截取区间，逐帧本地量化编码，文件不上传服务器。',
+    path: '/video/to-gif',
+    icon: 'GIF',
+    category: 'convert',
+    featured: false,
+  },
+  {
+    id: 'video-compress',
+    name: '视频压缩',
+    description: '在浏览器本地压缩视频体积，提供画质档位与分辨率缩放，重编码为 H.264 MP4 并压低音轨，文件不上传服务器。',
+    path: '/video/compress',
+    icon: 'CMP',
+    category: 'convert',
+    featured: false,
+  },
+  {
+    id: 'video-trim',
+    name: '视频截取',
+    description: '在浏览器本地截取视频片段，设定开始与结束时间后重编码为 H.264 MP4 并回填对应区间的音轨，文件不上传服务器。',
+    path: '/video/trim',
+    icon: 'TRM',
+    category: 'convert',
+    featured: false,
+  },
+  {
     id: 'audio-lyric-video',
     name: 'MV 生成器',
     description: '在浏览器本地将 MP3 和 LRC 歌词合成为带动态背景的 MP4 歌词视频',
@@ -920,6 +956,11 @@ export function getAudioTools(): ToolMeta[] {
   return toolRegistry.filter((tool) => tool.path.startsWith('/audio/'));
 }
 
+/** 获取视频工具集合 */
+export function getVideoTools(): ToolMeta[] {
+  return toolRegistry.filter((tool) => tool.path.startsWith('/video/'));
+}
+
 /** 获取二维码工具集合 */
 export function getQrCodeTools(): ToolMeta[] {
   return toolRegistry.filter((tool) => tool.path.startsWith('/qr-code/'));
@@ -944,6 +985,7 @@ function isNonJsonTopLevelTool(tool: ToolMeta): boolean {
     tool.path.startsWith('/subtitle') ||
     tool.path.startsWith('/text/') ||
     tool.path.startsWith('/audio/') ||
+    tool.path.startsWith('/video/') ||
     tool.path.startsWith('/qr-code/') ||
     tool.path.startsWith('/info-codec') ||
     tool.path.startsWith('/other/') ||
@@ -967,6 +1009,7 @@ const RELATED_HUB_PREFIXES = [
   '/pdf/',
   '/file-merge/',
   '/audio/',
+  '/video/',
   '/text/',
   '/qr-code/',
   '/other/',

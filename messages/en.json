@@ -1404,7 +1404,11 @@
     "mind-map": "online mind map, mind map maker, mind mapping tool, Markdown mind map, browser mind map editor",
     "jwt": "JWT decoder,JWT parser,decode JWT token,JWT signature verifier,inspect JWT payload,HS256 validator,JWT decoder online,view JWT payload,HS256 signature verify,debug JWT online",
     "audio-lyric-video": "lyric video maker, MV generator, MP3 to MP4, LRC lyric video, music video maker online, make lyric video",
-    "font-preview": "font preview, online font viewer, TTF preview, OTF preview, WOFF preview"
+    "font-preview": "font preview, online font viewer, TTF preview, OTF preview, WOFF preview",
+    "video-remove-watermark": "remove video watermark, video watermark remover, video watermark removal online, delete logo from video, free video watermark remover",
+    "video-to-gif": "video to gif, mp4 to gif, video to gif converter online, make gif from video, free gif maker",
+    "video-compress": "compress video, video compressor online, reduce video file size, free video compression, mp4 compressor",
+    "video-trim": "trim video, video cutter online, cut video clip, video segment cutter, split video online"
   },
   "tool_faq": {
     "json-escape": {
@@ -2902,6 +2906,70 @@
           "answer": "It records at 30 fps and about 8 Mbps, in 16:9, 9:16, 4:3 or 1:1."
         }
       ]
+    },
+    "video-remove-watermark": {
+      "items": [
+        {
+          "question": "视频去水印会上传文件吗？",
+          "answer": "No. The video is decoded, reconstructed and encoded locally, and the output is generated locally too; nothing is uploaded. AI mode downloads the about-28MB MI-GAN model on first use, which the browser then usually caches."
+        },
+        {
+          "question": "什么水印去不掉？",
+          "answer": "Watermarks that move or change shape cannot be covered by one selection, and rolling credits are better handled by cropping. Marks over faces or continuously changing texture are rebuilt by estimation and may not match the real content."
+        },
+        {
+          "question": "导出是什么格式？画质有损失吗？",
+          "answer": "Output is an H.264 MP4 with the original audio re-added when possible. The picture is re-encoded, so there is slight second-generation compression depending on the source bitrate and content complexity. Default AI inpainting uses lightweight MI-GAN (about 28MB); the LaMa HQ mode (about 198MB) suits large watermarks but is much slower."
+        }
+      ]
+    },
+    "video-to-gif": {
+      "items": [
+        {
+          "question": "Why is the GIF bigger than the video clip?",
+          "answer": "GIF compresses photographic content far less efficiently than modern video codecs. Lower fps, smaller width and shorter segments all shrink it; UI recordings with flat colors usually stay tiny."
+        },
+        {
+          "question": "The GIF has banding or flicker — what can I do?",
+          "answer": "Banding comes from the 256-color limit of GIF; flicker usually means the frame rate is too high. Try 8fps. Text and UI recordings with few colors work best."
+        },
+        {
+          "question": "Can I convert a whole video?",
+          "answer": "Conversion is capped at 900 frames, about a minute at 15fps. GIFs are meant to be short segments; trim the part you need first."
+        }
+      ]
+    },
+    "video-compress": {
+      "items": [
+        {
+          "question": "Can I target an exact file size?",
+          "answer": "The tool works with quality presets rather than exact byte targets. Try the medium preset, check the real output size, then step up or down; one or two rounds usually finds the right preset."
+        },
+        {
+          "question": "Why does quality drop noticeably?",
+          "answer": "The bitrate factor decides how much data each pixel gets. The low preset trades detail for size, and fast motion shows blocky artifacts first; use the high preset at original resolution for quality-sensitive footage."
+        },
+        {
+          "question": "Is the audio kept?",
+          "answer": "Usually yes: the audio is re-encoded to AAC at a bitrate matched to the preset. If muxing fails for some formats the export is silent, and the result panel labels it."
+        }
+      ]
+    },
+    "video-trim": {
+      "items": [
+        {
+          "question": "Is this a lossless cut?",
+          "answer": "No. The clip is re-encoded to H.264 with slight second-generation compression, but the output is universally compatible; at the default high preset the loss is usually imperceptible."
+        },
+        {
+          "question": "How long can a clip be?",
+          "answer": "Within the 5-minute and 300MB limits. Trimming only re-encodes the selected range, so cutting 10 seconds out of a long video processes as fast as a 10-second clip."
+        },
+        {
+          "question": "Does the audio get cut too?",
+          "answer": "Yes. The audio is cut from the source for the chosen range and muxed back in sync; if muxing fails the export is silent, and the result panel labels it."
+        }
+      ]
     }
   },
   "nav": {
@@ -2922,7 +2990,8 @@
     "menu": "Menu",
     "close_menu": "Close",
     "blog": "Blog",
-    "github": "GitHub"
+    "github": "GitHub",
+    "video_tools": "Video tools"
   },
   "footer": {
     "text": "ToolGarden",
@@ -4245,6 +4314,64 @@
           ]
         ]
       }
+    },
+    "video_hub": {
+      "lead": [
+        "These tools decode and re-encode video with WebCodecs in your browser and re-add audio with a WebAssembly build of ffmpeg, so watermark removal never uploads your file. AI inpainting models load on demand: lightweight MI-GAN for small marks, and the LaMa HQ mode for large watermarks or marks over faces and building edges.",
+        "The compute comes from your device: processing time scales with video length, resolution and hardware, so test a clip under one minute before running a full video."
+      ],
+      "choosing": [
+        {
+          "title": "Just removing a badge or logo",
+          "detail": "The default Auto mode is enough: temporal median rebuild on moving backgrounds, or MI-GAN inpainting on one representative frame applied to the whole clip when the background is static."
+        },
+        {
+          "title": "Large marks over faces or structures",
+          "detail": "Switch to the LaMa HQ mode: its global receptive field reconstructs structure instead of just filling texture, at the cost of an about-198MB download and roughly 7x slower inference."
+        },
+        {
+          "title": "Fastest possible result",
+          "detail": "Pick the temporal mode explicitly: no AI model loads at all, and it is fastest with zero flicker when the background or camera moves."
+        },
+        {
+          "title": "Privacy first",
+          "detail": "No video tool uploads files: decoding, rebuilding and encoding all happen locally, and data is cleared when the page closes — suitable for unpublished material."
+        }
+      ],
+      "comparison": {
+        "caption": "Trade-offs between the three reconstruction modes: speed, model size and best-fit scenarios.",
+        "headers": [
+          "Mode",
+          "Model size",
+          "Speed",
+          "Best for"
+        ],
+        "rows": [
+          [
+            "Temporal rebuild",
+            "No model",
+            "Fastest (about the clip duration)",
+            "Moving backgrounds or camera movement"
+          ],
+          [
+            "MI-GAN inpainting (default)",
+            "About 28MB",
+            "About 0.4s per frame with WebGPU",
+            "Small marks on static backgrounds"
+          ],
+          [
+            "LaMa HQ inpainting",
+            "About 198MB",
+            "About 1/7 of MI-GAN speed",
+            "Large marks over faces or structures"
+          ]
+        ]
+      },
+      "notes": [
+        "Only fixed-position watermarks are supported; marks that move or change shape cannot be covered by a single selection, and rolling credits are better handled by cropping.",
+        "Marks over faces, text, or continuously changing texture are rebuilt by estimation and may not match the real content — inspect the output frame by frame.",
+        "Export re-encodes to H.264, adding slight second-generation compression; use original project files when maximum fidelity matters."
+      ]
     }
   },
   "tool_article": {
@@ -5366,6 +5493,22 @@
     "font-preview": {
       "name": "Font Preview",
       "description": "Upload a TTF, OTF, WOFF or WOFF2 font and preview your own text with adjustable size, line height and spacing, locally in your browser."
+    },
+    "video-remove-watermark": {
+      "name": "Video Watermark Remover",
+      "description": "Remove fixed watermarks from videos in your browser: temporal reconstruction on moving backgrounds or MI-GAN AI inpainting, with audio kept."
+    },
+    "video-to-gif": {
+      "name": "Video to GIF",
+      "description": "Convert video clips to animated GIFs in your browser: trim any range, pick a frame rate and output width, and encode locally. Files never leave your device."
+    },
+    "video-compress": {
+      "name": "Video Compressor",
+      "description": "Shrink video file size in your browser with three quality presets and downscaling to 1080p, 720p or 480p, re-encoded to H.264 MP4 with audio kept."
+    },
+    "video-trim": {
+      "name": "Video Trimmer",
+      "description": "Cut a video segment by start and end time in your browser, re-encoded to H.264 MP4 with the matching audio kept and three quality presets available."
     }
   },
   "redirect_page": {
@@ -5487,5 +5630,206 @@
         "answer": "The preview uses the font’s default style. It supports size, line height and spacing, but does not expose variable axes or separate weight controls."
       }
     ]
+  },
+  "video_remove_watermark": {
+    "settings_title": "Video watermark settings",
+    "drop_title": "Click or drop a video to upload",
+    "drop_hint": "Supports MP4, WebM, MOV and more, up to 5 minutes and 300MB; all processing is local",
+    "drop_action": "Choose a video",
+    "replace": "Replace video",
+    "local_note": "Only process videos you own or are authorized to edit. Decoding, reconstruction and encoding all happen locally; nothing is uploaded and data is cleared when the page closes.",
+    "method_title": "Method",
+    "method_auto": "Auto",
+    "method_temporal": "Temporal rebuild",
+    "method_ai": "AI single-frame fill",
+    "method_auto_description": "Samples how the selection changes over time: temporal median on moving backgrounds, MI-GAN AI on static ones.",
+    "method_temporal_description": "No AI model; a temporal median recovers the clean background behind the watermark. Best when the background or camera moves.",
+    "method_ai_description": "Loads the MI-GAN model (about 28MB), inpaints one representative frame locally and applies the patch to the whole clip. Best on fully static backgrounds.",
+    "resolution": "Resolution",
+    "source_duration": "Duration",
+    "file_size": "File size",
+    "feather": "Edge feather",
+    "feather_value": "{value}px",
+    "apply": "Render clean video",
+    "processing": "Processing…",
+    "cancel": "Cancel",
+    "download": "Download video",
+    "progress_prepare": "Reading video",
+    "progress_analyze": "Sampling watermark region",
+    "progress_model": "Loading local AI model",
+    "progress_render": "Rebuilding frames and encoding",
+    "progress_audio": "Restoring audio track",
+    "progress_done": "Done",
+    "preview_title": "Source preview",
+    "preview_scrubber": "Preview position",
+    "empty_title": "Waiting for a video",
+    "empty_body": "After uploading, drag a box over the watermark in the preview; the box can be moved and resized.",
+    "selection_x": "X {value}",
+    "selection_y": "Y {value}",
+    "selection_width": "W {value}",
+    "selection_height": "H {value}",
+    "reset_selection": "Reset area",
+    "output_title": "Output video",
+    "output_empty": "The rendered clean video will appear here",
+    "result_method": "Reconstruction",
+    "method_value_temporal": "Temporal rebuild",
+    "method_value_ai": "AI inpainting",
+    "method_value_auto": "自动 · {method}",
+    "audio_track": "Audio",
+    "audio_track_kept": "Original audio kept",
+    "audio_track_dropped": "Silent (audio mux failed)",
+    "duration": "Time",
+    "duration_value": "{value}ms",
+    "errors": {
+      "general": "Processing failed. Retry or try another video.",
+      "unsupported_input": "Unsupported file type. Choose a video such as MP4, WebM or MOV.",
+      "unsupported_browser": "This browser does not support WebCodecs video encoding. Use a recent Chrome, Edge or Safari.",
+      "file_too_large": "The video exceeds the {maxSize} limit. Trim or compress it first.",
+      "video_too_long": "The video exceeds the {maxDuration} limit. Cut the segment you need first.",
+      "video_load_failed": "Failed to read the video; the codec may be unsupported or the file damaged.",
+      "encode_failed": "Video encoding failed{detail}.",
+      "canvas_context": "Could not create a canvas context. Please retry.",
+      "selection_required": "Select the watermark area first.",
+      "cancelled": "Processing cancelled."
+    },
+    "method_hq": "LaMa HQ inpainting",
+    "method_hq_description": "Loads the large LaMa model (about 198MB) for high-quality single-frame inpainting. Best for large watermarks or marks over faces and building edges; big download and slow, best for short clips.",
+    "method_value_hq": "LaMa HQ inpainting"
+  },
+  "video_hub": {
+    "title": "Video tools",
+    "meta_title": "Video Tools - Local Watermark Removal & AI",
+    "description": "Process video locally in your browser: remove fixed-position watermarks with automatic temporal reconstruction or MI-GAN and LaMa AI inpainting, an optional HQ mode for large marks, exported as H.264 MP4 with the original audio. Files never leave your device.",
+    "all_tools": "All video tools",
+    "breadcrumb": "Video tools",
+    "privacy_note": "Videos are decoded, rebuilt and encoded locally in your browser and never uploaded; AI inpainting models (about 28MB / 198MB) are downloaded on demand.",
+    "faq": {
+      "privacy_q": "Do the video tools upload my files?",
+      "privacy_a": "No. Videos are decoded, rebuilt and encoded locally, and the output is generated locally too; nothing is uploaded. AI modes download open-source models on first use, which the browser then usually caches.",
+      "formats_q": "Which video formats are supported?",
+      "formats_a": "Common formats your browser can decode, such as MP4, WebM and MOV, up to 300MB and 5 minutes per file. Output is always an H.264 MP4 with the original audio re-added when possible.",
+      "free_q": "Are the video tools free?",
+      "free_a": "Yes. Everything runs in your own browser with no transcoding queue and no usage limits; speed depends on your device.",
+      "quality_q": "Does watermark removal reduce quality?",
+      "quality_a": "The picture is re-encoded, adding slight second-generation compression. Default AI inpainting uses lightweight MI-GAN; for large watermarks the LaMa HQ mode gives better structural reconstruction but is bigger and slower."
+    }
+  },
+  "video_to_gif": {
+    "settings_title": "Video to GIF settings",
+    "drop_title": "Click or drop a video to upload",
+    "drop_hint": "Supports MP4, WebM, MOV and more, up to 5 minutes and 300MB; all processing is local",
+    "replace": "Replace video",
+    "local_note": "Only process videos you own or are authorized to edit. Frame sampling and quantization run entirely in your browser; nothing is uploaded.",
+    "range_title": "Segment",
+    "range_start": "Start",
+    "range_end": "End",
+    "range_summary": "{duration}s segment",
+    "range_empty": "Set the segment after uploading a video",
+    "fps_title": "Frame rate",
+    "fps_value": "{value} fps",
+    "width_title": "Output width",
+    "width_value": "{value}px",
+    "apply": "Convert to GIF",
+    "processing": "Converting…",
+    "cancel": "Cancel",
+    "download": "Download GIF",
+    "preview_title": "Source preview",
+    "empty_title": "Waiting for a video",
+    "empty_body": "Upload a video, set the range and options, and render an animated GIF.",
+    "output_title": "Output GIF",
+    "output_empty": "The rendered GIF will appear here",
+    "frame_count": "{value} frames",
+    "duration_value": "Time {value}ms",
+    "errors": {
+      "general": "Conversion failed. Retry or try another video.",
+      "unsupported_input": "Unsupported file type. Choose a video such as MP4, WebM or MOV.",
+      "file_too_large": "The video exceeds the {maxSize} limit. Trim or compress it first.",
+      "video_too_long": "The video exceeds the {maxDuration} limit. Cut the segment you need first.",
+      "video_load_failed": "Failed to read the video; the codec may be unsupported or the file damaged.",
+      "encode_failed": "GIF encoding failed{detail}.",
+      "canvas_context": "Could not create a canvas context. Please retry.",
+      "range_invalid": "Invalid range; the end time must be after the start time.",
+      "cancelled": "Conversion cancelled."
+    }
+  },
+  "video_compress": {
+    "settings_title": "Compression settings",
+    "drop_title": "Click or drop a video to upload",
+    "drop_hint": "Supports MP4, WebM, MOV and more, up to 5 minutes and 300MB; all processing is local",
+    "replace": "Replace video",
+    "local_note": "Only process videos you own or are authorized to edit. Compression runs entirely in your browser; nothing is uploaded and data is cleared when the page closes.",
+    "quality_title": "Quality preset",
+    "quality_high": "High quality",
+    "quality_high_hint": "Generous bitrate, minimal loss, limited size reduction",
+    "quality_medium": "Medium quality",
+    "quality_medium_hint": "The usual balance for sharing; a fraction of the original size",
+    "quality_low": "Low quality",
+    "quality_low_hint": "Size first; fast motion may show blocky artifacts",
+    "resolution_title": "Output resolution",
+    "resolution_original": "Original size",
+    "resolution_1080": "1080p long side",
+    "resolution_720": "720p long side",
+    "resolution_480": "480p long side",
+    "estimate": "Estimated output at this preset: about {size} (depends on content complexity)",
+    "apply": "Compress video",
+    "processing": "Compressing…",
+    "cancel": "Cancel",
+    "download": "Download video",
+    "output_title": "Output video",
+    "output_empty": "The compressed video will appear here",
+    "audio_track": "Audio",
+    "audio_track_kept": "Kept (re-encoded AAC)",
+    "audio_track_dropped": "Silent (audio mux failed)",
+    "duration_value": "Time {value}ms",
+    "errors": {
+      "general": "Compression failed. Retry or try another video.",
+      "unsupported_input": "Unsupported file type. Choose a video such as MP4, WebM or MOV.",
+      "unsupported_browser": "This browser does not support WebCodecs video encoding. Use a recent Chrome, Edge or Safari.",
+      "file_too_large": "The video exceeds the {maxSize} limit. Trim or compress it first.",
+      "video_too_long": "The video exceeds the {maxDuration} limit. Cut the segment you need first.",
+      "video_load_failed": "Failed to read the video; the codec may be unsupported or the file damaged.",
+      "encode_failed": "Video encoding failed{detail}.",
+      "canvas_context": "Could not create a canvas context. Please retry.",
+      "range_invalid": "Invalid range.",
+      "cancelled": "Compression cancelled."
+    }
+  },
+  "video_trim": {
+    "settings_title": "Trim settings",
+    "drop_title": "Click or drop a video to upload",
+    "drop_hint": "Supports MP4, WebM, MOV and more, up to 5 minutes and 300MB; all processing is local",
+    "replace": "Replace video",
+    "local_note": "Only process videos you own or are authorized to edit. Trimming runs entirely in your browser; nothing is uploaded.",
+    "range_title": "Segment",
+    "range_start": "Start",
+    "range_end": "End",
+    "range_summary": "{start} → {end}, {duration}s total",
+    "range_empty": "Set the range after uploading a video",
+    "quality_title": "Quality preset",
+    "quality_high": "High",
+    "quality_medium": "Medium",
+    "quality_low": "Low",
+    "apply": "Trim clip",
+    "processing": "Trimming…",
+    "cancel": "Cancel",
+    "download": "Download video",
+    "output_title": "Output video",
+    "output_empty": "The trimmed clip will appear here",
+    "audio_track": "Audio",
+    "audio_track_kept": "Original range audio kept",
+    "audio_track_dropped": "Silent (audio mux failed)",
+    "duration_value": "Time {value}ms",
+    "errors": {
+      "general": "Trimming failed. Retry or try another video.",
+      "unsupported_input": "Unsupported file type. Choose a video such as MP4, WebM or MOV.",
+      "unsupported_browser": "This browser does not support WebCodecs video encoding. Use a recent Chrome, Edge or Safari.",
+      "file_too_large": "The video exceeds the {maxSize} limit. Trim or compress it first.",
+      "video_too_long": "The video exceeds the {maxDuration} limit. Cut the segment you need first.",
+      "video_load_failed": "Failed to read the video; the codec may be unsupported or the file damaged.",
+      "encode_failed": "Video encoding failed{detail}.",
+      "canvas_context": "Could not create a canvas context. Please retry.",
+      "range_invalid": "Invalid range; the end time must be after the start time.",
+      "cancelled": "Trimming cancelled."
+    }
   }
 }

@@ -51,6 +51,7 @@ function shouldShowPrivacyTrust(toolId: string, toolPath?: string): boolean {
   return (
     toolPath.startsWith('/image/') ||
     toolPath.startsWith('/audio/') ||
+    toolPath.startsWith('/video/') ||
     toolPath.startsWith('/pdf/') ||
     toolPath.startsWith('/file-merge/') ||
     TOOL_IDS_WITH_FILE_INPUT.has(toolId)

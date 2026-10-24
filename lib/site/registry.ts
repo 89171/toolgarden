@@ -16,6 +16,7 @@ export const hubPaths = [
   '/json-tools',
   '/image',
   '/audio',
+  '/video',
   '/pdf',
   '/file-merge',
   '/text',

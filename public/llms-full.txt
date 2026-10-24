@@ -566,6 +566,46 @@ Canonical examples:
 - English URL: https://toolgarden.xyz/en/subtitle-maker
 - Chinese URL: https://toolgarden.xyz/zh/subtitle-maker
 
+#### Video Watermark Remover / 视频去水印 (/video/remove-watermark)
+- ID: `video-remove-watermark`
+- Category: Convert / 转换
+- Icon label: `VID`
+- Featured: yes
+- English description: Remove fixed watermarks from videos in your browser: temporal reconstruction on moving backgrounds or MI-GAN AI inpainting, with audio kept.
+- Chinese description: 在浏览器本地去除视频固定水印，自动选择时域重建或 MI-GAN AI 补全水印选区，支持边缘羽化过渡，导出带音轨的 MP4，文件不上传服务器。
+- English URL: https://toolgarden.xyz/en/video/remove-watermark
+- Chinese URL: https://toolgarden.xyz/zh/video/remove-watermark
+
+#### Video to GIF / 视频转 GIF (/video/to-gif)
+- ID: `video-to-gif`
+- Category: Convert / 转换
+- Icon label: `GIF`
+- Featured: no
+- English description: Convert video clips to animated GIFs in your browser: trim any range, pick a frame rate and output width, and encode locally. Files never leave your device.
+- Chinese description: 在浏览器本地把视频片段转成 GIF 动图，自由截取区间并选择帧率与输出宽度，逐帧量化编码，适合表情包、聊天斗图与界面演示场景，文件不上传服务器。
+- English URL: https://toolgarden.xyz/en/video/to-gif
+- Chinese URL: https://toolgarden.xyz/zh/video/to-gif
+
+#### Video Compressor / 视频压缩 (/video/compress)
+- ID: `video-compress`
+- Category: Convert / 转换
+- Icon label: `CMP`
+- Featured: no
+- English description: Shrink video file size in your browser with three quality presets and downscaling to 1080p, 720p or 480p, re-encoded to H.264 MP4 with audio kept.
+- Chinese description: 在浏览器本地压缩视频体积，画质三档可选并支持把长边缩放到 1080p、720p 或 480p，重编码为 H.264 MP4 并同步压低音轨，文件不上传服务器。
+- English URL: https://toolgarden.xyz/en/video/compress
+- Chinese URL: https://toolgarden.xyz/zh/video/compress
+
+#### Video Trimmer / 视频截取 (/video/trim)
+- ID: `video-trim`
+- Category: Convert / 转换
+- Icon label: `TRM`
+- Featured: no
+- English description: Cut a video segment by start and end time in your browser, re-encoded to H.264 MP4 with the matching audio kept and three quality presets available.
+- Chinese description: 在浏览器本地按起止时间截取视频片段，重编码为 H.264 MP4 并回填对应区间的音轨，画质三档可选，适合截取精彩片段或去掉头尾冗余，文件不上传服务器。
+- English URL: https://toolgarden.xyz/en/video/trim
+- Chinese URL: https://toolgarden.xyz/zh/video/trim
+
 #### MV Generator / MV 生成器 (/audio/lyric-video)
 - ID: `audio-lyric-video`
 - Category: Convert / 转换

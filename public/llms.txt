@@ -178,6 +178,18 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - **Subtitle Maker / 字幕编辑器** (`/subtitle-maker`): Free online LRC, SRT, and VTT subtitle editor and converter with media preview, timeline calibration, and subtitle export
   - English: https://toolgarden.xyz/en/subtitle-maker
   - Chinese: https://toolgarden.xyz/zh/subtitle-maker
+- **Video Watermark Remover / 视频去水印** (`/video/remove-watermark`): Remove fixed watermarks from videos in your browser: temporal reconstruction on moving backgrounds or MI-GAN AI inpainting, with audio kept.
+  - English: https://toolgarden.xyz/en/video/remove-watermark
+  - Chinese: https://toolgarden.xyz/zh/video/remove-watermark
+- **Video to GIF / 视频转 GIF** (`/video/to-gif`): Convert video clips to animated GIFs in your browser: trim any range, pick a frame rate and output width, and encode locally. Files never leave your device.
+  - English: https://toolgarden.xyz/en/video/to-gif
+  - Chinese: https://toolgarden.xyz/zh/video/to-gif
+- **Video Compressor / 视频压缩** (`/video/compress`): Shrink video file size in your browser with three quality presets and downscaling to 1080p, 720p or 480p, re-encoded to H.264 MP4 with audio kept.
+  - English: https://toolgarden.xyz/en/video/compress
+  - Chinese: https://toolgarden.xyz/zh/video/compress
+- **Video Trimmer / 视频截取** (`/video/trim`): Cut a video segment by start and end time in your browser, re-encoded to H.264 MP4 with the matching audio kept and three quality presets available.
+  - English: https://toolgarden.xyz/en/video/trim
+  - Chinese: https://toolgarden.xyz/zh/video/trim
 - **MV Generator / MV 生成器** (`/audio/lyric-video`): Turn an MP3 and LRC lyrics into an MP4 lyric video with an animated background, right in your browser. Choose vinyl, spectrum or star tunnel templates, set the aspect ratio and lyric style, and export locally without uploading any files.
   - English: https://toolgarden.xyz/en/audio/lyric-video
   - Chinese: https://toolgarden.xyz/zh/audio/lyric-video
