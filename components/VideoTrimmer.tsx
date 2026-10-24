@@ -233,11 +233,11 @@ export default function VideoTrimmer() {
         </Panel>
 
         <Panel title={t('settings_title')} className="flex flex-col gap-4 self-start">
-          <fieldset className="flex flex-col gap-2" disabled={!videoMeta || isProcessing}>
+          <fieldset className="flex flex-col gap-3 border-b border-border-base pb-4" disabled={!videoMeta || isProcessing}>
             <legend className="text-sm font-semibold text-content">{t('range_title')}</legend>
             {videoMeta && range ? (
               <>
-                <label className="flex flex-col gap-1 text-xs text-content-muted">
+                <label className="flex flex-col gap-1.5 text-xs text-content-muted">
                   <span>{t('range_start')}: <span className="font-mono text-content">{formatTime(range.start)}</span></span>
                   <input
                     type="range"
@@ -253,7 +253,7 @@ export default function VideoTrimmer() {
                     aria-label={t('range_start')}
                   />
                 </label>
-                <label className="flex flex-col gap-1 text-xs text-content-muted">
+                <label className="flex flex-col gap-1.5 text-xs text-content-muted">
                   <span>{t('range_end')}: <span className="font-mono text-content">{formatTime(range.end)}</span></span>
                   <input
                     type="range"
@@ -278,7 +278,7 @@ export default function VideoTrimmer() {
             )}
           </fieldset>
 
-          <fieldset className="flex flex-col gap-2">
+          <fieldset className="flex flex-col gap-3 border-b border-border-base pb-4">
             <legend className="text-sm font-semibold text-content">{t('quality_title')}</legend>
             <div className="grid grid-cols-3 gap-2">
               {(['high', 'medium', 'low'] as ReencodeQuality[]).map((option) => (
@@ -302,7 +302,7 @@ export default function VideoTrimmer() {
             </div>
           </fieldset>
 
-          <Button onClick={startProcessing} disabled={!canProcess} className="w-full">
+          <Button onClick={startProcessing} disabled={!canProcess} className="mt-1 w-full">
             {isProcessing ? t('processing') : t('apply')}
           </Button>
 
@@ -335,6 +335,8 @@ export default function VideoTrimmer() {
                 {t('download')}
               </Button>
             </div>
+          ) : error ? (
+            <p role="alert" className="rounded-lg bg-danger-weak px-3 py-2 text-sm text-danger">{error}</p>
           ) : (
             <p className="text-sm text-content-muted">{t('output_empty')}</p>
           )}

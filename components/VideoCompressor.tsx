@@ -266,7 +266,7 @@ export default function VideoCompressor() {
         </Panel>
 
         <Panel title={t('settings_title')} className="flex flex-col gap-4 self-start">
-          <fieldset className="flex flex-col gap-2">
+          <fieldset className="flex flex-col gap-3 border-b border-border-base pb-4">
             <legend className="text-sm font-semibold text-content">{t('quality_title')}</legend>
             {QUALITY_OPTIONS.map((option) => (
               <label
@@ -291,7 +291,7 @@ export default function VideoCompressor() {
             ))}
           </fieldset>
 
-          <fieldset className="flex flex-col gap-2">
+          <fieldset className="flex flex-col gap-3 border-b border-border-base pb-4">
             <legend className="text-sm font-semibold text-content">{t('resolution_title')}</legend>
             <div className="grid grid-cols-2 gap-2">
               {RESOLUTION_OPTIONS.map((option) => (
@@ -319,7 +319,7 @@ export default function VideoCompressor() {
             <p className="text-xs leading-5 text-content-muted">{t('estimate', { size: formatFileSize(Math.round(estimatedSize)) })}</p>
           ) : null}
 
-          <Button onClick={startProcessing} disabled={!file || !videoMeta || isProcessing} className="w-full">
+          <Button onClick={startProcessing} disabled={!file || !videoMeta || isProcessing} className="mt-1 w-full">
             {isProcessing ? t('processing') : t('apply')}
           </Button>
 
@@ -352,6 +352,8 @@ export default function VideoCompressor() {
                 {t('download')}
               </Button>
             </div>
+          ) : error ? (
+            <p role="alert" className="rounded-lg bg-danger-weak px-3 py-2 text-sm text-danger">{error}</p>
           ) : (
             <p className="text-sm text-content-muted">{t('output_empty')}</p>
           )}

@@ -102,7 +102,7 @@ export function VideoWatermarkRemover() {
   const [sourceUrl, setSourceUrl] = useState('');
   const [videoMeta, setVideoMeta] = useState<VideoMeta | null>(null);
   const [selection, setSelection] = useState<ImageCropRect | null>(null);
-  const [method, selectMethod] = useUrlOption('mode', 'auto', METHOD_URL_OPTIONS);
+  const [method, selectMethod] = useUrlOption('mode', 'hq', METHOD_URL_OPTIONS);
   const [feather, setFeather] = useState(12);
   const [output, setOutput] = useState<OutputState | null>(null);
   const [progress, setProgress] = useState<VideoWatermarkProgress | null>(null);

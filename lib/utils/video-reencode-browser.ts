@@ -98,10 +98,22 @@ function loadVideoElement(file: File): Promise<LoadedVideo> {
     video.muted = true;
     video.playsInline = true;
     video.crossOrigin = 'anonymous';
+    // 挂载到屏幕外的真实 DOM：部分浏览器（如 Safari）对不在文档中的视频
+    // 不呈现帧、也不派发 requestVideoFrameCallback，必须真实参与渲染。
+    video.setAttribute('aria-hidden', 'true');
+    video.style.position = 'fixed';
+    video.style.left = '-10000px';
+    video.style.top = '0';
+    video.style.width = '320px';
+    video.style.height = '180px';
+    video.style.pointerEvents = 'none';
+    document.body.appendChild(video);
 
     const cleanupAndReject = (code: import('./video-reencode').VideoReencodeErrorCode, detail?: string) => {
       URL.revokeObjectURL(url);
+      video.pause();
       video.removeAttribute('src');
+      video.remove();
       reject(createFailureError(code, detail));
     };
 
@@ -120,6 +132,41 @@ function loadVideoElement(file: File): Promise<LoadedVideo> {
     };
     video.onerror = () => cleanupAndReject('video_load_failed');
     video.src = url;
+  });
+}
+
+/**
+ * 定位到指定时间。两个关键点：
+ * 1. 同值守卫：目标时间与当前播放头一致时（典型：从 0 开始压缩/截取），
+ *    设置 currentTime 不会触发 seeked 事件，必须直接返回，否则永远挂起。
+ * 2. 超时兜底：个别环境下 seek 事件可能丢失，超时后继续流程而不是卡死。
+ */
+function seekTo(video: HTMLVideoElement, time: number): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (Math.abs(video.currentTime - time) < 0.001) {
+      resolve();
+      return;
+    }
+    const cleanup = () => {
+      window.clearTimeout(timer);
+      video.removeEventListener('seeked', onSeeked);
+      video.removeEventListener('error', onError);
+    };
+    const onSeeked = () => {
+      cleanup();
+      resolve();
+    };
+    const onError = () => {
+      cleanup();
+      reject(createFailureError('video_load_failed'));
+    };
+    const timer = window.setTimeout(() => {
+      cleanup();
+      resolve();
+    }, 8000);
+    video.addEventListener('seeked', onSeeked);
+    video.addEventListener('error', onError);
+    video.currentTime = Math.min(time, Math.max(0, (video.duration || 0) - 0.05));
   });
 }
 
@@ -257,31 +304,55 @@ async function renderAndEncode(context: RenderContext): Promise<Blob> {
 
   const source = video.video;
   source.pause();
-  source.currentTime = start;
-
-  await new Promise<void>((resolve) => {
-    const onSeeked = () => {
-      source.removeEventListener('seeked', onSeeked);
-      resolve();
-    };
-    source.addEventListener('seeked', onSeeked);
-  });
+  await seekTo(source, start);
 
   let lastKeyTime = -Infinity;
   let settled = false;
+  const lastFrameAt = { value: performance.now() };
+
+  /** rVFC 不可用时用 rAF 泵替代（老 Safari 等场景），mediaTime 用播放头近似 */
+  const scheduleNextFrame = (callback: (now: number, metadata: VideoFrameCallbackMetadata) => void) => {
+    if (typeof source.requestVideoFrameCallback === 'function') {
+      source.requestVideoFrameCallback(callback);
+      return;
+    }
+    requestAnimationFrame((now) => {
+      callback(now, {
+        mediaTime: source.currentTime,
+        expectedDisplayTime: now + 1000 / REENCODE_FRAMERATE,
+        width: source.videoWidth,
+        height: source.videoHeight,
+        presentedFrames: 0,
+        processingDuration: 0,
+        captureTime: now,
+        receiveTime: now,
+        presentationTime: now,
+      } as unknown as VideoFrameCallbackMetadata);
+    });
+  };
 
   try {
     await new Promise<void>((resolve, reject) => {
       const finish = () => {
         if (settled) return;
         settled = true;
+        window.clearInterval(stallTimer);
         resolve();
       };
       const fail = (error: Error) => {
         if (settled) return;
         settled = true;
+        window.clearInterval(stallTimer);
         reject(error);
       };
+
+      // 渲染停顿看门狗：连续 15 秒没有任何新帧则报错，避免界面永远卡住
+      const stallTimer = window.setInterval(() => {
+        if (settled) return;
+        if (performance.now() - lastFrameAt.value > 15_000) {
+          fail(createFailureError('encode_failed', 'render stalled: no frames received'));
+        }
+      }, 2000);
 
       const step = (_now: number, metadata: VideoFrameCallbackMetadata) => {
         if (settled) return;
@@ -291,6 +362,7 @@ async function renderAndEncode(context: RenderContext): Promise<Blob> {
             fail(encoderState.error);
             return;
           }
+          lastFrameAt.value = performance.now();
 
           context2d.drawImage(source, 0, 0, outputWidth, outputHeight);
 
@@ -327,7 +399,7 @@ async function renderAndEncode(context: RenderContext): Promise<Blob> {
               requestAnimationFrame(pump);
               return;
             }
-            source.requestVideoFrameCallback(step);
+            scheduleNextFrame(step);
           };
           pump();
         } catch (error) {
@@ -336,7 +408,7 @@ async function renderAndEncode(context: RenderContext): Promise<Blob> {
       };
 
       source.onended = finish;
-      source.requestVideoFrameCallback(step);
+      scheduleNextFrame(step);
       source.play().catch(() => fail(createFailureError('video_load_failed', 'playback blocked')));
     });
   } finally {
@@ -435,6 +507,7 @@ export async function reencodeVideoToMp4(
     if (loaded) {
       loaded.video.pause();
       loaded.video.removeAttribute('src');
+      loaded.video.remove();
       URL.revokeObjectURL(loaded.url);
     }
   }
