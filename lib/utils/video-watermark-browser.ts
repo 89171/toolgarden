@@ -422,12 +422,18 @@ async function renderAndEncode(context: RenderContext): Promise<Blob> {
     target,
     video: { codec: 'avc', width, height },
     fastStart: 'in-memory',
+    // 首帧时间戳不一定精确为 0，strict 模式会直接抛错，offset 模式自动归零
+    firstTimestampBehavior: 'offset',
   });
 
   const encoderState: { error: Error | null } = { error: null };
   const encoder = new VideoEncoder({
     output: (chunk, meta) => {
-      muxer.addVideoChunk(chunk, meta);
+      try {
+        muxer.addVideoChunk(chunk, meta);
+      } catch (error) {
+        encoderState.error = error instanceof Error ? error : new Error(String(error));
+      }
     },
     error: (error) => {
       encoderState.error = error instanceof Error ? error : new Error(String(error));

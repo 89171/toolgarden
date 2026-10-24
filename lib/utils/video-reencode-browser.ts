@@ -197,25 +197,26 @@ async function muxAudio(
   onProgress?: (progress: VideoReencodeProgress) => void,
   signal?: AbortSignal
 ): Promise<{ blob: Blob; hasAudio: boolean }> {
-  const ffmpeg = await loadFfmpeg((progress: AudioProcessingProgress) => {
-    onProgress?.({
-      stage: 'audio',
-      label: progress.label,
-      percent: mapReencodeProgress(progress.percent, AUDIO_PROGRESS_START, AUDIO_PROGRESS_END),
-    });
-  });
-  throwIfAborted(signal);
-
   const silentName = 'reencode-silent.mp4';
   const extension = (/\.([a-z0-9]{2,5})$/i.exec(sourceFile.name)?.[1] ?? 'mp4').toLowerCase();
   const sourceName = `reencode-source.${extension}`;
   const outputName = 'reencode-output.mp4';
-
-  await ffmpeg.writeFile(silentName, new Uint8Array(await videoBlob.arrayBuffer()));
-  await ffmpeg.writeFile(sourceName, new Uint8Array(await sourceFile.arrayBuffer()));
-  throwIfAborted(signal);
+  let ffmpeg: Awaited<ReturnType<typeof loadFfmpeg>> | null = null;
 
   try {
+    ffmpeg = await loadFfmpeg((progress: AudioProcessingProgress) => {
+      onProgress?.({
+        stage: 'audio',
+        label: progress.label,
+        percent: mapReencodeProgress(progress.percent, AUDIO_PROGRESS_START, AUDIO_PROGRESS_END),
+      });
+    });
+    throwIfAborted(signal);
+
+    await ffmpeg.writeFile(silentName, new Uint8Array(await videoBlob.arrayBuffer()));
+    await ffmpeg.writeFile(sourceName, new Uint8Array(await sourceFile.arrayBuffer()));
+    throwIfAborted(signal);
+
     const args = ['-i', silentName];
     if (trim) {
       args.push('-ss', trim.start.toFixed(3), '-t', (trim.end - trim.start).toFixed(3));
@@ -242,14 +243,16 @@ async function muxAudio(
     return { blob: new Blob([new Uint8Array(data)], { type: 'video/mp4' }), hasAudio: true };
   } catch (error) {
     if (isCancellation(error)) throw error;
-    // 音轨处理失败不致命：输出无声视频
+    // 音轨处理失败（含 ffmpeg 加载/写入失败）不致命：输出无声视频
     return { blob: videoBlob, hasAudio: false };
   } finally {
-    await Promise.allSettled([
-      ffmpeg.deleteFile(silentName),
-      ffmpeg.deleteFile(sourceName),
-      ffmpeg.deleteFile(outputName),
-    ]);
+    if (ffmpeg) {
+      await Promise.allSettled([
+        ffmpeg.deleteFile(silentName),
+        ffmpeg.deleteFile(sourceName),
+        ffmpeg.deleteFile(outputName),
+      ]);
+    }
   }
 }
 
@@ -280,12 +283,20 @@ async function renderAndEncode(context: RenderContext): Promise<Blob> {
     target,
     video: { codec: 'avc', width: outputWidth, height: outputHeight },
     fastStart: 'in-memory',
+    // 首帧时间戳不一定精确为 0（截取起点 > 0、部分视频首帧 PTS 有偏移），
+    // strict 模式会直接抛错导致整个输出失败，offset 模式自动归零。
+    firstTimestampBehavior: 'offset',
   });
 
   const encoderState: { error: Error | null } = { error: null };
   const encoder = new VideoEncoder({
     output: (chunk, meta) => {
-      muxer.addVideoChunk(chunk, meta);
+      try {
+        muxer.addVideoChunk(chunk, meta);
+      } catch (error) {
+        // output 回调里的异常不会自动传播，必须显式记录，让渲染循环尽快失败并给出原因
+        encoderState.error = error instanceof Error ? error : new Error(String(error));
+      }
     },
     error: (error) => {
       encoderState.error = error instanceof Error ? error : new Error(String(error));

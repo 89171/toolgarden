@@ -194,7 +194,7 @@ export function VideoWatermarkRemover() {
       case 'cancelled':
         return ti('errors.cancelled');
       default:
-        return ti('errors.general');
+        return detail ? `${ti('errors.general')} (${detail})` : ti('errors.general');
     }
   }, [ti]);
 

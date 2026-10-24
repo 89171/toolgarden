@@ -67,7 +67,7 @@ export default function VideoTrimmer() {
     }
   }, [t]);
 
-  const getErrorMessage = useCallback((code: string): string => {
+  const getErrorMessage = useCallback((code: string, detail?: string): string => {
     switch (code) {
       case 'unsupported_input':
         return t('errors.unsupported_input');
@@ -88,7 +88,7 @@ export default function VideoTrimmer() {
       case 'cancelled':
         return t('errors.cancelled');
       default:
-        return t('errors.general');
+        return detail ? `${t('errors.general')} (${detail})` : t('errors.general');
     }
   }, [t]);
 
@@ -142,7 +142,8 @@ export default function VideoTrimmer() {
       setResult(outcome);
       setProgress(null);
     } else {
-      setError(getErrorMessage(outcome.code));
+      console.error('[video-trim] failed:', outcome.code, outcome.detail ?? '');
+      setError(getErrorMessage(outcome.code, outcome.detail));
       setProgress(null);
     }
   }, [file, videoMeta, range, isProcessing, quality, getErrorMessage]);
