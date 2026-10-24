@@ -318,6 +318,7 @@ async function renderAndEncode(context: RenderContext): Promise<Blob> {
   await seekTo(source, start);
 
   let lastKeyTime = -Infinity;
+  let previousTimestamp = -1;
   let settled = false;
   const lastFrameAt = { value: performance.now() };
 
@@ -379,10 +380,16 @@ async function renderAndEncode(context: RenderContext): Promise<Blob> {
 
           const relativeTime = Math.max(0, metadata.mediaTime - start);
           const timestamp = Math.max(0, Math.round(relativeTime * 1_000_000));
-          const expectedDuration = Math.round((metadata.expectedDisplayTime - metadata.mediaTime) * 1_000_000);
+          // 帧时长取相邻帧时间戳差。不能用 expectedDisplayTime - mediaTime：
+          // 前者是文档时钟（页面打开起算的毫秒数），后者是媒体时钟，二者相减
+          // 会得到巨大的无意义值，导致输出 MP4 的时长被声明成几个小时。
+          const frameDuration = previousTimestamp >= 0
+            ? Math.min(Math.max(1_000, timestamp - previousTimestamp), 1_000_000)
+            : 33_333;
+          previousTimestamp = timestamp;
           const frame = new VideoFrame(canvas, {
             timestamp,
-            duration: expectedDuration > 0 ? expectedDuration : 33_333,
+            duration: frameDuration,
           });
           const isKeyFrame = relativeTime - lastKeyTime >= KEYFRAME_INTERVAL_SECONDS;
           if (isKeyFrame) lastKeyTime = relativeTime;

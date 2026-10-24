@@ -457,6 +457,7 @@ async function renderAndEncode(context: RenderContext): Promise<Blob> {
   await seekTo(source, 0);
 
   let lastKeyTime = -Infinity;
+  let previousTimestamp = -1;
   let settled = false;
   const lastFrameAt = { value: performance.now() };
 
@@ -521,10 +522,16 @@ async function renderAndEncode(context: RenderContext): Promise<Blob> {
           context2d.drawImage(patchCanvas, selection.x, selection.y);
 
           const timestamp = Math.max(0, Math.round(metadata.mediaTime * 1_000_000));
-          const expectedDuration = Math.round((metadata.expectedDisplayTime - metadata.mediaTime) * 1_000_000);
+          // 帧时长取相邻帧时间戳差。不能用 expectedDisplayTime - mediaTime：
+          // 前者是文档时钟、后者是媒体时钟，相减会得到巨大无意义值，
+          // 导致输出 MP4 时长被声明成几个小时。
+          const frameDuration = previousTimestamp >= 0
+            ? Math.min(Math.max(1_000, timestamp - previousTimestamp), 1_000_000)
+            : 33_333;
+          previousTimestamp = timestamp;
           const frame = new VideoFrame(canvas, {
             timestamp,
-            duration: expectedDuration > 0 ? expectedDuration : 33_333,
+            duration: frameDuration,
           });
           const isKeyFrame = metadata.mediaTime - lastKeyTime >= KEYFRAME_INTERVAL_SECONDS;
           if (isKeyFrame) lastKeyTime = metadata.mediaTime;
