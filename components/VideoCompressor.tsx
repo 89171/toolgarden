@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
 import { formatFileSize } from '@/lib/utils/image';
+import { preloadFfmpeg } from '@/lib/utils/audio-browser';
 import {
   reencodeVideoToMp4,
 } from '@/lib/utils/video-reencode-browser';
@@ -56,6 +57,11 @@ export default function VideoCompressor() {
   const [error, setError] = useState('');
   const [result, setResult] = useState<VideoReencodeSuccess | null>(null);
   const [draggingFile, setDraggingFile] = useState(false);
+
+  useEffect(() => {
+    // 进入页面即在空闲时预加载 ffmpeg 内核（下载 + 缓存 + 编译），处理时无需再等
+    preloadFfmpeg();
+  }, []);
 
   useEffect(() => () => {
     if (sourceUrlRef.current) URL.revokeObjectURL(sourceUrlRef.current);

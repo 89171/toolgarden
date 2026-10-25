@@ -6,6 +6,7 @@ import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
 import { formatFileSize } from '@/lib/utils/image';
+import { preloadFfmpeg } from '@/lib/utils/audio-browser';
 import type {
   ImageCropHandle,
   ImageCropRect,
@@ -213,6 +214,11 @@ export function VideoWatermarkRemover() {
   useEffect(() => {
     outputRef.current = output;
   }, [output]);
+
+  useEffect(() => {
+    // 进入页面即在空闲时预加载 ffmpeg 内核（下载 + 缓存 + 编译），处理时无需再等
+    preloadFfmpeg();
+  }, []);
 
   useEffect(() => () => {
     if (sourceUrlRef.current) URL.revokeObjectURL(sourceUrlRef.current);

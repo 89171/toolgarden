@@ -46,9 +46,11 @@ type FFmpegInstance = import('@ffmpeg/ffmpeg').FFmpeg;
 type TransformersModule = typeof import('@xenova/transformers');
 type Transcriber = (audio: string | URL, options?: Record<string, unknown>) => Promise<{ text?: string }>;
 
+// 内核优先同源自托管（public/vendor/ffmpeg/core），避免国内访问 jsdelivr 慢或不稳定；
+// 本地缺失时回退 CDN。资源首次下载后写入 Cache API 持久缓存，后续会话零网络加载。
+const FFMPEG_CORE_LOCAL_BASE = '/vendor/ffmpeg/core';
 const FFMPEG_CORE_CDN_BASE = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/esm';
-const FFMPEG_CORE_URL = `${FFMPEG_CORE_CDN_BASE}/ffmpeg-core.js`;
-const FFMPEG_WASM_URL = `${FFMPEG_CORE_CDN_BASE}/ffmpeg-core.wasm`;
+const FFMPEG_CORE_CACHE_NAME = 'toolgarden-ffmpeg-core-0.12.10';
 const FFMPEG_WORKER_URL = '/vendor/ffmpeg/worker.js';
 const DEFAULT_MP3_BITRATE = 192;
 const DEFAULT_COMPRESS_BITRATE = 96;
@@ -79,18 +81,70 @@ function toPublicAssetUrl(path: string): string {
   return new URL(path, window.location.origin).href;
 }
 
+/** 从 Cache API 读取资源；未命中返回 null */
+async function readCoreAssetFromCache(url: string): Promise<Blob | null> {
+  if (typeof caches === 'undefined') return null;
+  try {
+    const cache = await caches.open(FFMPEG_CORE_CACHE_NAME);
+    const cached = await cache.match(url);
+    if (!cached) return null;
+    const blob = await cached.blob();
+    return blob.size > 0 ? blob : null;
+  } catch {
+    return null;
+  }
+}
+
+/** 下载资源并写入 Cache API 持久缓存（写失败不影响本次使用） */
+async function downloadCoreAsset(url: string, mimeType: string): Promise<Blob> {
+  const response = await fetch(url, { mode: 'cors' });
+  if (!response.ok) {
+    throw new Error(`Failed to fetch ${url}: ${response.status}`);
+  }
+  const blob = await response.blob();
+  if (typeof caches !== 'undefined') {
+    try {
+      const cache = await caches.open(FFMPEG_CORE_CACHE_NAME);
+      await cache.put(url, new Response(blob, { headers: { 'content-type': mimeType } }));
+    } catch {
+      // 隐私模式等场景写缓存失败，忽略
+    }
+  }
+  return blob;
+}
+
+async function fetchCoreAsset(base: string, filename: string, mimeType: string): Promise<string> {
+  const url = `${base}/${filename}`;
+  const cached = await readCoreAssetFromCache(url);
+  if (cached) {
+    return URL.createObjectURL(new Blob([cached], { type: mimeType }));
+  }
+  const blob = await downloadCoreAsset(url, mimeType);
+  return URL.createObjectURL(new Blob([blob], { type: mimeType }));
+}
+
 async function loadFfmpegCoreAssets(
   onProgress?: (progress: AudioProcessingProgress) => void
 ): Promise<{ coreURL: string; wasmURL: string }> {
   if (!ffmpegCoreAssetPromise) {
     ffmpegCoreAssetPromise = (async () => {
-      const { toBlobURL } = await import('@ffmpeg/util');
       onProgress?.({ stage: 'prepare', label: 'downloading-ffmpeg-core', percent: 10 });
-      const coreURL = await toBlobURL(FFMPEG_CORE_URL, 'text/javascript');
-      onProgress?.({ stage: 'prepare', label: 'downloading-ffmpeg-wasm', percent: 12 });
-      const wasmURL = await toBlobURL(FFMPEG_WASM_URL, 'application/wasm');
+
+      const loadPair = async (base: string): Promise<{ coreURL: string; wasmURL: string }> => ({
+        coreURL: await fetchCoreAsset(base, 'ffmpeg-core.js', 'text/javascript'),
+        wasmURL: await fetchCoreAsset(base, 'ffmpeg-core.wasm', 'application/wasm'),
+      });
+
+      let assets: { coreURL: string; wasmURL: string };
+      try {
+        // 同源版本：与 worker.js 一样来自本站，首次加载也无外网依赖
+        assets = await loadPair(FFMPEG_CORE_LOCAL_BASE);
+      } catch {
+        // 本地资源缺失（如老版本部署包）时回退 CDN
+        assets = await loadPair(FFMPEG_CORE_CDN_BASE);
+      }
       onProgress?.({ stage: 'prepare', label: 'ffmpeg-core-ready', percent: 18 });
-      return { coreURL, wasmURL };
+      return assets;
     })().catch((error) => {
       ffmpegCoreAssetPromise = null;
       throw error;
@@ -98,6 +152,24 @@ async function loadFfmpegCoreAssets(
   }
 
   return ffmpegCoreAssetPromise;
+}
+
+/**
+ * 页面进入时预加载 ffmpeg 内核（下载 + 写缓存 + wasm 编译）。
+ * 在浏览器空闲时触发，不阻塞首屏；失败静默，用户真正处理时再正常加载。
+ */
+export function preloadFfmpeg(): void {
+  if (typeof window === 'undefined') return;
+  if (ffmpegPromise || ffmpeg?.loaded) return;
+  const schedule =
+    typeof window.requestIdleCallback === 'function'
+      ? (callback: () => void) => window.requestIdleCallback(callback, { timeout: 5000 })
+      : (callback: () => void) => window.setTimeout(callback, 1500);
+  schedule(() => {
+    void loadFfmpeg().catch(() => {
+      // 预加载失败不打扰用户，处理时会重试并显示真实错误
+    });
+  });
 }
 
 function toProgress(label: string, percent: number): AudioProcessingProgress {

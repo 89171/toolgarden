@@ -7,6 +7,7 @@ import {
   inpaintCanvasRegionWithMigan,
   resetMiganWatermarkSession,
 } from './image-browser';
+import { detectNoAudio } from './video-reencode-browser';
 import {
   createOutputFilename,
   computeTemporalMedian,
@@ -627,6 +628,9 @@ export async function removeVideoWatermark(
       durationSeconds: loaded.duration,
     });
 
+    // 与视频渲染并行预加载 ffmpeg.wasm 内核（约 32MB），避免音频阶段干等下载
+    void loadFfmpeg().catch(() => undefined);
+
     throwIfAborted(signal);
     onProgress?.({ stage: 'analyze', label: 'sampling', percent: 6 });
     const samples = await sampleSelectionPixels(
@@ -698,17 +702,22 @@ export async function removeVideoWatermark(
     throwIfAborted(signal);
     let finalBlob = videoBlob;
     let hasAudio = false;
-    try {
-      onProgress?.({ stage: 'audio', label: 'audio-mux', percent: AUDIO_PROGRESS_START });
-      finalBlob = await muxOriginalAudio(videoBlob, file, onProgress, signal);
-      hasAudio = true;
-    } catch (error) {
-      if (isCancellation(error)) {
-        return createFailure('cancelled');
+    if (detectNoAudio(loaded.video)) {
+      // 源视频明确无音轨：跳过 ffmpeg.wasm，直接输出无声视频
+      onProgress?.({ stage: 'done', label: 'done', percent: 100 });
+    } else {
+      try {
+        onProgress?.({ stage: 'audio', label: 'audio-mux', percent: AUDIO_PROGRESS_START });
+        finalBlob = await muxOriginalAudio(videoBlob, file, onProgress, signal);
+        hasAudio = true;
+      } catch (error) {
+        if (isCancellation(error)) {
+          return createFailure('cancelled');
+        }
+        // 音轨回填失败时降级为无声视频，不算整体失败
+        finalBlob = videoBlob;
+        hasAudio = false;
       }
-      // 音轨回填失败时降级为无声视频，不算整体失败
-      finalBlob = videoBlob;
-      hasAudio = false;
     }
 
     throwIfAborted(signal);

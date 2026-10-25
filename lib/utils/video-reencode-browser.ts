@@ -61,6 +61,25 @@ const AUDIO_PROGRESS_END = 96;
 const KEYFRAME_INTERVAL_SECONDS = 2;
 const MAX_ENCODER_QUEUE_SIZE = 8;
 
+/**
+ * 尽力探测视频是否包含音轨（在一段真实播放之后调用才可靠）。
+ * 明确无音轨时可以完全跳过 ffmpeg.wasm 回填，直接输出无声视频。
+ * 无法判断时返回 false（保守走回填路径）。
+ */
+export function detectNoAudio(video: HTMLVideoElement): boolean {
+  const probe = video as HTMLVideoElement & {
+    mozHasAudio?: boolean;
+    webkitAudioDecodedByteCount?: number;
+    audioTracks?: { length: number };
+  };
+  if (typeof probe.mozHasAudio === 'boolean') return !probe.mozHasAudio;
+  if (typeof probe.webkitAudioDecodedByteCount === 'number') {
+    return probe.webkitAudioDecodedByteCount === 0;
+  }
+  if (probe.audioTracks) return probe.audioTracks.length === 0;
+  return false;
+}
+
 function throwIfAborted(signal?: AbortSignal) {
   if (signal?.aborted) {
     throw createCancellationError();
@@ -482,6 +501,10 @@ export async function reencodeVideoToMp4(
     const bitrate = computeTargetBitrate(size.width, size.height, quality);
     onProgress?.({ stage: 'model', label: 'ready', percent: 12 });
 
+    // 与视频渲染并行预加载 ffmpeg.wasm 内核（约 32MB），把下载/编译时间
+    // 藏进 30%~80% 的渲染进度段，而不是渲染完才在音频阶段干等
+    void loadFfmpeg().catch(() => undefined);
+
     const videoBlob = await renderAndEncode({
       video: loaded,
       range: range ?? { start: 0, end: loaded.duration },
@@ -493,6 +516,21 @@ export async function reencodeVideoToMp4(
     });
 
     throwIfAborted(signal);
+    // 源视频明确无音轨时直接输出，省掉整个 ffmpeg.wasm 环节
+    if (detectNoAudio(loaded.video)) {
+      onProgress?.({ stage: 'done', label: 'done', percent: 100 });
+      return {
+        ok: true,
+        blob: videoBlob,
+        filename: createReencodeFilename(file.name, suffix),
+        width: size.width,
+        height: size.height,
+        durationMs: Math.round(performance.now() - startedAt),
+        outputSize: videoBlob.size,
+        hasAudio: false,
+      };
+    }
+
     const { blob, hasAudio } = await muxAudio(
       videoBlob,
       file,
