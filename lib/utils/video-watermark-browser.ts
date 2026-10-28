@@ -143,14 +143,14 @@ function createFailureError(code: import('./video-watermark').VideoWatermarkErro
  * AI 单帧补全的看门狗。
  *
  * WebGPU 会话"创建成功"不代表推理可用：部分 GPU/驱动组合下首次推理会静默挂起
- * （无错误、无超时可救）。MI-GAN 走 WebGPU 时若在时限内没返回，强制降级到
+ * 或直接报错。MI-GAN 推理失败或在时限内没返回时，强制降级到
  * WASM（disableMiganWebGpu + 重置缓存会话）重试一次。LaMa 刻意只用 WASM，
  * 但大模型推理慢，仍需要超长看门狗兜底转为 general 错误而不是永远挂着。
  */
 const MIGAN_WATCHDOG_MS = 120_000;
 const LAMA_WATCHDOG_MS = 600_000;
 
-async function inpaintSingleFrameWithWatchdog(
+export async function inpaintSingleFrameWithWatchdog(
   run: () => Promise<HTMLCanvasElement>,
   useLama: boolean
 ): Promise<HTMLCanvasElement> {
@@ -176,11 +176,10 @@ async function inpaintSingleFrameWithWatchdog(
   try {
     return await runWithTimeout(watchdogMs);
   } catch (error) {
-    const timedOut = error instanceof Error && error.message === 'inference_watchdog_timeout';
-    if (useLama || !timedOut) {
+    if (useLama || isCancellation(error)) {
       throw error;
     }
-    // MI-GAN WebGPU 挂起 → 丢弃会话、禁用 WebGPU，用 WASM 会话重试一次
+    // WebGPU 推理可能直接拒绝，也可能挂起；两种情况都使用 WASM 重试一次。
     disableMiganWebGpu();
     resetMiganWatermarkSession();
     return runWithTimeout(MIGAN_WATCHDOG_MS);
@@ -331,6 +330,8 @@ async function pickVideoCodec(
       height,
       bitrate,
       framerate,
+      latencyMode: 'realtime',
+      avc: { format: 'avc' },
     };
     try {
       const support = await VideoEncoder.isConfigSupported(config);
@@ -529,6 +530,10 @@ async function renderAndEncode(context: RenderContext): Promise<Blob> {
           const frameDuration = previousTimestamp >= 0
             ? Math.min(Math.max(1_000, timestamp - previousTimestamp), 1_000_000)
             : 33_333;
+          if (timestamp <= previousTimestamp) {
+            scheduleNextFrame(step);
+            return;
+          }
           previousTimestamp = timestamp;
           const frame = new VideoFrame(canvas, {
             timestamp,
@@ -536,8 +541,11 @@ async function renderAndEncode(context: RenderContext): Promise<Blob> {
           });
           const isKeyFrame = metadata.mediaTime - lastKeyTime >= KEYFRAME_INTERVAL_SECONDS;
           if (isKeyFrame) lastKeyTime = metadata.mediaTime;
-          encoder.encode(frame, { keyFrame: isKeyFrame });
-          frame.close();
+          try {
+            encoder.encode(frame, { keyFrame: isKeyFrame });
+          } finally {
+            frame.close();
+          }
 
           onProgress?.({
             stage: 'render',
@@ -572,21 +580,22 @@ async function renderAndEncode(context: RenderContext): Promise<Blob> {
       scheduleNextFrame(step);
       source.play().catch(() => fail(createFailureError('video_load_failed', 'playback blocked')));
     });
+    if (encoderState.error) throw encoderState.error;
+    await encoder.flush();
+    // Output callbacks can fail during flush without rejecting flush itself.
+    if (encoderState.error) throw encoderState.error;
+    if (previousTimestamp < 0) throw new Error('No video frames encoded');
+    muxer.finalize();
+    return new Blob([target.buffer], { type: 'video/mp4' });
+  } catch (error) {
+    if (isCancellation(error)) throw error;
+    throw createFailureError('encode_failed', error instanceof Error ? error.message : String(error));
   } finally {
+    settled = true;
     source.pause();
     source.onended = null;
+    if (encoder.state !== 'closed') encoder.close();
   }
-
-  if (encoderState.error) {
-    try { encoder.close(); } catch { /* noop */ }
-    throw createFailureError('encode_failed', encoderState.error.message);
-  }
-
-  await encoder.flush();
-  encoder.close();
-  muxer.finalize();
-
-  return new Blob([target.buffer], { type: 'video/mp4' });
 }
 
 /** 视频去水印主入口：返回判别联合结果，不抛异常 */
