@@ -17,6 +17,7 @@
 /.next/
 /out/
 /public/vendor/espeak-ng/
+/public/vendor/ffmpeg/core/ffmpeg-core.wasm
 
 # production
 /build

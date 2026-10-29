@@ -46,9 +46,10 @@ type FFmpegInstance = import('@ffmpeg/ffmpeg').FFmpeg;
 type TransformersModule = typeof import('@xenova/transformers');
 type Transcriber = (audio: string | URL, options?: Record<string, unknown>) => Promise<{ text?: string }>;
 
-// 内核优先同源自托管（public/vendor/ffmpeg/core），避免国内访问 jsdelivr 慢或不稳定；
-// 本地缺失时回退 CDN。资源首次下载后写入 Cache API 持久缓存，后续会话零网络加载。
+// JS 内核同源托管，WASM 使用对象存储，避免超过部署平台单文件大小限制。
+// 加载失败时回退 CDN；资源首次下载后写入 Cache API 持久缓存。
 const FFMPEG_CORE_LOCAL_BASE = '/vendor/ffmpeg/core';
+const FFMPEG_CORE_WASM_URL = 'https://aimodels.s3.cn-north-1.jdcloud-oss.com/ffmpeg-core.wasm';
 const FFMPEG_CORE_CDN_BASE = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/esm';
 const FFMPEG_CORE_CACHE_NAME = 'toolgarden-ffmpeg-core-0.12.10';
 const FFMPEG_WORKER_URL = '/vendor/ffmpeg/worker.js';
@@ -113,8 +114,7 @@ async function downloadCoreAsset(url: string, mimeType: string): Promise<Blob> {
   return blob;
 }
 
-async function fetchCoreAsset(base: string, filename: string, mimeType: string): Promise<string> {
-  const url = `${base}/${filename}`;
+async function fetchCoreAsset(url: string, mimeType: string): Promise<string> {
   const cached = await readCoreAssetFromCache(url);
   if (cached) {
     return URL.createObjectURL(new Blob([cached], { type: mimeType }));
@@ -130,18 +130,17 @@ async function loadFfmpegCoreAssets(
     ffmpegCoreAssetPromise = (async () => {
       onProgress?.({ stage: 'prepare', label: 'downloading-ffmpeg-core', percent: 10 });
 
-      const loadPair = async (base: string): Promise<{ coreURL: string; wasmURL: string }> => ({
-        coreURL: await fetchCoreAsset(base, 'ffmpeg-core.js', 'text/javascript'),
-        wasmURL: await fetchCoreAsset(base, 'ffmpeg-core.wasm', 'application/wasm'),
+      const loadPair = async (base: string, wasmUrl: string): Promise<{ coreURL: string; wasmURL: string }> => ({
+        coreURL: await fetchCoreAsset(`${base}/ffmpeg-core.js`, 'text/javascript'),
+        wasmURL: await fetchCoreAsset(wasmUrl, 'application/wasm'),
       });
 
       let assets: { coreURL: string; wasmURL: string };
       try {
-        // 同源版本：与 worker.js 一样来自本站，首次加载也无外网依赖
-        assets = await loadPair(FFMPEG_CORE_LOCAL_BASE);
+        assets = await loadPair(FFMPEG_CORE_LOCAL_BASE, FFMPEG_CORE_WASM_URL);
       } catch {
-        // 本地资源缺失（如老版本部署包）时回退 CDN
-        assets = await loadPair(FFMPEG_CORE_CDN_BASE);
+        // 同源 JS 或对象存储不可用时，回退到同版本 CDN 资源。
+        assets = await loadPair(FFMPEG_CORE_CDN_BASE, `${FFMPEG_CORE_CDN_BASE}/ffmpeg-core.wasm`);
       }
       onProgress?.({ stage: 'prepare', label: 'ffmpeg-core-ready', percent: 18 });
       return assets;
