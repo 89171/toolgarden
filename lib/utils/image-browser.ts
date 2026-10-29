@@ -283,7 +283,9 @@ const ONNX_RUNTIME_ASSET_VERSION = '1.21.0';
 const ONNX_WASM_PUBLIC_PATH = `/models/onnxruntime-web/${ONNX_RUNTIME_ASSET_VERSION}/`;
 const ONNX_WEBGPU_WASM_PUBLIC_PATH = '/models/onnxruntime-web/';
 const WATERMARK_MIGAN_MODEL_URL = 'https://huggingface.co/andraniksargsyan/migan/resolve/main/migan_pipeline_v2.onnx';
-const WATERMARK_AI_MODEL_URL = 'https://huggingface.co/Carve/LaMa-ONNX/resolve/main/lama_fp32.onnx';
+// 自托管在京东云对象存储（原地址为 huggingface.co/Carve/LaMa-ONNX/resolve/main/lama_fp32.onnx，
+// 国内访问慢且有 302 跳转；SHA256 = 1faef5301d78db7dda502fe59966957ec4b79dd64e16f03ed96913c7a4eb68d6）
+const WATERMARK_AI_MODEL_URL = 'https://aimodels.s3.cn-north-1.jdcloud-oss.com/lama_fp32.onnx';
 const WATERMARK_AI_INPUT_SIZE = 512;
 const SVG_OUTPUT_SCALE = 3;
 const SVG_MIN_RENDER_LONG_SIDE = 2048;
