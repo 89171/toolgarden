@@ -122,6 +122,11 @@ async function getBiRefNetModel(): Promise<{
     biRefNetModelPromise = (async () => {
       reportBiRefNetProgress(createBiRefNetProgress('model', 'model:prepare', 1));
       const transformers: TransformersModule = await import('@huggingface/transformers');
+      // 模型仓库自托管在京东云对象存储，把 remoteHost 指过去后
+      // from_pretrained 会从 {remoteHost}{model}/resolve/{revision}/ 拉取
+      // config.json / preprocessor_config.json / onnx/model_fp16.onnx。
+      // 注意：此 worker 只加载 BiRefNet 一个模型，全局覆盖 remoteHost 是安全的。
+      transformers.env.remoteHost = 'https://aimodels.s3.cn-north-1.jdcloud-oss.com/';
       const processor = await transformers.AutoProcessor.from_pretrained(BIREFNET_LITE_MODEL_ID, {
         revision: BIREFNET_LITE_MODEL_REVISION,
       });

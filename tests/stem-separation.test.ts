@@ -71,7 +71,7 @@ describe('stem model registry', () => {
     expect([...stemModelIds].sort()).toEqual(Object.keys(stemModels).sort());
     for (const id of stemModelIds) {
       expect(stemModels[id].id).toBe(id);
-      expect(stemModels[id].url).toMatch(/^https:\/\/huggingface\.co\//);
+      expect(stemModels[id].url).toMatch(/^https:\/\/aimodels\.s3\.cn-north-1\.jdcloud-oss\.com\//);
     }
   });
 

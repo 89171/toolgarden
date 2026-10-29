@@ -67,14 +67,18 @@ export interface StemModelMeta {
 export const stemModels: Record<StemModelId, StemModelMeta> = {
   htdemucs: {
     id: 'htdemucs',
-    url: 'https://huggingface.co/StemSplitio/htdemucs-onnx/resolve/main/htdemucs_fp16weights.onnx',
+    // 自托管在京东云对象存储（原地址为
+    // huggingface.co/StemSplitio/htdemucs-onnx/resolve/main/htdemucs_fp16weights.onnx）
+    url: 'https://aimodels.s3.cn-north-1.jdcloud-oss.com/htdemucs_fp16weights.onnx',
     bytes: 165_612_636,
     sha256: 'd05c269d0178d2a72ad484b10b11dd370193fc923201c3b27a99f848745db70a',
     sources: ['drums', 'bass', 'other', 'vocals'],
   },
   htdemucs_6s: {
     id: 'htdemucs_6s',
-    url: 'https://huggingface.co/StemSplitio/htdemucs-6s-onnx/resolve/main/htdemucs_6s_fp16weights.onnx',
+    // 自托管在京东云对象存储（原地址为
+    // huggingface.co/StemSplitio/htdemucs-6s-onnx/resolve/main/htdemucs_6s_fp16weights.onnx）
+    url: 'https://aimodels.s3.cn-north-1.jdcloud-oss.com/htdemucs_6s_fp16weights.onnx',
     bytes: 136_428_532,
     sha256: '7ce55792e2231c93fbf92de95f5fd5b3a5e6c89f7db690dfd693e8f1dce56869',
     sources: ['drums', 'bass', 'other', 'vocals', 'guitar', 'piano'],

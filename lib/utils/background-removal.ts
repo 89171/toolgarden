@@ -13,8 +13,11 @@ export const BACKGROUND_REMOVAL_PUBLIC_PATH =
 
 export const BIREFNET_LITE_MODEL_ID = 'studioludens/birefnet-lite-512';
 export const BIREFNET_LITE_MODEL_REVISION = '4a3c40c36c94093cc1e724d9ea428b8fa4b57dc7';
+// BiRefNet-lite 由 transformers.js 从 remoteHost 加载（见 background-removal.worker.ts），
+// 仓库布局已自托管到京东云对象存储。此常量与权重文件的 remoteURL 保持一致，
+// 作为浏览器 Cache API 的失效键使用（original: huggingface.co/studioludens/birefnet-lite-512）。
 export const BIREFNET_LITE_MODEL_URL =
-  `https://huggingface.co/${BIREFNET_LITE_MODEL_ID}/resolve/${BIREFNET_LITE_MODEL_REVISION}/onnx/model_fp16.onnx`;
+  `https://aimodels.s3.cn-north-1.jdcloud-oss.com/${BIREFNET_LITE_MODEL_ID}/resolve/${BIREFNET_LITE_MODEL_REVISION}/onnx/model_fp16.onnx`;
 
 const BACKGROUND_REMOVAL_MODEL_MAP: Record<
   ImglyBackgroundRemovalModel,

@@ -269,6 +269,10 @@ export function VideoWatermarkRemover() {
     const selected = Array.from(fileList)[0];
     if (!selected) return;
 
+    // 选择动作已落袋，立即清空 input value：
+    // 否则下一次通过对话框重选同一个文件时不会触发 change，更换视频会静默失效
+    if (inputRef.current) inputRef.current.value = '';
+
     const requestId = loadRequestRef.current + 1;
     loadRequestRef.current = requestId;
     setIsLoading(true);
