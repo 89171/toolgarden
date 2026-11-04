@@ -17,6 +17,19 @@ const nextIntlRequestConfig = './i18n/request.ts';
  */
 const paddleOcrOrtExternal = './lib/vendor/onnxruntime-web/ort.wasm.min.mjs';
 const emptyModule = './lib/shims/empty-module.ts';
+/**
+ * @ffmpeg/ffmpeg vendored 副本（lib/vendor/ffmpeg/）。
+ *
+ * Next.js 16.4+ 的 Turbopack 会对 classes.js 里 Worker 的两个创建分支都做静态
+ * 解析，原版的 `new URL(classWorkerURL, import.meta.url)`（classWorkerURL 是
+ * 运行时变量）无法解析，构建报
+ * "Module not found: Can't resolve (<dynamic> | 'undefined')"。
+ * 本项目固定通过 classWorkerURL 传入 /vendor/ffmpeg/worker.js 的绝对 URL，
+ * vendor 副本把该分支改为直接 new Worker(classWorkerURL)。
+ * TS 类型仍解析 node_modules 里真实包的 .d.ts；升级 @ffmpeg/ffmpeg 时需同步
+ * 重拷 dist/esm 六个运行时文件并重放该补丁。
+ */
+const ffmpegVendored = './lib/vendor/ffmpeg/index.js';
 const sharedSecurityHeaders = securityHeaders as Array<{ key: string; value: string }>;
 
 /**
@@ -73,6 +86,7 @@ const nextConfig: NextConfig = {
       'next-intl/config': nextIntlRequestConfig,
       fs: emptyModule,
       'ort.bundle.min.mjs': paddleOcrOrtExternal,
+      '@ffmpeg/ffmpeg': ffmpegVendored,
     },
   },
   webpack(config) {
@@ -87,6 +101,10 @@ const nextConfig: NextConfig = {
     config.resolve.alias['ort.bundle.min.mjs'] = path.resolve(
       config.context,
       paddleOcrOrtExternal,
+    );
+    config.resolve.alias['@ffmpeg/ffmpeg'] = path.resolve(
+      config.context,
+      ffmpegVendored,
     );
     config.resolve.fallback = {
       ...config.resolve.fallback,
