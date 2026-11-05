@@ -606,6 +606,16 @@ Canonical examples:
 - English URL: https://toolgarden.xyz/en/video/trim
 - Chinese URL: https://toolgarden.xyz/zh/video/trim
 
+#### Video Region Crop / 视频画面裁剪 (/video/crop)
+- ID: `video-crop`
+- Category: Convert / 转换
+- Icon label: `CRP`
+- Featured: no
+- English description: Drag a crop region over your video locally in the browser, lock it to common ratios like 16:9, 9:16 or 1:1, resize with handles, and export only the picture inside the box with the original audio, without uploading.
+- Chinese description: 在浏览器本地拖拽选区裁剪视频画面，支持 16:9、9:16、1:1 等比例锁定与手柄缩放，输出只保留框内画面并回填原音轨，文件不上传服务器。
+- English URL: https://toolgarden.xyz/en/video/crop
+- Chinese URL: https://toolgarden.xyz/zh/video/crop
+
 #### MV Generator / MV 生成器 (/audio/lyric-video)
 - ID: `audio-lyric-video`
 - Category: Convert / 转换

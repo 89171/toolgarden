@@ -30,6 +30,8 @@ export interface ReencodeOptions {
   maxLongSide?: number | null;
   /** 截取区间（秒），null 表示全片 */
   trim?: { start: number; end: number } | null;
+  /** 画面裁剪区域（源视频像素坐标），null 表示保留完整画面 */
+  crop?: { x: number; y: number; width: number; height: number } | null;
   /** 输出文件名后缀（不含扩展名） */
   suffix: string;
   onProgress?: (progress: VideoReencodeProgress) => void;
@@ -280,6 +282,8 @@ interface RenderContext {
   range: { start: number; end: number };
   outputWidth: number;
   outputHeight: number;
+  /** 源画面采样区域（像素），null 表示整幅画面 */
+  crop: { x: number; y: number; width: number; height: number } | null;
   bitrate: number;
   onProgress?: (progress: VideoReencodeProgress) => void;
   signal?: AbortSignal;
@@ -287,7 +291,7 @@ interface RenderContext {
 
 /** 播放并逐帧重编码（WebCodecs + mp4-muxer），只处理 [start, end] 区间 */
 async function renderAndEncode(context: RenderContext): Promise<Blob> {
-  const { video, range, outputWidth, outputHeight, bitrate, onProgress, signal } = context;
+  const { video, range, outputWidth, outputHeight, crop, bitrate, onProgress, signal } = context;
   const { start, end } = range;
   const spanSeconds = Math.max(0.1, end - start);
 
@@ -395,7 +399,12 @@ async function renderAndEncode(context: RenderContext): Promise<Blob> {
           }
           lastFrameAt.value = performance.now();
 
-          context2d.drawImage(source, 0, 0, outputWidth, outputHeight);
+          // 有裁剪区域时只采样区域内的画面：9 参 drawImage（源矩形 → 目标矩形）
+          if (crop) {
+            context2d.drawImage(source, crop.x, crop.y, crop.width, crop.height, 0, 0, outputWidth, outputHeight);
+          } else {
+            context2d.drawImage(source, 0, 0, outputWidth, outputHeight);
+          }
 
           const relativeTime = Math.max(0, metadata.mediaTime - start);
           const timestamp = Math.max(0, Math.round(relativeTime * 1_000_000));
@@ -471,7 +480,7 @@ export async function reencodeVideoToMp4(
   options: ReencodeOptions
 ): Promise<VideoReencodeResult> {
   const startedAt = performance.now();
-  const { quality, maxLongSide = null, trim = null, suffix, onProgress, signal } = options;
+  const { quality, maxLongSide = null, trim = null, crop = null, suffix, onProgress, signal } = options;
 
   const fileCheck = validateReencodeFile(file);
   if (!fileCheck.ok) {
@@ -497,7 +506,12 @@ export async function reencodeVideoToMp4(
       return createFailure('range_invalid');
     }
 
-    const size = computeOutputSize(loaded.width, loaded.height, maxLongSide);
+    // 裁剪输出时以区域尺寸为源尺寸，码率与输出分辨率均按区域内画面计算
+    const size = computeOutputSize(
+      crop ? crop.width : loaded.width,
+      crop ? crop.height : loaded.height,
+      maxLongSide
+    );
     const bitrate = computeTargetBitrate(size.width, size.height, quality);
     onProgress?.({ stage: 'model', label: 'ready', percent: 12 });
 
@@ -510,6 +524,7 @@ export async function reencodeVideoToMp4(
       range: range ?? { start: 0, end: loaded.duration },
       outputWidth: size.width,
       outputHeight: size.height,
+      crop,
       bitrate,
       onProgress,
       signal,

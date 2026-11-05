@@ -190,6 +190,9 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - **Video Trimmer / 视频截取** (`/video/trim`): Cut a video segment by start and end time in your browser, re-encoded to H.264 MP4 with the matching audio kept and three quality presets available.
   - English: https://toolgarden.xyz/en/video/trim
   - Chinese: https://toolgarden.xyz/zh/video/trim
+- **Video Region Crop / 视频画面裁剪** (`/video/crop`): Drag a crop region over your video locally in the browser, lock it to common ratios like 16:9, 9:16 or 1:1, resize with handles, and export only the picture inside the box with the original audio, without uploading.
+  - English: https://toolgarden.xyz/en/video/crop
+  - Chinese: https://toolgarden.xyz/zh/video/crop
 - **MV Generator / MV 生成器** (`/audio/lyric-video`): Turn an MP3 and LRC lyrics into an MP4 lyric video with an animated background, right in your browser. Choose vinyl, spectrum or star tunnel templates, set the aspect ratio and lyric style, and export locally without uploading any files.
   - English: https://toolgarden.xyz/en/audio/lyric-video
   - Chinese: https://toolgarden.xyz/zh/audio/lyric-video

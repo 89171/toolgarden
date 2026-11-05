@@ -1408,7 +1408,8 @@
     "video-remove-watermark": "视频去水印,去除视频水印,视频水印消除,在线视频去水印,视频去logo,视频去水印免费",
     "video-to-gif": "视频转GIF,视频生成GIF,在线视频转GIF,MP4转GIF,GIF制作,视频截取动图",
     "video-compress": "视频压缩,视频压缩在线,免费视频压缩,压缩视频体积,MP4压缩,视频变小",
-    "video-trim": "视频截取,视频剪辑,在线截取视频,视频片段截取,剪切视频,视频切割"
+    "video-trim": "视频截取,视频剪辑,在线截取视频,视频片段截取,剪切视频,视频切割",
+    "video-crop": "视频画面裁剪,视频裁剪,裁剪视频画面,视频截取区域,视频画面截取,视频裁剪比例,视频裁剪在线,视频局部裁剪"
   },
   "tool_faq": {
     "json-escape": {
@@ -2968,6 +2969,22 @@
         {
           "question": "声音会跟着一起截吗？",
           "answer": "会。音轨按所选区间从原视频裁剪后回填，画面和声音对齐；个别格式回填失败时会输出无声视频并标注。"
+        }
+      ]
+    },
+    "video-crop": {
+      "items": [
+        {
+          "question": "裁剪框外的画面去哪了？",
+          "answer": "被完全丢弃。输出文件只包含选区内的像素，选区外的内容不会以任何形式保留在输出里，输出分辨率就是选区的像素尺寸。"
+        },
+        {
+          "question": "为什么输出尺寸和拖拽的选区差一两个像素？",
+          "answer": "H.264 编码要求宽高都是偶数，选区会做偶数对齐，所以可能有 1~2 像素的取整误差。"
+        },
+        {
+          "question": "声音会变吗？",
+          "answer": "不会。音轨按原样保留，画面裁剪不影响声音内容；个别格式音轨回填失败时会输出无声视频，结果信息里会标注。"
         }
       ]
     }
@@ -5509,6 +5526,10 @@
     "video-trim": {
       "name": "视频截取",
       "description": "在浏览器本地按起止时间截取视频片段，重编码为 H.264 MP4 并回填对应区间的音轨，画质三档可选，适合截取精彩片段或去掉头尾冗余，文件不上传服务器。"
+    },
+    "video-crop": {
+      "name": "视频画面裁剪",
+      "description": "在浏览器本地拖拽选区裁剪视频画面，支持 16:9、9:16、1:1 等比例锁定与手柄缩放，输出只保留框内画面并回填原音轨，文件不上传服务器。"
     }
   },
   "redirect_page": {
@@ -5830,6 +5851,57 @@
       "canvas_context": "无法创建画布上下文，请重试。",
       "range_invalid": "截取区间无效，请保证结束时间晚于开始时间。",
       "cancelled": "截取已取消。"
+    }
+  },
+  "video_crop": {
+    "settings_title": "画面裁剪设置",
+    "drop_title": "点击或拖拽视频上传",
+    "drop_hint": "支持 MP4、WebM、MOV 等常见格式，最长 5 分钟、最大 300MB，所有处理都在本地完成",
+    "replace": "更换视频",
+    "local_note": "请仅处理你拥有权利或已获授权修改的视频。裁剪全程在浏览器本地完成，不会上传到任何服务器。",
+    "preview_title": "裁剪预览",
+    "crop_box_label": "裁剪选区",
+    "crop_hint": "拖动选区框整体移动位置，拖动边角手柄缩放大小；选中比例预设后缩放会自动锁定比例。",
+    "ratio_title": "比例预设",
+    "ratio_free": "自由",
+    "fill_frame": "铺满画面",
+    "reset_crop": "恢复默认",
+    "region_summary": "选区：位置 ({x}, {y})，尺寸 {width}×{height}，比例约 {ratio}",
+    "region_empty": "上传视频后在这里拖拽确定裁剪区域",
+    "quality_title": "画质档位",
+    "quality_high": "高",
+    "quality_medium": "中",
+    "quality_low": "低",
+    "apply": "裁剪画面",
+    "processing": "裁剪中…",
+    "cancel": "取消",
+    "download": "下载视频",
+    "output_title": "输出视频",
+    "output_empty": "裁剪出的视频会显示在这里",
+    "audio_track": "音轨",
+    "audio_track_kept": "已保留原音轨",
+    "audio_track_dropped": "无声视频（音轨处理失败）",
+    "duration_value": "耗时 {value}ms",
+    "handle_nw": "左上角手柄",
+    "handle_n": "上边手柄",
+    "handle_ne": "右上角手柄",
+    "handle_e": "右边手柄",
+    "handle_se": "右下角手柄",
+    "handle_s": "下边手柄",
+    "handle_sw": "左下角手柄",
+    "handle_w": "左边手柄",
+    "errors": {
+      "general": "裁剪失败，请重试或换一个视频。",
+      "unsupported_input": "不支持的文件类型，请选择 MP4、WebM、MOV 等视频文件。",
+      "unsupported_browser": "当前浏览器不支持 WebCodecs 视频编码，请使用较新版本的 Chrome、Edge 或 Safari。",
+      "file_too_large": "视频超过 {maxSize} 上限，请先裁剪或压缩。",
+      "video_too_long": "视频超过 {maxDuration} 上限，请先截取需要的片段。",
+      "video_load_failed": "视频读取失败，可能是不支持的编码格式或损坏的文件。",
+      "encode_failed": "视频编码失败{detail}。",
+      "canvas_context": "无法创建画布上下文，请重试。",
+      "range_invalid": "截取区间无效。",
+      "crop_invalid": "裁剪区域无效，请重新拖拽选区。",
+      "cancelled": "裁剪已取消。"
     }
   }
 }

@@ -474,6 +474,15 @@ export const toolRegistry: ToolMeta[] = [
     featured: false,
   },
   {
+    id: 'video-crop',
+    name: '视频画面裁剪',
+    description: '在浏览器本地拖拽选区裁剪视频画面，支持 16:9、9:16、1:1 等比例锁定与手柄缩放，输出只保留框内画面并回填原音轨，文件不上传服务器。',
+    path: '/video/crop',
+    icon: 'CRP',
+    category: 'convert',
+    featured: false,
+  },
+  {
     id: 'audio-lyric-video',
     name: 'MV 生成器',
     description: '在浏览器本地将 MP3 和 LRC 歌词合成为带动态背景的 MP4 歌词视频',

@@ -1408,7 +1408,8 @@
     "video-remove-watermark": "remove video watermark, video watermark remover, video watermark removal online, delete logo from video, free video watermark remover",
     "video-to-gif": "video to gif, mp4 to gif, video to gif converter online, make gif from video, free gif maker",
     "video-compress": "compress video, video compressor online, reduce video file size, free video compression, mp4 compressor",
-    "video-trim": "trim video, video cutter online, cut video clip, video segment cutter, split video online"
+    "video-trim": "trim video, video cutter online, cut video clip, video segment cutter, split video online",
+    "video-crop": "video crop, crop video online, video region crop, crop video ratio, trim video frame area, video cropper, crop mp4 video, video crop without upload"
   },
   "tool_faq": {
     "json-escape": {
@@ -2968,6 +2969,22 @@
         {
           "question": "Does the audio get cut too?",
           "answer": "Yes. The audio is cut from the source for the chosen range and muxed back in sync; if muxing fails the export is silent, and the result panel labels it."
+        }
+      ]
+    },
+    "video-crop": {
+      "items": [
+        {
+          "question": "What happens to the picture outside the crop box?",
+          "answer": "It is discarded completely. The output contains only the pixels inside the selection, and its resolution equals the selection's pixel size — nothing outside is kept in any form."
+        },
+        {
+          "question": "Why is the output size off by a pixel or two?",
+          "answer": "H.264 requires even width and height, so the selection is even-aligned, which can round the value by 1-2 pixels."
+        },
+        {
+          "question": "Does the audio change?",
+          "answer": "No. The audio track is kept as-is; cropping only affects the picture. If muxing fails for some formats the export is silent, and the result panel labels it."
         }
       ]
     }
@@ -5509,6 +5526,10 @@
     "video-trim": {
       "name": "Video Trimmer",
       "description": "Cut a video segment by start and end time in your browser, re-encoded to H.264 MP4 with the matching audio kept and three quality presets available."
+    },
+    "video-crop": {
+      "name": "Video Region Crop",
+      "description": "Drag a crop region over your video locally in the browser, lock it to common ratios like 16:9, 9:16 or 1:1, resize with handles, and export only the picture inside the box with the original audio, without uploading."
     }
   },
   "redirect_page": {
@@ -5830,6 +5851,57 @@
       "canvas_context": "Could not create a canvas context. Please retry.",
       "range_invalid": "Invalid range; the end time must be after the start time.",
       "cancelled": "Trimming cancelled."
+    }
+  },
+  "video_crop": {
+    "settings_title": "Crop settings",
+    "drop_title": "Click or drop a video to upload",
+    "drop_hint": "Supports MP4, WebM, MOV and more, up to 5 minutes and 300MB; all processing is local",
+    "replace": "Replace video",
+    "local_note": "Only process videos you own or are authorized to edit. Cropping runs entirely in your browser; nothing is uploaded.",
+    "preview_title": "Crop preview",
+    "crop_box_label": "Crop selection",
+    "crop_hint": "Drag the box to move it, drag a corner or edge handle to resize it; with a ratio preset selected, resizing snaps to that ratio.",
+    "ratio_title": "Ratio presets",
+    "ratio_free": "Free",
+    "fill_frame": "Fill frame",
+    "reset_crop": "Reset",
+    "region_summary": "Region: position ({x}, {y}), size {width}×{height}, ratio ≈ {ratio}",
+    "region_empty": "Drag out the crop region after uploading a video",
+    "quality_title": "Quality preset",
+    "quality_high": "High",
+    "quality_medium": "Medium",
+    "quality_low": "Low",
+    "apply": "Crop video",
+    "processing": "Cropping…",
+    "cancel": "Cancel",
+    "download": "Download video",
+    "output_title": "Output video",
+    "output_empty": "The cropped video will appear here",
+    "audio_track": "Audio",
+    "audio_track_kept": "Original audio kept",
+    "audio_track_dropped": "Silent video (audio processing failed)",
+    "duration_value": "Took {value}ms",
+    "handle_nw": "Top-left handle",
+    "handle_n": "Top handle",
+    "handle_ne": "Top-right handle",
+    "handle_e": "Right handle",
+    "handle_se": "Bottom-right handle",
+    "handle_s": "Bottom handle",
+    "handle_sw": "Bottom-left handle",
+    "handle_w": "Left handle",
+    "errors": {
+      "general": "Cropping failed, please retry or try another video.",
+      "unsupported_input": "Unsupported file type, please choose a video such as MP4, WebM or MOV.",
+      "unsupported_browser": "This browser does not support WebCodecs video encoding; use a recent Chrome, Edge or Safari.",
+      "file_too_large": "The video exceeds the {maxSize} limit; trim or compress it first.",
+      "video_too_long": "The video exceeds the {maxDuration} limit; cut the segment you need first.",
+      "video_load_failed": "Failed to read the video; the encoding may be unsupported or the file damaged.",
+      "encode_failed": "Video encoding failed{detail}.",
+      "canvas_context": "Could not create a canvas context, please retry.",
+      "range_invalid": "Invalid segment range.",
+      "crop_invalid": "Invalid crop region, please drag the selection again.",
+      "cancelled": "Cropping cancelled."
     }
   }
 }
