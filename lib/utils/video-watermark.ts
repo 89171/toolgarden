@@ -143,6 +143,60 @@ export function createVideoWatermarkPlan(input: VideoWatermarkPlanInput): VideoW
   };
 }
 
+/** 选区四边是否贴到画面边界（贴边的一侧不能再做向内羽化） */
+export interface FeatherEdges {
+  top: boolean;
+  right: boolean;
+  bottom: boolean;
+  left: boolean;
+}
+
+/** 四边羽化带宽度（px） */
+export interface FeatherBands {
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+}
+
+/**
+ * 判断选区四边与画面边界的贴合情况。
+ * 允许 1px 容差：选区坐标经 normalizeCropRect 取整后可能与画面边界差 1px。
+ */
+export function getCropEdgeContact(
+  selection: ImageCropRect,
+  videoWidth: number,
+  videoHeight: number
+): FeatherEdges {
+  return {
+    left: selection.x <= 1,
+    top: selection.y <= 1,
+    right: selection.x + selection.width >= videoWidth - 1,
+    bottom: selection.y + selection.height >= videoHeight - 1,
+  };
+}
+
+/**
+ * 计算补丁四边的羽化带宽度。
+ *
+ * 早期实现用「白色矩形从 inset 起画 + 高斯模糊」做 destination-in，
+ * 补丁四周 inset(~feather) 像素会变成半透明甚至全透明，等于把有效修复区
+ * 向内缩了 2×feather。水印贴画面底边时用户无法再向下扩框，底部一条就清不掉。
+ * 现在改为：羽化带宽度固定上限 4px，且贴画面边界的一侧直接不羽化
+ * （边界外没有像素需要过渡），保证选区内几乎全部保持不透明。
+ */
+export function computeFeatherBands(feather: number, edges: FeatherEdges): FeatherBands {
+  const band = Number.isFinite(feather) && feather > 0
+    ? Math.max(1, Math.min(4, Math.round(feather / 4)))
+    : 0;
+  return {
+    top: edges.top ? 0 : band,
+    right: edges.right ? 0 : band,
+    bottom: edges.bottom ? 0 : band,
+    left: edges.left ? 0 : band,
+  };
+}
+
 /**
  * 计算时域中值补丁与时域波动。
  *

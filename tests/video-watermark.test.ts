@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import type { ImageCropRect } from '../lib/utils/image';
 import {
+  computeFeatherBands,
   computeSampleTimestamps,
   computeTemporalMedian,
   createOutputFilename,
   createVideoWatermarkPlan,
   decideRepairMethod,
+  getCropEdgeContact,
   getSampleCount,
   mapProgressRange,
   STATIC_MOTION_THRESHOLD,
@@ -143,6 +145,45 @@ describe('createVideoWatermarkPlan', () => {
     expect(plan.selection.y).toBeGreaterThanOrEqual(0);
     expect(plan.selection.x + plan.selection.width).toBeLessThanOrEqual(640);
     expect(plan.selection.y + plan.selection.height).toBeLessThanOrEqual(360);
+  });
+});
+
+describe('getCropEdgeContact / computeFeatherBands', () => {
+  it('detects a selection whose bottom edge touches the bottom of the frame', () => {
+    const edges = getCropEdgeContact(
+      { x: 400, y: 300, width: 200, height: 60 },
+      640,
+      360
+    );
+    expect(edges).toEqual({ top: false, right: false, bottom: true, left: false });
+  });
+
+  it('detects a selection filling the whole frame', () => {
+    const edges = getCropEdgeContact({ x: 0, y: 0, width: 640, height: 360 }, 640, 360);
+    expect(edges).toEqual({ top: true, right: true, bottom: true, left: true });
+  });
+
+  it('keeps touching edges fully opaque and limits feathering to 4px', () => {
+    const edges = getCropEdgeContact({ x: 400, y: 300, width: 200, height: 60 }, 640, 360);
+    const bands = computeFeatherBands(12, edges);
+    // 贴底边不再向内羽化，其余三边最多 3~4px（而不是旧实现的 12px+blur）
+    expect(bands.bottom).toBe(0);
+    expect(bands.top).toBe(3);
+    expect(bands.left).toBe(3);
+    expect(bands.right).toBe(3);
+    expect(computeFeatherBands(36, edges).right).toBe(4);
+  });
+
+  it('disables feathering entirely when the selection fills the frame', () => {
+    const full = { top: true, right: true, bottom: true, left: true };
+    const bands = computeFeatherBands(12, full);
+    expect(bands).toEqual({ top: 0, right: 0, bottom: 0, left: 0 });
+  });
+
+  it('disables feathering when feather is zero or invalid', () => {
+    const none = { top: false, right: false, bottom: false, left: false };
+    expect(computeFeatherBands(0, none)).toEqual({ top: 0, right: 0, bottom: 0, left: 0 });
+    expect(computeFeatherBands(Number.NaN, none)).toEqual({ top: 0, right: 0, bottom: 0, left: 0 });
   });
 });
 

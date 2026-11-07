@@ -10,13 +10,16 @@ import {
 import { demuxMp4Video } from './mp4-demux';
 import { muxWithPreparedAudio, prepareAudioTrack } from './video-audio-track';
 import {
+  computeFeatherBands,
   createOutputFilename,
   computeTemporalMedian,
   createVideoWatermarkPlan,
   decideRepairMethod,
+  getCropEdgeContact,
   mapProgressRange,
   MAX_VIDEO_DURATION_SECONDS,
   validateVideoFile,
+  type FeatherEdges,
   type VideoWatermarkAppliedMethod,
   type VideoWatermarkProgress,
   type VideoWatermarkRemovalResult,
@@ -267,24 +270,44 @@ function createCanvas(width: number, height: number): HTMLCanvasElement | null {
   return canvas.getContext('2d') ? canvas : null;
 }
 
-/** 给补丁画布应用边缘羽化透明，使贴回画面时边界自然过渡 */
-function applyFeatheredAlpha(canvas: HTMLCanvasElement, feather: number) {
-  if (feather <= 0) return;
+/**
+ * 给补丁画布应用边缘羽化透明，使贴回画面时边界自然过渡。
+ *
+ * 关键：羽化带只能吃掉选区最外侧几像素，且贴画面边界的一侧必须完全不羽化。
+ * 旧实现让白色 mask 从 inset = feather 处才开始画（再叠加 blur），补丁四周
+ * 约 2×feather 像素几乎透明；水印贴画面底边时用户无法再往下扩框，底部一条
+ * 就始终清不掉。现在羽化带最多 4px，中心区域（包括所有贴边边）保持不透明。
+ */
+export function applyFeatheredAlpha(canvas: HTMLCanvasElement, feather: number, edges: FeatherEdges) {
+  const bands = computeFeatherBands(feather, edges);
+  if (!bands.top && !bands.right && !bands.bottom && !bands.left) return;
+
   const context = canvas.getContext('2d');
   if (!context) return;
-
   const mask = document.createElement('canvas');
   mask.width = canvas.width;
   mask.height = canvas.height;
   const maskContext = mask.getContext('2d');
   if (!maskContext) return;
 
-  const blur = Math.max(1, Math.round(feather / 2));
-  const inset = Math.max(2, Math.round(feather));
-  maskContext.filter = `blur(${blur}px)`;
+  const { width, height } = canvas;
+  // 先铺满不透明白，再用 destination-out 把四条羽化带擦出 0→1 的 alpha 渐变。
+  // 这样贴边的一侧完全保留 alpha=1，且不会像 filter: blur 那样侵蚀整圈边缘。
   maskContext.fillStyle = '#ffffff';
-  maskContext.fillRect(inset, inset, Math.max(1, canvas.width - inset * 2), Math.max(1, canvas.height - inset * 2));
-  maskContext.filter = 'none';
+  maskContext.fillRect(0, 0, width, height);
+  maskContext.globalCompositeOperation = 'destination-out';
+
+  const eraseBand = (x0: number, y0: number, x1: number, y1: number, x: number, y: number, w: number, h: number) => {
+    const gradient = maskContext.createLinearGradient(x0, y0, x1, y1);
+    gradient.addColorStop(0, 'rgba(0, 0, 0, 1)');
+    gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    maskContext.fillStyle = gradient;
+    maskContext.fillRect(x, y, w, h);
+  };
+  if (bands.left > 0) eraseBand(0, 0, bands.left, 0, 0, 0, bands.left, height);
+  if (bands.right > 0) eraseBand(width, 0, width - bands.right, 0, width - bands.right, 0, bands.right, height);
+  if (bands.top > 0) eraseBand(0, 0, 0, bands.top, 0, 0, width, bands.top);
+  if (bands.bottom > 0) eraseBand(0, height, 0, height - bands.bottom, 0, height - bands.bottom, width, bands.bottom);
 
   context.globalCompositeOperation = 'destination-in';
   context.drawImage(mask, 0, 0);
@@ -294,7 +317,8 @@ function applyFeatheredAlpha(canvas: HTMLCanvasElement, feather: number) {
 function createTemporalPatchCanvas(
   median: Uint8ClampedArray,
   rect: ImageCropRect,
-  feather: number
+  feather: number,
+  edges: FeatherEdges
 ): HTMLCanvasElement | null {
   const canvas = createCanvas(rect.width, rect.height);
   if (!canvas) return null;
@@ -304,14 +328,15 @@ function createTemporalPatchCanvas(
   const imageData = context.createImageData(rect.width, rect.height);
   imageData.data.set(median.subarray(0, imageData.data.length));
   context.putImageData(imageData, 0, 0);
-  applyFeatheredAlpha(canvas, feather);
+  applyFeatheredAlpha(canvas, feather, edges);
   return canvas;
 }
 
 function extractSelectionPatch(
   frame: HTMLCanvasElement,
   rect: ImageCropRect,
-  feather: number
+  feather: number,
+  edges: FeatherEdges
 ): HTMLCanvasElement | null {
   const canvas = createCanvas(rect.width, rect.height);
   if (!canvas) return null;
@@ -319,7 +344,7 @@ function extractSelectionPatch(
   if (!context) return null;
 
   context.drawImage(frame, rect.x, rect.y, rect.width, rect.height, 0, 0, rect.width, rect.height);
-  applyFeatheredAlpha(canvas, feather);
+  applyFeatheredAlpha(canvas, feather, edges);
   return canvas;
 }
 
@@ -839,6 +864,9 @@ export async function removeVideoWatermark(
       method,
       durationSeconds: loaded.duration,
     });
+    // 贴到画面边界的一侧不再做向内羽化，否则选区边缘的补丁会变半透明，
+    // 用户把框底边拉到画面底部时，最底下那条水印就清不掉。
+    const edges = getCropEdgeContact(plan.selection, loaded.width, loaded.height);
 
     // 与视频渲染并行预加载 ffmpeg.wasm 内核（约 32MB），避免音频阶段干等下载
     void loadFfmpeg().catch(() => undefined);
@@ -867,7 +895,7 @@ export async function removeVideoWatermark(
     throwIfAborted(signal);
     let patchCanvas: HTMLCanvasElement | null;
     if (appliedMethod === 'temporal') {
-      patchCanvas = createTemporalPatchCanvas(median, plan.selection, feather);
+      patchCanvas = createTemporalPatchCanvas(median, plan.selection, feather, edges);
       onProgress?.({ stage: 'model', label: 'temporal-ready', percent: 34 });
     } else {
       onProgress?.({ stage: 'model', label: 'model-loading', percent: 26 });
@@ -892,10 +920,10 @@ export async function removeVideoWatermark(
             label: progress.label,
             percent: mapProgressRange(progress.percent, 26, 38),
           });
-        }),
+        }, false),
         useLama
       );
-      patchCanvas = extractSelectionPatch(repaired, plan.selection, feather);
+      patchCanvas = extractSelectionPatch(repaired, plan.selection, feather, edges);
     }
 
     if (!patchCanvas) {

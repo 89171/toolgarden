@@ -2573,7 +2573,8 @@ async function runMiganWatermarkInpaint(
   image: LoadedImage,
   selection: ImageCropRect,
   feather: number,
-  onProgress?: (progress: ImageWatermarkRemovalProgress) => void
+  onProgress?: (progress: ImageWatermarkRemovalProgress) => void,
+  soften = true
 ): Promise<HTMLCanvasElement> {
   const { ort, session } = await getWatermarkMiganSession(onProgress);
   onProgress?.(createWatermarkRemovalProgress('prepare', 'prepare:patch', 36));
@@ -2633,7 +2634,7 @@ async function runMiganWatermarkInpaint(
   repairContext.imageSmoothingQuality = 'high';
   repairContext.drawImage(outputPatchCanvas, patch.x, patch.y, patch.width, patch.height);
   repairContext.restore();
-  softenRepairArea(repairCanvas, selection, feather);
+  if (soften) softenRepairArea(repairCanvas, selection, feather);
 
   return repairCanvas;
 }
@@ -2646,14 +2647,16 @@ export async function inpaintCanvasRegionWithMigan(
   frame: HTMLCanvasElement,
   selection: ImageCropRect,
   feather: number,
-  onProgress?: (progress: ImageWatermarkRemovalProgress) => void
+  onProgress?: (progress: ImageWatermarkRemovalProgress) => void,
+  /** 视频工具传 false：补丁自己负责边界融合，跳过会把原图（含水印）叠回选区的柔化 */
+  soften = true
 ): Promise<HTMLCanvasElement> {
   const image: LoadedImage = {
     element: frame as unknown as HTMLImageElement,
     width: frame.width,
     height: frame.height,
   };
-  return runMiganWatermarkInpaint(image, selection, feather, onProgress);
+  return runMiganWatermarkInpaint(image, selection, feather, onProgress, soften);
 }
 
 /**
@@ -2667,21 +2670,24 @@ export async function inpaintCanvasRegionWithLama(
   frame: HTMLCanvasElement,
   selection: ImageCropRect,
   feather: number,
-  onProgress?: (progress: ImageWatermarkRemovalProgress) => void
+  onProgress?: (progress: ImageWatermarkRemovalProgress) => void,
+  /** 视频工具传 false：补丁自己负责边界融合，跳过会把原图（含水印）叠回选区的柔化 */
+  soften = true
 ): Promise<HTMLCanvasElement> {
   const image: LoadedImage = {
     element: frame as unknown as HTMLImageElement,
     width: frame.width,
     height: frame.height,
   };
-  return runAiWatermarkInpaint(image, selection, feather, onProgress);
+  return runAiWatermarkInpaint(image, selection, feather, onProgress, soften);
 }
 
 async function runAiWatermarkInpaint(
   image: LoadedImage,
   selection: ImageCropRect,
   feather: number,
-  onProgress?: (progress: ImageWatermarkRemovalProgress) => void
+  onProgress?: (progress: ImageWatermarkRemovalProgress) => void,
+  soften = true
 ): Promise<HTMLCanvasElement> {
   const { ort, session } = await getWatermarkInpaintSession(onProgress);
   onProgress?.(createWatermarkRemovalProgress('prepare', 'prepare:patch', 36));
@@ -2739,7 +2745,7 @@ async function runAiWatermarkInpaint(
   repairContext.imageSmoothingQuality = 'high';
   repairContext.drawImage(outputPatchCanvas, patch.x, patch.y, patch.width, patch.height);
   repairContext.restore();
-  softenRepairArea(repairCanvas, selection, feather);
+  if (soften) softenRepairArea(repairCanvas, selection, feather);
 
   return repairCanvas;
 }
