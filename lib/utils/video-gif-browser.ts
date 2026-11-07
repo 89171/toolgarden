@@ -169,10 +169,20 @@ async function tryRenderGifViaDecoder(context: {
   const totalFrames = sampleTimesUs.length;
 
   let decoder: VideoDecoder | null = null;
+  /** 经函数读取可避免 TS 把「只在回调里赋值」的变量窄化成 null */
   const readDecoder = (): VideoDecoder | null => decoder;
   let writtenFrames = 0;
   let nextSampleIndex = 0;
   let fatal: Error | null = null;
+  /** 已收尾：解码器的 output 回调不得再写 GIF 或进度（回退 seek 后尤其重要） */
+  let disposed = false;
+  /** 唤醒正在等待 dequeue 的 drainSamples，避免解码器收尾后永久挂起 */
+  let wakeDrain: (() => void) | null = null;
+  const notifyDrain = () => {
+    const wake = wakeDrain;
+    wakeDrain = null;
+    wake?.();
+  };
 
   /** 把当前画布内容量化并写入 GIF（每帧局部调色板） */
   const writeFrameFromCanvas = () => {
@@ -202,13 +212,30 @@ async function tryRenderGifViaDecoder(context: {
     const pending: EncodedVideoChunk[] = [];
     const drainSamples = async () => {
       const instance = decoder;
-      if (!instance) return;
+      if (!instance || disposed) return;
       while (pending.length > 0) {
+        if (disposed) return;
         throwIfAborted(signal);
         if (fatal) throw fatal;
         if (instance.decodeQueueSize > MAX_DECODER_QUEUE_SIZE) {
+          // 队列拥塞时等 dequeue，但解码器报错 / 任务取消 / 已收尾时不一定还会
+          // 派发 dequeue。同时监听这些信号并用短超时轮询兜底，避免永久挂起。
           await new Promise<void>((resolve) => {
-            instance.addEventListener('dequeue', () => resolve(), { once: true });
+            let settled = false;
+            const finish = () => {
+              if (settled) return;
+              settled = true;
+              instance.removeEventListener('dequeue', finish);
+              signal?.removeEventListener('abort', finish);
+              if (wakeDrain === finish) wakeDrain = null;
+              resolve();
+            };
+            instance.addEventListener('dequeue', finish, { once: true });
+            signal?.addEventListener('abort', finish, { once: true });
+            // 250ms 兜底轮询：即使 dequeue 不再派发也会重新检查 fatal / 取消；
+            // finish 幂等，超时触发时多半已被 dequeue 唤醒，多一次空转无副作用。
+            setTimeout(finish, 250);
+            wakeDrain = finish;
           });
           continue;
         }
@@ -225,7 +252,7 @@ async function tryRenderGifViaDecoder(context: {
           const nextDecoder = new VideoDecoder({
             output: (frame) => {
               try {
-                if (fatal) return;
+                if (disposed || fatal) return;
                 // 解码器按显示顺序输出；取「采样时间点处或之后的第一帧」。
                 // 同一帧可能对应多个相邻采样点，画面只画一次。
                 let captured = false;
@@ -242,12 +269,14 @@ async function tryRenderGifViaDecoder(context: {
                 }
               } catch (error) {
                 fatal = error instanceof Error ? error : new Error(String(error));
+                notifyDrain();
               } finally {
                 frame.close();
               }
             },
             error: (error) => {
               fatal = error instanceof Error ? error : new Error(String(error));
+              notifyDrain();
             },
           });
           nextDecoder.configure({
@@ -275,6 +304,15 @@ async function tryRenderGifViaDecoder(context: {
     );
     await drainSamples();
     if (fatal) throw fatal;
+    throwIfAborted(signal);
+
+    // H.264 有 B 帧时解码器会缓存一个重排序队列；不 flush 末尾若干帧不会
+    // 派发 output，GIF 就丢尾帧，且尾部补齐用的是过期画布。
+    const activeDecoder = readDecoder();
+    if (activeDecoder && activeDecoder.state === 'configured') {
+      await activeDecoder.flush();
+    }
+    if (fatal) throw fatal;
     if (writtenFrames === 0) return null;
 
     // 区间尾部采样点晚于最后一帧时（常见于 end 贴近片尾），用最后一帧画面补齐
@@ -290,6 +328,20 @@ async function tryRenderGifViaDecoder(context: {
   } catch (error) {
     if (isCancellation(error)) throw error;
     return null;
+  } finally {
+    // 无论成功、失败、取消还是回退，都必须关闭解码器：释放硬件解码资源，
+    // 同时让 disposed 阻止后续 output 回调继续写 GIF / 进度条。
+    disposed = true;
+    notifyDrain();
+    const instance = readDecoder();
+    decoder = null;
+    if (instance && instance.state !== 'closed') {
+      try {
+        instance.close();
+      } catch {
+        // 解码器可能已被引擎关闭
+      }
+    }
   }
 }
 

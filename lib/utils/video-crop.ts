@@ -139,6 +139,36 @@ export interface ResizeGestureInput {
   pointer: { x: number; y: number };
   /** 归一化空间中的目标比例（像素比例换算后），null 表示自由 */
   ratio: number | null;
+  /**
+   * 手势按下时的指针位置。传入后按「相对位移」计算：
+   * 把位移加到被拖动手柄（或选区中心）的初始锚点上，得到等效指针位置。
+   * 不传则沿用旧行为（pointer 直接作为落点），保留给非手势调用方。
+   */
+  startPoint?: { x: number; y: number };
+}
+
+/** 手势起始时被拖动的锚点：move 是选区中心，其余手柄是对应的边/角 */
+export function getCropHandleAnchor(rect: CropRect, handle: CropHandle): { x: number; y: number } {
+  const base = clampCropRectInside(rect);
+  const centerX = base.x + base.width / 2;
+  const centerY = base.y + base.height / 2;
+  // 注意必须先排除 'move'：字符串 'move' 里含字母 e/w 语义无关，
+  // 直接用 includes('e') 判断会把它当成东边手柄。
+  if (handle === 'move') return { x: centerX, y: centerY };
+  return {
+    x: handle.includes('w') ? base.x : handle.includes('e') ? base.x + base.width : centerX,
+    y: handle.includes('n') ? base.y : handle.includes('s') ? base.y + base.height : centerY,
+  };
+}
+
+/** 把「指针绝对位置」换算成手柄锚点应到达的位置 */
+function resolveGesturePointer(start: CropRect, input: ResizeGestureInput): { x: number; y: number } {
+  if (!input.startPoint) return input.pointer;
+  const anchor = getCropHandleAnchor(start, input.handle);
+  return {
+    x: anchor.x + (input.pointer.x - input.startPoint.x),
+    y: anchor.y + (input.pointer.y - input.startPoint.y),
+  };
 }
 
 /**
@@ -146,12 +176,14 @@ export interface ResizeGestureInput {
  * 结果保证在画面内且不小于最小尺寸。
  */
 export function resizeCropRect(input: ResizeGestureInput): CropRect {
-  const { handle, pointer, ratio } = input;
+  const { handle, ratio } = input;
+  const start = clampCropRectInside(input.rect);
+  const pointer = resolveGesturePointer(start, input);
+
   if (handle === 'move') {
-    return clampCropRectInside({ ...input.rect, x: pointer.x - input.rect.width / 2, y: pointer.y - input.rect.height / 2 });
+    return clampCropRectInside({ ...start, x: pointer.x - start.width / 2, y: pointer.y - start.height / 2 });
   }
 
-  const start = clampCropRectInside(input.rect);
   let left = start.x;
   let top = start.y;
   let right = start.x + start.width;

@@ -3,6 +3,7 @@ import {
   clampCropRectInside,
   cropRectToPixelRegion,
   describeCropRegion,
+  getCropHandleAnchor,
   resizeCropRect,
   snapCropRectToPixelRatio,
   CROP_MIN_SIZE,
@@ -81,6 +82,107 @@ describe('resizeCropRect', () => {
     const resized = resizeCropRect({ rect, handle: 'w', pointer: { x: 0.1, y: 0.4 }, ratio: 1 });
     expect(resized.x + resized.width).toBeCloseTo(0.6, 5);
     expect(resized.width).toBeCloseTo(resized.height, 5);
+  });
+});
+
+describe('getCropHandleAnchor', () => {
+  it('uses the selection center for move and the matching edge for each handle', () => {
+    const rect: CropRect = { x: 0.2, y: 0.2, width: 0.4, height: 0.4 };
+    const expectPointCloseTo = (actual: { x: number; y: number }, x: number, y: number) => {
+      expect(actual.x).toBeCloseTo(x, 6);
+      expect(actual.y).toBeCloseTo(y, 6);
+    };
+    expectPointCloseTo(getCropHandleAnchor(rect, 'move'), 0.4, 0.4);
+    expectPointCloseTo(getCropHandleAnchor(rect, 'se'), 0.6, 0.6);
+    expectPointCloseTo(getCropHandleAnchor(rect, 'nw'), 0.2, 0.2);
+    expectPointCloseTo(getCropHandleAnchor(rect, 'n'), 0.4, 0.2);
+    expectPointCloseTo(getCropHandleAnchor(rect, 'e'), 0.6, 0.4);
+  });
+});
+
+describe('resizeCropRect with a gesture startPoint', () => {
+  const rect: CropRect = { x: 0.2, y: 0.2, width: 0.4, height: 0.4 };
+  const expectRectCloseTo = (actual: CropRect, expected: CropRect) => {
+    expect(actual.x).toBeCloseTo(expected.x, 6);
+    expect(actual.y).toBeCloseTo(expected.y, 6);
+    expect(actual.width).toBeCloseTo(expected.width, 6);
+    expect(actual.height).toBeCloseTo(expected.height, 6);
+  };
+
+  it('does not jump when a drag starts anywhere inside the selection', () => {
+    // 按下点不是选区中心：旧逻辑会把中心吸到指针，选区瞬间跳走
+    const startPoint = { x: 0.28, y: 0.31 };
+    const next = resizeCropRect({ rect, handle: 'move', pointer: startPoint, startPoint, ratio: null });
+    expectRectCloseTo(next, rect);
+  });
+
+  it('translates the whole selection by the pointer delta', () => {
+    const startPoint = { x: 0.28, y: 0.31 };
+    const next = resizeCropRect({
+      rect,
+      handle: 'move',
+      pointer: { x: 0.38, y: 0.36 },
+      startPoint,
+      ratio: null,
+    });
+    expectRectCloseTo(next, { x: 0.3, y: 0.25, width: 0.4, height: 0.4 });
+  });
+
+  it('clamps at the frame edge when the pointer leaves the stage', () => {
+    const startPoint = { x: 0.28, y: 0.31 };
+    const next = resizeCropRect({
+      rect,
+      handle: 'move',
+      pointer: { x: 3, y: -2 },
+      startPoint,
+      ratio: null,
+    });
+    expectRectCloseTo(next, { x: 0.6, y: 0, width: 0.4, height: 0.4 });
+  });
+
+  it('keeps a resize handle stable at gesture start, then moves only the dragged edges', () => {
+    const startPoint = { x: 0.6, y: 0.6 };
+    expectRectCloseTo(
+      resizeCropRect({ rect, handle: 'se', pointer: startPoint, startPoint, ratio: null }),
+      rect
+    );
+    const grown = resizeCropRect({
+      rect,
+      handle: 'se',
+      pointer: { x: 0.8, y: 0.75 },
+      startPoint,
+      ratio: null,
+    });
+    expectRectCloseTo(grown, { x: 0.2, y: 0.2, width: 0.6, height: 0.55 });
+  });
+
+  it('anchors the opposite corner when dragging the north-west handle', () => {
+    const startPoint = { x: 0.2, y: 0.2 };
+    const shrunk = resizeCropRect({
+      rect,
+      handle: 'nw',
+      pointer: { x: 0.3, y: 0.3 },
+      startPoint,
+      ratio: null,
+    });
+    expect(shrunk.x + shrunk.width).toBeCloseTo(0.6, 6);
+    expect(shrunk.y + shrunk.height).toBeCloseTo(0.6, 6);
+  });
+
+  it('tolerates a start point offset from the exact handle center', () => {
+    // 手柄有 14px 视觉尺寸，用户按下的位置通常不正好落在锚点像素上
+    const startPoint = { x: 0.58, y: 0.62 };
+    expectRectCloseTo(
+      resizeCropRect({ rect, handle: 'se', pointer: startPoint, startPoint, ratio: null }),
+      rect
+    );
+  });
+
+  it('keeps the legacy absolute-pointer behaviour when startPoint is omitted', () => {
+    expectRectCloseTo(
+      resizeCropRect({ rect, handle: 'move', pointer: { x: 0.5, y: 0.5 }, ratio: null }),
+      { x: 0.3, y: 0.3, width: 0.4, height: 0.4 }
+    );
   });
 });
 

@@ -146,14 +146,21 @@ export default function VideoCropper() {
     abortRef.current?.abort();
   }, []);
 
-  /** 把指针事件坐标换算成选区空间的归一化坐标 */
-  const pointerToNormalized = useCallback((clientX: number, clientY: number) => {
+  /**
+   * 把指针事件坐标换算成选区空间的归一化坐标。
+   * 手势起点需要夹进舞台（一定在 [0,1]），移动中的指针则不夹：
+   * 相对位移要保留拖出画面外的距离，最终由 resizeCropRect 把选区夹回画面内。
+   */
+  const pointerToNormalized = useCallback((clientX: number, clientY: number, clampToStage = true) => {
     const stage = stageRef.current;
     if (!stage) return { x: 0, y: 0 };
     const bounds = stage.getBoundingClientRect();
+    const x = bounds.width > 0 ? (clientX - bounds.left) / bounds.width : 0;
+    const y = bounds.height > 0 ? (clientY - bounds.top) / bounds.height : 0;
+    if (!clampToStage) return { x, y };
     return {
-      x: Math.min(1, Math.max(0, (clientX - bounds.left) / bounds.width)),
-      y: Math.min(1, Math.max(0, (clientY - bounds.top) / bounds.height)),
+      x: Math.min(1, Math.max(0, x)),
+      y: Math.min(1, Math.max(0, y)),
     };
   }, []);
 
@@ -175,14 +182,17 @@ export default function VideoCropper() {
     const onPointerMove = (event: PointerEvent) => {
       const gesture = gestureRef.current;
       if (!gesture) return;
-      const pointer = pointerToNormalized(event.clientX, event.clientY);
+      const pointer = pointerToNormalized(event.clientX, event.clientY, false);
       // 比例换算成归一化空间：像素比例 × (videoHeight / videoWidth)
       const preset = CROP_RATIO_PRESETS.find((item) => item.id === ratioId);
       const normalizedRatio = preset?.ratio ? preset.ratio * (videoMeta.height / videoMeta.width) : null;
+      // 用按下时的指针位置做相对位移：在选区内部任意位置按下拖动时，
+      // 选区应整体平移，而不是把中心瞬间吸附到指针；缩放手柄同理。
       const next = resizeCropRect({
         rect: gesture.startRect,
         handle: gesture.handle,
         pointer,
+        startPoint: gesture.startPoint,
         ratio: normalizedRatio,
       });
       setRect(next);
