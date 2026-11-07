@@ -1,4 +1,5 @@
 import { loadFfmpeg } from './audio-browser';
+import { demuxMp4Video } from './mp4-demux';
 import {
   clampGifRange,
   createGifFilename,
@@ -14,10 +15,12 @@ import {
 /**
  * 视频转 GIF — 浏览器管线。
  *
- * 流程：本地解码 → 按目标帧率确定性采样（seek + drawImage）→
- * gifenc 每帧量化（局部调色板）输出 GIF。无音轨概念，也不依赖实时播放，
- * 长片段会逐帧 seek，耗时与帧数成正比。
+ * 两条采样路径：
+ * A. 解码路径（首选，MP4/MOV + H.264）：mp4box.js 解封装 → WebCodecs VideoDecoder
+ *    一次性顺序解码，按目标帧率对齐采样时间点，边解码边量化编码（内存只保留单帧）。
+ * B. seek 路径（回退）：逐帧 seek + drawImage 确定性采样，用于 WebM 等其他容器。
  *
+ * 两条路径都按目标帧率确定性取帧，无音轨概念，也不依赖实时播放。
  * 全程在浏览器本地完成，视频不会上传到任何服务器。
  */
 
@@ -42,6 +45,17 @@ const SAMPLE_PROGRESS_START = 12;
 const SAMPLE_PROGRESS_END = 78;
 const ENCODE_PROGRESS_START = 80;
 const ENCODE_PROGRESS_END = 96;
+/** 解码路径把整个文件读进内存（解封装需要），超过该体积回退到 seek 路径 */
+const DECODER_PATH_MAX_BYTES = 160 * 1024 * 1024;
+const DEMUX_SLICE_BYTES = 8 * 1024 * 1024;
+const MAX_DECODER_QUEUE_SIZE = 16;
+
+/** 判断是否 ISO BMFF（MP4/MOV）容器：只有这类素材能走 mp4box 解封装路径 */
+function isIsoBmffSource(file: File): boolean {
+  const extension = (/\.([a-z0-9]{2,5})$/i.exec(file.name)?.[1] ?? '').toLowerCase();
+  if (extension === 'mp4' || extension === 'm4v' || extension === 'mov') return true;
+  return /^video\/(mp4|quicktime)$/i.test(file.type);
+}
 
 function throwIfAborted(signal?: AbortSignal) {
   if (signal?.aborted) {
@@ -124,6 +138,162 @@ function seekTo(video: HTMLVideoElement, time: number): Promise<void> {
 }
 
 /**
+ * 解码路径采样（首选）：mp4box 解封装 → VideoDecoder 顺序解码 →
+ * 按采样时间点对齐帧，边解码边量化编码。解码一次代替逐帧 seek，
+ * 硬件解码下速度大幅领先；内存峰值只有单帧 RGBA。
+ * 返回 null 表示素材不适合或处理失败，调用方回退 seek 路径（取消除外）。
+ */
+async function tryRenderGifViaDecoder(context: {
+  file: File;
+  plan: { timestamps: number[]; width: number; height: number; delayMs: number };
+  start: number;
+  end: number;
+  onProgress?: (progress: VideoGifProgress) => void;
+  signal?: AbortSignal;
+}): Promise<Blob | null> {
+  const { file, plan, start, end, onProgress, signal } = context;
+  if (typeof VideoDecoder === 'undefined') return null;
+  if (!isIsoBmffSource(file)) return null;
+  if (file.size > DECODER_PATH_MAX_BYTES) return null;
+
+  const { GIFEncoder, quantize, applyPalette } = await import('gifenc');
+  const gifEncoder = GIFEncoder();
+
+  const canvas = document.createElement('canvas');
+  canvas.width = plan.width;
+  canvas.height = plan.height;
+  const context2d = canvas.getContext('2d', { alpha: false, willReadFrequently: true });
+  if (!context2d) return null;
+
+  const sampleTimesUs = plan.timestamps.map((time) => Math.round(time * 1_000_000));
+  const totalFrames = sampleTimesUs.length;
+
+  let decoder: VideoDecoder | null = null;
+  const readDecoder = (): VideoDecoder | null => decoder;
+  let writtenFrames = 0;
+  let nextSampleIndex = 0;
+  let fatal: Error | null = null;
+
+  /** 把当前画布内容量化并写入 GIF（每帧局部调色板） */
+  const writeFrameFromCanvas = () => {
+    throwIfAborted(signal);
+    const { data } = context2d.getImageData(0, 0, plan.width, plan.height);
+    const palette = quantize(data, 256);
+    const indexed = applyPalette(data, palette);
+    gifEncoder.writeFrame(indexed, plan.width, plan.height, {
+      palette,
+      delay: plan.delayMs,
+      first: writtenFrames === 0,
+    });
+    writtenFrames += 1;
+    onProgress?.({
+      stage: 'sample',
+      label: 'sampling',
+      percent:
+        SAMPLE_PROGRESS_START +
+        ((SAMPLE_PROGRESS_END - SAMPLE_PROGRESS_START) * writtenFrames) / totalFrames,
+    });
+  };
+
+  try {
+    const buffer = await file.arrayBuffer();
+    throwIfAborted(signal);
+
+    const pending: EncodedVideoChunk[] = [];
+    const drainSamples = async () => {
+      const instance = decoder;
+      if (!instance) return;
+      while (pending.length > 0) {
+        throwIfAborted(signal);
+        if (fatal) throw fatal;
+        if (instance.decodeQueueSize > MAX_DECODER_QUEUE_SIZE) {
+          await new Promise<void>((resolve) => {
+            instance.addEventListener('dequeue', () => resolve(), { once: true });
+          });
+          continue;
+        }
+        const chunk = pending.shift();
+        if (!chunk) break;
+        instance.decode(chunk);
+      }
+    };
+
+    await demuxMp4Video(
+      buffer,
+      {
+        onConfig: (config) => {
+          const nextDecoder = new VideoDecoder({
+            output: (frame) => {
+              try {
+                if (fatal) return;
+                // 解码器按显示顺序输出；取「采样时间点处或之后的第一帧」。
+                // 同一帧可能对应多个相邻采样点，画面只画一次。
+                let captured = false;
+                while (
+                  nextSampleIndex < sampleTimesUs.length &&
+                  frame.timestamp >= sampleTimesUs[nextSampleIndex]
+                ) {
+                  if (!captured) {
+                    context2d.drawImage(frame, 0, 0, plan.width, plan.height);
+                    captured = true;
+                  }
+                  writeFrameFromCanvas();
+                  nextSampleIndex += 1;
+                }
+              } catch (error) {
+                fatal = error instanceof Error ? error : new Error(String(error));
+              } finally {
+                frame.close();
+              }
+            },
+            error: (error) => {
+              fatal = error instanceof Error ? error : new Error(String(error));
+            },
+          });
+          nextDecoder.configure({
+            codec: config.codec,
+            codedWidth: config.codedWidth,
+            codedHeight: config.codedHeight,
+            description: config.description,
+            optimizeForLatency: true,
+          });
+          decoder = nextDecoder;
+        },
+        onBatch: async (samples) => {
+          for (const sample of samples) {
+            pending.push(new EncodedVideoChunk({
+              type: sample.isKey ? 'key' : 'delta',
+              timestamp: sample.timestampUs,
+              duration: sample.durationUs,
+              data: sample.data,
+            }));
+          }
+          await drainSamples();
+        },
+      },
+      { rangeUs: { start: Math.round(start * 1_000_000), end: Math.round(end * 1_000_000) }, sliceBytes: DEMUX_SLICE_BYTES }
+    );
+    await drainSamples();
+    if (fatal) throw fatal;
+    if (writtenFrames === 0) return null;
+
+    // 区间尾部采样点晚于最后一帧时（常见于 end 贴近片尾），用最后一帧画面补齐
+    while (nextSampleIndex < sampleTimesUs.length) {
+      writeFrameFromCanvas();
+      nextSampleIndex += 1;
+    }
+
+    gifEncoder.finish();
+    const bytes = gifEncoder.bytes();
+    if (bytes.byteLength < 512) return null;
+    return new Blob([new Uint8Array(bytes)], { type: 'image/gif' });
+  } catch (error) {
+    if (isCancellation(error)) throw error;
+    return null;
+  }
+}
+
+/**
  * 部分容器（webm/mkv 等）在逐帧 seek 时时间轴可能不准，先用 ffmpeg 无损转成
  * 中间 MP4（-c:v copy 只换容器，速度很快）。MP4/MOV 源直接跳过。
  */
@@ -194,6 +364,34 @@ export async function convertVideoToGif(
       sourceHeight: loaded.height,
       targetWidth: width,
     });
+
+    // 首选解码路径（快于逐帧 seek）；不适用或失败时回退 seek 路径。
+    // 取消要向上传播，不能当成「回退」吞掉。
+    const viaDecoder = await tryRenderGifViaDecoder({
+      file: sourceFile,
+      plan,
+      start,
+      end,
+      onProgress,
+      signal,
+    }).catch((error) => {
+      if (isCancellation(error)) throw error;
+      return null;
+    });
+    if (viaDecoder) {
+      onProgress?.({ stage: 'encode', label: 'encode', percent: ENCODE_PROGRESS_START });
+      onProgress?.({ stage: 'done', label: 'done', percent: 100 });
+      return {
+        ok: true,
+        blob: viaDecoder,
+        filename: createGifFilename(file.name),
+        width: plan.width,
+        height: plan.height,
+        frameCount: plan.timestamps.length,
+        durationMs: Math.round(performance.now() - startedAt),
+        outputSize: viaDecoder.size,
+      };
+    }
 
     const canvas = document.createElement('canvas');
     canvas.width = plan.width;

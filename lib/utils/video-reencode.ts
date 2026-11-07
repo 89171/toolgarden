@@ -1,9 +1,11 @@
 /**
- * 视频重编码工具（压缩 / 截取）— 纯函数层。
+ * 视频重编码工具（压缩 / 截取 / 画面裁剪）— 纯函数层。
  *
  * 管线概要（见 video-reencode-browser.ts）：
- * 1. 浏览器本地解码视频，逐帧经 canvas 交给 WebCodecs VideoEncoder 重编码
- * 2. mp4-muxer 合成 MP4，再用 ffmpeg.wasm 处理音轨（压缩音质或裁剪区间）
+ * 1. 首选 WebCodecs 解码路径：mp4box.js 解封装 → VideoDecoder 解码 →
+ *    VideoEncoder 重编码，速度不受实时播放限制
+ * 2. 回退实时播放路径：video 元素播放 + canvas 抓帧（WebM、HEVC、超大文件）
+ * 3. 音轨与渲染并行预处理，最后用 ffmpeg.wasm 以流复制方式封装
  *
  * 本文件保持纯函数：不依赖 DOM / React，返回判别联合类型，不抛异常。
  */

@@ -7,7 +7,8 @@ import {
   inpaintCanvasRegionWithMigan,
   resetMiganWatermarkSession,
 } from './image-browser';
-import { detectNoAudio } from './video-reencode-browser';
+import { demuxMp4Video } from './mp4-demux';
+import { muxWithPreparedAudio, prepareAudioTrack } from './video-audio-track';
 import {
   createOutputFilename,
   computeTemporalMedian,
@@ -65,6 +66,11 @@ const AUDIO_PROGRESS_START = 88;
 const AUDIO_PROGRESS_END = 97;
 const KEYFRAME_INTERVAL_SECONDS = 2;
 const MAX_ENCODER_QUEUE_SIZE = 8;
+const MAX_DECODER_QUEUE_SIZE = 16;
+/** 解码路径把整个文件读进内存（解封装需要），超过该体积回退到播放路径 */
+const DECODER_PATH_MAX_BYTES = 160 * 1024 * 1024;
+/** 解封装时每次喂给 mp4box 的切片大小 */
+const DEMUX_SLICE_BYTES = 8 * 1024 * 1024;
 
 function throwIfAborted(signal?: AbortSignal) {
   if (signal?.aborted) {
@@ -341,6 +347,203 @@ async function pickVideoCodec(
     }
   }
   return null;
+}
+
+/** 判断是否 ISO BMFF（MP4/MOV）容器：只有这类素材能走 mp4box 解封装路径 */
+function isIsoBmffSource(file: File): boolean {
+  const extension = (/\.([a-z0-9]{2,5})$/i.exec(file.name)?.[1] ?? '').toLowerCase();
+  if (extension === 'mp4' || extension === 'm4v' || extension === 'mov') return true;
+  return /^video\/(mp4|quicktime)$/i.test(file.type);
+}
+
+/**
+ * 解码路径渲染（首选）：mp4box 解封装 → VideoDecoder 解码 → 逐帧合成水印补丁 →
+ * VideoEncoder 重编码。不受实时播放限制，处理速度取决于 CPU/硬件编码器。
+ * 返回 null 表示素材不适合（容器/编码不支持、体积过大、无可用帧），调用方回退播放路径。
+ */
+async function renderWithVideoDecoder(context: {
+  file: File;
+  patchCanvas: HTMLCanvasElement;
+  selection: ImageCropRect;
+  width: number;
+  height: number;
+  durationSeconds: number;
+  onProgress?: (progress: VideoWatermarkProgress) => void;
+  signal?: AbortSignal;
+}): Promise<Blob | null> {
+  const { file, patchCanvas, selection, width, height, durationSeconds, onProgress, signal } = context;
+  if (typeof VideoDecoder === 'undefined' || typeof VideoEncoder === 'undefined') return null;
+  if (!isIsoBmffSource(file)) return null;
+  if (file.size > DECODER_PATH_MAX_BYTES) return null;
+
+  const framerate = 30;
+  const bitrate = Math.min(
+    20_000_000,
+    Math.max(1_200_000, Math.round(width * height * framerate * 0.07))
+  );
+  const encoderConfig = await pickVideoCodec(width, height, bitrate, framerate);
+  if (!encoderConfig) return null;
+
+  let decoder: VideoDecoder | null = null;
+  let encoder: VideoEncoder | null = null;
+  const readDecoder = (): VideoDecoder | null => decoder;
+
+  try {
+    onProgress?.({ stage: 'render', label: 'demux', percent: RENDER_PROGRESS_START });
+    const buffer = await file.arrayBuffer();
+    throwIfAborted(signal);
+
+    const { Muxer, ArrayBufferTarget } = await import('mp4-muxer');
+    const target = new ArrayBufferTarget();
+    const muxer = new Muxer({
+      target,
+      video: { codec: 'avc', width, height },
+      fastStart: 'in-memory',
+      firstTimestampBehavior: 'offset',
+    });
+
+    const canvas = createCanvas(width, height);
+    if (!canvas) return null;
+    const context2d = canvas.getContext('2d', { alpha: false });
+    if (!context2d) return null;
+
+    const encoderState: { error: Error | null } = { error: null };
+    encoder = new VideoEncoder({
+      output: (chunk, meta) => {
+        try {
+          muxer.addVideoChunk(chunk, meta);
+        } catch (error) {
+          encoderState.error = error instanceof Error ? error : new Error(String(error));
+        }
+      },
+      error: (error) => {
+        encoderState.error = error instanceof Error ? error : new Error(String(error));
+      },
+    });
+    encoder.configure(encoderConfig);
+
+    const pending: EncodedVideoChunk[] = [];
+    let encodedFrames = 0;
+    let lastKeyAtUs = -Infinity;
+    let lastEncodedUs = -1;
+    let fatal: Error | null = null;
+    const totalUs = Math.max(0.1, durationSeconds) * 1_000_000;
+
+    const handleFrame = (frame: VideoFrame) => {
+      try {
+        if (fatal || encoderState.error) return;
+        // encoder 要求输入帧时间戳严格递增；解码器按显示顺序输出，
+        // 个别素材（B 帧重排）仍可能回退，这里单调化兜底
+        const timestamp = Math.max(frame.timestamp, lastEncodedUs + 1);
+        lastEncodedUs = timestamp;
+
+        context2d.drawImage(frame, 0, 0, width, height);
+        context2d.drawImage(patchCanvas, selection.x, selection.y);
+
+        const frameDuration = Math.max(1_000, frame.duration ?? Math.round(1_000_000 / framerate));
+        const output = new VideoFrame(canvas, { timestamp, duration: frameDuration });
+        const keyFrame = timestamp - lastKeyAtUs >= KEYFRAME_INTERVAL_SECONDS * 1_000_000;
+        if (keyFrame) lastKeyAtUs = timestamp;
+        try {
+          encoder!.encode(output, { keyFrame });
+        } finally {
+          output.close();
+        }
+        encodedFrames += 1;
+        onProgress?.({
+          stage: 'render',
+          label: 'decode',
+          percent: mapProgressRange(
+            Math.min(100, (timestamp / totalUs) * 100),
+            RENDER_PROGRESS_START,
+            RENDER_PROGRESS_END
+          ),
+        });
+      } catch (error) {
+        fatal = error instanceof Error ? error : new Error(String(error));
+      } finally {
+        frame.close();
+      }
+    };
+
+    const drainSamples = async () => {
+      const instance = decoder;
+      if (!instance) return;
+      while (pending.length > 0) {
+        throwIfAborted(signal);
+        if (fatal || encoderState.error) {
+          throw fatal ?? encoderState.error!;
+        }
+        if (instance.decodeQueueSize > MAX_DECODER_QUEUE_SIZE) {
+          await new Promise<void>((resolve) => {
+            const onDequeue = () => resolve();
+            instance.addEventListener('dequeue', onDequeue, { once: true });
+          });
+          continue;
+        }
+        if (encoder!.encodeQueueSize > MAX_ENCODER_QUEUE_SIZE) {
+          await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+          continue;
+        }
+        const chunk = pending.shift();
+        if (!chunk) break;
+        instance.decode(chunk);
+      }
+    };
+
+    await demuxMp4Video(
+      buffer,
+      {
+        onConfig: (config) => {
+          const nextDecoder = new VideoDecoder({
+            output: handleFrame,
+            error: (error) => {
+              fatal = error instanceof Error ? error : new Error(String(error));
+            },
+          });
+          nextDecoder.configure({
+            codec: config.codec,
+            codedWidth: config.codedWidth,
+            codedHeight: config.codedHeight,
+            description: config.description,
+            optimizeForLatency: true,
+          });
+          decoder = nextDecoder;
+        },
+        onBatch: async (samples) => {
+          for (const sample of samples) {
+            pending.push(new EncodedVideoChunk({
+              type: sample.isKey ? 'key' : 'delta',
+              timestamp: sample.timestampUs,
+              duration: sample.durationUs,
+              data: sample.data,
+            }));
+          }
+          await drainSamples();
+        },
+      },
+      { sliceBytes: DEMUX_SLICE_BYTES }
+    );
+    await drainSamples();
+
+    if (fatal) throw fatal;
+    if (encodedFrames === 0) return null;
+
+    const activeDecoder = readDecoder();
+    if (!activeDecoder) return null;
+    await activeDecoder.flush();
+    await encoder.flush();
+    if (encoderState.error) throw encoderState.error;
+    muxer.finalize();
+
+    return new Blob([target.buffer], { type: 'video/mp4' });
+  } catch (error) {
+    if (isCancellation(error)) throw error;
+    return null;
+  } finally {
+    try { readDecoder()?.close(); } catch { /* noop */ }
+    try { encoder?.close(); } catch { /* noop */ }
+  }
 }
 
 async function muxOriginalAudio(
@@ -699,22 +902,70 @@ export async function removeVideoWatermark(
       return createFailure('canvas_context');
     }
 
-    throwIfAborted(signal);
-    const videoBlob = await renderAndEncode({
-      video: loaded,
-      patchCanvas,
-      selection: plan.selection,
-      onProgress,
-      signal,
-    });
+    // 音轨与视频渲染并行：渲染开始时同步抽取独立音轨（AAC 源流复制），
+    // 渲染结束后只剩一次流复制封装。挂空 catch 避免渲染先失败时的未处理拒绝。
+    void loadFfmpeg().catch(() => undefined);
+    const audioTask = prepareAudioTrack(file, null, 160, signal);
+    void audioTask.catch(() => undefined);
 
     throwIfAborted(signal);
+    // 首选 WebCodecs 解码路径（快于实时播放）；不适用或失败时回退播放路径
+    let videoBlob = await renderWithVideoDecoder({
+      file,
+      patchCanvas,
+      selection: plan.selection,
+      width: loaded.width,
+      height: loaded.height,
+      durationSeconds: loaded.duration,
+      onProgress,
+      signal,
+    }).catch((error) => {
+      if (isCancellation(error)) throw error;
+      return null;
+    });
+    if (!videoBlob) {
+      videoBlob = await renderAndEncode({
+        video: loaded,
+        patchCanvas,
+        selection: plan.selection,
+        onProgress,
+        signal,
+      });
+    }
+
+    throwIfAborted(signal);
+    const audio = await audioTask;
+    throwIfAborted(signal);
+
     let finalBlob = videoBlob;
     let hasAudio = false;
-    if (detectNoAudio(loaded.video)) {
-      // 源视频明确无音轨：跳过 ffmpeg.wasm，直接输出无声视频
-      onProgress?.({ stage: 'done', label: 'done', percent: 100 });
-    } else {
+    if (audio.status === 'none') {
+      // 源视频明确无音轨：直接输出无声视频
+    } else if (audio.status === 'ready') {
+      try {
+        onProgress?.({ stage: 'audio', label: 'audio-mux', percent: AUDIO_PROGRESS_START });
+        const muxed = await muxWithPreparedAudio(videoBlob, audio.blob, signal, (label, percent) => {
+          onProgress?.({
+            stage: 'audio',
+            label,
+            percent: mapProgressRange(percent, AUDIO_PROGRESS_START, AUDIO_PROGRESS_END),
+          });
+        });
+        if (muxed) {
+          finalBlob = muxed;
+          hasAudio = true;
+        }
+        // 流复制封装失败时退回下面的源文件重编码路径
+      } catch (error) {
+        if (isCancellation(error)) {
+          return createFailure('cancelled');
+        }
+        // 降级为无声视频，不算整体失败
+        finalBlob = videoBlob;
+        hasAudio = false;
+      }
+    }
+    if (!hasAudio && audio.status !== 'none') {
       try {
         onProgress?.({ stage: 'audio', label: 'audio-mux', percent: AUDIO_PROGRESS_START });
         finalBlob = await muxOriginalAudio(videoBlob, file, onProgress, signal);
