@@ -30,7 +30,9 @@ export const Button: React.FC<ButtonProps> = ({
 }) => (
   <button
     className={clsx(
-      'inline-flex cursor-pointer items-center justify-center rounded text-center font-medium leading-snug transition-colors active:translate-y-px disabled:cursor-not-allowed disabled:active:translate-y-0',
+      // 按压反馈只用滤镜，不用 transform：位移会扩大滚动容器的溢出区域，
+      // 在内容恰好临界的面板里按下按钮会突然出现滚动条、缩窄按钮并吞掉 click。
+      'inline-flex cursor-pointer items-center justify-center rounded text-center font-medium leading-snug transition-colors active:brightness-95 disabled:cursor-not-allowed',
       variantClasses[variant],
       sizeClasses[size],
       className

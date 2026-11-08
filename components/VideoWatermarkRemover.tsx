@@ -97,6 +97,7 @@ export function VideoWatermarkRemover() {
   const sourceUrlRef = useRef('');
   const outputRef = useRef<OutputState | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const processingRef = useRef(false);
   const loadRequestRef = useRef(0);
 
   const [file, setFile] = useState<File | null>(null);
@@ -247,6 +248,8 @@ export function VideoWatermarkRemover() {
 
   const clearVideo = useCallback(() => {
     loadRequestRef.current += 1;
+    // 兜底：若仍有残留任务在跑，先中止，避免它回写到已清空的状态
+    abortRef.current?.abort();
     if (sourceUrl) URL.revokeObjectURL(sourceUrl);
     clearOutput();
     setFile(null);
@@ -427,7 +430,9 @@ export function VideoWatermarkRemover() {
   }, [updateSelection, videoMeta]);
 
   const processVideo = useCallback(async () => {
-    if (!file || !selection) return;
+    // ref 同步生效，挡住 React 状态提交前同一轮里连续触发的第二次点击
+    if (processingRef.current || !file || !selection) return;
+    processingRef.current = true;
 
     setIsProcessing(true);
     setProgress(null);
@@ -437,27 +442,36 @@ export function VideoWatermarkRemover() {
     const controller = new AbortController();
     abortRef.current = controller;
 
-    const result = await removeVideoWatermark(file, {
-      selection,
-      method,
-      feather,
-      onProgress: setProgress,
-      signal: controller.signal,
-    });
+    try {
+      const result = await removeVideoWatermark(file, {
+        selection,
+        method,
+        feather,
+        onProgress: setProgress,
+        signal: controller.signal,
+      });
 
-    abortRef.current = null;
-    setIsProcessing(false);
-    setProgress(null);
+      // 被取消 / 清空的旧任务不再回写界面
+      if (controller.signal.aborted) return;
+      if (!result.ok) {
+        setError(getErrorMessage(result.code, result.detail));
+        return;
+      }
 
-    if (!result.ok) {
-      setError(getErrorMessage(result.code, result.detail));
-      return;
+      setOutput({
+        result,
+        url: URL.createObjectURL(result.blob),
+      });
+    } catch (error) {
+      if (!controller.signal.aborted) {
+        setError(getErrorMessage('general', error instanceof Error ? error.message : undefined));
+      }
+    } finally {
+      if (abortRef.current === controller) abortRef.current = null;
+      processingRef.current = false;
+      setIsProcessing(false);
+      setProgress(null);
     }
-
-    setOutput({
-      result,
-      url: URL.createObjectURL(result.blob),
-    });
   }, [clearOutput, feather, file, getErrorMessage, method, selection]);
 
   const cancelProcessing = useCallback(() => {
@@ -504,10 +518,11 @@ export function VideoWatermarkRemover() {
       <div className="grid flex-grow grid-cols-1 gap-4 overflow-auto pb-4 sm:gap-6 sm:pb-8 xl:min-h-0 xl:grid-cols-[minmax(320px,420px)_1fr] xl:overflow-hidden">
         <Panel
           title={ti('settings_title')}
-          actions={<Button variant="secondary" onClick={clearVideo} disabled={!file && !error}>{tc('clear')}</Button>}
+          actions={<Button variant="secondary" onClick={clearVideo} disabled={(!file && !error) || isProcessing}>{tc('clear')}</Button>}
           className="h-[min(40rem,calc(100svh-12rem))] min-h-0 overflow-hidden xl:h-auto xl:min-h-0"
         >
-          <div className="flex min-h-0 flex-grow flex-col gap-4 overflow-y-auto overscroll-auto pr-1">
+          {/* 预留滚动条槽位：进度/错误块插入时不会缩窄内容，避免按下按钮时宽度跳变导致 click 丢失 */}
+          <div className="flex min-h-0 flex-grow flex-col gap-4 overflow-y-auto overscroll-auto pr-1 [scrollbar-gutter:stable]">
             <input
               ref={inputRef}
               type="file"
@@ -627,10 +642,8 @@ export function VideoWatermarkRemover() {
               />
             </div>
 
+            {/* 状态块放在按钮上方：处理开始后按钮仍贴在面板底部，不会因新增内容而位移 */}
             <div className="mt-auto flex flex-col gap-2 pt-2">
-              <Button onClick={processVideo} disabled={!canProcess}>
-                {isProcessing ? ti('processing') : ti('apply')}
-              </Button>
               {isProcessing ? (
                 <>
                   <div className="h-1.5 w-full overflow-hidden rounded bg-surface-hover">
@@ -653,6 +666,9 @@ export function VideoWatermarkRemover() {
                   {error}
                 </p>
               ) : null}
+              <Button onClick={processVideo} disabled={!canProcess} className="w-full shrink-0">
+                {isProcessing ? ti('processing') : ti('apply')}
+              </Button>
             </div>
           </div>
         </Panel>
