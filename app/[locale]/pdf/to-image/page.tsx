@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { ImagePreviewDialog } from '@/components/ImagePreviewDialog';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { downloadPagesAsZip, renderPdfPages, type RenderedPage } from '@/lib/utils/pdf-render';
@@ -8,6 +9,8 @@ import { pdfToImageContent } from '@/lib/tools/content/pdf-to-image';
 
 export default function PdfToImagePage() {
   const t = useTranslations('tools.pdf-to-image');
+  const tc = useTranslations('common');
+  const [previewSrc, setPreviewSrc] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [format, setFormat] = useState<'png' | 'jpeg'>('png');
   const [scale, setScale] = useState(2);
@@ -94,8 +97,15 @@ export default function PdfToImagePage() {
             <div className="grid grid-cols-2 gap-3 overflow-auto sm:grid-cols-3">
               {pages.map((page) => (
                 <div key={page.pageNumber} className="flex flex-col gap-1 rounded border border-border-subtle bg-surface-raised p-2">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={page.dataUrl} alt={`page ${page.pageNumber}`} className="max-w-full" />
+                  <button
+                    type="button"
+                    onClick={() => setPreviewSrc(page.dataUrl)}
+                    aria-label={tc('preview_open_output')}
+                    className="flex w-full cursor-zoom-in appearance-none items-center justify-center rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={page.dataUrl} alt={`page ${page.pageNumber}`} className="max-w-full" />
+                  </button>
                   <div className="flex items-center justify-between text-xs text-content-muted">
                     <span>{t('page_label', { page: page.pageNumber })}</span>
                     <a
@@ -112,6 +122,15 @@ export default function PdfToImagePage() {
           )}
         </section>
       </div>
+
+      <ImagePreviewDialog
+        open={Boolean(previewSrc)}
+        src={previewSrc || undefined}
+        alt={t('result_title')}
+        title={tc('preview_title')}
+        closeLabel={tc('preview_close')}
+        onClose={() => setPreviewSrc('')}
+      />
     </ToolLayout>
   );
 }

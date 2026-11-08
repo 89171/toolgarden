@@ -3,6 +3,7 @@
 /* eslint-disable @next/next/no-img-element -- Local previews use object URLs. */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { ImagePreviewDialog } from '@/components/ImagePreviewDialog';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
@@ -150,6 +151,7 @@ interface ImageIdPhotoToolProps {
 
 export function ImageIdPhotoTool({ content }: ImageIdPhotoToolProps) {
   const ti = useTranslations('image_id_photo');
+  const tc = useTranslations('common');
   const inputRef = useRef<HTMLInputElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
   const sourceRef = useRef<SourceImage | null>(null);
@@ -158,6 +160,7 @@ export function ImageIdPhotoTool({ content }: ImageIdPhotoToolProps) {
   const pointerRef = useRef<Map<number, PointerPosition>>(new Map());
   const gestureRef = useRef<GestureState | null>(null);
   const jobRef = useRef<string | null>(null);
+  const outputUrlRef = useRef<string | null>(null);
 
   const [source, setSource] = useState<SourceImage | null>(null);
   const [subject, setSubject] = useState<SubjectImage | null>(null);
@@ -175,6 +178,8 @@ export function ImageIdPhotoTool({ content }: ImageIdPhotoToolProps) {
   const [virtualProgress, setVirtualProgress] = useState(0);
   const [error, setError] = useState('');
   const [isExporting, setIsExporting] = useState(false);
+  const [outputUrl, setOutputUrl] = useState('');
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   const accept = getImageAcceptValue();
   const inputFormatLabels = useMemo(() => getSupportedImageInputLabel().split(' / '), []);
@@ -311,8 +316,16 @@ export function ImageIdPhotoTool({ content }: ImageIdPhotoToolProps) {
     fitSubjectToTemplate();
   }, [fitSubjectToTemplate, subject]);
 
+  useEffect(() => () => {
+    if (outputUrlRef.current) URL.revokeObjectURL(outputUrlRef.current);
+  }, []);
+
   const clearCurrentImage = useCallback(() => {
     jobRef.current = null;
+    if (outputUrlRef.current) URL.revokeObjectURL(outputUrlRef.current);
+    outputUrlRef.current = null;
+    setOutputUrl('');
+    setPreviewOpen(false);
     if (sourceRef.current) URL.revokeObjectURL(sourceRef.current.url);
     if (subjectRef.current) URL.revokeObjectURL(subjectRef.current.url);
     sourceRef.current = null;
@@ -458,8 +471,10 @@ export function ImageIdPhotoTool({ content }: ImageIdPhotoToolProps) {
 
       if (result.ok) {
         const url = URL.createObjectURL(result.blob);
+        if (outputUrlRef.current) URL.revokeObjectURL(outputUrlRef.current);
+        outputUrlRef.current = url;
+        setOutputUrl(url);
         downloadUrl(url, result.filename);
-        window.setTimeout(() => URL.revokeObjectURL(url), 15000);
       } else {
         setError(ti(`errors.${result.code}`));
       }
@@ -934,10 +949,29 @@ export function ImageIdPhotoTool({ content }: ImageIdPhotoToolProps) {
               <Button type="button" size="md" disabled={!canExport} onClick={exportPhoto}>
                 {isExporting ? ti('exporting') : ti('download')}
               </Button>
+              {outputUrl ? (
+                <button
+                  type="button"
+                  onClick={() => setPreviewOpen(true)}
+                  aria-label={tc('preview_open_output')}
+                  className="flex w-full cursor-zoom-in appearance-none items-center justify-center overflow-hidden rounded border border-border-base bg-surface p-2 transition-colors hover:border-border-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+                >
+                  <img src={outputUrl} alt={ti('output_title')} className="max-h-40 w-full object-contain" />
+                </button>
+              ) : null}
             </div>
           </aside>
         </div>
       </Panel>
+
+      <ImagePreviewDialog
+        open={previewOpen && Boolean(outputUrl)}
+        src={outputUrl || undefined}
+        alt={ti('output_title')}
+        title={tc('preview_title')}
+        closeLabel={tc('preview_close')}
+        onClose={() => setPreviewOpen(false)}
+      />
     </ToolLayout>
   );
 }

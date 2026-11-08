@@ -14,7 +14,10 @@
     "result": "结果",
     "empty": "结果将显示在这里",
     "error_placeholder": "输入 JSON 后自动处理",
-    "download_json": "下载 JSON"
+    "download_json": "下载 JSON",
+    "preview_title": "结果预览",
+    "preview_open_output": "点击预览输出结果",
+    "preview_close": "关闭预览"
   },
   "privacy_trust": {
     "label": "默认保护隐私",

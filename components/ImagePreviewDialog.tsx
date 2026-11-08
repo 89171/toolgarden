@@ -10,9 +10,11 @@ interface ImagePreviewDialogProps {
   title: string;
   closeLabel: string;
   onClose: () => void;
+  /** PDF 等需要用 iframe 展示的结果，默认按图片渲染 */
+  media?: 'image' | 'iframe';
 }
 
-export function ImagePreviewDialog({ open, src, alt, title, closeLabel, onClose }: ImagePreviewDialogProps) {
+export function ImagePreviewDialog({ open, src, alt, title, closeLabel, onClose, media = 'image' }: ImagePreviewDialogProps) {
   useEffect(() => {
     if (!open) return undefined;
 
@@ -54,7 +56,15 @@ export function ImagePreviewDialog({ open, src, alt, title, closeLabel, onClose 
           </button>
         </div>
         <div className="flex min-h-0 flex-grow items-center justify-center overflow-auto bg-surface-raised p-4">
-          <img src={src} alt={alt} className="max-h-[calc(100svh-9rem)] max-w-full object-contain" />
+          {media === 'iframe' ? (
+            <iframe
+              src={src}
+              title={alt}
+              className="h-[calc(100svh-9rem)] w-full rounded border-0 bg-white"
+            />
+          ) : (
+            <img src={src} alt={alt} className="max-h-[calc(100svh-9rem)] max-w-full object-contain" />
+          )}
         </div>
       </div>
     </div>

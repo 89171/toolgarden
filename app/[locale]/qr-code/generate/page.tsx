@@ -3,6 +3,7 @@
 import React, { useRef, useState } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
+import { ImagePreviewDialog } from '@/components/ImagePreviewDialog';
 import { ToolLayout } from '@/components/ToolLayout';
 import { QrToolSwitcher } from '@/components/QrToolSwitcher';
 import { Button } from '@/components/ui/Button';
@@ -42,6 +43,7 @@ export default function QrCodeGeneratePage() {
   const [level, setLevel] = useState<QrErrorCorrectionLevel>('M');
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [generated, setGenerated] = useState<GeneratedQrCode | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
   const [generateError, setGenerateError] = useState('');
   const [generating, setGenerating] = useState(false);
   const logoInputRef = useRef<HTMLInputElement>(null);
@@ -261,14 +263,21 @@ export default function QrCodeGeneratePage() {
             <div className="flex flex-grow flex-col items-center justify-center gap-4 rounded border border-border-base bg-surface-raised p-4">
               {generated ? (
                 <>
-                  <Image
-                    src={generated.dataUrl}
-                    alt={t('preview_alt')}
-                    width={generated.options.size}
-                    height={generated.options.size}
-                    unoptimized
-                    className="aspect-square w-full max-w-80 rounded border border-border-subtle bg-surface object-contain p-3"
-                  />
+                  <button
+                    type="button"
+                    onClick={() => setPreviewOpen(true)}
+                    aria-label={tc('preview_open_output')}
+                    className="flex w-full cursor-zoom-in appearance-none items-center justify-center rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+                  >
+                    <Image
+                      src={generated.dataUrl}
+                      alt={t('preview_alt')}
+                      width={generated.options.size}
+                      height={generated.options.size}
+                      unoptimized
+                      className="aspect-square w-full max-w-80 rounded border border-border-subtle bg-surface object-contain p-3"
+                    />
+                  </button>
                   <dl className="grid w-full grid-cols-2 gap-2 text-xs text-content-muted">
                     <div className="rounded border border-border-subtle bg-surface px-3 py-2">
                       <dt className="text-content-faint">{t('input_bytes')}</dt>
@@ -297,6 +306,15 @@ export default function QrCodeGeneratePage() {
           </Panel>
         </div>
       </div>
+
+      <ImagePreviewDialog
+        open={previewOpen && Boolean(generated)}
+        src={generated?.dataUrl}
+        alt={t('preview_alt')}
+        title={tc('preview_title')}
+        closeLabel={tc('preview_close')}
+        onClose={() => setPreviewOpen(false)}
+      />
     </ToolLayout>
   );
 }

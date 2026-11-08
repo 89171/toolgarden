@@ -1,6 +1,7 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { ImagePreviewDialog } from '@/components/ImagePreviewDialog';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { canvasToBlob, drawTransformed, loadImageFromFile } from '@/lib/utils/image-transform';
@@ -14,6 +15,7 @@ export default function ImageRotatePage() {
   const [angle, setAngle] = useState(0);
   const [flipX, setFlipX] = useState(false);
   const [flipY, setFlipY] = useState(false);
+  const [previewSrc, setPreviewSrc] = useState('');
   const previewRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -41,6 +43,25 @@ export default function ImageRotatePage() {
       setFlipY(false);
     } catch {
       /* ignore */
+    }
+  };
+
+  const openPreview = () => {
+    // 优先用原始分辨率重新渲染，超大画布失败时退回当前预览画布
+    const full = image ? drawTransformed(image, { angle, flipX, flipY }) : null;
+    const source = full ?? previewRef.current;
+    if (!source) return;
+    try {
+      setPreviewSrc(source.toDataURL('image/png'));
+    } catch {
+      const fallback = previewRef.current;
+      if (fallback && fallback !== source) {
+        try {
+          setPreviewSrc(fallback.toDataURL('image/png'));
+        } catch {
+          /* 画布不可读时忽略 */
+        }
+      }
     }
   };
 
@@ -111,13 +132,29 @@ export default function ImageRotatePage() {
           <h2 className="text-lg font-semibold text-content">{t('result_title')}</h2>
           {image ? (
             <div className="flex flex-1 items-center justify-center overflow-auto rounded border border-border-subtle bg-surface-raised p-3">
-              <canvas ref={previewRef} className="max-h-full max-w-full" />
+              <button
+                type="button"
+                onClick={openPreview}
+                aria-label={tc('preview_open_output')}
+                className="flex cursor-zoom-in appearance-none items-center justify-center rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+              >
+                <canvas ref={previewRef} className="block max-h-[60vh] max-w-full" />
+              </button>
             </div>
           ) : (
             <p className="text-sm text-content-faint">{t('empty_state')}</p>
           )}
         </section>
       </div>
+
+      <ImagePreviewDialog
+        open={Boolean(previewSrc)}
+        src={previewSrc || undefined}
+        alt={t('result_title')}
+        title={tc('preview_title')}
+        closeLabel={tc('preview_close')}
+        onClose={() => setPreviewSrc('')}
+      />
     </ToolLayout>
   );
 }

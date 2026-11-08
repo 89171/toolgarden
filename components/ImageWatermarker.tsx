@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { clsx } from 'clsx';
+import { ImagePreviewDialog } from '@/components/ImagePreviewDialog';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import {
@@ -176,6 +177,7 @@ export function ImageWatermarker() {
   const [outputFormat, setOutputFormat] = useState<BasicImageTargetFormat>('png');
   const [quality, setQuality] = useState(0.92);
   const [output, setOutput] = useState<OutputState | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -821,6 +823,15 @@ export function ImageWatermarker() {
                   {tw('download')}
                 </button>
               </div>
+              <button
+                type="button"
+                onClick={() => setPreviewOpen(true)}
+                aria-label={tc('preview_open_output')}
+                className="flex w-full cursor-zoom-in appearance-none items-center justify-center overflow-hidden rounded border border-border-base bg-surface transition-colors hover:border-border-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element -- Local blob URL preview. */}
+                <img src={output.url} alt={tw('result_ready')} className="max-h-40 w-full object-contain" />
+              </button>
               {outputStats?.map((item) => (
                 <div key={item.label} className="flex justify-between gap-2 border-t border-border-subtle pt-1">
                   <span className="text-content-faint">{item.label}</span>
@@ -917,6 +928,15 @@ export function ImageWatermarker() {
 
       {/* 隐藏的 clear hook（保持 ToolLayout 不变） */}
       <span className="hidden">{tc('clear')}</span>
+
+      <ImagePreviewDialog
+        open={previewOpen && Boolean(output)}
+        src={output?.url}
+        alt={tw('result_ready')}
+        title={tc('preview_title')}
+        closeLabel={tc('preview_close')}
+        onClose={() => setPreviewOpen(false)}
+      />
     </ToolLayout>
   );
 }

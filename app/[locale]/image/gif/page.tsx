@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { ImagePreviewDialog } from '@/components/ImagePreviewDialog';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { decodeGif, downloadFramesAsZip, type DecodedFrame } from '@/lib/utils/gif';
@@ -39,9 +40,11 @@ export default function ImageGifPage() {
 
 function SplitMode() {
   const t = useTranslations('tools.image-gif');
+  const tc = useTranslations('common');
   const [frames, setFrames] = useState<DecodedFrame[]>([]);
   const [baseName, setBaseName] = useState('gif');
   const [busy, setBusy] = useState(false);
+  const [previewSrc, setPreviewSrc] = useState('');
 
   const handleFile = async (file: File) => {
     setBusy(true);
@@ -86,31 +89,50 @@ function SplitMode() {
           <div className="grid grid-cols-2 gap-2 overflow-auto sm:grid-cols-3 md:grid-cols-4">
             {frames.map((frame) => (
               <div key={frame.index} className="flex flex-col items-center gap-1 rounded border border-border-subtle bg-surface-raised p-2">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={frame.dataUrl} alt={`frame ${frame.index + 1}`} className="max-w-full" />
+                <button
+                  type="button"
+                  onClick={() => setPreviewSrc(frame.dataUrl)}
+                  aria-label={tc('preview_open_output')}
+                  className="flex w-full cursor-zoom-in appearance-none items-center justify-center rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={frame.dataUrl} alt={`frame ${frame.index + 1}`} className="max-w-full" />
+                </button>
                 <span className="text-xs text-content-faint">#{frame.index + 1} · {frame.delay}ms</span>
               </div>
             ))}
           </div>
         )}
       </section>
+
+      <ImagePreviewDialog
+        open={Boolean(previewSrc)}
+        src={previewSrc || undefined}
+        alt={t('result_title')}
+        title={tc('preview_title')}
+        closeLabel={tc('preview_close')}
+        onClose={() => setPreviewSrc('')}
+      />
     </div>
   );
 }
 
 function ComposeMode() {
   const t = useTranslations('tools.image-gif');
+  const tc = useTranslations('common');
   const [files, setFiles] = useState<File[]>([]);
   const [delay, setDelay] = useState(200);
   const [repeat, setRepeat] = useState<number>(0);
   const [quality, setQuality] = useState(10);
   const [busy, setBusy] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string>('');
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   const compose = async () => {
     if (files.length === 0) return;
     setBusy(true);
     setPreviewUrl('');
+    setPreviewOpen(false);
     try {
       const first = await loadImageFromFile(files[0]);
       const width = first.naturalWidth;
@@ -206,8 +228,15 @@ function ComposeMode() {
         <h2 className="text-lg font-semibold text-content">{t('result_title')}</h2>
         {previewUrl ? (
           <div className="flex flex-col items-center gap-3">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={previewUrl} alt="composed" className="max-h-96 max-w-full" />
+            <button
+              type="button"
+              onClick={() => setPreviewOpen(true)}
+              aria-label={tc('preview_open_output')}
+              className="flex cursor-zoom-in appearance-none items-center justify-center rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={previewUrl} alt="composed" className="max-h-96 max-w-full" />
+            </button>
             <a
               href={previewUrl}
               download="composed.gif"
@@ -220,6 +249,15 @@ function ComposeMode() {
           <p className="text-sm text-content-faint">{t('empty_compose')}</p>
         )}
       </section>
+
+      <ImagePreviewDialog
+        open={previewOpen && Boolean(previewUrl)}
+        src={previewUrl || undefined}
+        alt={t('result_title')}
+        title={tc('preview_title')}
+        closeLabel={tc('preview_close')}
+        onClose={() => setPreviewOpen(false)}
+      />
     </div>
   );
 }

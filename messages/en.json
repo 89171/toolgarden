@@ -14,7 +14,10 @@
     "result": "Result",
     "empty": "Result will appear here",
     "error_placeholder": "Enter JSON to start",
-    "download_json": "Download JSON"
+    "download_json": "Download JSON",
+    "preview_title": "Result preview",
+    "preview_open_output": "Click to preview the output",
+    "preview_close": "Close preview"
   },
   "privacy_trust": {
     "label": "Privacy by default",

@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
+import { ImagePreviewDialog } from '@/components/ImagePreviewDialog';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
@@ -125,6 +126,7 @@ export function FileMergeTool({ mode, content }: FileMergeToolProps) {
   const [activeExcelSheet, setActiveExcelSheet] = useState('');
   const [imageOutput, setImageOutput] = useState<ImageMergeOutput>('pdf');
   const [previewUrl, setPreviewUrl] = useState('');
+  const [previewMedia, setPreviewMedia] = useState<'image' | 'iframe' | null>(null);
 
   const accept = useMemo(() => getFileMergeAcceptValue(mode), [mode]);
 
@@ -745,16 +747,33 @@ export function FileMergeTool({ mode, content }: FileMergeToolProps) {
           {previewUrl ? (
             <div className="min-h-[28rem] flex-grow overflow-auto rounded border border-border-input bg-surface-raised p-3">
               {currentResult.format === 'png' ? (
-                <Image
-                  src={previewUrl}
-                  alt={t('preview_title')}
-                  width={currentResult.width}
-                  height={currentResult.height}
-                  unoptimized
-                  className="h-auto w-full rounded"
-                />
+                <button
+                  type="button"
+                  onClick={() => setPreviewMedia('image')}
+                  aria-label={tc('preview_open_output')}
+                  className="flex w-full cursor-zoom-in appearance-none items-center justify-center rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+                >
+                  <Image
+                    src={previewUrl}
+                    alt={t('preview_title')}
+                    width={currentResult.width}
+                    height={currentResult.height}
+                    unoptimized
+                    className="h-auto w-full rounded"
+                  />
+                </button>
               ) : (
-                <iframe title={t('preview_title')} src={previewUrl} className="h-full min-h-[28rem] w-full rounded" />
+                <div className="flex h-full flex-col gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setPreviewMedia('iframe')}
+                    aria-label={tc('preview_open_output')}
+                    className="self-start rounded border border-border-base px-3 py-1 text-xs text-content-secondary transition-colors hover:bg-surface-hover"
+                  >
+                    {tc('preview_open_output')}
+                  </button>
+                  <iframe title={t('preview_title')} src={previewUrl} className="h-full min-h-[28rem] w-full rounded" />
+                </div>
               )}
             </div>
           ) : null}
@@ -843,6 +862,16 @@ export function FileMergeTool({ mode, content }: FileMergeToolProps) {
           </div>
         </Panel>
       </div>
+
+      <ImagePreviewDialog
+        open={Boolean(previewMedia && previewUrl)}
+        src={previewUrl || undefined}
+        media={previewMedia ?? 'image'}
+        alt={t('preview_title')}
+        title={tc('preview_title')}
+        closeLabel={tc('preview_close')}
+        onClose={() => setPreviewMedia(null)}
+      />
     </ToolLayout>
   );
 }

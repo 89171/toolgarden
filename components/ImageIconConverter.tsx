@@ -4,6 +4,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { clsx } from 'clsx';
+import { ImagePreviewDialog } from '@/components/ImagePreviewDialog';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
@@ -83,6 +84,7 @@ function getDistanceFromCenter(point: { x: number; y: number; width: number; hei
 
 export function ImageIconConverter() {
   const ti = useTranslations('image_icon_converter');
+  const tc = useTranslations('common');
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const sourceRef = useRef<LoadedIconImage | null>(null);
@@ -97,6 +99,7 @@ export function ImageIconConverter() {
   const [transform, setTransform] = useState<IconRenderTransform>(DEFAULT_TRANSFORM);
   const [output, setOutput] = useState<IconOutputState | null>(null);
   const [previewDataUrl, setPreviewDataUrl] = useState('');
+  const [previewOpen, setPreviewOpen] = useState(false);
   const [error, setError] = useState('');
   const [isDraggingUpload, setIsDraggingUpload] = useState(false);
   const [isLoadingSource, setIsLoadingSource] = useState(false);
@@ -640,6 +643,17 @@ export function ImageIconConverter() {
             <Panel title={ti('output_title')}>
               {output ? (
                 <div className="space-y-4">
+                  {previewDataUrl ? (
+                    <button
+                      type="button"
+                      onClick={() => setPreviewOpen(true)}
+                      aria-label={tc('preview_open_output')}
+                      className="flex w-full cursor-zoom-in appearance-none items-center justify-center gap-3 rounded border border-border-base bg-surface p-3 transition-colors hover:border-border-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
+                    >
+                      <img src={previewDataUrl} alt={ti('output_title')} className="h-20 w-20 shrink-0 object-contain" />
+                      <span className="text-sm text-content-muted">{tc('preview_open_output')}</span>
+                    </button>
+                  ) : null}
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     <div className="rounded-md border border-border-base bg-surface-raised p-3">
                       <p className="text-xs text-content-muted">{ti('output_format')}</p>
@@ -697,6 +711,15 @@ export function ImageIconConverter() {
           </div>
         </div>
       </div>
+
+      <ImagePreviewDialog
+        open={previewOpen && Boolean(output && previewDataUrl)}
+        src={previewDataUrl || undefined}
+        alt={ti('output_title')}
+        title={tc('preview_title')}
+        closeLabel={tc('preview_close')}
+        onClose={() => setPreviewOpen(false)}
+      />
     </ToolLayout>
   );
 }
