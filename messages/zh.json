@@ -916,6 +916,25 @@
     "progress_fallback": "切换本地快速修复",
     "unknown_type": "未知类型",
     "resize_handle": "调整水印区域",
+    "batch_enable": "批量处理",
+    "batch_enable_hint": "勾选后可一次选择多张图片，用第一张框选水印区域，其余图片自动套用相同相对位置。",
+    "batch_drop_title": "点击或拖入多张图片",
+    "batch_drop_hint": "支持 {formats}，可一次选择多张图片；第一张用于框选，处理完全在本地完成。",
+    "batch_files_title": "已选图片",
+    "batch_file_count": "共 {count} 张",
+    "batch_sample": "示例",
+    "batch_apply": "批量修复 {count} 张",
+    "batch_progress": "正在处理第 {current}/{total} 张",
+    "batch_cancel": "取消处理",
+    "batch_canceled": "已取消，仅保留已完成的结果",
+    "batch_canceled_empty": "已取消，没有生成任何结果。",
+    "batch_partial_warning": "有 {count} 张图片处理失败，详见失败列表。",
+    "batch_result_count": "处理结果",
+    "batch_result_value": "成功 {done} / {total} 张",
+    "batch_zip_size": "ZIP 大小",
+    "batch_download_zip": "下载 ZIP（{count} 张）",
+    "batch_failures_title": "以下图片未能处理",
+    "batch_output_hint": "当前预览为第一张图片的修复结果；下载会打包全部成功处理的图片。",
     "errors": {
       "empty_file": "文件为空，请选择有效图片。",
       "unsupported_input": "暂不支持这种图片类型：{type}。",
@@ -925,7 +944,9 @@
       "canvas_context": "无法创建 Canvas 绘图上下文。",
       "canvas_export": "图片导出失败，请换一个浏览器重试。",
       "unsupported_output": "当前浏览器不支持导出 {format}。",
-      "general": "图片修复失败，请重试。"
+      "general": "图片修复失败，请重试。",
+      "batch_all_failed": "所有图片都处理失败，请检查图片格式和尺寸后重试。",
+      "zip_failed": "ZIP 打包失败，已改为下载第一张修复图。"
     }
   },
   "image_erase": {

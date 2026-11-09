@@ -28,7 +28,10 @@ import {
   type ImageWatermarkRemovalSuccess,
 } from '@/lib/utils/image';
 import { imageRemoveWatermarkContent } from '@/lib/tools/content/image-remove-watermark';
+import { createZipArchive } from '@/lib/utils/zip';
 import { useUrlOption } from '@/components/useUrlOption';
+
+const BATCH_ZIP_FILENAME = 'watermark-removed-images.zip';
 
 const WATERMARK_REMOVAL_URL_OPTIONS: Readonly<Record<string, ImageWatermarkRemovalMethod>> = {
   fast: 'local',
@@ -49,9 +52,36 @@ interface DragState {
   startSelection: ImageCropRect;
 }
 
+interface BatchFailure {
+  filename: string;
+  message: string;
+}
+
+interface BatchReport {
+  total: number;
+  succeeded: number;
+  failures: BatchFailure[];
+  canceled: boolean;
+  durationMs: number;
+}
+
+interface BatchOutputState {
+  zipUrl: string;
+  zipFilename: string;
+  fileCount: number;
+  totalSize: number;
+}
+
 interface OutputState {
   result: ImageWatermarkRemovalSuccess;
   url: string;
+  batch?: BatchOutputState;
+}
+
+interface BatchProgressState {
+  current: number;
+  total: number;
+  filename: string;
 }
 
 const OUTPUT_FORMATS: BasicImageTargetFormat[] = ['jpg', 'png', 'webp'];
@@ -109,11 +139,15 @@ export function ImageWatermarkRemover() {
   const sourceUrlRef = useRef('');
   const outputRef = useRef<OutputState | null>(null);
   const loadRequestRef = useRef(0);
+  const processingRef = useRef(false);
+  const cancelRequestedRef = useRef(false);
 
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
+  const file = files[0] ?? null;
   const [sourceUrl, setSourceUrl] = useState('');
   const [image, setImage] = useState<ImageInspectionSuccess | null>(null);
   const [selection, setSelection] = useState<ImageCropRect | null>(null);
+  const [batchMode, setBatchMode] = useState(false);
   const [method, selectMethod] = useUrlOption(
     'mode',
     'migan',
@@ -125,6 +159,8 @@ export function ImageWatermarkRemover() {
   const [output, setOutput] = useState<OutputState | null>(null);
   const [isOutputPreviewOpen, setIsOutputPreviewOpen] = useState(false);
   const [progress, setProgress] = useState<ImageWatermarkRemovalProgress | null>(null);
+  const [batchProgress, setBatchProgress] = useState<BatchProgressState | null>(null);
+  const [batchReport, setBatchReport] = useState<BatchReport | null>(null);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -135,8 +171,12 @@ export function ImageWatermarkRemover() {
   const inputFormatLabels = useMemo(() => getSupportedImageInputLabel().split(' / '), []);
   const target = getBasicImageTargetConfig(outputFormat);
   const showQuality = target.supportsQuality;
+  const isBatch = batchMode && files.length > 1;
   const canProcess = Boolean(file && image && selection && !isLoading && !isProcessing);
   const canDownload = Boolean(output?.url);
+  const downloadLabel = output?.batch
+    ? ti('batch_download_zip', { count: output.batch.fileCount })
+    : ti('download');
   const progressLabel = useMemo(() => {
     if (!progress) return '';
 
@@ -207,15 +247,23 @@ export function ImageWatermarkRemover() {
 
   useEffect(() => () => {
     if (sourceUrlRef.current) URL.revokeObjectURL(sourceUrlRef.current);
-    if (outputRef.current) URL.revokeObjectURL(outputRef.current.url);
+    if (outputRef.current) {
+      URL.revokeObjectURL(outputRef.current.url);
+      if (outputRef.current.batch) URL.revokeObjectURL(outputRef.current.batch.zipUrl);
+    }
   }, []);
 
   const clearOutput = useCallback(() => {
     setIsOutputPreviewOpen(false);
     setOutput((current) => {
-      if (current) URL.revokeObjectURL(current.url);
+      if (current) {
+        URL.revokeObjectURL(current.url);
+        if (current.batch) URL.revokeObjectURL(current.batch.zipUrl);
+      }
       return null;
     });
+    setBatchReport(null);
+    setBatchProgress(null);
   }, []);
 
   const getErrorMessage = useCallback((imageError: ImageConversionError): string => {
@@ -242,10 +290,12 @@ export function ImageWatermarkRemover() {
   }, [ti]);
 
   const clearImage = useCallback(() => {
+    if (processingRef.current) return;
     loadRequestRef.current += 1;
+    cancelRequestedRef.current = false;
     if (sourceUrl) URL.revokeObjectURL(sourceUrl);
     clearOutput();
-    setFile(null);
+    setFiles([]);
     setSourceUrl('');
     setImage(null);
     setSelection(null);
@@ -256,13 +306,22 @@ export function ImageWatermarkRemover() {
     if (inputRef.current) inputRef.current.value = '';
   }, [clearOutput, sourceUrl]);
 
+  const changeBatchMode = useCallback((enabled: boolean) => {
+    if (processingRef.current) return;
+    // 单张/批量切换时重新选择文件，避免示例图与文件数量不一致。
+    setBatchMode(enabled);
+    clearImage();
+  }, [clearImage]);
+
   const updateSelection = useCallback((nextSelection: ImageCropRect) => {
     setSelection(nextSelection);
     clearOutput();
   }, [clearOutput]);
 
   const handleFiles = useCallback(async (fileList: FileList | File[]) => {
-    const selected = Array.from(fileList)[0];
+    if (processingRef.current) return;
+    const selectedFiles = batchMode ? Array.from(fileList) : Array.from(fileList).slice(0, 1);
+    const selected = selectedFiles[0];
     if (!selected) return;
 
     const requestId = loadRequestRef.current + 1;
@@ -270,8 +329,9 @@ export function ImageWatermarkRemover() {
     setIsLoading(true);
     setError('');
     clearOutput();
+    cancelRequestedRef.current = false;
     if (sourceUrl) URL.revokeObjectURL(sourceUrl);
-    setFile(null);
+    setFiles([]);
     setSourceUrl('');
     setImage(null);
     setSelection(null);
@@ -288,13 +348,13 @@ export function ImageWatermarkRemover() {
 
     const nextSelection = createInitialWatermarkRect(inspected.width, inspected.height);
     const url = URL.createObjectURL(selected);
-    setFile(selected);
+    setFiles(selectedFiles);
     setSourceUrl(url);
     setImage(inspected);
     setSelection(nextSelection);
     selectionRef.current = nextSelection;
     setOutputFormat(getDefaultOutputFormat(selected));
-  }, [clearOutput, getErrorMessage, sourceUrl]);
+  }, [batchMode, clearOutput, getErrorMessage, sourceUrl]);
 
   const getNaturalPoint = useCallback((event: PointerEvent | React.PointerEvent): { x: number; y: number } | null => {
     const element = imageWrapRef.current;
@@ -419,62 +479,158 @@ export function ImageWatermarkRemover() {
   }, [image, updateSelection]);
 
   const generateOutput = useCallback(async () => {
-    if (!file || !selection) return;
+    if (!file || !selection || !image || processingRef.current) return;
+
+    processingRef.current = true;
+    cancelRequestedRef.current = false;
+    const sourceFiles = files.length > 0 ? files : [file];
+    const batchRun = batchMode && sourceFiles.length > 1;
+    // 批量时以第一张图为坐标基准，其余图片按相对位置映射选区。
+    const selectionSource = batchRun ? { width: image.width, height: image.height } : undefined;
 
     setIsProcessing(true);
     setProgress(null);
+    setBatchProgress(null);
     setError('');
     clearOutput();
 
-    const result = await removeImageWatermark(file, {
-      selection,
-      targetFormat: outputFormat,
-      method,
-      quality,
-      feather,
-      jpegBackground: '#ffffff',
-      onProgress: setProgress,
-    });
+    try {
+      const startedAt = performance.now();
+      const results: ImageWatermarkRemovalSuccess[] = [];
+      const failures: BatchFailure[] = [];
+      let canceled = false;
 
-    setIsProcessing(false);
-    setProgress(null);
+      for (const [index, item] of sourceFiles.entries()) {
+        if (cancelRequestedRef.current) {
+          canceled = true;
+          break;
+        }
 
-    if (!result.ok) {
-      setError(getErrorMessage(result));
-      return;
+        if (batchRun) {
+          setBatchProgress({ current: index + 1, total: sourceFiles.length, filename: item.name });
+        }
+
+        const result = await removeImageWatermark(item, {
+          selection,
+          selectionSource,
+          targetFormat: outputFormat,
+          method,
+          quality,
+          feather,
+          jpegBackground: '#ffffff',
+          onProgress: (stageProgress) => setProgress(
+            batchRun
+              ? {
+                  ...stageProgress,
+                  percent: Math.round(((index + stageProgress.percent / 100) / sourceFiles.length) * 100),
+                }
+              : stageProgress
+          ),
+        });
+
+        if (result.ok) results.push(result);
+        else failures.push({ filename: item.name, message: getErrorMessage(result) });
+      }
+
+      const durationMs = Math.round(performance.now() - startedAt);
+      setBatchReport(batchRun
+        ? { total: sourceFiles.length, succeeded: results.length, failures, canceled, durationMs }
+        : null);
+
+      if (results.length === 0) {
+        setError(canceled ? ti('batch_canceled_empty') : failures[0]?.message ?? ti('errors.batch_all_failed'));
+        return;
+      }
+
+      const notices: string[] = [];
+      if (canceled) notices.push(ti('batch_canceled'));
+      if (failures.length > 0) notices.push(ti('batch_partial_warning', { count: failures.length }));
+
+      const previewUrl = URL.createObjectURL(results[0].blob);
+      let nextOutput: OutputState = { result: results[0], url: previewUrl };
+
+      if (batchRun && results.length > 1) {
+        try {
+          const zipBlob = await createZipArchive(
+            results.map((item) => ({ filename: item.filename, blob: item.blob }))
+          );
+          nextOutput = {
+            ...nextOutput,
+            batch: {
+              zipUrl: URL.createObjectURL(zipBlob),
+              zipFilename: BATCH_ZIP_FILENAME,
+              fileCount: results.length,
+              totalSize: zipBlob.size,
+            },
+          };
+        } catch {
+          notices.push(ti('errors.zip_failed'));
+        }
+      }
+
+      if (notices.length > 0) setError(notices.join(' '));
+      setOutput(nextOutput);
+    } catch {
+      setError(ti('errors.general'));
+    } finally {
+      processingRef.current = false;
+      setIsProcessing(false);
+      setProgress(null);
+      setBatchProgress(null);
     }
+  }, [
+    batchMode, clearOutput, feather, file, files, getErrorMessage, image,
+    method, outputFormat, quality, selection, ti,
+  ]);
 
-    setOutput({
-      result,
-      url: URL.createObjectURL(result.blob),
-    });
-  }, [clearOutput, feather, file, getErrorMessage, method, outputFormat, quality, selection]);
+  const cancelProcessing = useCallback(() => {
+    cancelRequestedRef.current = true;
+  }, []);
 
   const downloadOutput = useCallback(() => {
     const current = outputRef.current;
     if (!current) return;
+    if (current.batch) {
+      downloadUrl(current.batch.zipUrl, current.batch.zipFilename);
+      return;
+    }
     downloadUrl(current.url, current.result.filename);
   }, []);
 
   const outputStats = useMemo(() => {
     if (!output) return null;
-    return [
+    const stats = [
       { label: ti('output_size'), value: formatDimensions(output.result.width, output.result.height) },
       {
         label: ti('result_method'),
         value: getResultMethodLabel(output.result.method),
       },
-      { label: ti('file_size'), value: formatFileSize(output.result.outputSize) },
-      { label: ti('duration'), value: ti('duration_value', { value: output.result.durationMs }) },
+      {
+        label: ti(output.batch ? 'batch_zip_size' : 'file_size'),
+        value: formatFileSize(output.batch ? output.batch.totalSize : output.result.outputSize),
+      },
+      {
+        label: ti('duration'),
+        value: ti('duration_value', { value: batchReport?.durationMs ?? output.result.durationMs }),
+      },
     ];
-  }, [getResultMethodLabel, output, ti]);
+
+    if (batchReport) {
+      stats.unshift({
+        label: ti('batch_result_count'),
+        value: ti('batch_result_value', { done: batchReport.succeeded, total: batchReport.total }),
+      });
+    }
+
+    return stats;
+  }, [batchReport, getResultMethodLabel, output, ti]);
 
   return (
     <ToolLayout toolId="image-remove-watermark" content={imageRemoveWatermarkContent}>
       <div className="grid flex-grow grid-cols-1 gap-4 overflow-auto pb-4 sm:gap-6 sm:pb-8 xl:min-h-0 xl:grid-cols-[minmax(320px,420px)_1fr] xl:overflow-hidden">
         <Panel
           title={ti('settings_title')}
-          actions={<Button variant="secondary" onClick={clearImage} disabled={!file && !error}>{tc('clear')}</Button>}
+          actions={<Button variant="secondary" onClick={clearImage} disabled={isProcessing || (!file && !error)}>{tc('clear')}</Button>}
           className="h-[min(40rem,calc(100svh-12rem))] min-h-0 overflow-hidden xl:h-auto xl:min-h-0"
         >
           <div className="flex min-h-0 flex-grow flex-col gap-4 overflow-y-auto overscroll-auto pr-1">
@@ -482,11 +638,30 @@ export function ImageWatermarkRemover() {
               ref={inputRef}
               type="file"
               accept={accept}
+              multiple={batchMode}
               className="hidden"
               onChange={(event) => {
                 if (event.target.files) handleFiles(event.target.files);
               }}
             />
+
+            <label
+              className={`flex items-start gap-3 rounded-lg border p-3 transition-colors ${
+                batchMode ? 'border-border-strong bg-surface-hover' : 'border-border-base bg-surface-raised'
+              }`}
+            >
+              <input
+                type="checkbox"
+                checked={batchMode}
+                disabled={isProcessing || isLoading}
+                onChange={(event) => changeBatchMode(event.target.checked)}
+                className="mt-0.5 h-4 w-4 shrink-0 accent-action"
+              />
+              <span className="flex flex-col gap-1">
+                <span className="text-sm font-semibold text-content">{ti('batch_enable')}</span>
+                <span className="text-xs leading-relaxed text-content-muted">{ti('batch_enable_hint')}</span>
+              </span>
+            </label>
 
             <button
               type="button"
@@ -516,12 +691,45 @@ export function ImageWatermarkRemover() {
               }`}
             >
               <span className="flex flex-col gap-1">
-                <span className="text-base font-semibold text-content">{file ? ti('replace') : ti('drop_title')}</span>
+                <span className="text-base font-semibold text-content">
+                  {file ? ti('replace') : batchMode ? ti('batch_drop_title') : ti('drop_title')}
+                </span>
                 <span className="max-w-72 text-xs leading-relaxed text-content-muted">
-                  {ti('drop_hint', { formats: getSupportedImageInputLabel() })}
+                  {ti(batchMode ? 'batch_drop_hint' : 'drop_hint', { formats: getSupportedImageInputLabel() })}
                 </span>
               </span>
             </button>
+
+            {isBatch && (
+              <div className="rounded-lg border border-border-base bg-surface-raised p-3">
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <span className="text-xs font-semibold uppercase tracking-normal text-content-faint">
+                    {ti('batch_files_title')}
+                  </span>
+                  <span className="font-mono text-xs text-content-muted">
+                    {ti('batch_file_count', { count: files.length })}
+                  </span>
+                </div>
+                <ul className="max-h-36 space-y-1.5 overflow-y-auto pr-1">
+                  {files.map((item, index) => (
+                    <li
+                      key={`${item.name}-${item.size}-${item.lastModified}-${index}`}
+                      className="flex items-center justify-between gap-2 rounded border border-border-subtle bg-surface px-2 py-1.5 text-xs"
+                    >
+                      <span className="truncate text-content-secondary" title={item.name}>{item.name}</span>
+                      <span className="flex shrink-0 items-center gap-2">
+                        <span className="font-mono text-content-faint">{formatFileSize(item.size)}</span>
+                        {index === 0 && (
+                          <span className="rounded border border-border-strong px-1.5 py-0.5 text-content-muted">
+                            {ti('batch_sample')}
+                          </span>
+                        )}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             <div className="rounded-lg border border-border-base bg-surface-raised p-3">
               <span className="mb-2 block text-xs font-semibold uppercase tracking-normal text-content-faint">
@@ -689,12 +897,29 @@ export function ImageWatermarkRemover() {
 
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   <Button onClick={generateOutput} disabled={!canProcess} className="justify-center">
-                    {isProcessing ? ti('processing') : ti('apply')}
+                    {isProcessing ? ti('processing') : isBatch ? ti('batch_apply', { count: files.length }) : ti('apply')}
                   </Button>
                   <Button variant="secondary" onClick={downloadOutput} disabled={!canDownload} className="justify-center">
-                    {ti('download')}
+                    {downloadLabel}
                   </Button>
                 </div>
+
+                {isProcessing && (
+                  <Button variant="secondary" onClick={cancelProcessing} className="justify-center">
+                    {ti('batch_cancel')}
+                  </Button>
+                )}
+
+                {isProcessing && batchProgress && (
+                  <div className="rounded-lg border border-border-subtle bg-surface-raised p-3 text-xs text-content-muted">
+                    <div className="flex items-center justify-between gap-3">
+                      <span>{ti('batch_progress', { current: batchProgress.current, total: batchProgress.total })}</span>
+                      <span className="max-w-[55%] truncate font-mono" title={batchProgress.filename}>
+                        {batchProgress.filename}
+                      </span>
+                    </div>
+                  </div>
+                )}
 
                 {isProcessing && progress && (
                   <div className="rounded-lg border border-border-subtle bg-surface-raised p-3">
@@ -713,6 +938,28 @@ export function ImageWatermarkRemover() {
               </>
             )}
 
+            {batchReport && !isProcessing && (
+              <div className="rounded-lg border border-border-subtle bg-surface-raised p-3 text-xs leading-relaxed text-content-muted">
+                <p>
+                  {ti('batch_result_value', { done: batchReport.succeeded, total: batchReport.total })}
+                  {batchReport.canceled ? ` · ${ti('batch_canceled')}` : ''}
+                </p>
+                {batchReport.failures.length > 0 && (
+                  <>
+                    <p className="mt-2 font-semibold text-content-secondary">{ti('batch_failures_title')}</p>
+                    <ul className="mt-1 max-h-28 space-y-1 overflow-y-auto pr-1">
+                      {batchReport.failures.map((failure, index) => (
+                        <li key={`${failure.filename}-${index}`} className="break-words">
+                          <span className="font-mono">{failure.filename}</span>
+                          <span> — {failure.message}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+              </div>
+            )}
+
             {error && (
               <div className="rounded-lg border border-danger-surface bg-danger-surface px-3 py-2 text-sm text-danger-content">
                 {error}
@@ -723,7 +970,7 @@ export function ImageWatermarkRemover() {
 
         <Panel
           title={ti('editor_title')}
-          actions={<Button variant="primary" onClick={downloadOutput} disabled={!canDownload}>{ti('download')}</Button>}
+          actions={<Button variant="primary" onClick={downloadOutput} disabled={!canDownload}>{downloadLabel}</Button>}
           className="min-h-[38rem] overflow-hidden xl:min-h-0"
         >
           <div className="grid min-h-0 flex-grow grid-cols-1 gap-4 overflow-y-auto xl:grid-cols-[minmax(0,1fr)_minmax(260px,360px)] xl:overflow-hidden">
@@ -806,6 +1053,12 @@ export function ImageWatermarkRemover() {
                   </span>
                 )}
               </div>
+
+              {output?.batch && (
+                <p className="rounded border border-border-subtle bg-surface px-3 py-2 text-xs leading-relaxed text-content-muted">
+                  {ti('batch_output_hint')}
+                </p>
+              )}
 
               {outputStats ? (
                 <div className="grid grid-cols-1 gap-2 text-sm sm:grid-cols-3 xl:grid-cols-1">

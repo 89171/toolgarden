@@ -916,6 +916,25 @@
     "progress_fallback": "Switching to fast local repair",
     "unknown_type": "Unknown type",
     "resize_handle": "Resize watermark area",
+    "batch_enable": "Batch processing",
+    "batch_enable_hint": "Select multiple images at once. Mark the watermark area on the first image and the same relative area is used for the rest.",
+    "batch_drop_title": "Click or drop multiple images",
+    "batch_drop_hint": "Supports {formats}. Choose several images at once; the first one is used for the selection and everything stays local.",
+    "batch_files_title": "Selected images",
+    "batch_file_count": "{count} images",
+    "batch_sample": "Sample",
+    "batch_apply": "Repair {count} images",
+    "batch_progress": "Processing image {current} of {total}",
+    "batch_cancel": "Cancel processing",
+    "batch_canceled": "Canceled; only the finished results are kept",
+    "batch_canceled_empty": "Canceled before any result was produced.",
+    "batch_partial_warning": "{count} images could not be processed; see the failure list.",
+    "batch_result_count": "Results",
+    "batch_result_value": "{done} of {total} succeeded",
+    "batch_zip_size": "ZIP size",
+    "batch_download_zip": "Download ZIP ({count} images)",
+    "batch_failures_title": "These images could not be processed",
+    "batch_output_hint": "The preview shows the first repaired image; downloading packages every successfully processed image.",
     "errors": {
       "empty_file": "The file is empty. Choose a valid image.",
       "unsupported_input": "This image type is not supported yet: {type}.",
@@ -925,7 +944,9 @@
       "canvas_context": "Could not create a Canvas drawing context.",
       "canvas_export": "Image export failed. Try another browser.",
       "unsupported_output": "This browser cannot export {format}.",
-      "general": "Image repair failed. Please try again."
+      "general": "Image repair failed. Please try again.",
+      "batch_all_failed": "Every image failed. Check the file formats and dimensions, then try again.",
+      "zip_failed": "Could not create the ZIP archive; the first repaired image is downloadable instead."
     }
   },
   "image_erase": {

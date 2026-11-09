@@ -433,6 +433,32 @@ export function normalizeCropRect(rect: ImageCropRect, imageWidth: number, image
   return { x, y, width, height };
 }
 
+/**
+ * 批量去水印：把示例图片上的选区按相对位置映射到另一张尺寸不同的图片。
+ * 水印通常固定在画面某个角落，用相对坐标缩放比直接复用像素坐标更稳。
+ */
+export function scaleCropRectToImage(
+  rect: ImageCropRect,
+  source: { width: number; height: number },
+  target: { width: number; height: number }
+): ImageCropRect {
+  const sourceWidth = Math.max(1, source.width);
+  const sourceHeight = Math.max(1, source.height);
+  const scaleX = target.width / sourceWidth;
+  const scaleY = target.height / sourceHeight;
+
+  return normalizeCropRect(
+    {
+      x: rect.x * scaleX,
+      y: rect.y * scaleY,
+      width: rect.width * scaleX,
+      height: rect.height * scaleY,
+    },
+    target.width,
+    target.height
+  );
+}
+
 export function getDefaultEraseBrushRadius(imageWidth: number, imageHeight: number): number {
   return clampNumber(Math.round(Math.min(imageWidth, imageHeight) * 0.04), 6, 64);
 }

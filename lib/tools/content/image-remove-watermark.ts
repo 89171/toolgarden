@@ -10,6 +10,7 @@ export const imageRemoveWatermarkContent = defineToolContent({
       ['确认使用权限', '仅上传你有权编辑的图片，并保留必要的作者署名和许可证记录。'],
       ['精确选择区域', '让选框覆盖完整水印及边缘，同时尽量减少无关背景和主体细节。'],
       ['比较修复方法', '预览不同方法的纹理连续性和边缘伪影，选择结果后按需要导出格式。'],
+      ['批量处理同组图片', '勾选批量处理后可一次选择多张图片，用第一张框选水印区域，其余图片按相同相对位置修复并打包下载。'],
     ],
     scenarios: [
       ['清理自有素材', '从品牌源文件中移除已经停用的旧日期、内部标记或错误版本标签。'],
@@ -21,7 +22,7 @@ export const imageRemoveWatermarkContent = defineToolContent({
       '复杂人脸、文字和规则线条被遮挡后通常无法准确还原，优先寻找无水印原件。',
       '多次处理重叠区域会累积模糊和重复纹理，建议从原图重新尝试更小的选区。',
     ],
-    specs: [["操作方式", "框选水印区域，模型根据周围像素补全该区域"], ["输出", "JPG、PNG 或 WebP"], ["效果较好", "背景规律、纹理连续的区域，如纯色、天空、平滑渐变"], ["效果不佳", "水印压在人脸、文字或复杂纹理上：补全结果是模型的猜测，会与原内容不符"], ["不能还原原始像素", "被水印覆盖的内容已经不存在，输出是合成的近似结果，不是恢复"], ["版权提示", "移除水印不改变图片的版权归属，使用前请确认自己有相应权利"]],
+    specs: [["操作方式", "框选水印区域，模型根据周围像素补全该区域"], ["输出", "JPG、PNG 或 WebP"], ["批量输出", "多张图片共用选区，成功结果打包为 ZIP；只有一张结果时直接下载图片"], ["效果较好", "背景规律、纹理连续的区域，如纯色、天空、平滑渐变"], ["效果不佳", "水印压在人脸、文字或复杂纹理上：补全结果是模型的猜测，会与原内容不符"], ["不能还原原始像素", "被水印覆盖的内容已经不存在，输出是合成的近似结果，不是恢复"], ["版权提示", "移除水印不改变图片的版权归属，使用前请确认自己有相应权利"]],
     faq: [{ question: "补全出来的内容和原图不一样？", answer: "这是必然的。水印覆盖的原始像素已经不存在，模型只能根据周围内容推测那里「应该」是什么。背景规律时猜得准，压在人脸、文字或复杂纹理上时几乎一定不对。" }, { question: "可以用它去掉别人图片上的水印吗？", answer: "技术上可以，但移除水印不改变图片的版权归属。使用他人作品前请确认自己有相应授权：工具能做到不等于使用上被允许。" }],
     reference: [
       ['inpainting', '利用选区周围的结构和纹理估计缺失像素的图像修复过程。'],
@@ -37,6 +38,7 @@ export const imageRemoveWatermarkContent = defineToolContent({
       ['Confirm editing rights', 'Upload only an image you may modify and retain any required attribution and license records.'],
       ['Select the exact region', 'Cover the complete mark and its edge while excluding unrelated background and subject detail.'],
       ['Compare repair methods', 'Inspect texture continuity and boundary artifacts, then export the best result in the needed format.'],
+      ['Process a set of images', 'Enable batch processing to select several images at once. Mark the watermark on the first image; the rest are repaired at the same relative position and packaged together.'],
     ],
     scenarios: [
       ['Cleaning an owned asset', 'Remove an obsolete date, internal mark, or incorrect version label from a brand source file.'],
@@ -48,7 +50,7 @@ export const imageRemoveWatermarkContent = defineToolContent({
       'Covered faces, text, and geometric lines usually cannot be reconstructed accurately; seek the unmarked original first.',
       'Repeated processing accumulates blur and duplicated texture. Restart from the source with a smaller selection when possible.',
     ],
-    specs: [["How it works", "Mark the watermark region and the model inpaints it from the surrounding pixels"], ["Output", "JPG, PNG or WebP"], ["Works well on", "Regular, continuous backgrounds; flat colour, sky, smooth gradients"], ["Works poorly on", "Watermarks over faces, text or complex texture, where the fill is a guess that will not match the real content"], ["It does not recover pixels", "Whatever the watermark covered is gone; the output is a synthesised approximation, not a restoration"], ["Rights reminder", "Removing a watermark does not change who owns the image; confirm you have the right to use it"]],
+    specs: [["How it works", "Mark the watermark region and the model inpaints it from the surrounding pixels"], ["Output", "JPG, PNG or WebP"], ["Batch output", "One selection is reused across images; successful results are zipped, and a single result downloads directly"], ["Works well on", "Regular, continuous backgrounds; flat colour, sky, smooth gradients"], ["Works poorly on", "Watermarks over faces, text or complex texture, where the fill is a guess that will not match the real content"], ["It does not recover pixels", "Whatever the watermark covered is gone; the output is a synthesised approximation, not a restoration"], ["Rights reminder", "Removing a watermark does not change who owns the image; confirm you have the right to use it"]],
     faq: [{ question: "The fill does not match the original; why?", answer: "It cannot. The pixels the watermark covered are gone, so the model infers what should plausibly be there from the surroundings. On regular backgrounds it guesses well; over faces, text or complex texture it will almost certainly be wrong." }, { question: "Can I use this on someone else's watermark?", answer: "Technically yes, but removing a watermark does not change who owns the image. Confirm you have the rights before using someone else's work; what a tool can do is not the same as what you are permitted to do." }],
     reference: [
       ['inpainting', 'An image-repair process that estimates missing pixels from nearby structure and texture.'],

@@ -23,6 +23,7 @@ import {
   MAX_IMAGE_PIXELS,
   normalizeImageQuality,
   normalizeCropRect,
+  scaleCropRectToImage,
   createEraseStrokeBounds,
   type AiUpscaleScale,
   type ImageBackgroundRemovalModel,
@@ -224,6 +225,8 @@ export interface EnhanceImageOptions {
 
 export interface RemoveImageWatermarkOptions {
   selection: ImageCropRect;
+  /** 选区来自哪张图；批量处理时传示例图尺寸，选区会按相对位置映射到当前图片。 */
+  selectionSource?: { width: number; height: number };
   targetFormat: ImageTargetFormat;
   method?: ImageWatermarkRemovalMethod;
   quality?: number;
@@ -4052,7 +4055,13 @@ export async function removeImageWatermark(
       };
     }
 
-    const selection = normalizeCropRect(options.selection, image.width, image.height);
+    const selection = options.selectionSource
+      ? scaleCropRectToImage(
+          options.selection,
+          options.selectionSource,
+          { width: image.width, height: image.height }
+        )
+      : normalizeCropRect(options.selection, image.width, image.height);
     const feather = clampNumber(Math.round(options.feather ?? 12), 0, 36);
     let repairCanvas: HTMLCanvasElement | null = null;
     let method: ImageWatermarkRemovalMethod = 'local';
