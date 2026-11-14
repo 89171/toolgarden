@@ -616,6 +616,46 @@ Canonical examples:
 - English URL: https://toolgarden.xyz/en/video/crop
 - Chinese URL: https://toolgarden.xyz/zh/video/crop
 
+#### Video to MP4 / 视频转 MP4 (/video/convert)
+- ID: `video-convert`
+- Category: Convert / 转换
+- Icon label: `MP4`
+- Featured: yes
+- English description: Convert MOV, MKV, WebM and more to a compatible H.264 MP4 in your browser, with quality presets and the original audio kept; nothing is uploaded.
+- Chinese description: 在浏览器本地把 MOV、MKV、WebM 等视频重编码为通用 H.264 MP4，画质三档可选并保留原音轨，输出兼容手机、电脑与主流播放器，文件不上传服务器。
+- English URL: https://toolgarden.xyz/en/video/convert
+- Chinese URL: https://toolgarden.xyz/zh/video/convert
+
+#### Video Merger / 视频合并 (/video/merge)
+- ID: `video-merge`
+- Category: Convert / 转换
+- Icon label: `MRG`
+- Featured: no
+- English description: Join multiple video clips into one MP4 in your browser, in file order with a unified resolution and concatenated audio, without uploading your files.
+- Chinese description: 在浏览器本地把多个视频按顺序合并成一个 MP4，统一输出分辨率并自动拼接各段音轨，画质三档可选，适合拼接多段素材与视频合集，文件不上传服务器。
+- English URL: https://toolgarden.xyz/en/video/merge
+- Chinese URL: https://toolgarden.xyz/zh/video/merge
+
+#### Video Rotate & Flip / 视频旋转 / 翻转 (/video/rotate)
+- ID: `video-rotate`
+- Category: Convert / 转换
+- Icon label: `ROT`
+- Featured: no
+- English description: Rotate a video by 90, 180 or 270 degrees or flip it horizontally or vertically in your browser, re-encoded to MP4 with audio kept, without uploading.
+- Chinese description: 在浏览器本地把视频旋转 90°、180°、270° 或做水平、垂直翻转，修正手机竖拍方向，重编码为 MP4 并保留原音轨，文件不上传服务器。
+- English URL: https://toolgarden.xyz/en/video/rotate
+- Chinese URL: https://toolgarden.xyz/zh/video/rotate
+
+#### Video Frame Extractor / 视频抽帧截图 (/video/frames)
+- ID: `video-frames`
+- Category: Convert / 转换
+- Icon label: `FRM`
+- Featured: no
+- English description: Export still frames from a video in your browser: grab frames at timestamps or on a fixed interval as PNG or JPG, with ZIP download for batches, no upload.
+- Chinese description: 在浏览器本地从视频导出高清截图：按指定时间点或固定间隔抽帧，输出 PNG 或 JPG 图片，单帧直接下载，多帧自动打包成 ZIP，文件不上传服务器。
+- English URL: https://toolgarden.xyz/en/video/frames
+- Chinese URL: https://toolgarden.xyz/zh/video/frames
+
 #### MV Generator / MV 生成器 (/audio/lyric-video)
 - ID: `audio-lyric-video`
 - Category: Convert / 转换

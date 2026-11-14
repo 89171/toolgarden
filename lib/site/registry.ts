@@ -7,7 +7,7 @@
  * 邮箱开通后设置 NEXT_PUBLIC_CONTACT_EMAIL 即可生效，无需改动代码。
  */
 export const SITE_CONTACT_EMAIL =
-  process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? '891715824@qq.com';
+  process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? '1289957510@qq.com';
 
 /**
  * 首页使用的工具集合页。sitemap、导航与提交脚本都从这里读取，避免重复维护。

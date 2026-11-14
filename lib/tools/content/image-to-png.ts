@@ -21,7 +21,7 @@ export const imageToPngContent = defineToolContent({
       '照片型 PNG 可能很大，若不需要透明和无损像素可考虑 WebP 或 JPG。',
       '动态图片经过静态转换通常只保留当前可解码画面。',
     ],
-    specs: [["输入格式", "JPG、WebP、GIF、BMP、SVG、AVIF 等浏览器可解码的图片"], ["压缩类型", "无损。像素不会因为转换而改变"], ["透明通道", "支持。从 WebP 或 AVIF 转来的透明区域会完整保留"], ["体积注意", "从 JPG 转 PNG 通常会明显变大：照片类内容不适合无损编码"], ["动图", "GIF 只取第一帧；需要逐帧导出请用 GIF 分帧 / 合成"], ["适合的内容", "截图、线稿、图标、需要透明背景的素材"]],
+    specs: [["输入格式", "JPG、WebP、HEIC、HEIF、GIF、BMP、SVG、AVIF 等浏览器可解码的图片"], ["压缩类型", "无损。像素不会因为转换而改变"], ["透明通道", "支持。从 WebP 或 AVIF 转来的透明区域会完整保留"], ["体积注意", "从 JPG 转 PNG 通常会明显变大：照片类内容不适合无损编码"], ["动图", "GIF 只取第一帧；需要逐帧导出请用 GIF 分帧 / 合成"], ["适合的内容", "截图、线稿、图标、需要透明背景的素材"]],
     faq: [{ question: "PNG 文件为什么这么大？", answer: "PNG 是无损压缩，照片这类信息密集的内容几乎没有可压缩的冗余。截图和线稿转 PNG 效果很好，照片则更适合 JPG 或 WebP。" }, { question: "从 JPG 转成 PNG 能提升画质吗？", answer: "不能。JPG 已经丢掉的信息不会因为换成无损容器而回来。转 PNG 的意义在于之后的编辑不再叠加损失，而不是修复已有的压缩痕迹。" }],
     reference: [
       ['lossless compression', '编码和解码后像素值保持一致的压缩方式。'],
@@ -48,7 +48,7 @@ export const imageToPngContent = defineToolContent({
       'Photographic PNG files can be large. Consider WebP or JPG if transparency and exact pixels are unnecessary.',
       'A static conversion of an animated image normally retains only the decoded still frame.',
     ],
-    specs: [["Input formats", "JPG, WebP, GIF, BMP, SVG, AVIF; anything the browser can decode"], ["Compression", "Lossless. Pixels are not altered by the conversion"], ["Transparency", "Supported; alpha from a WebP or AVIF source comes through intact"], ["Size warning", "JPG to PNG usually gets noticeably larger; photographic content is a poor fit for lossless encoding"], ["Animation", "Only the first frame of a GIF; use GIF Frames to export every frame"], ["Best for", "Screenshots, line art, icons, and anything needing a transparent background"]],
+    specs: [["Input formats", "JPG, WebP, HEIC, HEIF, GIF, BMP, SVG, AVIF; anything the browser can decode"], ["Compression", "Lossless. Pixels are not altered by the conversion"], ["Transparency", "Supported; alpha from a WebP or AVIF source comes through intact"], ["Size warning", "JPG to PNG usually gets noticeably larger; photographic content is a poor fit for lossless encoding"], ["Animation", "Only the first frame of a GIF; use GIF Frames to export every frame"], ["Best for", "Screenshots, line art, icons, and anything needing a transparent background"]],
     faq: [{ question: "Why is the PNG so large?", answer: "PNG is lossless, and information-dense content like photographs has almost no redundancy to squeeze. Screenshots and line art compress well as PNG; photographs belong in JPG or WebP." }, { question: "Does JPG to PNG improve quality?", answer: "No. What JPG already discarded does not return because you moved it into a lossless container. The point is that further editing adds no new loss, not that existing artefacts are repaired." }],
     reference: [
       ['lossless compression', 'Compression that preserves pixel values through an encode-decode round trip.'],

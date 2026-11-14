@@ -17,7 +17,17 @@
     "download_json": "Download JSON",
     "preview_title": "Result preview",
     "preview_open_output": "Click to preview the output",
-    "preview_close": "Close preview"
+    "preview_close": "Close preview",
+    "batch": {
+      "title": "Batch results",
+      "count": "{done} / {total} succeeded",
+      "failed": "{count} file(s) failed and were skipped",
+      "download": "Download",
+      "download_zip": "Download ZIP ({count} files)",
+      "zipping": "Packaging...",
+      "processing": "Processing {current} / {total}",
+      "select_multiple": "Select multiple files at once"
+    }
   },
   "privacy_trust": {
     "label": "Privacy by default",
@@ -1075,7 +1085,9 @@
     "settings_title": "Image resize",
     "editor_title": "Resize preview",
     "drop_title": "Click or drop an image",
-    "drop_hint": "Supports {formats}. All processing stays local.",
+    "drop_hint": "Supports {formats}. Select multiple images to resize them all to the same dimensions. All processing stays local.",
+    "batch_selected": "{count} images selected. All will be resized to the same output dimensions.",
+    "batch_progress": "Processing {current} / {total}",
     "drop_action": "Choose image",
     "input_formats": "Supported formats",
     "local_note": "All file processing happens locally. Files are not uploaded to any server, and data is cleared when you close the page.",
@@ -1218,7 +1230,9 @@
   "image_watermark": {
     "settings_title": "Watermark settings",
     "drop_title": "Click or drop an image",
-    "drop_hint": "Supports {formats}. Everything runs locally.",
+    "drop_hint": "Supports {formats}. Select multiple images to apply one watermark to all of them. Everything runs locally.",
+    "batch_selected": "{count} images selected. Adjust the watermark on the first one; the rest reuse the same settings.",
+    "batch_progress": "Processing {current} / {total}",
     "drop_action": "Choose image",
     "drop_replace": "Drop to replace the current image",
     "replace": "Replace image",
@@ -1372,10 +1386,10 @@
     "image-watermark": "add watermark to image, image watermark maker, text watermark online, logo watermark tool, batch style image watermark",
     "image-editor": "online image editor, edit image online, image annotation tool, blur image online, add text to image, image markup tool",
     "image-to-icon": "image to icon converter, PNG to ICO, image to ICO, image to ICNS, favicon maker, app icon generator",
-    "image-to-jpg": "image to JPG converter, PNG to JPG, WebP to JPG, GIF to JPG, SVG to JPG, AVIF to JPG",
-    "image-to-png": "image to PNG converter, JPG to PNG, WebP to PNG, GIF to PNG, SVG to PNG, AVIF to PNG",
-    "image-to-webp": "image to WebP converter, JPG to WebP, PNG to WebP, GIF to WebP, SVG to WebP, AVIF to WebP",
-    "image-to-avif": "image to AVIF converter, JPG to AVIF, PNG to AVIF, WebP to AVIF, GIF to AVIF, SVG to AVIF",
+    "image-to-jpg": "image to JPG converter, PNG to JPG, WebP to JPG, GIF to JPG, SVG to JPG, AVIF to JPG, HEIC to JPG, iPhone photo to JPG, HEIC converter online",
+    "image-to-png": "image to PNG converter, JPG to PNG, WebP to PNG, GIF to PNG, SVG to PNG, AVIF to PNG, HEIC to PNG, iPhone photo to PNG",
+    "image-to-webp": "image to WebP converter, JPG to WebP, PNG to WebP, GIF to WebP, SVG to WebP, AVIF to WebP, HEIC to WebP, iPhone photo to WebP",
+    "image-to-avif": "image to AVIF converter, JPG to AVIF, PNG to AVIF, WebP to AVIF, GIF to AVIF, SVG to AVIF, HEIC to AVIF, iPhone photo to AVIF",
     "image-to-base64": "image to Base64 converter, PNG to Base64, JPG to Base64, image to data URL, encode image as Base64",
     "base64-to-image": "Base64 to image converter, Base64 to PNG, data URL to image, decode Base64 image, save Base64 as image",
     "image-crop": "crop image online, image cropper, crop photo online, custom image crop, browser image crop tool",
@@ -1433,7 +1447,11 @@
     "video-to-gif": "video to gif, mp4 to gif, video to gif converter online, make gif from video, free gif maker",
     "video-compress": "compress video, video compressor online, reduce video file size, free video compression, mp4 compressor",
     "video-trim": "trim video, video cutter online, cut video clip, video segment cutter, split video online",
-    "video-crop": "video crop, crop video online, video region crop, crop video ratio, trim video frame area, video cropper, crop mp4 video, video crop without upload"
+    "video-crop": "video crop, crop video online, video region crop, crop video ratio, trim video frame area, video cropper, crop mp4 video, video crop without upload",
+    "video-convert": "convert video to mp4, mov to mp4, mkv to mp4, webm to mp4, video format converter, hevc to mp4 online, convert video to mp4 free, video converter without upload",
+    "video-merge": "merge videos, combine videos online, join video clips, video merger, concatenate mp4, merge mp4 files, video joiner online",
+    "video-rotate": "rotate video, flip video online, video mirror, fix sideways video, rotate mp4, flip video horizontally, rotate video online",
+    "video-frames": "video to frames, extract frames from video, video screenshot, frame extractor, mp4 to png, capture video stills, export video frames"
   },
   "tool_faq": {
     "json-escape": {
@@ -3011,6 +3029,70 @@
           "answer": "No. The audio track is kept as-is; cropping only affects the picture. If muxing fails for some formats the export is silent, and the result panel labels it."
         }
       ]
+    },
+    "video-convert": {
+      "items": [
+        {
+          "question": "How is this different from renaming the extension?",
+          "answer": "Renaming only changes the label; the codec stays incompatible. This tool genuinely re-encodes the picture to H.264 and the audio to AAC, producing a standards-compliant MP4."
+        },
+        {
+          "question": "Will quality drop?",
+          "answer": "Re-encoding adds slight second-generation compression. At the default high preset with the original resolution it is usually imperceptible; medium and low presets shrink files noticeably for casual sharing."
+        },
+        {
+          "question": "What happens to multiple audio tracks and subtitles in MKV?",
+          "answer": "The tool takes the first video and first audio track into the MP4; embedded subtitle tracks are not carried over. Use the subtitle tool to handle captions separately."
+        }
+      ]
+    },
+    "video-merge": {
+      "items": [
+        {
+          "question": "What happens to clips with different resolutions?",
+          "answer": "The first video defines the output frame; other clips are scaled to fit and centered, with black bars where the aspect ratio differs. Nothing is stretched."
+        },
+        {
+          "question": "What if one clip has no audio?",
+          "answer": "Silent clips get matching silence of the same length, so later segments stay in sync; if every clip is silent the output is a silent video."
+        },
+        {
+          "question": "Is the merge lossless?",
+          "answer": "No. All picture is re-encoded to H.264 with slight second-generation compression; in exchange you get a single uniform MP4 with the best compatibility."
+        }
+      ]
+    },
+    "video-rotate": {
+      "items": [
+        {
+          "question": "Why burn the orientation instead of writing rotation metadata?",
+          "answer": "Only some players honor rotation metadata; older devices and editors often ignore it. Drawing the orientation into every frame makes the output display consistently everywhere."
+        },
+        {
+          "question": "Does the file size change after rotating?",
+          "answer": "Rotating 90° / 270° swaps the frame dimensions (1920×1080 landscape becomes 1080×1920 portrait); 0° / 180° keeps the size unchanged."
+        },
+        {
+          "question": "Can I rotate and flip at the same time?",
+          "answer": "Yes. Rotation and horizontal / vertical flips can be combined freely, and the preview shows the combined effect live."
+        }
+      ]
+    },
+    "video-frames": {
+      "items": [
+        {
+          "question": "Are the timestamps accurate?",
+          "answer": "To within about one frame (33ms at 30fps). Some codecs land on a neighboring frame when seeking off a keyframe; nudge the timestamp and retry if you need an exact frame."
+        },
+        {
+          "question": "PNG or JPG?",
+          "answer": "Choose PNG for lossless archiving or further editing; choose JPG for batch step images and previews, with 60%–92% quality options."
+        },
+        {
+          "question": "Too many frames in interval mode?",
+          "answer": "The per-run cap is 50 frames. Beyond that the spacing widens automatically so frames cover your entire range evenly instead of being cut off mid-way."
+        }
+      ]
     }
   },
   "nav": {
@@ -3388,6 +3470,8 @@
     "drop_audio_hint": "Supports common audio formats such as MP3, WAV, M4A, AAC, OGG, OPUS, WebM, and FLAC.",
     "drop_video_hint": "Supports video formats such as MP4, MOV, WebM, MKV, AVI, and MPEG, then extracts the audio track.",
     "drop_multiple_hint": "Choose audio files multiple times to append them. The tool concatenates the list order into one MP3.",
+    "drop_batch_hint": "Select multiple audio files at once, then download them one by one or as a ZIP.",
+    "batch_selected": "{count} files selected",
     "bitrate_label": "MP3 bitrate",
     "volume_label": "Volume",
     "speed_label": "Playback speed",
@@ -4358,60 +4442,60 @@
     },
     "video_hub": {
       "lead": [
-        "These tools decode and re-encode video with WebCodecs in your browser and re-add audio with a WebAssembly build of ffmpeg, so watermark removal never uploads your file. AI inpainting models load on demand: lightweight MI-GAN for small marks, and the LaMa HQ mode for large watermarks or marks over faces and building edges.",
+        "These video tools decode and re-encode video with WebCodecs in your browser and handle audio with a WebAssembly build of ffmpeg, so converting, compressing, trimming, merging, rotating, frame extraction and watermark removal never upload your file. The watermark remover's AI inpainting models load on demand: lightweight MI-GAN for small marks, and the LaMa HQ mode for large watermarks or marks over faces and building edges.",
         "The compute comes from your device: processing time scales with video length, resolution and hardware, so test a clip under one minute before running a full video."
       ],
       "choosing": [
         {
-          "title": "Just removing a badge or logo",
-          "detail": "The default Auto mode is enough: temporal median rebuild on moving backgrounds, or MI-GAN inpainting on one representative frame applied to the whole clip when the background is static."
+          "title": "Make a video play everywhere",
+          "detail": "Use Video to MP4 to re-encode MOV, MKV, WebM and other formats into a universal H.264 MP4; if you only need it smaller, use the compressor with quality presets and downscaling."
         },
         {
-          "title": "Large marks over faces or structures",
-          "detail": "Switch to the LaMa HQ mode: its global receptive field reconstructs structure instead of just filling texture, at the cost of an about-198MB download and roughly 7x slower inference."
+          "title": "Keep just one segment",
+          "detail": "The trimmer cuts a clip by start and end time; the region crop goes further and keeps only the picture inside the selection, lockable to 16:9, 9:16 or 1:1."
         },
         {
-          "title": "Fastest possible result",
-          "detail": "Pick the temporal mode explicitly: no AI model loads at all, and it is fastest with zero flicker when the background or camera moves."
+          "title": "Join several clips into one file",
+          "detail": "The merger stitches multiple videos in order at the first clip's resolution; rotate & flip fixes sideways phone footage before further editing."
         },
         {
-          "title": "Privacy first",
-          "detail": "No video tool uploads files: decoding, rebuilding and encoding all happen locally, and data is cleared when the page closes — suitable for unpublished material."
+          "title": "Need a GIF, stills, or watermark removal",
+          "detail": "Video to GIF builds reaction and demo animations; the frame extractor exports PNG / JPG at timestamps or on an interval; fixed watermarks go to the remover, which picks temporal rebuild or AI inpainting automatically."
         }
       ],
       "comparison": {
-        "caption": "Trade-offs between the three reconstruction modes: speed, model size and best-fit scenarios.",
+        "caption": "Trade-offs between the two render paths and AI inpainting: speed, supported material and output traits.",
         "headers": [
-          "Mode",
-          "Model size",
+          "Path",
           "Speed",
-          "Best for"
+          "Supported material",
+          "Notes"
         ],
         "rows": [
           [
-            "Temporal rebuild",
-            "No model",
-            "Fastest (about the clip duration)",
-            "Moving backgrounds or camera movement"
+            "WebCodecs decode path",
+            "Much faster than realtime",
+            "MP4 / MOV containers, browser-decodable codecs, up to about 160MB",
+            "mp4box demuxes, then frames are decoded and re-encoded one by one; the biggest win on long videos"
           ],
           [
-            "MI-GAN inpainting (default)",
-            "About 28MB",
-            "About 0.4s per frame with WebGPU",
-            "Small marks on static backgrounds"
+            "Realtime playback path",
+            "About the clip duration",
+            "WebM, HEVC, AV1, or files beyond the memory budget",
+            "The browser decodes and applies rotation metadata automatically; the fallback that guarantees output"
           ],
           [
-            "LaMa HQ inpainting",
-            "About 198MB",
-            "About 1/7 of MI-GAN speed",
-            "Large marks over faces or structures"
+            "AI inpainting (watermark remover only)",
+            "Depends on the model",
+            "Fixed-position watermarks",
+            "MI-GAN (about 28MB) suits small marks; LaMa (about 198MB) rebuilds structure better but slower"
           ]
         ]
       },
       "notes": [
-        "Only fixed-position watermarks are supported; marks that move or change shape cannot be covered by a single selection, and rolling credits are better handled by cropping.",
-        "Marks over faces, text, or continuously changing texture are rebuilt by estimation and may not match the real content — inspect the output frame by frame.",
-        "Export re-encodes to H.264, adding slight second-generation compression; use original project files when maximum fidelity matters."
+        "No video tool uploads files: decoding, processing and encoding all happen locally, and data is cleared when the page closes — suitable for unpublished material.",
+        "Re-encoded output uses H.264 with slight second-generation compression; the frame extractor exports decoded frames directly with no recompression. Use original project files when maximum fidelity matters.",
+        "Phone videos with rotation metadata are handled per browser behavior: the decode path requires no rotation matrix, so rotated sources fall back to the playback path and match the player's orientation."
       ]
     }
   },
@@ -5131,8 +5215,8 @@
       "preview_title": "QR preview",
       "text_label": "QR content",
       "text_placeholder": "Enter a URL, text, contact data, or Wi-Fi configuration text...",
-      "generate": "Generate",
-      "generating": "Generating...",
+      "auto_generate_hint": "Updates automatically as you type or change settings",
+      "generating": "Updating...",
       "size_label": "Size",
       "margin_label": "Margin",
       "level_label": "Error correction",
@@ -5143,7 +5227,7 @@
       "input_bytes": "Input size",
       "output_size": "Output size",
       "logo_meta": "Logo",
-      "empty_preview": "Generated QR code will appear here",
+      "empty_preview": "Your QR code appears here as you type",
       "unknown_logo_type": "unknown type",
       "errors": {
         "empty_text": "Enter content to generate a QR code.",
@@ -5440,7 +5524,11 @@
       "settings_title": "Watermark settings",
       "result_title": "Result",
       "drop_title": "Click or drop a PDF here",
-      "drop_hint": "Files are processed locally and never uploaded",
+      "drop_hint": "Select multiple PDFs at once. Files are processed locally and never uploaded",
+      "batch_selected": "{count} PDFs selected",
+      "batch_export": "Watermark {count} PDFs",
+      "batch_hint": "The same watermark settings are applied to every file. Download results one by one or as a ZIP.",
+      "batch_progress": "Processing {current} / {total}",
       "text_label": "Watermark text",
       "font_size_label": "Font size",
       "opacity_label": "Opacity",
@@ -5554,6 +5642,22 @@
     "video-crop": {
       "name": "Video Region Crop",
       "description": "Drag a crop region over your video locally in the browser, lock it to common ratios like 16:9, 9:16 or 1:1, resize with handles, and export only the picture inside the box with the original audio, without uploading."
+    },
+    "video-convert": {
+      "name": "Video to MP4",
+      "description": "Convert MOV, MKV, WebM and more to a compatible H.264 MP4 in your browser, with quality presets and the original audio kept; nothing is uploaded."
+    },
+    "video-merge": {
+      "name": "Video Merger",
+      "description": "Join multiple video clips into one MP4 in your browser, in file order with a unified resolution and concatenated audio, without uploading your files."
+    },
+    "video-rotate": {
+      "name": "Video Rotate & Flip",
+      "description": "Rotate a video by 90, 180 or 270 degrees or flip it horizontally or vertically in your browser, re-encoded to MP4 with audio kept, without uploading."
+    },
+    "video-frames": {
+      "name": "Video Frame Extractor",
+      "description": "Export still frames from a video in your browser: grab frames at timestamps or on a fixed interval as PNG or JPG, with ZIP download for batches, no upload."
     }
   },
   "redirect_page": {
@@ -5743,20 +5847,20 @@
   },
   "video_hub": {
     "title": "Video tools",
-    "meta_title": "Video Tools - Local Watermark Removal & AI",
-    "description": "Process video locally in your browser: remove fixed-position watermarks with automatic temporal reconstruction or MI-GAN and LaMa AI inpainting, an optional HQ mode for large marks, exported as H.264 MP4 with the original audio. Files never leave your device.",
+    "meta_title": "Video Tools - Convert, Compress, Trim, Crop, Merge, Rotate, Extract Frames, GIF & Watermark Removal",
+    "description": "Process video locally in your browser: convert to universal MP4, compress, trim by time, crop the picture, merge clips, rotate and flip, extract still frames, create GIFs, and remove fixed watermarks with AI inpainting — exported as H.264 MP4 with the original audio, never uploaded.",
     "all_tools": "All video tools",
     "breadcrumb": "Video tools",
-    "privacy_note": "Videos are decoded, rebuilt and encoded locally in your browser and never uploaded; AI inpainting models (about 28MB / 198MB) are downloaded on demand.",
+    "privacy_note": "Every video tool decodes, processes and encodes locally in your browser and never uploads your files; the watermark remover's AI modes download open-source models on demand (about 28MB / 198MB).",
     "faq": {
       "privacy_q": "Do the video tools upload my files?",
-      "privacy_a": "No. Videos are decoded, rebuilt and encoded locally, and the output is generated locally too; nothing is uploaded. AI modes download open-source models on first use, which the browser then usually caches.",
+      "privacy_a": "No. Every video tool decodes, processes and encodes locally, and the output is generated locally too; nothing is uploaded. A few AI modes download open-source models on first use, which the browser then usually caches.",
       "formats_q": "Which video formats are supported?",
-      "formats_a": "Common formats your browser can decode, such as MP4, WebM and MOV, up to 300MB and 5 minutes per file. Output is always an H.264 MP4 with the original audio re-added when possible.",
+      "formats_a": "Common formats your browser can decode, such as MP4, WebM and MOV, up to 300MB and 5 minutes per file. Except the frame extractor, which outputs images, tools export an H.264 MP4 with the original audio re-added when possible.",
       "free_q": "Are the video tools free?",
       "free_a": "Yes. Everything runs in your own browser with no transcoding queue and no usage limits; speed depends on your device.",
-      "quality_q": "Does watermark removal reduce quality?",
-      "quality_a": "The picture is re-encoded, adding slight second-generation compression. Default AI inpainting uses lightweight MI-GAN; for large watermarks the LaMa HQ mode gives better structural reconstruction but is bigger and slower."
+      "quality_q": "Does processing reduce quality?",
+      "quality_a": "Except the frame extractor, which exports decoded frames directly, the picture is re-encoded to H.264 with slight second-generation compression. The compressor offers quality presets and downscaling, and the watermark remover defaults to lightweight MI-GAN with a LaMa HQ mode for large marks."
     }
   },
   "video_to_gif": {
@@ -5926,6 +6030,185 @@
       "range_invalid": "Invalid segment range.",
       "crop_invalid": "Invalid crop region, please drag the selection again.",
       "cancelled": "Cropping cancelled."
+    }
+  },
+  "video_convert": {
+    "settings_title": "Convert settings",
+    "drop_title": "Click or drop a video to upload",
+    "drop_hint": "Supports MP4, WebM, MOV, MKV and more, up to 5 minutes and 300MB; all processing is local",
+    "replace": "Replace video",
+    "local_note": "Only process videos you own or are authorized to edit. Conversion runs entirely in your browser; nothing is uploaded.",
+    "preview_title": "Source preview",
+    "quality_title": "Quality preset",
+    "quality_high": "High",
+    "quality_medium": "Medium",
+    "quality_low": "Low",
+    "apply": "Convert to MP4",
+    "processing": "Converting…",
+    "cancel": "Cancel",
+    "download": "Download video",
+    "output_title": "Output video",
+    "output_empty": "The converted MP4 will appear here",
+    "audio_track": "Audio",
+    "audio_track_kept": "Original audio kept",
+    "audio_track_dropped": "Silent video (audio processing failed)",
+    "duration_value": "Took {value}ms",
+    "progress_prepare": "Preparing…",
+    "progress_analyze": "Analyzing video…",
+    "progress_render": "Converting picture…",
+    "progress_audio": "Processing audio…",
+    "progress_done": "Done",
+    "errors": {
+      "general": "Conversion failed, please retry or try another video.",
+      "unsupported_input": "Unsupported file type, please choose a video such as MP4, WebM or MOV.",
+      "unsupported_browser": "This browser does not support WebCodecs video encoding; use a recent Chrome, Edge or Safari.",
+      "file_too_large": "The video exceeds the {maxSize} limit; trim or compress it first.",
+      "video_too_long": "The video exceeds the {maxDuration} limit; cut the segment you need first.",
+      "video_load_failed": "Failed to read the video; the encoding may be unsupported or the file damaged.",
+      "encode_failed": "Video encoding failed{detail}.",
+      "canvas_context": "Could not create a canvas context, please retry.",
+      "cancelled": "Conversion cancelled."
+    }
+  },
+  "video_merge": {
+    "settings_title": "Merge settings",
+    "list_title": "Videos to merge",
+    "drop_title": "Click or drop videos to upload",
+    "drop_hint": "Supports MP4, WebM, MOV and more; 2 to 8 files, all processing is local",
+    "add_more": "Add more",
+    "move_up": "Move up",
+    "move_down": "Move down",
+    "remove": "Remove",
+    "file_count": "{count} files (max {max})",
+    "total_size": "{size} total",
+    "local_note": "Only process videos you own or are authorized to edit. Merging runs entirely in your browser; nothing is uploaded.",
+    "quality_title": "Quality preset",
+    "quality_high": "High",
+    "quality_medium": "Medium",
+    "quality_low": "Low",
+    "apply": "Merge videos",
+    "processing": "Merging…",
+    "cancel": "Cancel",
+    "download": "Download video",
+    "output_title": "Output video",
+    "output_empty": "The merged video will appear here",
+    "segment_count": "{count} segments",
+    "audio_track": "Audio",
+    "audio_track_kept": "Segment audio concatenated",
+    "audio_track_dropped": "Silent video (audio processing failed)",
+    "duration_value": "Took {value}ms",
+    "progress_prepare": "Reading video metadata…",
+    "progress_render_segment": "Processing segment {current} / {total}…",
+    "progress_audio": "Concatenating audio…",
+    "progress_done": "Done",
+    "errors": {
+      "general": "Merging failed, please retry or choose different files.",
+      "unsupported_input": "Unsupported file type, please choose videos such as MP4, WebM or MOV.",
+      "unsupported_browser": "This browser does not support WebCodecs video encoding; use a recent Chrome, Edge or Safari.",
+      "file_too_large": "A video exceeds the {maxSize} limit; trim or compress it first.",
+      "video_too_long": "A video exceeds the 5-minute limit; cut the segment you need first.",
+      "total_too_long": "The merged total exceeds the 15-minute limit; use fewer or shorter segments.",
+      "too_few_files": "At least two videos are required to merge.",
+      "too_many_files": "Up to {maxFiles} videos can be merged.",
+      "total_too_large": "The files exceed the {maxSize} total limit; use fewer files.",
+      "video_load_failed": "Failed to read a video; the encoding may be unsupported or the file damaged.",
+      "canvas_context": "Could not create a canvas context, please retry.",
+      "cancelled": "Merging cancelled."
+    }
+  },
+  "video_rotate": {
+    "settings_title": "Rotate / flip settings",
+    "drop_title": "Click or drop a video to upload",
+    "drop_hint": "Supports MP4, WebM, MOV and more, up to 5 minutes and 300MB; all processing is local",
+    "replace": "Replace video",
+    "local_note": "Only process videos you own or are authorized to edit. Rotation runs entirely in your browser; nothing is uploaded.",
+    "preview_title": "Orientation preview",
+    "rotation_title": "Rotation",
+    "rotate_left": "Rotate left 90°",
+    "rotate_right": "Rotate right 90°",
+    "rotation_value": "Current rotation: {value}°",
+    "flip_title": "Flip",
+    "flip_horizontal": "Flip horizontally (mirror)",
+    "flip_vertical": "Flip vertically (upside down)",
+    "quality_title": "Quality preset",
+    "quality_high": "High",
+    "quality_medium": "Medium",
+    "quality_low": "Low",
+    "apply": "Export video",
+    "processing": "Processing…",
+    "cancel": "Cancel",
+    "download": "Download video",
+    "output_title": "Output video",
+    "output_empty": "The reoriented video will appear here",
+    "audio_track": "Audio",
+    "audio_track_kept": "Original audio kept",
+    "audio_track_dropped": "Silent video (audio processing failed)",
+    "duration_value": "Took {value}ms",
+    "progress_prepare": "Preparing…",
+    "progress_analyze": "Analyzing video…",
+    "progress_render": "Rotating picture…",
+    "progress_audio": "Processing audio…",
+    "progress_done": "Done",
+    "errors": {
+      "general": "Processing failed, please retry or try another video.",
+      "unsupported_input": "Unsupported file type, please choose a video such as MP4, WebM or MOV.",
+      "unsupported_browser": "This browser does not support WebCodecs video encoding; use a recent Chrome, Edge or Safari.",
+      "file_too_large": "The video exceeds the {maxSize} limit; trim or compress it first.",
+      "video_too_long": "The video exceeds the {maxDuration} limit; cut the segment you need first.",
+      "video_load_failed": "Failed to read the video; the encoding may be unsupported or the file damaged.",
+      "encode_failed": "Video encoding failed{detail}.",
+      "canvas_context": "Could not create a canvas context, please retry.",
+      "cancelled": "Processing cancelled."
+    }
+  },
+  "video_frames": {
+    "settings_title": "Extraction settings",
+    "drop_title": "Click or drop a video to upload",
+    "drop_hint": "Supports MP4, WebM, MOV and more, up to 5 minutes and 300MB; all processing is local",
+    "replace": "Replace video",
+    "local_note": "Only process videos you own or are authorized to edit. Frame extraction runs entirely in your browser; nothing is uploaded.",
+    "preview_title": "Source preview",
+    "mode_title": "Extraction mode",
+    "mode_moments": "Timestamps",
+    "mode_interval": "Fixed interval",
+    "moments_title": "Timestamp list",
+    "add_current_time": "Add current playback time",
+    "moments_empty": "Play to the target frame and click the button above to add a timestamp",
+    "remove_moment": "Remove timestamp {time}",
+    "interval_title": "Interval range",
+    "interval_start": "Start",
+    "interval_end": "End",
+    "interval_seconds": "Interval (seconds)",
+    "format_title": "Output format",
+    "format_png": "PNG (lossless)",
+    "format_jpeg": "JPG (adjustable quality)",
+    "jpeg_quality": "JPG quality",
+    "apply": "Extract frames",
+    "processing": "Extracting…",
+    "cancel": "Cancel",
+    "progress_extract": "Extracting ({done} / {total})…",
+    "progress_done": "Done",
+    "output_title": "Extracted frames",
+    "output_empty": "Exported stills will appear here",
+    "frame_alt": "Video still at {time}",
+    "download_frame": "Download",
+    "frame_count": "{count} frames",
+    "output_size": "{size} total",
+    "dimensions": "Size {width}×{height}",
+    "download_zip": "Download all {count} frames (ZIP)",
+    "errors": {
+      "general": "Extraction failed, please retry or try another video.",
+      "unsupported_input": "Unsupported file type, please choose a video such as MP4, WebM or MOV.",
+      "unsupported_browser": "This browser does not support the required video capabilities; use a recent Chrome, Edge or Safari.",
+      "file_too_large": "The video exceeds the {maxSize} limit; trim or compress it first.",
+      "video_too_long": "The video exceeds the {maxDuration} limit; cut the segment you need first.",
+      "video_load_failed": "Failed to read the video; the encoding may be unsupported or the file damaged.",
+      "canvas_context": "Could not create a canvas context, please retry.",
+      "encode_failed": "Frame encoding failed{detail}.",
+      "no_frames": "No timestamps to export; add timestamps or check the interval settings.",
+      "range_invalid": "Invalid range; the end time must be after the start time.",
+      "too_many_moments": "Up to {maxMoments} timestamps are supported.",
+      "cancelled": "Extraction cancelled."
     }
   }
 }

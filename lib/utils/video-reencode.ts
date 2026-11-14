@@ -70,6 +70,56 @@ export const MAX_VIDEO_BITRATE = 20_000_000;
 
 export type ReencodeQuality = keyof typeof AUDIO_BITRATE_BY_QUALITY;
 
+/** 用户施加的几何变换：旋转角度 + 水平 / 垂直翻转（视频旋转 / 翻转工具使用） */
+export type VideoRotation = 0 | 90 | 180 | 270;
+
+export interface VideoTransform {
+  rotation: VideoRotation;
+  flipHorizontal: boolean;
+  flipVertical: boolean;
+}
+
+export const VIDEO_TRANSFORM_IDENTITY: VideoTransform = {
+  rotation: 0,
+  flipHorizontal: false,
+  flipVertical: false,
+};
+
+/** 是否为恒等变换（不改变画面几何），用于跳过多余的画布合成 */
+export function isIdentityTransform(transform?: VideoTransform | null): boolean {
+  if (!transform) return true;
+  return transform.rotation === 0 && !transform.flipHorizontal && !transform.flipVertical;
+}
+
+/** 旋转 90° / 270° 时输出宽高互换；0° / 180° 保持不变。结果做偶数对齐。 */
+export function computeTransformedSize(
+  width: number,
+  height: number,
+  rotation: VideoRotation
+): { width: number; height: number } {
+  const even = (value: number) => Math.max(2, Math.round(value / 2) * 2);
+  if (rotation === 90 || rotation === 270) {
+    return { width: even(height), height: even(width) };
+  }
+  return { width: even(width), height: even(height) };
+}
+
+/** 把任意数值收敛到支持的旋转档位（0 / 90 / 180 / 270），平局（如 45°）归入较低档位 */
+export function normalizeVideoRotation(value: number): VideoRotation {
+  const safe = Number.isFinite(value) ? Math.ceil(value / 90 - 0.5) : 0;
+  const normalized = ((safe * 90) % 360 + 360) % 360;
+  return (normalized === 90 || normalized === 180 || normalized === 270 ? normalized : 0) as VideoRotation;
+}
+
+/** 校验并补全用户变换，非法字段回退为恒等值 */
+export function normalizeVideoTransform(transform?: Partial<VideoTransform> | null): VideoTransform {
+  return {
+    rotation: normalizeVideoRotation(transform?.rotation ?? 0),
+    flipHorizontal: transform?.flipHorizontal === true,
+    flipVertical: transform?.flipVertical === true,
+  };
+}
+
 export interface ReencodeRangeInput {
   start: number;
   end: number;

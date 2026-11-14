@@ -21,7 +21,7 @@ export const imageToWebpContent = defineToolContent({
       '极低质量会在文字、边缘和渐变处产生模糊或色带，应按实际显示尺寸检查。',
       '若接收方明确只支持 JPG 或 PNG，应优先满足兼容要求，而不是仅追求更小体积。',
     ],
-    specs: [["输入格式", "JPG、PNG、GIF、BMP、SVG、AVIF 等浏览器可解码的图片"], ["两种模式", "有损与无损。有损适合照片，无损适合截图和线稿"], ["体积对比", "结果取决于源格式、画面复杂度和质量设置；应以实际导出的文件和观感为准"], ["透明通道", "支持，且与有损压缩可同时使用：这是 WebP 相对 JPG 的主要优势"], ["兼容性", "所有现代浏览器均支持；部分老旧图像软件和系统预览可能仍不识别"], ["典型用途", "网页图片交付，在不明显损失观感的前提下降低加载体积"]],
+    specs: [["输入格式", "JPG、PNG、HEIC、HEIF、GIF、BMP、SVG、AVIF 等浏览器可解码的图片"], ["两种模式", "有损与无损。有损适合照片，无损适合截图和线稿"], ["体积对比", "结果取决于源格式、画面复杂度和质量设置；应以实际导出的文件和观感为准"], ["透明通道", "支持，且与有损压缩可同时使用：这是 WebP 相对 JPG 的主要优势"], ["兼容性", "所有现代浏览器均支持；部分老旧图像软件和系统预览可能仍不识别"], ["典型用途", "网页图片交付，在不明显损失观感的前提下降低加载体积"]],
     faq: [{ question: "有损和无损模式怎么选？", answer: "照片选有损，体积优势最明显；截图、线稿、含大量文字的图选无损，避免边缘出现杂色。需要透明背景时两种模式都支持。" }, { question: "还需要为老浏览器准备 JPG 备份吗？", answer: "所有现代浏览器都支持 WebP，一般不再需要。但如果你的访客里有相当比例使用很老的系统，或者图片会被下载后用旧图像软件打开，保留一份 JPG 更稳妥。" }],
     reference: [
       ['WebP', 'Google 推出的现代图像格式，支持有损、无损、透明与动画能力。'],
@@ -48,7 +48,7 @@ export const imageToWebpContent = defineToolContent({
       'Very low quality creates blur or banding around text, edges, and gradients, so judge at the real display size.',
       'If the recipient explicitly requires JPG or PNG, prioritize compatibility over file-size gains.',
     ],
-    specs: [["Input formats", "JPG, PNG, GIF, BMP, SVG, AVIF; anything the browser can decode"], ["Two modes", "Lossy and lossless. Lossy suits photographs, lossless suits screenshots and line art"], ["Size comparison", "Depends on the source format, image complexity, and quality setting; compare the real export and its appearance"], ["Transparency", "Supported, and usable together with lossy compression; the main advantage over JPG"], ["Compatibility", "Every modern browser supports it; some older image software and OS previews still do not"], ["Typical use", "Reducing web-image payload while checking the actual export against the source"]],
+    specs: [["Input formats", "JPG, PNG, HEIC, HEIF, GIF, BMP, SVG, AVIF; anything the browser can decode"], ["Two modes", "Lossy and lossless. Lossy suits photographs, lossless suits screenshots and line art"], ["Size comparison", "Depends on the source format, image complexity, and quality setting; compare the real export and its appearance"], ["Transparency", "Supported, and usable together with lossy compression; the main advantage over JPG"], ["Compatibility", "Every modern browser supports it; some older image software and OS previews still do not"], ["Typical use", "Reducing web-image payload while checking the actual export against the source"]],
     faq: [{ question: "Lossy or lossless mode?", answer: "Lossy for photographs, where the size advantage is largest. Lossless for screenshots, line art and text-heavy images, to avoid artefacts at the edges. Transparency works in both." }, { question: "Do I still need a JPG fallback for old browsers?", answer: "Every modern browser supports WebP, so usually not. Keep a JPG copy if a meaningful share of your visitors run very old systems, or if the images get downloaded and opened in legacy image software." }],
     reference: [
       ['WebP', 'A modern image format from Google supporting lossy, lossless, alpha, and animation features.'],

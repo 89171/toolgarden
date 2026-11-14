@@ -6,6 +6,8 @@ import { clsx } from 'clsx';
 import { ImagePreviewDialog } from '@/components/ImagePreviewDialog';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
+import { BatchResults } from '@/components/ui/BatchResults';
+import { createBatchId, type BatchOutput } from '@/lib/utils/batch';
 import {
   applyWatermark,
   createImageAssetFromUrl,
@@ -155,6 +157,8 @@ export function ImageWatermarker() {
   const sourceUrlRef = useRef('');
   const watermarkUrlRef = useRef('');
   const outputRef = useRef<OutputState | null>(null);
+  const sourceFilesRef = useRef<File[]>([]);
+  const batchOutputsRef = useRef<BatchOutput[]>([]);
 
   // 主图与水印图
   const sourceAssetRef = useRef<ImageWatermarkAsset | null>(null);
@@ -177,6 +181,10 @@ export function ImageWatermarker() {
   const [outputFormat, setOutputFormat] = useState<BasicImageTargetFormat>('png');
   const [quality, setQuality] = useState(0.92);
   const [output, setOutput] = useState<OutputState | null>(null);
+  const [sourceFileCount, setSourceFileCount] = useState(0);
+  const [batchOutputs, setBatchOutputs] = useState<BatchOutput[]>([]);
+  const [batchFailedCount, setBatchFailedCount] = useState(0);
+  const [batchProgress, setBatchProgress] = useState<{ current: number; total: number } | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -197,6 +205,11 @@ export function ImageWatermarker() {
       if (current) URL.revokeObjectURL(current.url);
       return null;
     });
+    batchOutputsRef.current.forEach((item) => URL.revokeObjectURL(item.url));
+    batchOutputsRef.current = [];
+    setBatchOutputs([]);
+    setBatchFailedCount(0);
+    setBatchProgress(null);
   }, []);
 
   // 错误码 → 文案
@@ -285,23 +298,30 @@ export function ImageWatermarker() {
     if (sourceUrlRef.current) URL.revokeObjectURL(sourceUrlRef.current);
     if (watermarkUrlRef.current) URL.revokeObjectURL(watermarkUrlRef.current);
     if (outputRef.current) URL.revokeObjectURL(outputRef.current.url);
+    batchOutputsRef.current.forEach((item) => URL.revokeObjectURL(item.url));
   }, []);
 
-  // 加载主图
+  // 加载主图：一次可选多张，第一张用于调参与预览，其余套用相同水印设置
   const handleSourceFiles = useCallback(async (files: FileList | File[]) => {
-    const file = Array.from(files)[0];
-    if (!file) return;
+    const selected = Array.from(files);
+    const first = selected[0];
+    if (!first) return;
     setIsLoading(true);
     setError('');
     clearOutput();
 
-    const validationError = validateWatermarkImageFile(file);
+    const validationError = validateWatermarkImageFile(first);
     if (validationError) {
       setIsLoading(false);
       setError(getErrorMessage(validationError));
       return;
     }
 
+    const valid = selected.filter((item) => validateWatermarkImageFile(item) === null);
+    sourceFilesRef.current = valid;
+    setSourceFileCount(valid.length);
+
+    const file = first;
     const nextUrl = URL.createObjectURL(file);
     try {
       const asset = await createImageAssetFromUrl(nextUrl);
@@ -408,42 +428,80 @@ export function ImageWatermarker() {
     draggingRef.current = null;
   }, []);
 
-  // 导出
+  // 导出：单文件保持原有自动下载，多文件逐个套用同一设置后打包下载
   const exportImage = useCallback(async () => {
-    const source = sourceAssetRef.current;
-    if (!imageInfo || !source) return;
+    const sources = sourceFilesRef.current;
+    if (!imageInfo || sources.length === 0) return;
 
     setIsExporting(true);
     setError('');
     clearOutput();
 
-    try {
-      const result = await applyWatermark({
-        source,
-        sourceFilename: imageInfo.filename,
-        originalSize: imageInfo.size,
-        targetFormat: outputFormat,
-        quality,
-        options: {
-          ...options,
-          image: watermarkAssetRef.current ?? options.image,
-        },
-      });
+    const sharedOptions = {
+      ...options,
+      image: watermarkAssetRef.current ?? options.image,
+    };
+    const outputs: BatchOutput[] = [];
+    const successes: OutputState[] = [];
+    let failures = 0;
 
-      if (!result.ok) {
-        setError(getErrorMessage(result));
-        return;
+    try {
+      for (const [index, sourceFile] of sources.entries()) {
+        setBatchProgress({ current: index + 1, total: sources.length });
+        let tempUrl = '';
+        try {
+          let asset = index === 0 ? sourceAssetRef.current : null;
+          if (!asset) {
+            tempUrl = URL.createObjectURL(sourceFile);
+            asset = await createImageAssetFromUrl(tempUrl);
+          }
+
+          const result = await applyWatermark({
+            source: asset,
+            sourceFilename: sourceFile.name,
+            originalSize: sourceFile.size,
+            targetFormat: outputFormat,
+            quality,
+            options: sharedOptions,
+          });
+
+          if (!result.ok) {
+            failures += 1;
+            if (sources.length === 1) setError(getErrorMessage(result));
+            continue;
+          }
+
+          const url = URL.createObjectURL(result.blob);
+          successes.push({ result, url });
+          outputs.push({
+            id: createBatchId('watermark', index),
+            filename: result.filename,
+            url,
+            blob: result.blob,
+            size: result.outputSize,
+          });
+        } catch {
+          failures += 1;
+        } finally {
+          if (tempUrl) URL.revokeObjectURL(tempUrl);
+        }
       }
 
-      const url = URL.createObjectURL(result.blob);
-      setOutput({ result, url });
-      downloadUrl(url, result.filename);
-    } catch {
-      setError(tw('errors.canvas_export'));
+      if (sources.length === 1) {
+        if (successes.length === 1) {
+          setOutput(successes[0]);
+          downloadUrl(successes[0].url, successes[0].result.filename);
+        }
+      } else if (outputs.length > 0) {
+        batchOutputsRef.current = outputs;
+        setBatchOutputs(outputs);
+      }
+      setBatchFailedCount(failures);
     } finally {
       setIsExporting(false);
+      setBatchProgress(null);
     }
-  }, [clearOutput, getErrorMessage, imageInfo, options, outputFormat, quality, tw]);
+  }, [clearOutput, getErrorMessage, imageInfo, options, outputFormat, quality]);
 
   // 文件拖入预览区
   const handleDrop = useCallback((event: React.DragEvent<HTMLDivElement>) => {
@@ -476,6 +534,7 @@ export function ImageWatermarker() {
         ref={sourceInputRef}
         type="file"
         accept={accept}
+        multiple
         className="hidden"
         onChange={(event) => {
           if (event.target.files) handleSourceFiles(event.target.files);
@@ -647,9 +706,9 @@ export function ImageWatermarker() {
             <div className="space-y-2.5 border-t border-border-subtle pt-3">
               <div className="flex items-center justify-between gap-2">
                 <Button variant="secondary" onClick={() => watermarkInputRef.current?.click()}>
-                  {watermarkAssetRef.current ? tw('replace_watermark') : tw('upload_watermark')}
+                  {watermarkImageName ? tw('replace_watermark') : tw('upload_watermark')}
                 </Button>
-                {watermarkAssetRef.current && (
+                {watermarkImageName && (
                   <span className="truncate text-[11px] text-content-faint" title={watermarkImageName}>
                     {watermarkImageName}
                   </span>
@@ -801,15 +860,34 @@ export function ImageWatermarker() {
             )}
           </div>
 
+          {sourceFileCount > 1 && (
+            <p className="rounded-md border border-border-subtle bg-surface-raised px-2.5 py-2 text-xs text-content-muted">
+              {tw('batch_selected', { count: sourceFileCount })}
+            </p>
+          )}
+
           {/* 导出按钮 */}
           <div className="sticky bottom-0 -mx-3 mt-1 border-t border-border-subtle bg-surface px-3 py-2">
             <Button onClick={exportImage} disabled={!canExport} className="w-full justify-center py-2">
               <span className="inline-flex items-center justify-center gap-1.5">
                 <IconDownload className="h-4 w-4" />
-                {isExporting ? tw('exporting') : tw('export')}
+                {isExporting && batchProgress
+                  ? tw('batch_progress', batchProgress)
+                  : isExporting
+                    ? tw('exporting')
+                    : tw('export')}
               </span>
             </Button>
           </div>
+
+          {(batchOutputs.length > 0 || batchFailedCount > 0) && (
+            <BatchResults
+              items={batchOutputs}
+              zipFilename="watermarked-images.zip"
+              failedCount={batchFailedCount}
+              formatSize={formatFileSize}
+            />
+          )}
 
           {output && (
             <div className="space-y-1.5 rounded-md border border-border-subtle bg-surface-raised p-2.5 text-xs">

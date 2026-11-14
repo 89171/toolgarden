@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { ImagePreviewDialog } from '@/components/ImagePreviewDialog';
@@ -24,6 +24,8 @@ import { generateQrCodeDataUrl } from '@/lib/utils/qr-browser';
 import { qrCodeGeneratorContent } from '@/lib/tools/content/qr-code-generator';
 
 const EXAMPLE_TEXT = 'https://toolgarden.xyz/zh/qr-code/generate';
+/** 输入或设置变化后自动重新生成的防抖间隔（毫秒）。 */
+const AUTO_GENERATE_DELAY_MS = 220;
 
 interface GeneratedQrCode {
   dataUrl: string;
@@ -31,6 +33,11 @@ interface GeneratedQrCode {
   inputBytes: number;
   options: NormalizedQrCodeOptions;
   logo?: QrCodeLogoInfo;
+}
+
+interface QrGenerateFailure {
+  code: QrFailureCode;
+  detail?: string;
 }
 
 export default function QrCodeGeneratePage() {
@@ -44,9 +51,10 @@ export default function QrCodeGeneratePage() {
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [generated, setGenerated] = useState<GeneratedQrCode | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [generateError, setGenerateError] = useState('');
+  const [generateError, setGenerateError] = useState<QrGenerateFailure | null>(null);
   const [generating, setGenerating] = useState(false);
   const logoInputRef = useRef<HTMLInputElement>(null);
+  const generateRequestRef = useRef(0);
 
   const errorMessage = (code: QrFailureCode, detail?: string) =>
     t(`errors.${code}`, {
@@ -55,41 +63,61 @@ export default function QrCodeGeneratePage() {
       type: detail || t('unknown_logo_type'),
     });
 
-  const runGenerate = async (nextText = text, nextLogoFile = logoFile) => {
-    setGenerating(true);
-    const result = await generateQrCodeDataUrl(nextText, {
-      size,
-      margin,
-      errorCorrectionLevel: level,
-    }, nextLogoFile);
-    setGenerating(false);
+  // 内容、尺寸、留白、纠错等级或 Logo 任一变化后自动重新生成。
+  // 防抖避免逐字输入 / 拖动滑块时重复计算；requestId 保证慢的旧任务不会覆盖新结果。
+  useEffect(() => {
+    const requestId = generateRequestRef.current + 1;
+    generateRequestRef.current = requestId;
 
-    if (!result.ok) {
-      setGenerated(null);
-      setGenerateError(errorMessage(result.code, result.detail));
-      return;
-    }
+    const timer = window.setTimeout(async () => {
+      const isStale = () => generateRequestRef.current !== requestId;
 
-    setGenerateError('');
-    setGenerated({
-      dataUrl: result.dataUrl,
-      filename: result.filename,
-      inputBytes: result.inputBytes,
-      options: result.options,
-      logo: result.logo,
-    });
-  };
+      if (!text.trim()) {
+        setGenerating(false);
+        setGenerated(null);
+        setGenerateError(null);
+        return;
+      }
+
+      setGenerating(true);
+      const result = await generateQrCodeDataUrl(text, {
+        size,
+        margin,
+        errorCorrectionLevel: level,
+      }, logoFile);
+      if (isStale()) return;
+
+      setGenerating(false);
+      if (!result.ok) {
+        setGenerated(null);
+        setGenerateError({ code: result.code, detail: result.detail });
+        return;
+      }
+
+      setGenerateError(null);
+      setGenerated({
+        dataUrl: result.dataUrl,
+        filename: result.filename,
+        inputBytes: result.inputBytes,
+        options: result.options,
+        logo: result.logo,
+      });
+    }, AUTO_GENERATE_DELAY_MS);
+
+    return () => window.clearTimeout(timer);
+  }, [level, logoFile, margin, size, text]);
 
   const loadExample = () => {
     setText(EXAMPLE_TEXT);
-    void runGenerate(EXAMPLE_TEXT);
   };
 
   const clearGenerator = () => {
     setText('');
     setLogoFile(null);
     setGenerated(null);
-    setGenerateError('');
+    setGenerateError(null);
+    setGenerating(false);
+    setPreviewOpen(false);
     if (logoInputRef.current) {
       logoInputRef.current.value = '';
     }
@@ -98,25 +126,13 @@ export default function QrCodeGeneratePage() {
   const handleLogoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] ?? null;
     setLogoFile(file);
-    setGenerateError('');
-
-    if (!file) return;
-
-    setLevel('H');
-    if (text.trim()) {
-      void runGenerate(text, file);
-    }
+    if (file) setLevel('H');
   };
 
   const removeLogo = () => {
     setLogoFile(null);
-    setGenerateError('');
     if (logoInputRef.current) {
       logoInputRef.current.value = '';
-    }
-
-    if (text.trim() && generated?.logo) {
-      void runGenerate(text, null);
     }
   };
 
@@ -140,11 +156,15 @@ export default function QrCodeGeneratePage() {
             title={t('generate_title')}
             actions={
               <>
+                <span
+                  role="status"
+                  aria-live="polite"
+                  className="inline-flex items-center self-center text-xs text-content-muted"
+                >
+                  {generating ? t('generating') : t('auto_generate_hint')}
+                </span>
                 <Button variant="secondary" onClick={loadExample}>{tc('example')}</Button>
                 <Button variant="secondary" onClick={clearGenerator}>{tc('clear')}</Button>
-                <Button onClick={() => void runGenerate()} disabled={generating}>
-                  {generating ? t('generating') : t('generate')}
-                </Button>
               </>
             }
             className="min-h-[30rem] lg:min-h-0"
@@ -155,10 +175,7 @@ export default function QrCodeGeneratePage() {
             <textarea
               id="qr-text"
               value={text}
-              onChange={(event) => {
-                setText(event.target.value);
-                setGenerateError('');
-              }}
+              onChange={(event) => setText(event.target.value)}
               className="w-full flex-grow min-h-64 resize-none rounded border border-border-input bg-surface-raised p-3 font-mono text-sm text-content-secondary outline-none transition-colors placeholder:text-content-faint focus:border-border-strong focus:ring-2 focus:ring-action"
               placeholder={t('text_placeholder')}
             />
@@ -257,7 +274,7 @@ export default function QrCodeGeneratePage() {
 
           <Panel
             title={t('preview_title')}
-            actions={<Button onClick={downloadQrCode} disabled={!generated}>{tc('download')}</Button>}
+            actions={<Button onClick={downloadQrCode} disabled={!generated || generating}>{tc('download')}</Button>}
             className="min-h-[30rem] lg:min-h-0"
           >
             <div className="flex flex-grow flex-col items-center justify-center gap-4 rounded border border-border-base bg-surface-raised p-4">
@@ -298,7 +315,7 @@ export default function QrCodeGeneratePage() {
                   </dl>
                 </>
               ) : generateError ? (
-                <p className="text-sm text-syntax-null">{generateError}</p>
+                <p className="text-sm text-syntax-null">{errorMessage(generateError.code, generateError.detail)}</p>
               ) : (
                 <p className="text-sm text-content-faint">{t('empty_preview')}</p>
               )}

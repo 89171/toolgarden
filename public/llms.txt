@@ -193,6 +193,18 @@ ToolGarden provides practical browser-based utilities for developer data, docume
 - **Video Region Crop / 视频画面裁剪** (`/video/crop`): Drag a crop region over your video locally in the browser, lock it to common ratios like 16:9, 9:16 or 1:1, resize with handles, and export only the picture inside the box with the original audio, without uploading.
   - English: https://toolgarden.xyz/en/video/crop
   - Chinese: https://toolgarden.xyz/zh/video/crop
+- **Video to MP4 / 视频转 MP4** (`/video/convert`): Convert MOV, MKV, WebM and more to a compatible H.264 MP4 in your browser, with quality presets and the original audio kept; nothing is uploaded.
+  - English: https://toolgarden.xyz/en/video/convert
+  - Chinese: https://toolgarden.xyz/zh/video/convert
+- **Video Merger / 视频合并** (`/video/merge`): Join multiple video clips into one MP4 in your browser, in file order with a unified resolution and concatenated audio, without uploading your files.
+  - English: https://toolgarden.xyz/en/video/merge
+  - Chinese: https://toolgarden.xyz/zh/video/merge
+- **Video Rotate & Flip / 视频旋转 / 翻转** (`/video/rotate`): Rotate a video by 90, 180 or 270 degrees or flip it horizontally or vertically in your browser, re-encoded to MP4 with audio kept, without uploading.
+  - English: https://toolgarden.xyz/en/video/rotate
+  - Chinese: https://toolgarden.xyz/zh/video/rotate
+- **Video Frame Extractor / 视频抽帧截图** (`/video/frames`): Export still frames from a video in your browser: grab frames at timestamps or on a fixed interval as PNG or JPG, with ZIP download for batches, no upload.
+  - English: https://toolgarden.xyz/en/video/frames
+  - Chinese: https://toolgarden.xyz/zh/video/frames
 - **MV Generator / MV 生成器** (`/audio/lyric-video`): Turn an MP3 and LRC lyrics into an MP4 lyric video with an animated background, right in your browser. Choose vinyl, spectrum or star tunnel templates, set the aspect ratio and lyric style, and export locally without uploading any files.
   - English: https://toolgarden.xyz/en/audio/lyric-video
   - Chinese: https://toolgarden.xyz/zh/audio/lyric-video

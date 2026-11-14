@@ -5,6 +5,8 @@ import { useLocale, useTranslations } from 'next-intl';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
+import { BatchResults } from '@/components/ui/BatchResults';
+import { createBatchId, type BatchOutput } from '@/lib/utils/batch';
 import { useUrlOption } from '@/components/useUrlOption';
 import type { ToolContent } from '@/lib/tools/content';
 import { copyText } from '@/lib/utils/markdown-browser';
@@ -42,6 +44,7 @@ interface AudioToolProps {
 
 interface OutputState {
   url: string;
+  blob: Blob;
   filename: string;
   mimeType: string;
   size: number;
@@ -98,8 +101,10 @@ function wait(ms: number): Promise<void> {
 
 export function AudioTool({ toolId, mode, content }: AudioToolProps) {
   const t = useTranslations('audio_tool');
+  const tb = useTranslations('common.batch');
   const locale = useLocale();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const batchOutputsRef = useRef<BatchOutput[]>([]);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -116,6 +121,9 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
   const [progress, setProgress] = useState<AudioProcessingProgress | null>(null);
   const [error, setError] = useState('');
   const [output, setOutput] = useState<OutputState | null>(null);
+  const [batchOutputs, setBatchOutputs] = useState<BatchOutput[]>([]);
+  const [batchFailedCount, setBatchFailedCount] = useState(0);
+  const [batchProgress, setBatchProgress] = useState<{ current: number; total: number } | null>(null);
   const [transcript, setTranscript] = useState('');
   const [transcriptCopyStatus, setTranscriptCopyStatus] = useState<'idle' | 'copied' | 'failed'>('idle');
   const [bitrate, setBitrate] = useState(mode === 'compress' ? 96 : 192);
@@ -151,6 +159,7 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
   const isTrim = mode === 'trim';
   const isTts = mode === 'tts';
   const isStandalone = isRecorder;
+  const isBatchable = !isMerge && !isRecorder && !isTts && !isTranscribe;
   const liveTranscriptionActive = isTranscribe && liveTranscriptionState !== 'idle';
   const usesBitrate = [
     'to-mp3',
@@ -174,9 +183,9 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
 
   const uploadTitle = useMemo(() => {
     if (isExtract) return t('upload_video_title');
-    if (isMerge) return t('upload_multiple_title');
+    if (isMerge || isBatchable) return t('upload_multiple_title');
     return t('upload_audio_title');
-  }, [isExtract, isMerge, t]);
+  }, [isBatchable, isExtract, isMerge, t]);
 
   const actionLabel = useMemo(() => {
     if (mode === 'to-mp3') return t('actions.to_mp3');
@@ -246,6 +255,11 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
       if (current) URL.revokeObjectURL(current.url);
       return null;
     });
+    batchOutputsRef.current.forEach((item) => URL.revokeObjectURL(item.url));
+    batchOutputsRef.current = [];
+    setBatchOutputs([]);
+    setBatchFailedCount(0);
+    setBatchProgress(null);
     setTranscript('');
     setTranscriptCopyStatus('idle');
     setTtsFallbackNotice('');
@@ -264,6 +278,7 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
 
   useEffect(() => () => {
     if (output) URL.revokeObjectURL(output.url);
+    batchOutputsRef.current.forEach((item) => URL.revokeObjectURL(item.url));
     if (recording) URL.revokeObjectURL(recording.url);
     streamRef.current?.getTracks().forEach((track) => track.stop());
     liveStreamRef.current?.getTracks().forEach((track) => track.stop());
@@ -285,7 +300,7 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
     const selected = Array.from(nextFiles);
     if (selected.length === 0) return;
     clearOutput();
-    setFiles((current) => (isMerge ? [...current, ...selected] : selected.slice(0, 1)));
+    setFiles((current) => (isMerge ? [...current, ...selected] : selected));
   }, [clearOutput, isMerge]);
 
   const moveSelectedFile = useCallback((index: number, direction: -1 | 1) => {
@@ -329,6 +344,48 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
         return;
       }
 
+      if (isBatchable && files.length > 1) {
+        const outputs: BatchOutput[] = [];
+        let failures = 0;
+
+        for (const [index, file] of files.entries()) {
+          setBatchProgress({ current: index + 1, total: files.length });
+          const item = await processAudioFiles([file], {
+            mode,
+            targetFormat,
+            bitrateKbps: bitrate,
+            startSeconds,
+            endSeconds,
+            volumeGain,
+            playbackRate,
+            sampleRate,
+            silenceThresholdDb,
+            silenceDuration,
+            onProgress: setProgress,
+          });
+
+          if (!item.ok) {
+            failures += 1;
+            continue;
+          }
+
+          outputs.push({
+            id: createBatchId(`audio-${mode}`, index),
+            filename: item.filename,
+            url: URL.createObjectURL(item.blob),
+            blob: item.blob,
+            size: item.outputSize,
+          });
+        }
+
+        batchOutputsRef.current = outputs;
+        setBatchOutputs(outputs);
+        setBatchFailedCount(failures);
+        setBatchProgress(null);
+        setProgress({ stage: 'done', label: 'done', percent: 100 });
+        return;
+      }
+
       const result = await processAudioFiles(files, {
         mode,
         targetFormat,
@@ -350,6 +407,7 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
 
       setOutput({
         url: URL.createObjectURL(result.blob),
+        blob: result.blob,
         filename: result.filename,
         mimeType: result.mimeType,
         size: result.outputSize,
@@ -364,6 +422,7 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
     endSeconds,
     files,
     getErrorMessage,
+    isBatchable,
     mode,
     playbackRate,
     sampleRate,
@@ -635,6 +694,7 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
 
       setOutput({
         url: URL.createObjectURL(result.blob),
+        blob: result.blob,
         filename: result.filename,
         mimeType: result.mimeType,
         size: result.outputSize,
@@ -840,7 +900,7 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
                   ref={fileInputRef}
                   type="file"
                   accept={accept}
-                  multiple={isMerge}
+                  multiple={isMerge || isBatchable}
                   disabled={liveTranscriptionActive}
                   className="sr-only"
                   onChange={(event) => {
@@ -850,7 +910,7 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
                 />
                 <span className="text-sm font-semibold text-content">{t('drop_title')}</span>
                 <span className="max-w-sm text-sm leading-relaxed text-content-muted">
-                  {isExtract ? t('drop_video_hint') : isMerge ? t('drop_multiple_hint') : t('drop_audio_hint')}
+                  {isExtract ? t('drop_video_hint') : isMerge ? t('drop_multiple_hint') : isBatchable ? t('drop_batch_hint') : t('drop_audio_hint')}
                 </span>
               </label>
 
@@ -912,53 +972,62 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
           )}
 
           {files.length > 0 && !isStandalone && (
-            <ul className="mt-4 flex flex-col gap-2">
-              {files.map((file, index) => (
-                <li key={`${file.name}-${file.size}-${file.lastModified}-${index}`} className="rounded border border-border-subtle bg-surface-raised p-3">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="min-w-0">
-                      <div className="truncate text-sm font-medium text-content">
-                        {isMerge ? `${index + 1}. ` : ''}{file.name}
+            <>
+              {isBatchable && files.length > 1 && (
+                <p className="mt-4 text-xs text-content-muted">{t('batch_selected', { count: files.length })}</p>
+              )}
+              <ul className="mt-4 flex flex-col gap-2">
+                {files.map((file, index) => (
+                  <li key={`${file.name}-${file.size}-${file.lastModified}-${index}`} className="rounded border border-border-subtle bg-surface-raised p-3">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="min-w-0">
+                        <div className="truncate text-sm font-medium text-content">
+                          {(isMerge || isBatchable) ? `${index + 1}. ` : ''}{file.name}
+                        </div>
+                        <div className="mt-1 text-xs text-content-muted">
+                          {file.type || t('unknown_type')} · {formatAudioFileSize(file.size)}
+                        </div>
                       </div>
-                      <div className="mt-1 text-xs text-content-muted">
-                        {file.type || t('unknown_type')} · {formatAudioFileSize(file.size)}
-                      </div>
+                      {(isMerge || isBatchable) && (
+                        <div className="flex shrink-0 flex-wrap gap-2">
+                          {isMerge && (
+                            <>
+                              <Button
+                                type="button"
+                                variant="secondary"
+                                onClick={() => moveSelectedFile(index, -1)}
+                                disabled={index === 0 || isProcessing}
+                                aria-label={t('move_up')}
+                              >
+                                {t('move_up')}
+                              </Button>
+                              <Button
+                                type="button"
+                                variant="secondary"
+                                onClick={() => moveSelectedFile(index, 1)}
+                                disabled={index === files.length - 1 || isProcessing}
+                                aria-label={t('move_down')}
+                              >
+                                {t('move_down')}
+                              </Button>
+                            </>
+                          )}
+                          <Button
+                            type="button"
+                            variant="danger"
+                            onClick={() => removeSelectedFile(index)}
+                            disabled={isProcessing}
+                            aria-label={t('remove_file')}
+                          >
+                            {t('remove_file')}
+                          </Button>
+                        </div>
+                      )}
                     </div>
-                    {isMerge && (
-                      <div className="flex shrink-0 flex-wrap gap-2">
-                        <Button
-                          type="button"
-                          variant="secondary"
-                          onClick={() => moveSelectedFile(index, -1)}
-                          disabled={index === 0 || isProcessing}
-                          aria-label={t('move_up')}
-                        >
-                          {t('move_up')}
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="secondary"
-                          onClick={() => moveSelectedFile(index, 1)}
-                          disabled={index === files.length - 1 || isProcessing}
-                          aria-label={t('move_down')}
-                        >
-                          {t('move_down')}
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="danger"
-                          onClick={() => removeSelectedFile(index)}
-                          disabled={isProcessing}
-                          aria-label={t('remove_file')}
-                        >
-                          {t('remove_file')}
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ul>
+                  </li>
+                ))}
+              </ul>
+            </>
           )}
 
           {usesBitrate && !isStandalone && (
@@ -1151,6 +1220,11 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
           <Panel title={isTranscribe ? t('transcript_title') : t('output_title')}>
             <div className="flex min-h-80 flex-grow flex-col gap-4">
               {progressBlock}
+              {batchProgress && (
+                <p role="status" className="text-xs text-content-muted">
+                  {tb('processing', batchProgress)}
+                </p>
+              )}
               {errorBlock}
               {isTts && ttsFallbackBlock}
 
@@ -1182,6 +1256,16 @@ export function AudioTool({ toolId, mode, content }: AudioToolProps) {
                     className="min-h-72 flex-grow resize-none rounded border border-border-input bg-surface-raised p-3 text-sm leading-6 text-content-secondary placeholder:text-content-faint focus:outline-none"
                   />
                 </>
+              ) : batchOutputs.length > 0 ? (
+                <div className="flex flex-col gap-4">
+                  <audio controls src={batchOutputs[0].url} className="w-full" />
+                  <BatchResults
+                    items={batchOutputs}
+                    zipFilename={`audio-${targetFormat}.zip`}
+                    failedCount={batchFailedCount}
+                    formatSize={formatAudioFileSize}
+                  />
+                </div>
               ) : output ? (
                 <div className="flex flex-col gap-4">
                   <audio controls src={output.url} className="w-full" />

@@ -1,5 +1,6 @@
 import { PDFDocument, StandardFonts, degrees, rgb } from 'pdf-lib';
 import { parseColor } from './color';
+import { createBatchFilename } from './batch';
 
 export interface WatermarkOptions {
   text: string;
@@ -8,6 +9,37 @@ export interface WatermarkOptions {
   rotation: number;
   color: string;
   layout: 'center' | 'tile' | 'diagonal';
+}
+
+export interface PdfWatermarkBatchItem {
+  filename: string;
+  blob: Blob;
+}
+
+/** 对一组 PDF 套用同一份水印设置，逐个返回产物，单文件失败不影响其余文件。 */
+export async function addPdfWatermarkBatch(
+  files: File[],
+  options: WatermarkOptions,
+  onProgress?: (current: number, total: number) => void,
+): Promise<{ items: PdfWatermarkBatchItem[]; failedCount: number }> {
+  const items: PdfWatermarkBatchItem[] = [];
+  let failedCount = 0;
+
+  for (const [index, file] of files.entries()) {
+    onProgress?.(index + 1, files.length);
+    try {
+      const blob = await addPdfWatermark(file, options);
+      if (!blob) throw new Error('Watermark generation failed.');
+      items.push({
+        filename: createBatchFilename(file.name, 'watermarked', 'pdf'),
+        blob,
+      });
+    } catch {
+      failedCount += 1;
+    }
+  }
+
+  return { items, failedCount };
 }
 
 export async function addPdfWatermark(file: File, options: WatermarkOptions): Promise<Blob | null> {

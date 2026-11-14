@@ -6,7 +6,9 @@ import {
   clampTrimRange,
   computeOutputSize,
   computeTargetBitrate,
+  computeTransformedSize,
   createReencodeFilename,
+  isIdentityTransform,
   mapReencodeProgress,
   REENCODE_FRAMERATE,
   REENCODE_MAX_DURATION_SECONDS,
@@ -15,6 +17,7 @@ import {
   type ReencodeQuality,
   type VideoReencodeProgress,
   type VideoReencodeResult,
+  type VideoTransform,
 } from './video-reencode';
 
 /**
@@ -40,13 +43,15 @@ export interface ReencodeOptions {
   trim?: { start: number; end: number } | null;
   /** 画面裁剪区域（源视频像素坐标），null 表示保留完整画面 */
   crop?: { x: number; y: number; width: number; height: number } | null;
+  /** 几何变换（旋转 / 翻转），null 或恒等表示不改变画面方向 */
+  transform?: VideoTransform | null;
   /** 输出文件名后缀（不含扩展名） */
   suffix: string;
   onProgress?: (progress: VideoReencodeProgress) => void;
   signal?: AbortSignal;
 }
 
-interface LoadedVideo {
+export interface LoadedVideo {
   video: HTMLVideoElement;
   url: string;
   width: number;
@@ -131,13 +136,14 @@ function getFileExtension(name: string): string {
 }
 
 /** 判断是否 ISO BMFF（MP4/MOV）容器：只有这类素材能走 mp4box 解封装路径 */
-function isIsoBmffSource(file: File): boolean {
+export function isIsoBmffSource(file: File): boolean {
   const extension = getFileExtension(file.name);
   if (extension === 'mp4' || extension === 'm4v' || extension === 'mov') return true;
   return /^video\/(mp4|quicktime)$/i.test(file.type);
 }
 
-function loadVideoElement(file: File): Promise<LoadedVideo> {
+/** 加载视频元素并返回尺寸与时长元数据；元素挂在屏幕外的真实 DOM 上以保证帧可用 */
+export function loadVideoElement(file: File): Promise<LoadedVideo> {
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(file);
     const video = document.createElement('video');
@@ -188,7 +194,7 @@ function loadVideoElement(file: File): Promise<LoadedVideo> {
  *    设置 currentTime 不会触发 seeked 事件，必须直接返回，否则永远挂起。
  * 2. 超时兜底：个别环境下 seek 事件可能丢失，超时后继续流程而不是卡死。
  */
-function seekTo(video: HTMLVideoElement, time: number): Promise<void> {
+export function seekVideoTo(video: HTMLVideoElement, time: number): Promise<void> {
   return new Promise((resolve, reject) => {
     if (Math.abs(video.currentTime - time) < 0.001) {
       resolve();
@@ -217,7 +223,7 @@ function seekTo(video: HTMLVideoElement, time: number): Promise<void> {
   });
 }
 
-async function pickVideoCodec(
+export async function pickVideoCodec(
   width: number,
   height: number,
   bitrate: number,
@@ -236,8 +242,6 @@ async function pickVideoCodec(
 }
 
 /* ────────────────────────────── 音轨（并行预处理，共享实现见 video-audio-track.ts） ────────────────────────────── */
-
-type AudioPrepResult = import('./video-audio-track').AudioPrepResult;
 
 /** 兜底音轨回填：视频 + 源文件直接合成并按区间裁剪音轨（失败时输出无声视频） */
 async function muxAudioFromSource(
@@ -315,32 +319,102 @@ interface RenderContext {
   outputHeight: number;
   /** 源画面采样区域（像素），null 表示整幅画面 */
   crop: PixelRect | null;
+  /** 几何变换（旋转 / 翻转），null 表示不改变方向 */
+  transform: VideoTransform | null;
   bitrate: number;
   onProgress?: (progress: VideoReencodeProgress) => void;
   signal?: AbortSignal;
 }
 
-/** 从解码帧直接产出目标帧：优先硬件 visibleRect 裁剪缩放，不支持时回退 canvas */
+/**
+ * 从解码帧直接产出目标帧：
+ * - 无裁剪且无变换时原帧直通（零拷贝快路径）
+ * - 有裁剪时优先硬件 visibleRect 裁剪缩放
+ * - 有旋转 / 翻转时必须经 canvas 合成（visibleRect 无法表达几何变换）
+ */
 function createOutputFrame(
   frame: VideoFrame,
   crop: PixelRect | null,
+  transform: VideoTransform | null,
   outputWidth: number,
   outputHeight: number,
   canvas: HTMLCanvasElement | null,
   context2d: CanvasRenderingContext2D | null
 ): VideoFrame {
-  if (!crop) return frame;
-  try {
-    return new VideoFrame(frame, {
-      visibleRect: { x: crop.x, y: crop.y, width: crop.width, height: crop.height },
-      displayWidth: outputWidth,
-      displayHeight: outputHeight,
-    });
-  } catch {
-    if (!canvas || !context2d) return frame;
-    context2d.drawImage(frame, crop.x, crop.y, crop.width, crop.height, 0, 0, outputWidth, outputHeight);
-    return new VideoFrame(canvas, { timestamp: frame.timestamp });
+  const transformed = Boolean(transform && !isIdentityTransform(transform));
+  if (!crop && !transformed) return frame;
+  // 仅裁剪（无几何变换）时优先走硬件 visibleRect 路径：解码器内直接完成裁剪与缩放
+  if (crop && !transformed) {
+    try {
+      return new VideoFrame(frame, {
+        visibleRect: { x: crop.x, y: crop.y, width: crop.width, height: crop.height },
+        displayWidth: outputWidth,
+        displayHeight: outputHeight,
+      });
+    } catch {
+      // 部分平台不支持 visibleRect，回退 canvas 合成
+    }
   }
+  if (!canvas || !context2d) return frame;
+  const sx = crop?.x ?? 0;
+  const sy = crop?.y ?? 0;
+  const sw = crop?.width ?? frame.displayWidth;
+  const sh = crop?.height ?? frame.displayHeight;
+  // 源画面按 oriented 尺寸 → 输出尺寸的统一比例缩放，maxLongSide 降分辨率时不会溢出画布
+  const oriented = transformed && transform
+    ? computeTransformedSize(sw, sh, transform.rotation)
+    : { width: sw, height: sh };
+  const scale = outputWidth / Math.max(1, oriented.width);
+  const dw = sw * scale;
+  const dh = sh * scale;
+  context2d.fillStyle = '#000000';
+  context2d.fillRect(0, 0, outputWidth, outputHeight);
+  context2d.save();
+  context2d.translate(outputWidth / 2, outputHeight / 2);
+  if (transformed && transform) {
+    context2d.rotate((transform.rotation * Math.PI) / 180);
+    context2d.scale(transform.flipHorizontal ? -1 : 1, transform.flipVertical ? -1 : 1);
+  }
+  context2d.drawImage(frame, sx, sy, sw, sh, -dw / 2, -dh / 2, dw, dh);
+  context2d.restore();
+  return new VideoFrame(canvas, { timestamp: frame.timestamp });
+}
+
+/** 播放路径的帧合成：与 createOutputFrame 同一套变换逻辑，源换成 video 元素 */
+function drawPlaybackFrame(
+  context2d: CanvasRenderingContext2D,
+  source: HTMLVideoElement,
+  crop: PixelRect | null,
+  transform: VideoTransform | null,
+  outputWidth: number,
+  outputHeight: number
+): void {
+  if (!crop && isIdentityTransform(transform)) {
+    context2d.drawImage(source, 0, 0, outputWidth, outputHeight);
+    return;
+  }
+  const transformed = Boolean(transform && !isIdentityTransform(transform));
+  const sx = crop?.x ?? 0;
+  const sy = crop?.y ?? 0;
+  const sw = crop?.width ?? source.videoWidth;
+  const sh = crop?.height ?? source.videoHeight;
+  // 与 createOutputFrame 相同：按 oriented → 输出的统一比例缩放，避免 maxLongSide 降分辨率时溢出
+  const oriented = transformed && transform
+    ? computeTransformedSize(sw, sh, transform.rotation)
+    : { width: sw, height: sh };
+  const scale = outputWidth / Math.max(1, oriented.width);
+  const dw = sw * scale;
+  const dh = sh * scale;
+  context2d.fillStyle = '#000000';
+  context2d.fillRect(0, 0, outputWidth, outputHeight);
+  context2d.save();
+  context2d.translate(outputWidth / 2, outputHeight / 2);
+  if (transformed && transform) {
+    context2d.rotate((transform.rotation * Math.PI) / 180);
+    context2d.scale(transform.flipHorizontal ? -1 : 1, transform.flipVertical ? -1 : 1);
+  }
+  context2d.drawImage(source, sx, sy, sw, sh, -dw / 2, -dh / 2, dw, dh);
+  context2d.restore();
 }
 
 /* ────────────────────────────── 路径 A：WebCodecs 解码 ────────────────────────────── */
@@ -350,7 +424,7 @@ function createOutputFrame(
  * 返回 null 表示该素材不适合走解码路径（容器/编码不支持、体积过大、无可用帧），调用方应回退播放路径。
  */
 async function renderWithVideoDecoder(context: RenderContext & { file: File }): Promise<Blob | null> {
-  const { file, range, outputWidth, outputHeight, crop, bitrate, onProgress, signal } = context;
+  const { file, range, outputWidth, outputHeight, crop, transform, bitrate, onProgress, signal } = context;
   if (typeof VideoDecoder === 'undefined' || typeof VideoEncoder === 'undefined') return null;
   if (!isIsoBmffSource(file)) return null;
   if (file.size > DECODER_PATH_MAX_BYTES) return null;
@@ -384,7 +458,7 @@ async function renderWithVideoDecoder(context: RenderContext & { file: File }): 
       firstTimestampBehavior: 'offset',
     });
 
-    if (crop) {
+    if (crop || !isIdentityTransform(transform)) {
       canvas = document.createElement('canvas');
       canvas.width = outputWidth;
       canvas.height = outputHeight;
@@ -421,7 +495,7 @@ async function renderWithVideoDecoder(context: RenderContext & { file: File }): 
         const timestamp = Math.max(frame.timestamp, lastEncodedUs + 1);
         lastEncodedUs = timestamp;
         const relativeUs = Math.max(0, timestamp - startUs);
-        const output = createOutputFrame(frame, crop, outputWidth, outputHeight, canvas, context2d);
+        const output = createOutputFrame(frame, crop, transform, outputWidth, outputHeight, canvas, context2d);
         const keyFrame = relativeUs - lastKeyAtUs >= KEYFRAME_INTERVAL_SECONDS * 1_000_000;
         if (keyFrame) lastKeyAtUs = relativeUs;
         encoder!.encode(output, { keyFrame });
@@ -532,7 +606,7 @@ async function renderWithVideoDecoder(context: RenderContext & { file: File }): 
 
 /** 播放并逐帧重编码（WebCodecs + mp4-muxer），只处理 [start, end] 区间 */
 async function renderAndEncode(context: RenderContext): Promise<Blob> {
-  const { video, range, outputWidth, outputHeight, crop, bitrate, onProgress, signal } = context;
+  const { video, range, outputWidth, outputHeight, crop, transform, bitrate, onProgress, signal } = context;
   const { start, end } = range;
   const spanSeconds = Math.max(0.1, end - start);
 
@@ -579,7 +653,7 @@ async function renderAndEncode(context: RenderContext): Promise<Blob> {
 
   const source = video.video;
   source.pause();
-  await seekTo(source, start);
+  await seekVideoTo(source, start);
 
   let lastKeyTime = -Infinity;
   let previousTimestamp = -1;
@@ -640,12 +714,8 @@ async function renderAndEncode(context: RenderContext): Promise<Blob> {
           }
           lastFrameAt.value = performance.now();
 
-          // 有裁剪区域时只采样区域内的画面：9 参 drawImage（源矩形 → 目标矩形）
-          if (crop) {
-            context2d.drawImage(source, crop.x, crop.y, crop.width, crop.height, 0, 0, outputWidth, outputHeight);
-          } else {
-            context2d.drawImage(source, 0, 0, outputWidth, outputHeight);
-          }
+          // 帧合成：裁剪 / 旋转 / 翻转统一走 drawPlaybackFrame，恒等时直通
+          drawPlaybackFrame(context2d, source, crop, transform, outputWidth, outputHeight);
 
           const relativeTime = Math.max(0, metadata.mediaTime - start);
           const timestamp = Math.max(0, Math.round(relativeTime * 1_000_000));
@@ -723,7 +793,7 @@ export async function reencodeVideoToMp4(
   options: ReencodeOptions
 ): Promise<VideoReencodeResult> {
   const startedAt = performance.now();
-  const { quality, maxLongSide = null, trim = null, crop = null, suffix, onProgress, signal } = options;
+  const { quality, maxLongSide = null, trim = null, crop = null, transform = null, suffix, onProgress, signal } = options;
 
   const fileCheck = validateReencodeFile(file);
   if (!fileCheck.ok) {
@@ -749,12 +819,13 @@ export async function reencodeVideoToMp4(
       return createFailure('range_invalid');
     }
 
-    // 裁剪输出时以区域尺寸为源尺寸，码率与输出分辨率均按区域内画面计算
-    const size = computeOutputSize(
-      crop ? crop.width : loaded.width,
-      crop ? crop.height : loaded.height,
-      maxLongSide
-    );
+    // 裁剪输出时以区域尺寸为源尺寸；旋转 90°/270° 时宽高互换；码率与输出分辨率按最终画面计算
+    const sourceWidth = crop ? crop.width : loaded.width;
+    const sourceHeight = crop ? crop.height : loaded.height;
+    const oriented = transform && !isIdentityTransform(transform)
+      ? computeTransformedSize(sourceWidth, sourceHeight, transform.rotation)
+      : { width: sourceWidth, height: sourceHeight };
+    const size = computeOutputSize(oriented.width, oriented.height, maxLongSide);
     const bitrate = computeTargetBitrate(size.width, size.height, quality);
     onProgress?.({ stage: 'model', label: 'ready', percent: 12 });
 
@@ -770,6 +841,7 @@ export async function reencodeVideoToMp4(
       outputWidth: size.width,
       outputHeight: size.height,
       crop,
+      transform: transform && !isIdentityTransform(transform) ? transform : null,
       bitrate,
       onProgress,
       signal,

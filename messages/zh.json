@@ -17,7 +17,17 @@
     "download_json": "下载 JSON",
     "preview_title": "结果预览",
     "preview_open_output": "点击预览输出结果",
-    "preview_close": "关闭预览"
+    "preview_close": "关闭预览",
+    "batch": {
+      "title": "批量处理结果",
+      "count": "成功 {done} / {total} 个",
+      "failed": "有 {count} 个文件处理失败，已跳过",
+      "download": "下载",
+      "download_zip": "下载 ZIP（{count} 个）",
+      "zipping": "正在打包...",
+      "processing": "正在处理第 {current} / {total} 个",
+      "select_multiple": "可一次选择多个文件"
+    }
   },
   "privacy_trust": {
     "label": "默认保护隐私",
@@ -1075,7 +1085,9 @@
     "settings_title": "尺寸修改",
     "editor_title": "尺寸预览",
     "drop_title": "点击或拖拽图片上传",
-    "drop_hint": "支持 {formats}，所有处理都在本地完成",
+    "drop_hint": "支持 {formats}，可一次选择多张图片统一调整尺寸，所有处理都在本地完成",
+    "batch_selected": "已选 {count} 张图片，将按相同输出尺寸批量处理",
+    "batch_progress": "正在处理第 {current} / {total} 张",
     "drop_action": "选择图片",
     "input_formats": "支持格式",
     "local_note": "所有文件处理都在本地完成，文件不会上传到任何服务器，关闭页面后，数据即被清除。",
@@ -1218,7 +1230,9 @@
   "image_watermark": {
     "settings_title": "水印设置",
     "drop_title": "点击或拖拽图片上传",
-    "drop_hint": "支持 {formats}，所有处理都在本地完成",
+    "drop_hint": "支持 {formats}，可一次选择多张图片，所有处理都在本地完成",
+    "batch_selected": "已选 {count} 张图片，用第一张调整水印，其余自动套用相同设置",
+    "batch_progress": "正在处理第 {current} / {total} 张",
     "drop_action": "选择图片",
     "drop_replace": "释放鼠标以替换当前图片",
     "replace": "更换图片",
@@ -1372,10 +1386,10 @@
     "image-watermark": "图片加水印,在线添加水印,文字水印,图片水印,Logo水印,平铺水印",
     "image-editor": "在线图片编辑,图片编辑器,图片标注,图片打马赛克,图片加文字,图片模糊",
     "image-to-icon": "图片转Icon,PNG转ICO,图片转ICO,图片转ICNS,Favicon制作,应用图标生成",
-    "image-to-jpg": "图片转JPG,PNG转JPG,WebP转JPG,GIF转JPG,SVG转JPG,AVIF转JPG",
-    "image-to-png": "图片转PNG,JPG转PNG,WebP转PNG,GIF转PNG,SVG转PNG,AVIF转PNG",
-    "image-to-webp": "图片转WebP,JPG转WebP,PNG转WebP,GIF转WebP,SVG转WebP,AVIF转WebP",
-    "image-to-avif": "图片转AVIF,JPG转AVIF,PNG转AVIF,WebP转AVIF,GIF转AVIF,SVG转AVIF",
+    "image-to-jpg": "图片转JPG,PNG转JPG,WebP转JPG,GIF转JPG,SVG转JPG,AVIF转JPG,HEIC转JPG,iPhone照片转JPG,HEIC转JPG在线",
+    "image-to-png": "图片转PNG,JPG转PNG,WebP转PNG,GIF转PNG,SVG转PNG,AVIF转PNG,HEIC转PNG,iPhone照片转PNG",
+    "image-to-webp": "图片转WebP,JPG转WebP,PNG转WebP,GIF转WebP,SVG转WebP,AVIF转WebP,HEIC转WebP,iPhone照片转WebP",
+    "image-to-avif": "图片转AVIF,JPG转AVIF,PNG转AVIF,WebP转AVIF,GIF转AVIF,SVG转AVIF,HEIC转AVIF,iPhone照片转AVIF",
     "image-to-base64": "图片转Base64,PNG转Base64,JPG转Base64,图片转Data URL,图片Base64编码",
     "base64-to-image": "Base64转图片,Base64转PNG,Data URL转图片,Base64图片解码,保存Base64图片",
     "image-crop": "图片裁剪,在线裁剪图片,照片裁剪,自定义裁图,图片裁切工具",
@@ -1433,7 +1447,11 @@
     "video-to-gif": "视频转GIF,视频生成GIF,在线视频转GIF,MP4转GIF,GIF制作,视频截取动图",
     "video-compress": "视频压缩,视频压缩在线,免费视频压缩,压缩视频体积,MP4压缩,视频变小",
     "video-trim": "视频截取,视频剪辑,在线截取视频,视频片段截取,剪切视频,视频切割",
-    "video-crop": "视频画面裁剪,视频裁剪,裁剪视频画面,视频截取区域,视频画面截取,视频裁剪比例,视频裁剪在线,视频局部裁剪"
+    "video-crop": "视频画面裁剪,视频裁剪,裁剪视频画面,视频截取区域,视频画面截取,视频裁剪比例,视频裁剪在线,视频局部裁剪",
+    "video-convert": "视频转MP4,MOV转MP4,MKV转MP4,WebM转MP4,视频格式转换,视频转换器在线,视频转MP4免费,HEVC转MP4,视频转码不上传",
+    "video-merge": "视频合并,合并视频,多个视频合成一个,视频拼接,在线视频合并,视频拼接器,MP4合并,视频合并不上传",
+    "video-rotate": "视频旋转,旋转视频,视频翻转,视频镜像,手机视频方向修正,视频旋转90度,视频翻转在线,视频旋转不上传",
+    "video-frames": "视频抽帧,视频截图,视频导出图片,视频截帧,按间隔截取视频帧,视频帧提取,MP4截图,视频截图工具,视频抽帧不上传"
   },
   "tool_faq": {
     "json-escape": {
@@ -3011,6 +3029,70 @@
           "answer": "不会。音轨按原样保留，画面裁剪不影响声音内容；个别格式音轨回填失败时会输出无声视频，结果信息里会标注。"
         }
       ]
+    },
+    "video-convert": {
+      "items": [
+        {
+          "question": "和直接改扩展名有什么区别？",
+          "answer": "改扩展名只是换个名字，视频编码不变，不兼容的播放器照样打不开。本工具真正把画面重编码为 H.264、音轨重编码为 AAC，输出的是标准 MP4。"
+        },
+        {
+          "question": "会损失画质吗？",
+          "answer": "重编码会有轻微的二次压缩，默认高档位、保持原分辨率时通常难以察觉；选择中低档位可以明显减小体积，适合对画质要求不高的分享场景。"
+        },
+        {
+          "question": "MKV 里的多条音轨和字幕怎么处理？",
+          "answer": "工具取第一条视频轨和第一条音轨转成 MP4；MKV 内封的字幕轨道不会带入输出。需要保留字幕请使用字幕工具单独处理。"
+        }
+      ]
+    },
+    "video-merge": {
+      "items": [
+        {
+          "question": "分辨率不一致的片段会怎样？",
+          "answer": "以第一个视频的尺寸为输出画幅，其余画面等比缩放并居中，比例不同的部分填充黑边；画面不会被拉伸变形。"
+        },
+        {
+          "question": "有的片段没有声音怎么办？",
+          "answer": "无音轨的片段会自动补上等长静音，后续片段的声音仍然对齐；如果所有片段都没有音轨，输出就是无声视频。"
+        },
+        {
+          "question": "合并是无损的吗？",
+          "answer": "不是。所有画面统一重编码为 H.264，会有轻微的二次压缩；好处是输出只有一个统一规格的 MP4，兼容性最好。"
+        }
+      ]
+    },
+    "video-rotate": {
+      "items": [
+        {
+          "question": "为什么选择烧进画面而不是写旋转元数据？",
+          "answer": "旋转元数据只有部分播放器会读取，老设备和剪辑软件经常忽略它。把方向直接画进每一帧，输出在任何地方显示都一致。"
+        },
+        {
+          "question": "旋转后文件尺寸会变吗？",
+          "answer": "旋转 90° / 270° 时画幅宽高互换（横 1920×1080 变竖 1080×1920），0° / 180° 尺寸不变。"
+        },
+        {
+          "question": "能同时旋转和翻转吗？",
+          "answer": "可以。旋转与水平 / 垂直翻转可任意叠加，预览窗口会实时显示叠加后的效果。"
+        }
+      ]
+    },
+    "video-frames": {
+      "items": [
+        {
+          "question": "截取的时间点准确吗？",
+          "answer": "精度约在一帧以内（30fps 视频约 33ms）。个别格式在非关键帧处 seek 会落在相邻帧，如需精确到某一帧可微调时间点重试。"
+        },
+        {
+          "question": "该选 PNG 还是 JPG？",
+          "answer": "需要无损归档或后续编辑选 PNG；批量导出步骤图、预览图选 JPG 更省空间，60%~92% 质量可选。"
+        },
+        {
+          "question": "固定间隔模式下帧数太多怎么办？",
+          "answer": "单次上限 50 帧。超出时工具会自动拉大间隔，让帧均匀覆盖你选择的整个区间，而不是在中间截断。"
+        }
+      ]
     }
   },
   "nav": {
@@ -3388,6 +3470,8 @@
     "drop_audio_hint": "支持 MP3、WAV、M4A、AAC、OGG、OPUS、WebM、FLAC 等常见音频格式。",
     "drop_video_hint": "支持 MP4、MOV、WebM、MKV、AVI、MPEG 等视频格式，会提取其中的音频轨道。",
     "drop_multiple_hint": "可多次选择音频文件追加到列表，工具会按列表顺序拼接并导出一个 MP3。",
+    "drop_batch_hint": "可一次选择多个音频，转换完成后逐个下载或一次打包为 ZIP。",
+    "batch_selected": "已选 {count} 个文件",
     "bitrate_label": "MP3 码率",
     "volume_label": "音量",
     "speed_label": "播放速度",
@@ -4358,60 +4442,60 @@
     },
     "video_hub": {
       "lead": [
-        "这一组工具用 WebCodecs 在浏览器里解码和重编码视频，配合 ffmpeg 的 WebAssembly 版本回填音轨，因此去水印全程不需要把视频传到服务器。AI 补全按需加载开源模型：轻量的 MI-GAN 适合小水印，LaMa 高清档适合大水印和压在人脸、建筑边缘的精修场景。",
+        "这一组视频工具用 WebCodecs 在浏览器里解码和重编码视频，配合 ffmpeg 的 WebAssembly 版本处理音轨，因此转换、压缩、截取、合并、旋转、抽帧和去水印全程不需要把视频传到服务器。去水印的 AI 补全按需加载开源模型：轻量的 MI-GAN 适合小水印，LaMa 高清档适合大水印和压在人脸、建筑边缘的精修场景。",
         "代价是算力来自你的设备：处理时长与视频长度、分辨率和设备性能成正比，建议先处理 1 分钟以内的片段验证效果，再处理完整视频。"
       ],
       "choosing": [
         {
-          "title": "只是要去掉角标或 logo",
-          "detail": "默认的自动判定模式就够了：背景在动时用时域中值直接还原干净背景，背景静止时用 MI-GAN 对代表帧做一次 AI 补全，把修复补丁贴回全片。"
+          "title": "想让视频在任何设备上都能播放",
+          "detail": "用「视频转 MP4」把 MOV、MKV、WebM 等格式统一重编码为 H.264 MP4；只需要变小就用「视频压缩」，可选画质档位与分辨率。"
         },
         {
-          "title": "水印很大或压在人脸、建筑边缘",
-          "detail": "切换 LaMa 高清档：它的全局感受野能重建结构而不只是填充纹理，效果明显更好；代价是约 198MB 的模型下载和慢约 7 倍的推理速度。"
+          "title": "只想保留一段内容",
+          "detail": "「视频截取」按起止时间剪出片段；「视频画面裁剪」进一步只保留选区内的画面，支持 16:9、9:16、1:1 等比例锁定。"
         },
         {
-          "title": "想最快出结果",
-          "detail": "手动选时域重建模式：不加载任何 AI 模型，背景运动或镜头移动时速度最快、且无闪烁。"
+          "title": "多段素材要拼成一个文件",
+          "detail": "「视频合并」把多个视频按顺序拼接并统一到第一段的分辨率；「视频旋转 / 翻转」先修正手机竖拍方向，再进入后续剪辑。"
         },
         {
-          "title": "在意隐私",
-          "detail": "所有视频工具都不上传文件：解码、重建、编码全部在本地完成，关闭页面后数据即被清除，适合处理未发布素材。"
+          "title": "要动图、截图或去水印",
+          "detail": "「视频转 GIF」生成表情包与演示动图；「视频抽帧」按时间点或固定间隔导出 PNG / JPG；位置固定的水印交给「视频去水印」，自动选择时域重建或 AI 补全。"
         }
       ],
       "comparison": {
-        "caption": "三种重建方式的取舍：速度、模型体积与适用场景的粗略对比。",
+        "caption": "两条渲染路径与 AI 补全的取舍：速度、适用素材与输出特点。",
         "headers": [
-          "方式",
-          "模型体积",
+          "路径",
           "速度",
-          "适合的场景"
+          "适用素材",
+          "说明"
         ],
         "rows": [
           [
-            "时域重建",
-            "无需模型",
-            "最快（约等于视频时长）",
-            "背景运动或镜头移动的视频"
+            "WebCodecs 解码路径",
+            "远快于实时",
+            "MP4 / MOV 容器、浏览器可解编码、约 160MB 以内",
+            "mp4box 解封装后逐帧解码重编码，长视频提速最明显"
           ],
           [
-            "MI-GAN 补全（默认）",
-            "约 28MB",
-            "WebGPU 下约 0.4 秒/帧",
-            "小面积水印、背景静止"
+            "实时播放路径",
+            "约等于视频时长",
+            "WebM、HEVC、AV1 或超出内存上限的文件",
+            "由浏览器解码并自动应用旋转元数据，作为兜底保证输出成功"
           ],
           [
-            "LaMa 高清补全",
-            "约 198MB",
-            "约为 MI-GAN 的 1/7 速度",
-            "大水印、压在人脸或建筑边缘"
+            "AI 补全（仅去水印）",
+            "取决于模型",
+            "位置固定的水印",
+            "MI-GAN 约 28MB 适合小水印；LaMa 约 198MB，结构重建更强但更慢"
           ]
         ]
       },
       "notes": [
-        "只处理位置固定的水印：位置随时间移动或形状变化的水印无法用单一选区覆盖，滚动字幕请使用裁剪方式处理。",
-        "水印压在人脸、文字或持续变化的复杂纹理上时，AI 补全是模型的推测，结果可能与真实内容不符，请逐帧检查输出。",
-        "输出采用 H.264 重编码，会有轻微的二次压缩；对画质要求极高的场景请使用原始工程文件处理。"
+        "所有视频工具都不上传文件：解码、处理、编码全部在本地完成，关闭页面后数据即被清除，适合处理未发布素材。",
+        "重编码输出采用 H.264，会有轻微的二次压缩；抽帧工具直接导出解码帧，无二次压缩。对画质要求极高的场景请使用原始工程文件处理。",
+        "带旋转元数据的手机视频会按浏览器行为处理方向：解码路径要求无旋转矩阵，带旋转的素材自动走播放路径，输出方向与播放器一致。"
       ]
     }
   },
@@ -5131,8 +5215,8 @@
       "preview_title": "二维码预览",
       "text_label": "二维码内容",
       "text_placeholder": "输入网址、文本、联系信息或 Wi-Fi 配置文本...",
-      "generate": "生成",
-      "generating": "生成中...",
+      "auto_generate_hint": "输入内容或修改设置后自动更新",
+      "generating": "正在更新...",
       "size_label": "尺寸",
       "margin_label": "留白",
       "level_label": "纠错等级",
@@ -5143,7 +5227,7 @@
       "input_bytes": "输入体积",
       "output_size": "输出尺寸",
       "logo_meta": "Logo",
-      "empty_preview": "生成后的二维码会显示在这里",
+      "empty_preview": "输入内容后会自动生成二维码",
       "unknown_logo_type": "未知类型",
       "errors": {
         "empty_text": "请输入要生成二维码的内容。",
@@ -5440,7 +5524,11 @@
       "settings_title": "水印设置",
       "result_title": "结果",
       "drop_title": "点击或拖拽 PDF 到这里",
-      "drop_hint": "文件只在本地处理，不会上传服务器",
+      "drop_hint": "可一次选择多个 PDF，文件只在本地处理，不会上传服务器",
+      "batch_selected": "已选 {count} 个 PDF",
+      "batch_export": "批量添加水印（{count} 个）",
+      "batch_hint": "批量处理会为所有文件套用相同的水印设置，完成后可逐个下载或一次打包下载。",
+      "batch_progress": "正在处理第 {current} / {total} 个",
       "text_label": "水印文字",
       "font_size_label": "字号",
       "opacity_label": "透明度",
@@ -5554,6 +5642,22 @@
     "video-crop": {
       "name": "视频画面裁剪",
       "description": "在浏览器本地拖拽选区裁剪视频画面，支持 16:9、9:16、1:1 等比例锁定与手柄缩放，输出只保留框内画面并回填原音轨，文件不上传服务器。"
+    },
+    "video-convert": {
+      "name": "视频转 MP4",
+      "description": "在浏览器本地把 MOV、MKV、WebM 等视频重编码为通用 H.264 MP4，画质三档可选并保留原音轨，输出兼容手机、电脑与主流播放器，文件不上传服务器。"
+    },
+    "video-merge": {
+      "name": "视频合并",
+      "description": "在浏览器本地把多个视频按顺序合并成一个 MP4，统一输出分辨率并自动拼接各段音轨，画质三档可选，适合拼接多段素材与视频合集，文件不上传服务器。"
+    },
+    "video-rotate": {
+      "name": "视频旋转 / 翻转",
+      "description": "在浏览器本地把视频旋转 90°、180°、270° 或做水平、垂直翻转，修正手机竖拍方向，重编码为 MP4 并保留原音轨，文件不上传服务器。"
+    },
+    "video-frames": {
+      "name": "视频抽帧截图",
+      "description": "在浏览器本地从视频导出高清截图：按指定时间点或固定间隔抽帧，输出 PNG 或 JPG 图片，单帧直接下载，多帧自动打包成 ZIP，文件不上传服务器。"
     }
   },
   "redirect_page": {
@@ -5743,20 +5847,20 @@
   },
   "video_hub": {
     "title": "视频工具",
-    "meta_title": "视频工具 - 本地去水印与 AI 补全，导出 MP4",
-    "description": "在浏览器本地处理视频：去除画面中位置固定的水印，自动选择时域重建或 MI-GAN、LaMa AI 补全，可选高清档精修大水印，导出 H.264 MP4 并回填原音轨。视频文件不上传到任何服务器，处理全程在你的设备上完成。",
+    "meta_title": "视频工具 - 转MP4、压缩、截取、裁剪、合并、旋转、抽帧、转GIF、去水印",
+    "description": "在浏览器本地处理视频：转换为通用 MP4、压缩体积、按时间截取、裁剪画面、合并多段、旋转翻转、抽帧截图、转 GIF 动图，以及用 AI 补全去除固定水印，输出 H.264 MP4 并尽量保留原音轨，文件不上传服务器。",
     "all_tools": "全部视频工具",
     "breadcrumb": "视频工具",
-    "privacy_note": "视频在浏览器本地解码、重建和编码，不会上传到任何服务器；AI 补全模式会按需下载开源模型（约 28MB / 198MB）。",
+    "privacy_note": "所有视频工具都在浏览器本地解码、处理和编码，不会上传到任何服务器；去水印的 AI 补全模式会按需下载开源模型（约 28MB / 198MB）。",
     "faq": {
       "privacy_q": "视频工具会上传我的视频吗？",
-      "privacy_a": "不会。视频在浏览器本地解码、重建和编码，输出也在本地生成，文件不会上传到任何服务器。AI 补全模式首次使用会下载开源模型资源，之后通常会被浏览器缓存。",
+      "privacy_a": "不会。所有视频工具都在浏览器本地解码、处理和编码，输出也在本地生成，文件不会上传到任何服务器；个别 AI 模式首次使用会下载开源模型，之后通常被浏览器缓存。",
       "formats_q": "支持哪些视频格式？",
-      "formats_a": "支持 MP4、WebM、MOV 等浏览器能解码的常见格式，单文件上限 300MB、时长上限 5 分钟。输出统一为 H.264 MP4，并尽量回填原音轨。",
+      "formats_a": "支持 MP4、WebM、MOV 等浏览器能解码的常见格式，单文件上限 300MB、时长上限 5 分钟。除抽帧工具输出图片外，其余工具统一输出 H.264 MP4，并尽量回填原音轨。",
       "free_q": "视频工具免费吗？",
       "free_a": "免费。所有处理都在你自己的浏览器里完成，没有转码队列也没有次数限制，速度取决于你的设备性能。",
-      "quality_q": "去水印后画质有损失吗？",
-      "quality_a": "画面需要重新编码，会有轻微的二次压缩。默认 AI 补全使用轻量的 MI-GAN 模型；大水印可以切换 LaMa 高清档，结构重建效果更好，但模型更大、速度更慢。"
+      "quality_q": "处理后的画质有损失吗？",
+      "quality_a": "除抽帧直接导出解码帧外，输出画面都会经 H.264 重编码，带来轻微的二次压缩；压缩工具可选画质档位与分辨率，去水印默认用轻量 MI-GAN 模型，大水印可切换 LaMa 高清档。"
     }
   },
   "video_to_gif": {
@@ -5926,6 +6030,185 @@
       "range_invalid": "截取区间无效。",
       "crop_invalid": "裁剪区域无效，请重新拖拽选区。",
       "cancelled": "裁剪已取消。"
+    }
+  },
+  "video_convert": {
+    "settings_title": "视频转换设置",
+    "drop_title": "点击或拖拽视频上传",
+    "drop_hint": "支持 MP4、WebM、MOV、MKV 等常见格式，最长 5 分钟、最大 300MB，所有处理都在本地完成",
+    "replace": "更换视频",
+    "local_note": "请仅处理你拥有权利或已获授权修改的视频。转换全程在浏览器本地完成，不会上传到任何服务器。",
+    "preview_title": "源视频预览",
+    "quality_title": "画质档位",
+    "quality_high": "高",
+    "quality_medium": "中",
+    "quality_low": "低",
+    "apply": "转换为 MP4",
+    "processing": "转换中…",
+    "cancel": "取消",
+    "download": "下载视频",
+    "output_title": "输出视频",
+    "output_empty": "转换后的 MP4 会显示在这里",
+    "audio_track": "音轨",
+    "audio_track_kept": "已保留原音轨",
+    "audio_track_dropped": "无声视频（音轨处理失败）",
+    "duration_value": "耗时 {value}ms",
+    "progress_prepare": "准备中…",
+    "progress_analyze": "分析视频…",
+    "progress_render": "转换画面…",
+    "progress_audio": "处理音轨…",
+    "progress_done": "完成",
+    "errors": {
+      "general": "转换失败，请重试或换一个视频。",
+      "unsupported_input": "不支持的文件类型，请选择 MP4、WebM、MOV 等视频文件。",
+      "unsupported_browser": "当前浏览器不支持 WebCodecs 视频编码，请使用较新版本的 Chrome、Edge 或 Safari。",
+      "file_too_large": "视频超过 {maxSize} 上限，请先裁剪或压缩。",
+      "video_too_long": "视频超过 {maxDuration} 上限，请先截取需要的片段。",
+      "video_load_failed": "视频读取失败，可能是不支持的编码格式或损坏的文件。",
+      "encode_failed": "视频编码失败{detail}。",
+      "canvas_context": "无法创建画布上下文，请重试。",
+      "cancelled": "转换已取消。"
+    }
+  },
+  "video_merge": {
+    "settings_title": "视频合并设置",
+    "list_title": "待合并视频",
+    "drop_title": "点击或拖拽视频上传",
+    "drop_hint": "支持 MP4、WebM、MOV 等常见格式，至少 2 个、最多 8 个文件，所有处理都在本地完成",
+    "add_more": "继续添加",
+    "move_up": "上移",
+    "move_down": "下移",
+    "remove": "移除",
+    "file_count": "共 {count} 个文件（最多 {max} 个）",
+    "total_size": "合计 {size}",
+    "local_note": "请仅处理你拥有权利或已获授权修改的视频。合并全程在浏览器本地完成，不会上传到任何服务器。",
+    "quality_title": "画质档位",
+    "quality_high": "高",
+    "quality_medium": "中",
+    "quality_low": "低",
+    "apply": "开始合并",
+    "processing": "合并中…",
+    "cancel": "取消",
+    "download": "下载视频",
+    "output_title": "输出视频",
+    "output_empty": "合并后的视频会显示在这里",
+    "segment_count": "{count} 个片段",
+    "audio_track": "音轨",
+    "audio_track_kept": "已拼接各段音轨",
+    "audio_track_dropped": "无声视频（音轨处理失败）",
+    "duration_value": "耗时 {value}ms",
+    "progress_prepare": "读取视频元数据…",
+    "progress_render_segment": "处理第 {current} / {total} 段…",
+    "progress_audio": "拼接音轨…",
+    "progress_done": "完成",
+    "errors": {
+      "general": "合并失败，请重试或更换文件。",
+      "unsupported_input": "不支持的文件类型，请选择 MP4、WebM、MOV 等视频文件。",
+      "unsupported_browser": "当前浏览器不支持 WebCodecs 视频编码，请使用较新版本的 Chrome、Edge 或 Safari。",
+      "file_too_large": "单个视频超过 {maxSize} 上限，请先裁剪或压缩。",
+      "video_too_long": "单个视频超过 5 分钟上限，请先截取需要的片段。",
+      "total_too_long": "合并后的总时长超过 15 分钟上限，请减少片段数量或时长。",
+      "too_few_files": "至少需要两个视频才能合并。",
+      "too_many_files": "最多支持合并 {maxFiles} 个视频。",
+      "total_too_large": "文件总体积超过 {maxSize} 上限，请减少文件数量。",
+      "video_load_failed": "视频读取失败，可能是不支持的编码格式或损坏的文件。",
+      "canvas_context": "无法创建画布上下文，请重试。",
+      "cancelled": "合并已取消。"
+    }
+  },
+  "video_rotate": {
+    "settings_title": "旋转 / 翻转设置",
+    "drop_title": "点击或拖拽视频上传",
+    "drop_hint": "支持 MP4、WebM、MOV 等常见格式，最长 5 分钟、最大 300MB，所有处理都在本地完成",
+    "replace": "更换视频",
+    "local_note": "请仅处理你拥有权利或已获授权修改的视频。旋转全程在浏览器本地完成，不会上传到任何服务器。",
+    "preview_title": "方向预览",
+    "rotation_title": "旋转",
+    "rotate_left": "向左转 90°",
+    "rotate_right": "向右转 90°",
+    "rotation_value": "当前旋转：{value}°",
+    "flip_title": "翻转",
+    "flip_horizontal": "水平翻转（左右镜像）",
+    "flip_vertical": "垂直翻转（上下镜像）",
+    "quality_title": "画质档位",
+    "quality_high": "高",
+    "quality_medium": "中",
+    "quality_low": "低",
+    "apply": "导出视频",
+    "processing": "处理中…",
+    "cancel": "取消",
+    "download": "下载视频",
+    "output_title": "输出视频",
+    "output_empty": "调整方向后的视频会显示在这里",
+    "audio_track": "音轨",
+    "audio_track_kept": "已保留原音轨",
+    "audio_track_dropped": "无声视频（音轨处理失败）",
+    "duration_value": "耗时 {value}ms",
+    "progress_prepare": "准备中…",
+    "progress_analyze": "分析视频…",
+    "progress_render": "调整画面方向…",
+    "progress_audio": "处理音轨…",
+    "progress_done": "完成",
+    "errors": {
+      "general": "处理失败，请重试或换一个视频。",
+      "unsupported_input": "不支持的文件类型，请选择 MP4、WebM、MOV 等视频文件。",
+      "unsupported_browser": "当前浏览器不支持 WebCodecs 视频编码，请使用较新版本的 Chrome、Edge 或 Safari。",
+      "file_too_large": "视频超过 {maxSize} 上限，请先裁剪或压缩。",
+      "video_too_long": "视频超过 {maxDuration} 上限，请先截取需要的片段。",
+      "video_load_failed": "视频读取失败，可能是不支持的编码格式或损坏的文件。",
+      "encode_failed": "视频编码失败{detail}。",
+      "canvas_context": "无法创建画布上下文，请重试。",
+      "cancelled": "处理已取消。"
+    }
+  },
+  "video_frames": {
+    "settings_title": "抽帧设置",
+    "drop_title": "点击或拖拽视频上传",
+    "drop_hint": "支持 MP4、WebM、MOV 等常见格式，最长 5 分钟、最大 300MB，所有处理都在本地完成",
+    "replace": "更换视频",
+    "local_note": "请仅处理你拥有权利或已获授权修改的视频。抽帧全程在浏览器本地完成，不会上传到任何服务器。",
+    "preview_title": "源视频预览",
+    "mode_title": "抽帧方式",
+    "mode_moments": "指定时间点",
+    "mode_interval": "固定间隔",
+    "moments_title": "时间点列表",
+    "add_current_time": "添加当前播放时间",
+    "moments_empty": "播放视频到目标画面后点击上方按钮添加时间点",
+    "remove_moment": "删除时间点 {time}",
+    "interval_title": "间隔抽帧区间",
+    "interval_start": "开始时间",
+    "interval_end": "结束时间",
+    "interval_seconds": "间隔（秒）",
+    "format_title": "输出格式",
+    "format_png": "PNG（无损）",
+    "format_jpeg": "JPG（可调质量）",
+    "jpeg_quality": "JPG 质量",
+    "apply": "开始抽帧",
+    "processing": "抽帧中…",
+    "cancel": "取消",
+    "progress_extract": "抽帧中（{done} / {total}）…",
+    "progress_done": "完成",
+    "output_title": "抽帧结果",
+    "output_empty": "导出的截图会显示在这里",
+    "frame_alt": "视频在 {time} 处的截图",
+    "download_frame": "下载",
+    "frame_count": "共 {count} 帧",
+    "output_size": "合计 {size}",
+    "dimensions": "尺寸 {width}×{height}",
+    "download_zip": "打包下载全部 {count} 帧（ZIP）",
+    "errors": {
+      "general": "抽帧失败，请重试或换一个视频。",
+      "unsupported_input": "不支持的文件类型，请选择 MP4、WebM、MOV 等视频文件。",
+      "unsupported_browser": "当前浏览器不支持所需的视频能力，请使用较新版本的 Chrome、Edge 或 Safari。",
+      "file_too_large": "视频超过 {maxSize} 上限，请先裁剪或压缩。",
+      "video_too_long": "视频超过 {maxDuration} 上限，请先截取需要的片段。",
+      "video_load_failed": "视频读取失败，可能是不支持的编码格式或损坏的文件。",
+      "canvas_context": "无法创建画布上下文，请重试。",
+      "encode_failed": "帧编码失败{detail}。",
+      "no_frames": "没有可导出的时间点，请先添加时间点或检查区间设置。",
+      "range_invalid": "区间设置无效，请保证结束时间晚于开始时间。",
+      "too_many_moments": "最多支持 {maxMoments} 个时间点。",
+      "cancelled": "抽帧已取消。"
     }
   }
 }

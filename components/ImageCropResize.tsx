@@ -7,6 +7,8 @@ import { ImagePreviewDialog } from '@/components/ImagePreviewDialog';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/Button';
 import { Panel } from '@/components/ui/Panel';
+import { BatchResults } from '@/components/ui/BatchResults';
+import { createBatchId, type BatchOutput } from '@/lib/utils/batch';
 import type { ToolContent } from '@/lib/tools/content';
 import { cropResizeImageFile, inspectImageFile } from '@/lib/utils/image-browser';
 import {
@@ -117,6 +119,8 @@ export function ImageCropResize({ mode, content }: ImageCropResizeProps) {
   const imageRef = useRef<ImageInspectionSuccess | null>(null);
   const sourceUrlRef = useRef('');
   const outputRef = useRef<OutputState | null>(null);
+  const sourceFilesRef = useRef<File[]>([]);
+  const batchOutputsRef = useRef<BatchOutput[]>([]);
   const outputWidthRef = useRef('');
   const outputHeightRef = useRef('');
   const resizeSourceRef = useRef<ResizeSource>('width');
@@ -132,6 +136,10 @@ export function ImageCropResize({ mode, content }: ImageCropResizeProps) {
   const [outputFormat, setOutputFormat] = useState<BasicImageTargetFormat>('png');
   const [quality, setQuality] = useState(0.92);
   const [output, setOutput] = useState<OutputState | null>(null);
+  const [sourceFileCount, setSourceFileCount] = useState(0);
+  const [batchOutputs, setBatchOutputs] = useState<BatchOutput[]>([]);
+  const [batchFailedCount, setBatchFailedCount] = useState(0);
+  const [batchProgress, setBatchProgress] = useState<{ current: number; total: number } | null>(null);
   const [isOutputPreviewOpen, setIsOutputPreviewOpen] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -174,6 +182,7 @@ export function ImageCropResize({ mode, content }: ImageCropResizeProps) {
   useEffect(() => () => {
     if (sourceUrlRef.current) URL.revokeObjectURL(sourceUrlRef.current);
     if (outputRef.current) URL.revokeObjectURL(outputRef.current.url);
+    batchOutputsRef.current.forEach((item) => URL.revokeObjectURL(item.url));
   }, []);
 
   const clearOutput = useCallback(() => {
@@ -182,6 +191,11 @@ export function ImageCropResize({ mode, content }: ImageCropResizeProps) {
       if (current) URL.revokeObjectURL(current.url);
       return null;
     });
+    batchOutputsRef.current.forEach((item) => URL.revokeObjectURL(item.url));
+    batchOutputsRef.current = [];
+    setBatchOutputs([]);
+    setBatchFailedCount(0);
+    setBatchProgress(null);
   }, []);
 
   const syncOutputSize = useCallback((nextCrop: ImageCropRect, force = false) => {
@@ -244,12 +258,20 @@ export function ImageCropResize({ mode, content }: ImageCropResizeProps) {
     setIsLoading(false);
     resizeTouchedRef.current = false;
     resizeSourceRef.current = 'width';
+    sourceFilesRef.current = [];
+    setSourceFileCount(0);
     if (inputRef.current) inputRef.current.value = '';
   }, [clearOutput, sourceUrl]);
 
   const handleFiles = useCallback(async (fileList: FileList | File[]) => {
-    const selected = Array.from(fileList)[0];
+    const incoming = Array.from(fileList);
+    // 裁剪使用绝对像素坐标，批量套用会越界，仅尺寸修改模式开放多选
+    const chosen = isCropMode ? incoming.slice(0, 1) : incoming;
+    const selected = chosen[0];
     if (!selected) return;
+
+    sourceFilesRef.current = chosen;
+    setSourceFileCount(chosen.length);
 
     const requestId = loadRequestRef.current + 1;
     loadRequestRef.current = requestId;
@@ -458,26 +480,66 @@ export function ImageCropResize({ mode, content }: ImageCropResizeProps) {
     setError('');
     clearOutput();
 
-    const result = await cropResizeImageFile(file, {
-      crop,
-      outputWidth: width,
-      outputHeight: height,
-      targetFormat: outputFormat,
-      quality,
-      jpegBackground: '#ffffff',
-    });
+    const sources = sourceFilesRef.current.length > 0 ? sourceFilesRef.current : [file];
+    const outputs: BatchOutput[] = [];
+    const successes: OutputState[] = [];
+    let failures = 0;
 
-    setIsProcessing(false);
+    try {
+      for (const [index, source] of sources.entries()) {
+        if (sources.length > 1) setBatchProgress({ current: index + 1, total: sources.length });
+        try {
+          // 批量时按每张图的原始尺寸重建整图选区，避免绝对坐标越界
+          let sourceCrop = crop;
+          if (sources.length > 1) {
+            const inspected = await inspectImageFile(source);
+            if (!inspected.ok) {
+              failures += 1;
+              continue;
+            }
+            sourceCrop = createFullImageCropRect(inspected);
+          }
 
-    if (!result.ok) {
-      setError(getErrorMessage(result));
-      return;
+          const result = await cropResizeImageFile(source, {
+            crop: sourceCrop,
+            outputWidth: width,
+            outputHeight: height,
+            targetFormat: outputFormat,
+            quality,
+            jpegBackground: '#ffffff',
+          });
+
+          if (!result.ok) {
+            failures += 1;
+            if (sources.length === 1) setError(getErrorMessage(result));
+            continue;
+          }
+
+          const url = URL.createObjectURL(result.blob);
+          successes.push({ result, url });
+          outputs.push({
+            id: createBatchId('resize', index),
+            filename: result.filename,
+            url,
+            blob: result.blob,
+            size: result.outputSize,
+          });
+        } catch {
+          failures += 1;
+        }
+      }
+
+      if (sources.length === 1) {
+        if (successes.length === 1) setOutput(successes[0]);
+      } else if (outputs.length > 0) {
+        batchOutputsRef.current = outputs;
+        setBatchOutputs(outputs);
+      }
+      setBatchFailedCount(failures);
+    } finally {
+      setIsProcessing(false);
+      setBatchProgress(null);
     }
-
-    setOutput({
-      result,
-      url: URL.createObjectURL(result.blob),
-    });
   }, [clearOutput, crop, file, getErrorMessage, outputFormat, outputHeight, outputWidth, quality, ti]);
 
   const outputStats = useMemo(() => {
@@ -502,6 +564,7 @@ export function ImageCropResize({ mode, content }: ImageCropResizeProps) {
               ref={inputRef}
               type="file"
               accept={accept}
+              multiple={!isCropMode}
               className="hidden"
               onChange={(event) => {
                 if (event.target.files) handleFiles(event.target.files);
@@ -697,8 +760,17 @@ export function ImageCropResize({ mode, content }: ImageCropResizeProps) {
                   </div>
                 )}
 
+                {sourceFileCount > 1 && (
+                  <p className="rounded-lg border border-border-subtle bg-surface-raised px-3 py-2 text-xs text-content-muted">
+                    {ti('batch_selected', { count: sourceFileCount })}
+                  </p>
+                )}
                 <Button onClick={generateOutput} disabled={!canProcess || isProcessing || isLoading} className="w-full justify-center">
-                  {isProcessing ? ti('processing') : ti('apply')}
+                  {isProcessing && batchProgress
+                    ? ti('batch_progress', batchProgress)
+                    : isProcessing
+                      ? ti('processing')
+                      : ti('apply')}
                 </Button>
               </>
             )}
@@ -814,6 +886,15 @@ export function ImageCropResize({ mode, content }: ImageCropResizeProps) {
                     </div>
                   ))}
                 </div>
+              )}
+
+              {(batchOutputs.length > 0 || batchFailedCount > 0) && (
+                <BatchResults
+                  items={batchOutputs}
+                  zipFilename="resized-images.zip"
+                  failedCount={batchFailedCount}
+                  formatSize={formatFileSize}
+                />
               )}
             </aside>
           </div>

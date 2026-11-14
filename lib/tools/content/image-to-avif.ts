@@ -21,7 +21,7 @@ export const imageToAvifContent = defineToolContent({
       '并非所有图片都能获得更小体积，应比较同等可接受画质，而不是只比较相同质量数字。',
       '发布到第三方平台前先确认其不会拒绝、错误转码或移除 AVIF 文件。',
     ],
-    specs: [["输入格式", "JPG、PNG、WebP、GIF、BMP、SVG 等浏览器可解码的图片"], ["体积表现", "同等观感下通常比 WebP 再小一截，是目前主流格式里最小的"], ["编码耗时", "明显慢于 JPG 和 WebP，大图或批量处理需要等待"], ["兼容性", "现代浏览器普遍支持，但老浏览器、部分设计软件和系统预览仍不识别"], ["透明与色深", "支持透明通道和 10 bit 色深，渐变过渡比 8 bit 格式更平滑"], ["使用建议", "适合可控的网页交付场景；作为需要给他人打开的通用文件时风险较高"]],
+    specs: [["输入格式", "JPG、PNG、WebP、HEIC、HEIF、GIF、BMP、SVG 等浏览器可解码的图片"], ["体积表现", "同等观感下通常比 WebP 再小一截，是目前主流格式里最小的"], ["编码耗时", "明显慢于 JPG 和 WebP，大图或批量处理需要等待"], ["兼容性", "现代浏览器普遍支持，但老浏览器、部分设计软件和系统预览仍不识别"], ["透明与色深", "支持透明通道和 10 bit 色深，渐变过渡比 8 bit 格式更平滑"], ["使用建议", "适合可控的网页交付场景；作为需要给他人打开的通用文件时风险较高"]],
     faq: [{ question: "为什么转换这么慢？", answer: "AVIF 的编码复杂度远高于 JPG 和 WebP，这是它换取更小体积的代价。大图或批量处理需要耐心等待，低配设备上尤其明显。" }, { question: "别人打不开我发的 AVIF 文件？", answer: "浏览器普遍支持，但很多设计软件、系统预览和聊天工具仍不识别。AVIF 适合你能控制展示环境的网页交付；作为需要给他人打开的通用文件，用 JPG 或 PNG 更稳妥。" }],
     reference: [
       ['AVIF', '使用 AV1 编码技术的图像文件格式，重点面向高压缩效率。'],
@@ -48,7 +48,7 @@ export const imageToAvifContent = defineToolContent({
       'Not every source becomes smaller. Compare formats at equally acceptable visual quality, not at matching numeric quality values.',
       'Before publishing to a third-party platform, confirm that it will not reject, mishandle, or strip the AVIF file.',
     ],
-    specs: [["Input formats", "JPG, PNG, WebP, GIF, BMP, SVG; anything the browser can decode"], ["Size", "Usually smaller again than WebP at matching quality; the smallest of the mainstream formats today"], ["Encoding time", "Noticeably slower than JPG or WebP; expect a wait on large images or batches"], ["Compatibility", "Widely supported in modern browsers, but older browsers, some design software and OS previews still cannot open it"], ["Transparency and bit depth", "Supports alpha and 10-bit colour, so gradients band less than in 8-bit formats"], ["When to use it", "Good for controlled web delivery; risky as a general-purpose file you hand to someone else"]],
+    specs: [["Input formats", "JPG, PNG, WebP, HEIC, HEIF, GIF, BMP, SVG; anything the browser can decode"], ["Size", "Usually smaller again than WebP at matching quality; the smallest of the mainstream formats today"], ["Encoding time", "Noticeably slower than JPG or WebP; expect a wait on large images or batches"], ["Compatibility", "Widely supported in modern browsers, but older browsers, some design software and OS previews still cannot open it"], ["Transparency and bit depth", "Supports alpha and 10-bit colour, so gradients band less than in 8-bit formats"], ["When to use it", "Good for controlled web delivery; risky as a general-purpose file you hand to someone else"]],
     faq: [{ question: "Why is encoding so slow?", answer: "AVIF encoding is far more computationally demanding than JPG or WebP; that is what buys the smaller file. Expect a wait on large images or batches, especially on modest hardware." }, { question: "The AVIF I sent will not open for someone; why?", answer: "Browser support is broad, but many design applications, OS previews and chat clients still cannot read it. AVIF suits web delivery where you control the environment; for a file someone else must open, send JPG or PNG." }],
     reference: [
       ['AVIF', 'An image file format based on AV1 coding technology and designed for high compression efficiency.'],
